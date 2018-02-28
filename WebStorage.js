@@ -45,7 +45,7 @@ export default class WebStorage {
         return null;
     }
 
-    removeItem() {
+    removeItem(key) {
         this._storage.removeItem(this._prefix + key);
     }
 
