@@ -19,8 +19,7 @@ export default class StatusManager {
         this._eventListener = (event) => {
             event.preventDefault();
             event.stopPropagation();
-            const params = event.detail ? event.detail : {};
-            this.dispatch(event.type, params);
+            this.dispatch(event.type, event.detail);
         };
 
         this._status = new Map();
