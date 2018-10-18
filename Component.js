@@ -28,7 +28,7 @@ export default class Component {
     _build() {
         const html = this.html();
         const style = this.style();
-        this.element.innerHTML = style ? `<style scoped>${style}</style>${html}` : html;
+        this.element.innerHTML = style ? `<style>${style}</style>${html}` : html;
         this.script();
     }
 
