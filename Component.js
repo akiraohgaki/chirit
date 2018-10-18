@@ -16,7 +16,7 @@ export default class Component {
             element = document.querySelector(element);
         }
 
-        this.element = element ? element : document.createElement('div');
+        this.element = element || document.createElement('div');
         this.innerHTML = this.element.innerHTML;
         this.state = state;
 

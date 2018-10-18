@@ -15,7 +15,7 @@ export default class StatusManager {
             eventTarget = document.querySelector(eventTarget);
         }
 
-        this._eventTarget = eventTarget ? eventTarget : document;
+        this._eventTarget = eventTarget || document;
         this._eventListener = (event) => {
             event.preventDefault();
             event.stopPropagation();
