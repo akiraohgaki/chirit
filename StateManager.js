@@ -7,7 +7,7 @@
  * @link        https://github.com/akiraohgaki/chirit
  */
 
-export default class StatusManager {
+export default class StateManager {
 
     constructor(eventTarget) {
         // "eventTarget" will be Element object or selector string
