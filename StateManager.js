@@ -10,7 +10,7 @@
 export default class StateManager {
 
     constructor(eventTarget) {
-        // "eventTarget" will be Element object or selector string
+        // "eventTarget" should be Element object or selector string
         if (typeof eventTarget === 'string') {
             eventTarget = document.querySelector(eventTarget);
         }
