@@ -9,8 +9,8 @@
 
 export default class WebStorage {
 
-    constructor(type = 'session', prefix = '') {
-        // "type" should be "session" or "local"
+    constructor(type = 'local', prefix = '') {
+        // "type" should be "local" or "session"
         this._storage = (type === 'local') ? window.localStorage : window.sessionStorage;
         this._prefix = prefix;
     }
