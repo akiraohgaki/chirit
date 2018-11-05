@@ -13,10 +13,10 @@ export default class Utility {
         const params = {};
         if (window.location.search.length > 1) {
             const queries = window.location.search.substring(1).split('&');
-            for (let i = 0; i < queries.length; i++) {
-                const kv = queries[i].split('=');
+            for (const query of queries) {
+                const kv = query.split('=');
                 const key = decodeURIComponent(kv[0]);
-                const value = kv[1] ? decodeURIComponent(kv[1]) : '';
+                const value = (typeof kv[1] !== 'undefined') ? decodeURIComponent(kv[1]) : '';
                 params[key] = value;
             }
         }
