@@ -68,44 +68,50 @@ export default class Utility {
 
     static convertDatetimeToHumanReadable(datetime) {
         // "datetime" should be ISO 8601 formatted string
+        const today = new Date();
+        const date = new Date(datetime);
+        const timeDelta = today.getTime() - date.getTime();
 
-        const minute = 60 * 1000;
+        const second = 1000;
+        const minute = 60 * second;
         const hour = 60 * minute;
         const day = 24 * hour;
         const week = 7 * day;
         const month = 30 * day;
         const year = 365 * day;
 
-        const today = new Date();
-        const date = new Date(datetime);
-        const timeDelta = today.getTime() - date.getTime();
         let timeDistance = 0;
         let timeUnit = '';
 
-        if (timeDelta >= year) {
-            timeDistance = timeDelta / year;
-            timeUnit = 'year';
+        if (timeDelta < minute) {
+            timeDistance = timeDelta / second;
+            timeUnit = 'second';
         }
-        else if (timeDelta >= month) {
-            timeDistance = timeDelta / month;
-            timeUnit = 'month';
-        }
-        else if (timeDelta >= week) {
-            timeDistance = timeDelta / week;
-            timeUnit = 'week';
-        }
-        else if (timeDelta >= day) {
-            timeDistance = timeDelta / day;
-            timeUnit = 'day';
-        }
-        else if (timeDelta >= hour) {
-            timeDistance = timeDelta / hour;
-            timeUnit = 'hour';
-        }
-        else if (timeDelta >= minute) {
+        else if (timeDelta < hour) {
             timeDistance = timeDelta / minute;
             timeUnit = 'minute';
         }
+        else if (timeDelta < day) {
+            timeDistance = timeDelta / hour;
+            timeUnit = 'hour';
+        }
+        else if (timeDelta < week) {
+            timeDistance = timeDelta / day;
+            timeUnit = 'day';
+        }
+        else if (timeDelta < month) {
+            timeDistance = timeDelta / week;
+            timeUnit = 'week';
+        }
+        else if (timeDelta < year) {
+            timeDistance = timeDelta / month;
+            timeUnit = 'month';
+        }
+        else if (timeDelta >= year) {
+            timeDistance = timeDelta / year;
+            timeUnit = 'year';
+        }
+
         timeDistance = Math.floor(timeDistance);
 
         let text = '';
@@ -129,6 +135,7 @@ export default class Utility {
             + 'abcdefghijklmnopqrstuvwxyz'
             + addition;
         const stringArray = strings.split('');
+
         let randomString = '';
         for (let i = 0; i < length; i++) {
             randomString += stringArray[Math.floor(Math.random() * stringArray.length)];
