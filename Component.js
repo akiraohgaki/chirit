@@ -28,8 +28,10 @@ export default class Component {
     _build() {
         const html = this.html();
         const style = this.style();
-        this.element.innerHTML = style ? `<style>${style}</style>${html}` : html;
-        this.script();
+        const script = this.script();
+        this.element.innerHTML = html
+            + (style ? `<style>${style}</style>` : '')
+            + (script ? `<script>${script}</script>` : '');
     }
 
     update(state) {
@@ -49,6 +51,8 @@ export default class Component {
         return '';
     }
 
-    script() {}
+    script() {
+        return '';
+    }
 
 }
