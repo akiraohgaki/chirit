@@ -104,12 +104,13 @@ export default class StateManager {
                     Object.assign(state, _state);
                 }
                 this._states.set(type, state);
-
+                return state;
+            })
+            .then((state) => {
                 if (!this._views.has(type)) {
                     console.log(`No views for type "${type}"`); // This case is not error
                     return;
                 }
-
                 const views = this._views.get(type);
                 for (const [view, options] of views) {
                     view(state, options);
