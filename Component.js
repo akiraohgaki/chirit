@@ -27,11 +27,13 @@ export default class Component {
 
     _build() {
         const html = this.html();
+        this.element.innerHTML = html || '';
+
         const style = this.style();
+        this.element.innerHTML += style ? `<style>${style}</style>` : '';
+
         const script = this.script();
-        this.element.innerHTML = html
-            + (style ? `<style>${style}</style>` : '')
-            + (script ? `<script>${script}</script>` : '');
+        this.element.innerHTML += script ? `<script>${script}</script>` : '';
     }
 
     update(state) {
