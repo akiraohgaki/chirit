@@ -21,29 +21,35 @@ export default class Component {
         this.state = state;
 
         this.init();
+        this.preBuild();
         this._build();
+        this.postBuild();
         this.complete();
     }
 
     _build() {
         const html = this.html();
-        this.element.innerHTML = html || '';
-
         const style = this.style();
-        this.element.innerHTML += style ? `<style>${style}</style>` : '';
-
         const script = this.script();
-        this.element.innerHTML += script ? `<script>${script}</script>` : '';
+        this.element.innerHTML = (html || '')
+            + (style ? `<style>${style}</style>` : '')
+            + (script ? `<script>${script}</script>` : '');
     }
 
     update(state) {
         this.state = state;
+        this.preBuild();
         this._build();
+        this.postBuild();
     }
 
     init() {}
 
     complete() {}
+
+    preBuild() {}
+
+    postBuild() {}
 
     html() {
         return '';
