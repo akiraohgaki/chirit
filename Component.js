@@ -21,7 +21,9 @@ export default class Component {
         this.state = state;
 
         this.init();
+        this.preBuild();
         this._build();
+        this.postBuild();
         this.complete();
     }
 
@@ -36,12 +38,18 @@ export default class Component {
 
     update(state) {
         this.state = state;
+        this.preBuild();
         this._build();
+        this.postBuild();
     }
 
     init() {}
 
     complete() {}
+
+    preBuild() {}
+
+    postBuild() {}
 
     html() {
         return '';
