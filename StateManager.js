@@ -98,10 +98,10 @@ export default class StateManager {
         }
 
         Promise.all(promises)
-            .then((states) => {
+            .then((values) => {
                 const state = {};
-                for (const _state of states) {
-                    Object.assign(state, _state);
+                for (const value of values) {
+                    Object.assign(state, value);
                 }
                 this._states.set(type, state);
                 return state;
