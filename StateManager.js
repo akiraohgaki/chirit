@@ -40,7 +40,7 @@ export default class StateManager {
     }
 
     registerAction(type, action, options) {
-        const actions = this._actionTypes.has(type) ? this._actionTypes.get(type) : new Map();
+        const actions = this._actionTypes.get(type) || new Map();
         if (!actions.size) {
             this._states.set(type, {});
             this._target.addEventListener(type, this._listener, false);
@@ -67,7 +67,7 @@ export default class StateManager {
     }
 
     registerView(type, view, options) {
-        const views = this._viewTypes.has(type) ? this._viewTypes.get(type) : new Map();
+        const views = this._viewTypes.get(type) || new Map();
         views.set(view, options);
         this._viewTypes.set(type, views);
     }
