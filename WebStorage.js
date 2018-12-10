@@ -20,7 +20,16 @@ export default class WebStorage {
             default:
                 throw new Error(`Unknown storage type "${type}"`);
         }
+        this._type = type;
         this._prefix = prefix;
+    }
+
+    get type() {
+        return this._type;
+    }
+
+    get prefix() {
+        return this._prefix;
     }
 
     get length() {
