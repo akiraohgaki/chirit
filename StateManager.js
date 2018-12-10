@@ -27,6 +27,10 @@ export default class StateManager {
         this._views = new Map();
     }
 
+    get target() {
+        return this._target;
+    }
+
     getStates() {
         return this._states;
     }
