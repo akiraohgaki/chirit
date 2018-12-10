@@ -23,8 +23,8 @@ export default class StateManager {
         };
 
         this._states = new Map();
-        this._actions = new Map();
-        this._views = new Map();
+        this._actionTypes = new Map();
+        this._viewTypes = new Map();
     }
 
     get target() {
@@ -40,25 +40,25 @@ export default class StateManager {
     }
 
     registerAction(type, action, options) {
-        const actions = this._actions.has(type) ? this._actions.get(type) : new Map();
+        const actions = this._actionTypes.has(type) ? this._actionTypes.get(type) : new Map();
         if (!actions.size) {
             this._states.set(type, {});
             this._target.addEventListener(type, this._listener, false);
         }
         actions.set(action, options);
-        this._actions.set(type, actions);
+        this._actionTypes.set(type, actions);
     }
 
     unregisterAction(type, action) {
-        if (this._actions.has(type)) {
-            const actions = this._actions.get(type);
+        if (this._actionTypes.has(type)) {
+            const actions = this._actionTypes.get(type);
             if (actions.has(action)) {
                 actions.delete(action);
                 if (actions.size) {
-                    this._actions.set(type, actions);
+                    this._actionTypes.set(type, actions);
                 }
                 else {
-                    this._actions.delete(type);
+                    this._actionTypes.delete(type);
                     this._states.delete(type);
                     this._target.removeEventListener(type, this._listener, false);
                 }
@@ -67,33 +67,33 @@ export default class StateManager {
     }
 
     registerView(type, view, options) {
-        const views = this._views.has(type) ? this._views.get(type) : new Map();
+        const views = this._viewTypes.has(type) ? this._viewTypes.get(type) : new Map();
         views.set(view, options);
-        this._views.set(type, views);
+        this._viewTypes.set(type, views);
     }
 
     unregisterView(type, view) {
-        if (this._views.has(type)) {
-            const views = this._views.get(type);
+        if (this._viewTypes.has(type)) {
+            const views = this._viewTypes.get(type);
             if (views.has(view)) {
                 views.delete(view);
                 if (views.size) {
-                    this._views.set(type, views);
+                    this._viewTypes.set(type, views);
                 }
                 else {
-                    this._views.delete(type);
+                    this._viewTypes.delete(type);
                 }
             }
         }
     }
 
     dispatch(type, params) {
-        if (!this._actions.has(type)) {
+        if (!this._actionTypes.has(type)) {
             console.error(new Error(`No actions for type "${type}"`));
             return;
         }
 
-        const actions = this._actions.get(type);
+        const actions = this._actionTypes.get(type);
         const promises = [];
         for (const [action, options] of actions) {
             promises.push(new Promise((resolve, reject) => {
@@ -111,11 +111,11 @@ export default class StateManager {
                 return state;
             })
             .then((state) => {
-                if (!this._views.has(type)) {
+                if (!this._viewTypes.has(type)) {
                     console.log(`No views for type "${type}"`); // This case is not error
                     return;
                 }
-                const views = this._views.get(type);
+                const views = this._viewTypes.get(type);
                 for (const [view, options] of views) {
                     view(state, options);
                 }
