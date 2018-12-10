@@ -9,13 +9,13 @@
 
 export default class StateManager {
 
-    constructor(eventTarget) {
-        // "eventTarget" should be Element object or selector string
-        if (typeof eventTarget === 'string') {
-            eventTarget = document.querySelector(eventTarget);
+    constructor(element) {
+        // "element" should be Element object or selector string
+        if (typeof element === 'string') {
+            element = document.querySelector(element);
         }
 
-        this._eventTarget = eventTarget || document;
+        this._eventTarget = element || document;
         this._eventListener = (event) => {
             event.preventDefault();
             event.stopPropagation();
