@@ -15,8 +15,8 @@ export default class StateManager {
             element = document.querySelector(element);
         }
 
-        this._eventTarget = element || document;
-        this._eventListener = (event) => {
+        this._target = element || document;
+        this._listener = (event) => {
             event.preventDefault();
             event.stopPropagation();
             this.dispatch(event.type, event.detail);
@@ -39,7 +39,7 @@ export default class StateManager {
         const actions = this._actions.has(type) ? this._actions.get(type) : new Map();
         if (!actions.size) {
             this._states.set(type, {});
-            this._eventTarget.addEventListener(type, this._eventListener, false);
+            this._target.addEventListener(type, this._listener, false);
         }
         actions.set(action, options);
         this._actions.set(type, actions);
@@ -56,7 +56,7 @@ export default class StateManager {
                 else {
                     this._actions.delete(type);
                     this._states.delete(type);
-                    this._eventTarget.removeEventListener(type, this._eventListener, false);
+                    this._target.removeEventListener(type, this._listener, false);
                 }
             }
         }
