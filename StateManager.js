@@ -89,8 +89,7 @@ export default class StateManager {
 
     dispatch(type, params) {
         if (!this._actionTypes.has(type)) {
-            console.error(new Error(`No actions for type "${type}"`));
-            return;
+            throw new Error(`Undefined action type "${type}"`);
         }
 
         const actions = this._actionTypes.get(type);
@@ -112,7 +111,7 @@ export default class StateManager {
             })
             .then((state) => {
                 if (!this._viewTypes.has(type)) {
-                    console.log(`No views for type "${type}"`); // This case is not error
+                    console.log(`Undefined view type "${type}"`); // This case is not error
                     return;
                 }
                 const views = this._viewTypes.get(type);
