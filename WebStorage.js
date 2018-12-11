@@ -18,7 +18,7 @@ export default class WebStorage {
                 this._storage = window.sessionStorage;
                 break;
             default:
-                throw new Error(`Unknown storage type "${type}"`);
+                throw new Error(`Illegal storage type "${type}"`);
         }
         this._type = type;
         this._prefix = prefix;
