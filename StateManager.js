@@ -19,7 +19,7 @@ export default class StateManager {
         this._listener = (event) => {
             event.preventDefault();
             event.stopPropagation();
-            this.dispatch(event.type, event.detail);
+            this._handleEvent(event.type, event.detail);
         };
 
         this._states = new Map();
@@ -88,6 +88,16 @@ export default class StateManager {
     }
 
     dispatch(type, params) {
+        this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
+    }
+
+    _handleEvent(type, params) {
+        this._callActions(type, params).then((state) => {
+            this._callViews(type, state);
+        });
+    }
+
+    async _callActions(type, params) {
         if (!this._actionTypes.has(type)) {
             throw new Error(`Undefined action type "${type}"`);
         }
@@ -99,29 +109,26 @@ export default class StateManager {
                 action(resolve, reject, params, options);
             }));
         }
+        return Promise.all(promises).then((values) => {
+            const state = {};
+            for (const value of values) {
+                Object.assign(state, value);
+            }
+            this._states.set(type, state);
+            return state;
+        });
+    }
 
-        Promise.all(promises)
-            .then((values) => {
-                const state = {};
-                for (const value of values) {
-                    Object.assign(state, value);
-                }
-                this._states.set(type, state);
-                return state;
-            })
-            .then((state) => {
-                if (!this._viewTypes.has(type)) {
-                    console.log(`Undefined view type "${type}"`); // This case is not error
-                    return;
-                }
-                const views = this._viewTypes.get(type);
-                for (const [view, options] of views) {
-                    view(state, options);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+    _callViews(type, state) {
+        if (!this._viewTypes.has(type)) {
+            console.log(`Undefined view type "${type}"`); // This case is not error
+            return;
+        }
+
+        const views = this._viewTypes.get(type);
+        for (const [view, options] of views) {
+            view(state, options);
+        }
     }
 
 }
