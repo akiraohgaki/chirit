@@ -36,7 +36,7 @@ export default class Component {
         return this._state;
     }
 
-    update(state) {
+    update(state = {}) {
         this._mergeState(state);
         this.preRender();
         this._target.innerHTML = this.render() || '';
