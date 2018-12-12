@@ -10,15 +10,14 @@
 export default class Component {
 
     // Subclass should use init() instead of constructor()
-    constructor(element, state) {
-        // "element" should be Element object or selector string
-        if (typeof element === 'string') {
-            element = document.querySelector(element);
+    constructor(target, state) {
+        // "target" should be Element object or selector string
+        if (typeof target === 'string') {
+            target = document.querySelector(target);
         }
 
-        this.element = element || document.createElement('div');
-        this.innerHTML = this.element.innerHTML;
-        this.state = state;
+        this._target = target || document.createElement('div');
+        this._state = state;
 
         this.init();
         this.preBuild();
@@ -27,17 +26,25 @@ export default class Component {
         this.complete();
     }
 
+    get target() {
+        return this._target;
+    }
+
+    get state() {
+        return this._state;
+    }
+
     _build() {
         const html = this.html();
         const style = this.style();
         const script = this.script();
-        this.element.innerHTML = (html || '')
+        this._target.innerHTML = (html || '')
             + (style ? `<style>${style}</style>` : '')
             + (script ? `<script>${script}</script>` : '');
     }
 
     update(state) {
-        this.state = state;
+        this._state = state;
         this.preBuild();
         this._build();
         this.postBuild();
