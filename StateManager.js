@@ -9,22 +9,22 @@
 
 export default class StateManager {
 
-    constructor(element) {
-        // "element" should be Element object or selector string
-        if (typeof element === 'string') {
-            element = document.querySelector(element);
+    constructor(target) {
+        // "target" should be Element object or selector string
+        if (typeof target === 'string') {
+            target = document.querySelector(target);
         }
 
-        this._target = element || document;
+        this._target = target || document;
+        this._states = new Map();
+        this._actionTypes = new Map();
+        this._viewTypes = new Map();
+
         this._listener = (event) => {
             event.preventDefault();
             event.stopPropagation();
             this._handleEvent(event.type, event.detail);
         };
-
-        this._states = new Map();
-        this._actionTypes = new Map();
-        this._viewTypes = new Map();
     }
 
     get target() {
@@ -92,12 +92,18 @@ export default class StateManager {
     }
 
     _handleEvent(type, params) {
-        this._callActions(type, params).then((state) => {
+        new Promise((resolve) => {
+            resolve(this._callActions(type, params));
+        })
+        .then((state) => {
             this._callViews(type, state);
+        })
+        .catch((error) => {
+            console.error(error);
         });
     }
 
-    async _callActions(type, params) {
+    _callActions(type, params) {
         if (!this._actionTypes.has(type)) {
             throw new Error(`Undefined action type "${type}"`);
         }
@@ -105,10 +111,11 @@ export default class StateManager {
         const actions = this._actionTypes.get(type);
         const promises = [];
         for (const [action, options] of actions) {
-            promises.push(new Promise((resolve, reject) => {
-                action(resolve, reject, params, options);
+            promises.push(new Promise((resolve) => {
+                resolve(action(params, options));
             }));
         }
+
         return Promise.all(promises).then((values) => {
             const state = {};
             for (const value of values) {
@@ -121,14 +128,18 @@ export default class StateManager {
 
     _callViews(type, state) {
         if (!this._viewTypes.has(type)) {
-            console.log(`Undefined view type "${type}"`); // This case is not error
             return;
         }
 
         const views = this._viewTypes.get(type);
+        const promises = [];
         for (const [view, options] of views) {
-            view(state, options);
+            promises.push(new Promise((resolve) => {
+                resolve(view(state, options));
+            }));
         }
+
+        Promise.all(promises);
     }
 
 }
