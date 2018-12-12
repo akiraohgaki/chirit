@@ -10,19 +10,17 @@
 export default class Component {
 
     // Subclass should use init() instead of constructor()
-    constructor(target, state) {
+    constructor(target, state = {}) {
         // "target" should be Element object or selector string
         if (typeof target === 'string') {
             target = document.querySelector(target);
         }
 
         this._target = target || document.createElement('div');
-        this._state = state;
+        this._state = {};
 
         this.init();
-        this.preBuild();
-        this._build();
-        this.postBuild();
+        this.update(state);
         this.complete();
     }
 
@@ -30,44 +28,31 @@ export default class Component {
         return this._target;
     }
 
+    set state(state) {
+        Object.assign(this._state, state);
+    }
+
     get state() {
         return this._state;
     }
 
-    _build() {
-        const html = this.html();
-        const style = this.style();
-        const script = this.script();
-        this._target.innerHTML = (html || '')
-            + (style ? `<style>${style}</style>` : '')
-            + (script ? `<script>${script}</script>` : '');
-    }
-
     update(state) {
-        this._state = state;
-        this.preBuild();
-        this._build();
-        this.postBuild();
+        this.state = state;
+        this.preRender();
+        this._target.innerHTML = this.render() || '';
+        this.postRender();
     }
 
     init() {}
 
+    preRender() {}
+
+    render() {
+        return '';
+    }
+
+    postRender() {}
+
     complete() {}
-
-    preBuild() {}
-
-    postBuild() {}
-
-    html() {
-        return '';
-    }
-
-    style() {
-        return '';
-    }
-
-    script() {
-        return '';
-    }
 
 }
