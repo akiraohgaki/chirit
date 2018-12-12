@@ -39,7 +39,7 @@ export default class StateManager {
         return this._states.get(type);
     }
 
-    registerAction(type, action, options) {
+    registerAction(type, action, options = {}) {
         const actions = this._actionTypes.get(type) || new Map();
         if (!actions.size) {
             this._states.set(type, {});
@@ -66,7 +66,7 @@ export default class StateManager {
         }
     }
 
-    registerView(type, view, options) {
+    registerView(type, view, options = {}) {
         const views = this._viewTypes.get(type) || new Map();
         views.set(view, options);
         this._viewTypes.set(type, views);
@@ -87,7 +87,7 @@ export default class StateManager {
         }
     }
 
-    dispatch(type, params) {
+    dispatch(type, params = {}) {
         this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
     }
 
