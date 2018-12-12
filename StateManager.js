@@ -9,22 +9,26 @@
 
 export default class StateManager {
 
-    constructor(eventTarget) {
-        // "eventTarget" should be Element object or selector string
-        if (typeof eventTarget === 'string') {
-            eventTarget = document.querySelector(eventTarget);
+    constructor(target) {
+        // "target" should be Element object or selector string
+        if (typeof target === 'string') {
+            target = document.querySelector(target);
         }
 
-        this._eventTarget = eventTarget || document;
-        this._eventListener = (event) => {
+        this._target = target || document;
+        this._states = new Map();
+        this._actionTypes = new Map();
+        this._viewTypes = new Map();
+
+        this._listener = (event) => {
             event.preventDefault();
             event.stopPropagation();
-            this.dispatch(event.type, event.detail);
+            this._handleEvent(event.type, event.detail);
         };
+    }
 
-        this._states = new Map();
-        this._actions = new Map();
-        this._views = new Map();
+    get target() {
+        return this._target;
     }
 
     getStates() {
@@ -35,90 +39,107 @@ export default class StateManager {
         return this._states.get(type);
     }
 
-    registerAction(type, action, options) {
-        const actions = this._actions.has(type) ? this._actions.get(type) : new Map();
+    registerAction(type, action, options = {}) {
+        const actions = this._actionTypes.get(type) || new Map();
         if (!actions.size) {
             this._states.set(type, {});
-            this._eventTarget.addEventListener(type, this._eventListener, false);
+            this._target.addEventListener(type, this._listener, false);
         }
         actions.set(action, options);
-        this._actions.set(type, actions);
+        this._actionTypes.set(type, actions);
     }
 
     unregisterAction(type, action) {
-        if (this._actions.has(type)) {
-            const actions = this._actions.get(type);
+        if (this._actionTypes.has(type)) {
+            const actions = this._actionTypes.get(type);
             if (actions.has(action)) {
                 actions.delete(action);
                 if (actions.size) {
-                    this._actions.set(type, actions);
+                    this._actionTypes.set(type, actions);
                 }
                 else {
-                    this._actions.delete(type);
+                    this._actionTypes.delete(type);
                     this._states.delete(type);
-                    this._eventTarget.removeEventListener(type, this._eventListener, false);
+                    this._target.removeEventListener(type, this._listener, false);
                 }
             }
         }
     }
 
-    registerView(type, view, options) {
-        const views = this._views.has(type) ? this._views.get(type) : new Map();
+    registerView(type, view, options = {}) {
+        const views = this._viewTypes.get(type) || new Map();
         views.set(view, options);
-        this._views.set(type, views);
+        this._viewTypes.set(type, views);
     }
 
     unregisterView(type, view) {
-        if (this._views.has(type)) {
-            const views = this._views.get(type);
+        if (this._viewTypes.has(type)) {
+            const views = this._viewTypes.get(type);
             if (views.has(view)) {
                 views.delete(view);
                 if (views.size) {
-                    this._views.set(type, views);
+                    this._viewTypes.set(type, views);
                 }
                 else {
-                    this._views.delete(type);
+                    this._viewTypes.delete(type);
                 }
             }
         }
     }
 
-    dispatch(type, params) {
-        if (!this._actions.has(type)) {
-            console.error(new Error(`No actions for type "${type}"`));
-            return;
+    dispatch(type, params = {}) {
+        this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
+    }
+
+    _handleEvent(type, params) {
+        new Promise((resolve) => {
+            resolve(this._callActions(type, params));
+        })
+        .then((state) => {
+            this._callViews(type, state);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    _callActions(type, params) {
+        if (!this._actionTypes.has(type)) {
+            throw new Error(`Undefined action type "${type}"`);
         }
 
-        const actions = this._actions.get(type);
+        const actions = this._actionTypes.get(type);
         const promises = [];
         for (const [action, options] of actions) {
-            promises.push(new Promise((resolve, reject) => {
-                action(resolve, reject, params, options);
+            promises.push(new Promise((resolve) => {
+                resolve(action(params, options));
             }));
         }
 
-        Promise.all(promises)
-            .then((states) => {
-                const state = {};
-                for (const _state of states) {
-                    Object.assign(state, _state);
-                }
-                this._states.set(type, state);
-                return state;
-            })
-            .then((state) => {
-                if (!this._views.has(type)) {
-                    console.log(`No views for type "${type}"`); // This case is not error
-                    return;
-                }
-                const views = this._views.get(type);
-                for (const [view, options] of views) {
-                    view(state, options);
-                }
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        return Promise.all(promises).then((values) => {
+            const state = {};
+            for (const value of values) {
+                Object.assign(state, value);
+            }
+            this._states.set(type, state);
+            return state;
+        });
+    }
+
+    _callViews(type, state) {
+        if (!this._viewTypes.has(type)) {
+            return;
+        }
+
+        const views = this._viewTypes.get(type);
+        const promises = [];
+        for (const [view, options] of views) {
+            promises.push(new Promise((resolve) => {
+                resolve(view(state, options));
+            }));
+        }
+
+        Promise.all(promises);
     }
 
 }

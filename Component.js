@@ -10,57 +10,53 @@
 export default class Component {
 
     // Subclass should use init() instead of constructor()
-    constructor(element, state) {
-        // "element" should be Element object or selector string
-        if (typeof element === 'string') {
-            element = document.querySelector(element);
+    constructor(target, state = {}) {
+        // "target" should be Element object or selector string
+        if (typeof target === 'string') {
+            target = document.querySelector(target);
         }
 
-        this.element = element || document.createElement('div');
-        this.innerHTML = this.element.innerHTML;
-        this.state = state;
+        this._target = target || document.createElement('div');
+        this._state = {};
 
         this.init();
-        this.preBuild();
-        this._build();
-        this.postBuild();
+        this.update(state);
         this.complete();
     }
 
-    _build() {
-        const html = this.html();
-        const style = this.style();
-        const script = this.script();
-        this.element.innerHTML = (html || '')
-            + (style ? `<style>${style}</style>` : '')
-            + (script ? `<script>${script}</script>` : '');
+    get target() {
+        return this._target;
     }
 
-    update(state) {
-        this.state = state;
-        this.preBuild();
-        this._build();
-        this.postBuild();
+    set state(state) {
+        this._mergeState(state);
+    }
+
+    get state() {
+        return this._state;
+    }
+
+    update(state = {}) {
+        this._mergeState(state);
+        this.preRender();
+        this._target.innerHTML = this.render() || '';
+        this.postRender();
     }
 
     init() {}
 
+    preRender() {}
+
+    render() {
+        return '';
+    }
+
+    postRender() {}
+
     complete() {}
 
-    preBuild() {}
-
-    postBuild() {}
-
-    html() {
-        return '';
-    }
-
-    style() {
-        return '';
-    }
-
-    script() {
-        return '';
+    _mergeState(state) {
+        Object.assign(this._state, state);
     }
 
 }

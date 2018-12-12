@@ -10,9 +10,26 @@
 export default class WebStorage {
 
     constructor(type = 'local', prefix = '') {
-        // "type" should be "local" or "session"
-        this._storage = (type === 'local') ? window.localStorage : window.sessionStorage;
+        switch (type) {
+            case 'local':
+                this._storage = window.localStorage;
+                break;
+            case 'session':
+                this._storage = window.sessionStorage;
+                break;
+            default:
+                throw new Error(`Illegal storage type "${type}"`);
+        }
+        this._type = type;
         this._prefix = prefix;
+    }
+
+    get type() {
+        return this._type;
+    }
+
+    get prefix() {
+        return this._prefix;
     }
 
     get length() {
