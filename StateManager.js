@@ -112,7 +112,10 @@ export default class StateManager {
         const promises = [];
         for (const [action, options] of actions) {
             promises.push(new Promise((resolve) => {
-                resolve(action(params, options));
+                const value = action(params, options);
+                if (value !== undefined) {
+                    resolve(value);
+                }
             }));
         }
 
@@ -135,7 +138,10 @@ export default class StateManager {
         const promises = [];
         for (const [view, options] of views) {
             promises.push(new Promise((resolve) => {
-                resolve(view(state, options));
+                const value = view(state, options);
+                if (value !== undefined) {
+                    resolve(value);
+                }
             }));
         }
 
