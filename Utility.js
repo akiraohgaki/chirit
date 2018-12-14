@@ -16,7 +16,7 @@ export default class Utility {
             for (const query of queries) {
                 const kv = query.split('=');
                 const key = decodeURIComponent(kv[0]);
-                const value = (typeof kv[1] !== 'undefined') ? decodeURIComponent(kv[1]) : '';
+                const value = (kv[1] !== undefined) ? decodeURIComponent(kv[1]) : '';
                 params[key] = value;
             }
         }

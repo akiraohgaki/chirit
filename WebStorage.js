@@ -53,7 +53,7 @@ export default class WebStorage {
             const deserializedValue = JSON.parse(value);
             if (deserializedValue
                 && deserializedValue._key === key
-                && typeof deserializedValue._value !== 'undefined'
+                && deserializedValue._value !== undefined
             ) {
                 return deserializedValue._value;
             }
