@@ -91,17 +91,17 @@ export default class StateManager {
         this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
     }
 
-    _handleEvent(type, params) {
-        new Promise((resolve) => {
-            resolve(this._callActions(type, params));
-        }).then((state) => {
+    async _handleEvent(type, params) {
+        try {
+            const state = await this._callActions(type, params);
             this._callViews(type, state);
-        }).catch((error) => {
+        }
+        catch (error) {
             console.error(error);
-        });
+        }
     }
 
-    _callActions(type, params) {
+    async _callActions(type, params) {
         if (!this._actionTypes.has(type)) {
             throw new Error(`Undefined action type "${type}"`);
         }
@@ -117,19 +117,18 @@ export default class StateManager {
             }));
         }
 
-        return Promise.all(promises).then((values) => {
-            const state = {};
-            for (const value of values) {
-                Object.assign(state, value);
-            }
-            this._states.set(type, state);
-            return state;
-        });
+        const values = await Promise.all(promises);
+        const state = {};
+        for (const value of values) {
+            Object.assign(state, value);
+        }
+        this._states.set(type, state);
+        return state;
     }
 
-    _callViews(type, state) {
+    async _callViews(type, state) {
         if (!this._viewTypes.has(type)) {
-            return;
+            return null;
         }
 
         const views = this._viewTypes.get(type);
@@ -143,7 +142,8 @@ export default class StateManager {
             }));
         }
 
-        Promise.all(promises);
+        const values = await Promise.all(promises);
+        return values;
     }
 
 }
