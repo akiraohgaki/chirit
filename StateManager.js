@@ -94,11 +94,9 @@ export default class StateManager {
     _handleEvent(type, params) {
         new Promise((resolve) => {
             resolve(this._callActions(type, params));
-        })
-        .then((state) => {
+        }).then((state) => {
             this._callViews(type, state);
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.error(error);
         });
     }
