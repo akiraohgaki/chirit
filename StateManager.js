@@ -22,7 +22,7 @@ export default class StateManager {
         this._storeHandlers = new Map();
         this._viewHandlers = new Map();
 
-        this._listener = (event) => {
+        this._eventListener = (event) => {
             event.preventDefault();
             event.stopPropagation();
             this._handleEvent(event.type, event.detail);
@@ -87,7 +87,7 @@ export default class StateManager {
             && !this._storeHandlers.has(type)
             && !this._viewHandlers.has(type)
         ) {
-            this._target.addEventListener(type, this._listener, false);
+            this._target.addEventListener(type, this._eventListener, false);
             this._states.set(type, {});
         }
 
@@ -119,7 +119,7 @@ export default class StateManager {
             && !this._storeHandlers.has(type)
             && !this._viewHandlers.has(type)
         ) {
-            this._target.removeEventListener(type, this._listener, false);
+            this._target.removeEventListener(type, this._eventListener, false);
             this._states.delete(type);
         }
     }
