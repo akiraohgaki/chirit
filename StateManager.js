@@ -93,8 +93,13 @@ export default class StateManager {
 
     async _handleEvent(type, params) {
         try {
-            const state = await this._callActions(type, params);
-            this._callViews(type, state);
+            if (this._actionTypes.has(type)) {
+                const state = await this._callActions(type, params);
+                if (this._viewTypes.has(type)) {
+                    //const state = await this._callViews(type, state);
+                    this._callViews(type, state);
+                }
+            }
         }
         catch (error) {
             console.error(error);
@@ -102,21 +107,18 @@ export default class StateManager {
     }
 
     async _callActions(type, params) {
-        if (!this._actionTypes.has(type)) {
-            throw new Error(`Undefined action type "${type}"`);
-        }
-
         const actions = this._actionTypes.get(type);
         const promises = [];
         for (const [action, options] of actions) {
             promises.push(new Promise((resolve) => {
+                // If registered function has no return value,
+                // keep this promise with pending status so don't reach the next phase.
                 const value = action(params, options);
                 if (value !== undefined) {
                     resolve(value);
                 }
             }));
         }
-
         const values = await Promise.all(promises);
         const state = {};
         for (const value of values) {
@@ -127,23 +129,24 @@ export default class StateManager {
     }
 
     async _callViews(type, state) {
-        if (!this._viewTypes.has(type)) {
-            return null;
-        }
-
         const views = this._viewTypes.get(type);
         const promises = [];
         for (const [view, options] of views) {
             promises.push(new Promise((resolve) => {
+                // If registered function has no return value,
+                // keep this promise with pending status so don't reach the next phase.
                 const value = view(state, options);
                 if (value !== undefined) {
                     resolve(value);
                 }
             }));
         }
-
         const values = await Promise.all(promises);
-        return values;
+        //const state = {};
+        for (const value of values) {
+            Object.assign(state, value);
+        }
+        return state;
     }
 
 }
