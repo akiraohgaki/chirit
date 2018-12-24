@@ -19,6 +19,7 @@ export default class StateManager {
         this._states = new Map();
         this._eventHandlers = new Map();
         this._actionHandlers = new Map();
+        this._storeHandlers = new Map();
         this._viewHandlers = new Map();
 
         this._listener = (event) => {
@@ -91,6 +92,31 @@ export default class StateManager {
                     this._actionHandlers.delete(type);
                     this._target.removeEventListener(type, this._listener, false);
                     //this._states.delete(type);
+                }
+            }
+        }
+    }
+
+    addStoreHandler(type, handler, options = {}) {
+        if (typeof handler !== 'function') {
+            throw new TypeError(`"${handler}" is not a function`);
+        }
+
+        const handlers = this._storeHandlers.get(type) || new Map();
+        handlers.set(handler, options);
+        this._storeHandlers.set(type, handlers);
+    }
+
+    removeStoreHandler(type, handler) {
+        if (this._storeHandlers.has(type)) {
+            const handlers = this._storeHandlers.get(type);
+            if (handlers.has(handler)) {
+                handlers.delete(handler);
+                if (handlers.size) {
+                    this._storeHandlers.set(type, handlers);
+                }
+                else {
+                    this._storeHandlers.delete(type);
                 }
             }
         }
