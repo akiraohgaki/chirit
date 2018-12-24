@@ -40,6 +40,10 @@ export default class StateManager {
     }
 
     registerAction(type, action, options = {}) {
+        if (typeof action !== 'function') {
+            throw new TypeError(`"${action}" is not a function`);
+        }
+
         const actions = this._actionTypes.get(type) || new Map();
         if (!actions.size) {
             this._states.set(type, {});
@@ -67,6 +71,10 @@ export default class StateManager {
     }
 
     registerView(type, view, options = {}) {
+        if (typeof view !== 'function') {
+            throw new TypeError(`"${view}" is not a function`);
+        }
+
         const views = this._viewTypes.get(type) || new Map();
         views.set(view, options);
         this._viewTypes.set(type, views);
@@ -110,14 +118,16 @@ export default class StateManager {
         const actions = this._actionTypes.get(type);
         const promises = [];
         for (const [action, options] of actions) {
-            promises.push(new Promise((resolve) => {
-                // If registered function has no return value,
-                // keep this promise with pending status so don't reach the next phase.
-                const value = action(params, options);
-                if (value !== undefined) {
-                    resolve(value);
-                }
-            }));
+            if (typeof action === 'function') {
+                promises.push(new Promise((resolve) => {
+                    // If registered function has no return value,
+                    // keep this promise with pending status so don't reach the next phase.
+                    const value = action(params, options);
+                    if (value !== undefined) {
+                        resolve(value);
+                    }
+                }));
+            }
         }
         const values = await Promise.all(promises);
         const state = {};
@@ -132,14 +142,16 @@ export default class StateManager {
         const views = this._viewTypes.get(type);
         const promises = [];
         for (const [view, options] of views) {
-            promises.push(new Promise((resolve) => {
-                // If registered function has no return value,
-                // keep this promise with pending status so don't reach the next phase.
-                const value = view(state, options);
-                if (value !== undefined) {
-                    resolve(value);
-                }
-            }));
+            if (typeof view === 'function') {
+                promises.push(new Promise((resolve) => {
+                    // If registered function has no return value,
+                    // keep this promise with pending status so don't reach the next phase.
+                    const value = view(state, options);
+                    if (value !== undefined) {
+                        resolve(value);
+                    }
+                }));
+            }
         }
         const values = await Promise.all(promises);
         //const state = {};
