@@ -17,6 +17,7 @@ export default class StateManager {
 
         this._target = target || document;
         this._states = new Map();
+        this._eventHandlers = new Map();
         this._actionHandlers = new Map();
         this._viewHandlers = new Map();
 
@@ -37,6 +38,31 @@ export default class StateManager {
 
     getState(type) {
         return this._states.get(type);
+    }
+
+    addEventHandler(type, handler, options = {}) {
+        if (typeof handler !== 'function') {
+            throw new TypeError(`"${handler}" is not a function`);
+        }
+
+        const handlers = this._eventHandlers.get(type) || new Map();
+        handlers.set(handler, options);
+        this._eventHandlers.set(type, handlers);
+    }
+
+    removeEventHandler(type, handler) {
+        if (this._eventHandlers.has(type)) {
+            const handlers = this._eventHandlers.get(type);
+            if (handlers.has(handler)) {
+                handlers.delete(handler);
+                if (handlers.size) {
+                    this._eventHandlers.set(type, handlers);
+                }
+                else {
+                    this._eventHandlers.delete(type);
+                }
+            }
+        }
     }
 
     addActionHandler(type, handler, options = {}) {
