@@ -17,8 +17,8 @@ export default class StateManager {
 
         this._target = target || document;
         this._states = new Map();
-        this._actionTypes = new Map();
-        this._viewTypes = new Map();
+        this._actionHandlers = new Map();
+        this._viewHandlers = new Map();
 
         this._listener = (event) => {
             event.preventDefault();
@@ -39,57 +39,57 @@ export default class StateManager {
         return this._states.get(type);
     }
 
-    registerAction(type, action, options = {}) {
-        if (typeof action !== 'function') {
-            throw new TypeError(`"${action}" is not a function`);
+    registerAction(type, handler, options = {}) {
+        if (typeof handler !== 'function') {
+            throw new TypeError(`"${handler}" is not a function`);
         }
 
-        const actions = this._actionTypes.get(type) || new Map();
-        if (!actions.size) {
-            this._states.set(type, {});
+        const handlers = this._actionHandlers.get(type) || new Map();
+        if (!handlers.size) {
             this._target.addEventListener(type, this._listener, false);
+            //this._states.set(type, {});
         }
-        actions.set(action, options);
-        this._actionTypes.set(type, actions);
+        handlers.set(handler, options);
+        this._actionHandlers.set(type, handlers);
     }
 
-    unregisterAction(type, action) {
-        if (this._actionTypes.has(type)) {
-            const actions = this._actionTypes.get(type);
-            if (actions.has(action)) {
-                actions.delete(action);
-                if (actions.size) {
-                    this._actionTypes.set(type, actions);
+    unregisterAction(type, handler) {
+        if (this._actionHandlers.has(type)) {
+            const handlers = this._actionHandlers.get(type);
+            if (handlers.has(handler)) {
+                handlers.delete(handler);
+                if (handlers.size) {
+                    this._actionHandlers.set(type, handlers);
                 }
                 else {
-                    this._actionTypes.delete(type);
-                    this._states.delete(type);
+                    this._actionHandlers.delete(type);
                     this._target.removeEventListener(type, this._listener, false);
+                    //this._states.delete(type);
                 }
             }
         }
     }
 
-    registerView(type, view, options = {}) {
-        if (typeof view !== 'function') {
-            throw new TypeError(`"${view}" is not a function`);
+    registerView(type, handler, options = {}) {
+        if (typeof handler !== 'function') {
+            throw new TypeError(`"${handler}" is not a function`);
         }
 
-        const views = this._viewTypes.get(type) || new Map();
-        views.set(view, options);
-        this._viewTypes.set(type, views);
+        const handlers = this._viewHandlers.get(type) || new Map();
+        handlers.set(handler, options);
+        this._viewHandlers.set(type, handlers);
     }
 
-    unregisterView(type, view) {
-        if (this._viewTypes.has(type)) {
-            const views = this._viewTypes.get(type);
-            if (views.has(view)) {
-                views.delete(view);
-                if (views.size) {
-                    this._viewTypes.set(type, views);
+    unregisterView(type, handler) {
+        if (this._viewHandlers.has(type)) {
+            const handlers = this._viewHandlers.get(type);
+            if (handlers.has(handler)) {
+                handlers.delete(handler);
+                if (handlers.size) {
+                    this._viewHandlers.set(type, handlers);
                 }
                 else {
-                    this._viewTypes.delete(type);
+                    this._viewHandlers.delete(type);
                 }
             }
         }
@@ -101,9 +101,9 @@ export default class StateManager {
 
     async _handleEvent(type, params) {
         try {
-            if (this._actionTypes.has(type)) {
+            if (this._actionHandlers.has(type)) {
                 const state = await this._callActions(type, params);
-                if (this._viewTypes.has(type)) {
+                if (this._viewHandlers.has(type)) {
                     //const state = await this._callViews(type, state);
                     this._callViews(type, state);
                 }
@@ -115,14 +115,14 @@ export default class StateManager {
     }
 
     async _callActions(type, params) {
-        const actions = this._actionTypes.get(type);
+        const handlers = this._actionHandlers.get(type);
         const promises = [];
-        for (const [action, options] of actions) {
-            if (typeof action === 'function') {
+        for (const [handler, options] of handlers) {
+            if (typeof handler === 'function') {
                 promises.push(new Promise((resolve) => {
-                    // If registered function has no return value,
+                    // If registered handler has no return value,
                     // keep this promise with pending status so don't reach the next phase.
-                    const value = action(params, options);
+                    const value = handler(params, options);
                     if (value !== undefined) {
                         resolve(value);
                     }
@@ -139,14 +139,14 @@ export default class StateManager {
     }
 
     async _callViews(type, state) {
-        const views = this._viewTypes.get(type);
+        const handlers = this._viewHandlers.get(type);
         const promises = [];
-        for (const [view, options] of views) {
-            if (typeof view === 'function') {
+        for (const [handler, options] of handlers) {
+            if (typeof handler === 'function') {
                 promises.push(new Promise((resolve) => {
-                    // If registered function has no return value,
+                    // If registered handler has no return value,
                     // keep this promise with pending status so don't reach the next phase.
-                    const value = view(state, options);
+                    const value = handler(state, options);
                     if (value !== undefined) {
                         resolve(value);
                     }
