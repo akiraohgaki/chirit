@@ -42,113 +42,87 @@ export default class StateManager {
     }
 
     addEventHandler(type, handler, options = {}) {
-        if (typeof handler !== 'function') {
-            throw new TypeError(`"${handler}" is not a function`);
+        this._addHandler(this._eventHandlers, type, handler, options);
         }
-
-        const handlers = this._eventHandlers.get(type) || new Map();
-        handlers.set(handler, options);
-        this._eventHandlers.set(type, handlers);
-    }
 
     removeEventHandler(type, handler) {
-        if (this._eventHandlers.has(type)) {
-            const handlers = this._eventHandlers.get(type);
-            if (handlers.has(handler)) {
-                handlers.delete(handler);
-                if (handlers.size) {
-                    this._eventHandlers.set(type, handlers);
+        this._removeHandler(this._eventHandlers, type, handler);
                 }
-                else {
-                    this._eventHandlers.delete(type);
-                }
-            }
-        }
-    }
 
     addActionHandler(type, handler, options = {}) {
-        if (typeof handler !== 'function') {
-            throw new TypeError(`"${handler}" is not a function`);
+        this._addHandler(this._actionHandlers, type, handler, options);
         }
-
-        const handlers = this._actionHandlers.get(type) || new Map();
-        if (!handlers.size) {
-            this._target.addEventListener(type, this._listener, false);
-            //this._states.set(type, {});
-        }
-        handlers.set(handler, options);
-        this._actionHandlers.set(type, handlers);
-    }
 
     removeActionHandler(type, handler) {
-        if (this._actionHandlers.has(type)) {
-            const handlers = this._actionHandlers.get(type);
-            if (handlers.has(handler)) {
-                handlers.delete(handler);
-                if (handlers.size) {
-                    this._actionHandlers.set(type, handlers);
-                }
-                else {
-                    this._actionHandlers.delete(type);
-                    this._target.removeEventListener(type, this._listener, false);
-                    //this._states.delete(type);
-                }
-            }
+        this._removeHandler(this._actionHandlers, type, handler);
         }
-    }
 
     addStoreHandler(type, handler, options = {}) {
-        if (typeof handler !== 'function') {
-            throw new TypeError(`"${handler}" is not a function`);
-        }
-
-        const handlers = this._storeHandlers.get(type) || new Map();
-        handlers.set(handler, options);
-        this._storeHandlers.set(type, handlers);
+        this._addHandler(this._storeHandlers, type, handler, options);
     }
 
     removeStoreHandler(type, handler) {
-        if (this._storeHandlers.has(type)) {
-            const handlers = this._storeHandlers.get(type);
-            if (handlers.has(handler)) {
-                handlers.delete(handler);
-                if (handlers.size) {
-                    this._storeHandlers.set(type, handlers);
+        this._removeHandler(this._storeHandlers, type, handler);
                 }
-                else {
-                    this._storeHandlers.delete(type);
-                }
-            }
-        }
-    }
 
     addViewHandler(type, handler, options = {}) {
+        this._addHandler(this._viewHandlers, type, handler, options);
+                }
+
+    removeViewHandler(type, handler) {
+        this._removeHandler(this._viewHandlers, type, handler);
+            }
+
+    dispatch(type, params = {}) {
+        this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
+        }
+
+
+    _addHandler(collection, type, handler, options) {
         if (typeof handler !== 'function') {
             throw new TypeError(`"${handler}" is not a function`);
         }
 
-        const handlers = this._viewHandlers.get(type) || new Map();
-        handlers.set(handler, options);
-        this._viewHandlers.set(type, handlers);
+        if (!this._eventHandlers.has(type)
+            && !this._actionHandlers.has(type)
+            && !this._storeHandlers.has(type)
+            && !this._viewHandlers.has(type)
+        ) {
+            this._target.addEventListener(type, this._listener, false);
+            this._states.set(type, {});
     }
 
-    removeViewHandler(type, handler) {
-        if (this._viewHandlers.has(type)) {
-            const handlers = this._viewHandlers.get(type);
+        const handlers = collection.get(type) || new Map();
+        handlers.set(handler, options);
+        collection.set(type, handlers);
+    }
+
+    _removeHandler(collection, type, handler) {
+        if (typeof handler !== 'function') {
+            throw new TypeError(`"${handler}" is not a function`);
+        }
+
+        if (collection.has(type)) {
+            const handlers = collection.get(type);
             if (handlers.has(handler)) {
                 handlers.delete(handler);
                 if (handlers.size) {
-                    this._viewHandlers.set(type, handlers);
+                    collection.set(type, handlers);
                 }
                 else {
-                    this._viewHandlers.delete(type);
-                }
+                    collection.delete(type);
             }
         }
     }
 
-    dispatch(type, params = {}) {
-        this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
+        if (!this._eventHandlers.has(type)
+            && !this._actionHandlers.has(type)
+            && !this._storeHandlers.has(type)
+            && !this._viewHandlers.has(type)
+        ) {
+            this._target.removeEventListener(type, this._listener, false);
+            this._states.delete(type);
+        }
     }
 
     async _handleEvent(type, params) {
