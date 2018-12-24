@@ -39,7 +39,7 @@ export default class StateManager {
         return this._states.get(type);
     }
 
-    registerAction(type, handler, options = {}) {
+    addAction(type, handler, options = {}) {
         if (typeof handler !== 'function') {
             throw new TypeError(`"${handler}" is not a function`);
         }
@@ -53,7 +53,7 @@ export default class StateManager {
         this._actionHandlers.set(type, handlers);
     }
 
-    unregisterAction(type, handler) {
+    removeAction(type, handler) {
         if (this._actionHandlers.has(type)) {
             const handlers = this._actionHandlers.get(type);
             if (handlers.has(handler)) {
@@ -70,7 +70,7 @@ export default class StateManager {
         }
     }
 
-    registerView(type, handler, options = {}) {
+    addView(type, handler, options = {}) {
         if (typeof handler !== 'function') {
             throw new TypeError(`"${handler}" is not a function`);
         }
@@ -80,7 +80,7 @@ export default class StateManager {
         this._viewHandlers.set(type, handlers);
     }
 
-    unregisterView(type, handler) {
+    removeView(type, handler) {
         if (this._viewHandlers.has(type)) {
             const handlers = this._viewHandlers.get(type);
             if (handlers.has(handler)) {
