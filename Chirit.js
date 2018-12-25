@@ -9,7 +9,7 @@
 
 import Component from './Component.js';
 import StateManager from './StateManager.js';
-import TypeHandler from './TypeHandler.js';
+import Handler from './Handler.js';
 import WebStorage from './WebStorage.js';
 import Utility from './Utility.js';
 
@@ -23,8 +23,8 @@ export default class Chirit {
         return StateManager;
     }
 
-    static get TypeHandler() {
-        return TypeHandler;
+    static get Handler() {
+        return Handler;
     }
 
     static get WebStorage() {

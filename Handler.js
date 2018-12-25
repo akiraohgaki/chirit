@@ -7,7 +7,7 @@
  * @link        https://github.com/akiraohgaki/chirit
  */
 
-export default class TypeHandler {
+export default class Handler {
 
     constructor() {
         this._defaultType = `default_${Math.random()}`;
@@ -68,12 +68,13 @@ export default class TypeHandler {
     }
 
     async call(type, data = {}) {
-        // Handler has wrapped with Promise
+        // This function make registered handlers wrapped into Promise and Promise.all().
+        // And all return values of the handlers in the same type will combine finally, and return value as object.
+        // If any handler returned false, will not values combine, and return value as undefined.
+
+        // Handler:
         // (data, options, type) => {
-        //     // All return values in the same type will combined
         //     return {};
-        //     // Stop the combine process and return undefined
-        //     return false;
         // }
 
         if (!this._handlerCollection.has(type)) {
