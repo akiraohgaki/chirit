@@ -27,6 +27,28 @@ export default class StateManager {
             event.stopPropagation();
             this._handleEvent(event.type, event.detail);
         };
+
+        this._defaultEventHandler = (type, params = {}) => {
+            return params;
+        };
+
+        this._defaultActionHandler = () => {
+            return {};
+        };
+
+        this._defaultStoreHandler = (type, state = {}) => {
+            this._states.set(type, state);
+            return state;
+        };
+
+        this._defaultViewHandler = () => {
+            return {};
+        };
+
+        this.resetDefaultEventHandler();
+        this.resetDefaultActionHandler();
+        this.resetDefaultStoreHandler();
+        this.resetDefaultViewHandler();
     }
 
     get target() {
@@ -41,12 +63,28 @@ export default class StateManager {
         return this._states.get(type);
     }
 
+    setDefaultEventHandler(handler, options = {}) {
+        this._setDefaultHandler(this._eventHandlers, handler, options);
+    }
+
+    resetDefaultEventHandler() {
+        this._setDefaultHandler(this._eventHandlers, this._defaultEventHandler, {});
+    }
+
     addEventHandler(type, handler, options = {}) {
         this._addHandler(this._eventHandlers, type, handler, options);
     }
 
     removeEventHandler(type, handler) {
         this._removeHandler(this._eventHandlers, type, handler);
+    }
+
+    setDefaultActionHandler(handler, options = {}) {
+        this._setDefaultHandler(this._actionHandlers, handler, options);
+    }
+
+    resetDefaultActionHandler() {
+        this._setDefaultHandler(this._actionHandlers, this._defaultActionHandler, {});
     }
 
     addActionHandler(type, handler, options = {}) {
@@ -57,12 +95,28 @@ export default class StateManager {
         this._removeHandler(this._actionHandlers, type, handler);
     }
 
+    setDefaultStoreHandler(handler, options = {}) {
+        this._setDefaultHandler(this._storeHandlers, handler, options);
+    }
+
+    resetDefaultStoreHandler() {
+        this._setDefaultHandler(this._storeHandlers, this._defaultStoreHandler, {});
+    }
+
     addStoreHandler(type, handler, options = {}) {
         this._addHandler(this._storeHandlers, type, handler, options);
     }
 
     removeStoreHandler(type, handler) {
         this._removeHandler(this._storeHandlers, type, handler);
+    }
+
+    setDefaultViewHandler(handler, options = {}) {
+        this._setDefaultHandler(this._viewHandlers, handler, options);
+    }
+
+    resetDefaultViewHandler() {
+        this._setDefaultHandler(this._viewHandlers, this._defaultViewHandler, {});
     }
 
     addViewHandler(type, handler, options = {}) {
@@ -75,6 +129,14 @@ export default class StateManager {
 
     dispatch(type, params = {}) {
         this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
+    }
+
+    _setDefaultHandler(collection, handler, options = {}) {
+        if (typeof handler !== 'function') {
+            throw new TypeError(`"${handler}" is not a function`);
+        }
+
+        collection.set('__default__', new Map([handler, options]));
     }
 
     _addHandler(collection, type, handler, options = {}) {
@@ -161,23 +223,6 @@ export default class StateManager {
         catch (error) {
             console.error(error);
         }
-    }
-
-    _defaultEventHandler(type, params = {}) {
-        return params;
-    }
-
-    _defaultActionHandler(type, params = {}) {
-        return {};
-    }
-
-    _defaultStoreHandler(type, state = {}) {
-        this._states.set(type, state);
-        return state;
-    }
-
-    _defaultViewHandler(type, state = {}) {
-        return {};
     }
 
     async _callHandlers(collection, type, data = {}) {
