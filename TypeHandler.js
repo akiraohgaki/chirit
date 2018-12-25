@@ -10,7 +10,7 @@
 export default class TypeHandler {
 
     constructor() {
-        this._defaultType = '__default__';
+        this._defaultType = `default_${Math.random()}`;
         this._initialHandlerCollection = new Map(); // [[handler, options]]
         this._handlerCollection = new Map(); // [[type, [[handler, options]]]]
 
