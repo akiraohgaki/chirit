@@ -101,11 +101,11 @@ export default class TypeHandler {
             return;
         }
 
-        const combineData = {};
+        const combinedData = {};
         for (const value of values) {
-            Object.assign(combineData, value);
+            Object.assign(combinedData, value);
         }
-        return combineData;
+        return combinedData;
     }
 
     _checkTypeOfHandler(handler) {
