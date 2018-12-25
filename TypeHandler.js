@@ -22,6 +22,7 @@ export default class TypeHandler {
         this._checkHandlerType(handler);
         this._initialSet.clear();
         this._initialSet.set(handler, options);
+        return this;
     }
 
     setDefault(handler, options = {}) {
@@ -29,10 +30,12 @@ export default class TypeHandler {
         const defaultSet = new Map();
         defaultSet.set(handler, options);
         this._collection.set(this._defaultType, defaultSet);
+        return this;
     }
 
     resetDefault() {
         this._collection.set(this._defaultType, this._initialSet);
+        return this;
     }
 
     add(type, handler, options = {}) {
@@ -40,6 +43,7 @@ export default class TypeHandler {
         const handlers = this._collection.get(type) || new Map();
         handlers.set(handler, options);
         this._collection.set(type, handlers);
+        return this;
     }
 
     remove(type, handler) {
@@ -56,6 +60,7 @@ export default class TypeHandler {
                 }
             }
         }
+        return this;
     }
 
     has(type) {
