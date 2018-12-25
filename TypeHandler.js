@@ -11,52 +11,52 @@ export default class TypeHandler {
 
     constructor() {
         this._defaultType = '__default__';
-        this._initialSet = new Map(); // [[handler, options]]
-        this._collection = new Map(); // [[type, [[handler, options]]]]
+        this._initialHandlerCollection = new Map(); // [[handler, options]]
+        this._handlerCollection = new Map(); // [[type, [[handler, options]]]]
 
         this.setInitial(() => {}, {});
         this.resetDefault();
     }
 
     setInitial(handler, options = {}) {
-        this._checkHandlerType(handler);
-        this._initialSet.clear();
-        this._initialSet.set(handler, options);
+        this._checkTypeOfHandler(handler);
+        this._initialHandlerCollection.clear();
+        this._initialHandlerCollection.set(handler, options);
         return this;
     }
 
     setDefault(handler, options = {}) {
-        this._checkHandlerType(handler);
-        const defaultSet = new Map();
-        defaultSet.set(handler, options);
-        this._collection.set(this._defaultType, defaultSet);
+        this._checkTypeOfHandler(handler);
+        const defaultHandlerCollection = new Map();
+        defaultHandlerCollection.set(handler, options);
+        this._handlerCollection.set(this._defaultType, defaultHandlerCollection);
         return this;
     }
 
     resetDefault() {
-        this._collection.set(this._defaultType, this._initialSet);
+        this._handlerCollection.set(this._defaultType, this._initialHandlerCollection);
         return this;
     }
 
     add(type, handler, options = {}) {
-        this._checkHandlerType(handler);
-        const handlers = this._collection.get(type) || new Map();
-        handlers.set(handler, options);
-        this._collection.set(type, handlers);
+        this._checkTypeOfHandler(handler);
+        const typeHandlerCollection = this._handlerCollection.get(type) || new Map();
+        typeHandlerCollection.set(handler, options);
+        this._handlerCollection.set(type, typeHandlerCollection);
         return this;
     }
 
     remove(type, handler) {
-        this._checkHandlerType(handler);
-        if (this._collection.has(type)) {
-            const handlers = this._collection.get(type);
-            if (handlers.has(handler)) {
-                handlers.delete(handler);
-                if (handlers.size) {
-                    this._collection.set(type, handlers);
+        this._checkTypeOfHandler(handler);
+        if (this._handlerCollection.has(type)) {
+            const typeHandlerCollection = this._handlerCollection.get(type);
+            if (typeHandlerCollection.has(handler)) {
+                typeHandlerCollection.delete(handler);
+                if (typeHandlerCollection.size) {
+                    this._handlerCollection.set(type, typeHandlerCollection);
                 }
                 else {
-                    this._collection.delete(type);
+                    this._handlerCollection.delete(type);
                 }
             }
         }
@@ -64,11 +64,11 @@ export default class TypeHandler {
     }
 
     has(type) {
-        return this._collection.has(type);
+        return this._handlerCollection.has(type);
     }
 
     async call(type, data = {}) {
-        // Handlers wrapped with Promise and called within Promise.all()
+        // Handler has wrapped with Promise
         // (data, options, type) => {
         //     // All return values in the same type will combined
         //     return {};
@@ -76,20 +76,20 @@ export default class TypeHandler {
         //     return false;
         // }
 
-        if (!this._collection.has(type)) {
+        if (!this._handlerCollection.has(type)) {
             return;
         }
 
         const promises = [];
 
-        const defaultSet = this._collection.get(this._defaultType);
-        const [handler, options] = defaultSet.entries().next().value;
+        const defaultHandlerCollection = this._handlerCollection.get(this._defaultType);
+        const [handler, options] = defaultHandlerCollection.entries().next().value;
         promises.push(new Promise((resolve) => {
             resolve(handler(data, options, type));
         }));
 
-        const handlers = this._collection.get(type);
-        for (const [handler, options] of handlers) {
+        const typeHandlerCollection = this._handlerCollection.get(type);
+        for (const [handler, options] of typeHandlerCollection) {
             promises.push(new Promise((resolve) => {
                 resolve(handler(data, options, type));
             }));
@@ -108,7 +108,7 @@ export default class TypeHandler {
         return combineData;
     }
 
-    _checkHandlerType(handler) {
+    _checkTypeOfHandler(handler) {
         if (typeof handler !== 'function') {
             throw new TypeError(`"${handler}" is not a function`);
         }
