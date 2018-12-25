@@ -136,7 +136,7 @@ export default class StateManager {
             throw new TypeError(`"${handler}" is not a function`);
         }
 
-        collection.set('__default__', new Map([handler, options]));
+        collection.set('__default__', new Map([[handler, options]]));
     }
 
     _addHandler(collection, type, handler, options = {}) {
@@ -218,9 +218,9 @@ export default class StateManager {
         const handlers = collection.get(type);
         const promises = [];
 
-        const [defaultHandler, defaultOptions] = collection.get('__default__').next();
+        const [defaultHandler, defaultOptions] = collection.get('__default__').entries().next().value;
         promises.push(new Promise((resolve) => {
-            const value = defaultHandler(data, defaultOptions);
+            const value = defaultHandler(type, data, defaultOptions);
             if (value !== undefined) {
                 resolve(value);
             }
