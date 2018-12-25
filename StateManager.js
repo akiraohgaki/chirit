@@ -188,36 +188,25 @@ export default class StateManager {
 
     async _handleEvent(type, params = {}) {
         try {
-            const eventParams = this._defaultEventHandler(type, params);
+            let eventParams = {};
             if (this._eventHandlers.has(type)) {
-                Object.assign(
-                    eventParams,
-                    await this._callHandlers(this._eventHandlers, type, params)
-                );
+                eventParams = await this._callHandlers(this._eventHandlers, type, params);
             }
 
-            const actionState = this._defaultActionHandler(type, eventParams);
+            let actionState = {};
             if (this._actionHandlers.has(type)) {
-                Object.assign(
-                    actionState,
-                    await this._callHandlers(this._actionHandlers, type, eventParams)
-                );
+                actionState = await this._callHandlers(this._actionHandlers, type, eventParams);
             }
 
-            const storeState = this._defaultStoreHandler(type, actionState);
+            let storeState = {};
             if (this._storeHandlers.has(type)) {
-                Object.assign(
-                    storeState,
-                    await this._callHandlers(this._storeHandlers, type, actionState)
-                );
+                storeState = await this._callHandlers(this._storeHandlers, type, actionState);
             }
 
-            const viewData = this._defaultViewHandler(type, storeState);
+            //let viewData = {};
             if (this._viewHandlers.has(type)) {
-                Object.assign(
-                    viewData,
-                    await this._callHandlers(this._viewHandlers, type, storeState)
-                );
+                //viewData = await this._callHandlers(this._viewHandlers, type, storeState);
+                this._callHandlers(this._viewHandlers, type, storeState);
             }
         }
         catch (error) {
@@ -228,6 +217,15 @@ export default class StateManager {
     async _callHandlers(collection, type, data = {}) {
         const handlers = collection.get(type);
         const promises = [];
+
+        const [defaultHandler, defaultOptions] = collection.get('__default__').next();
+        promises.push(new Promise((resolve) => {
+            const value = defaultHandler(data, defaultOptions);
+            if (value !== undefined) {
+                resolve(value);
+            }
+        }));
+
         for (const [handler, options] of handlers) {
             if (typeof handler === 'function') {
                 promises.push(new Promise((resolve) => {
@@ -240,6 +238,7 @@ export default class StateManager {
                 }));
             }
         }
+
         const values = await Promise.all(promises);
         const mergedData = {};
         for (const value of values) {
