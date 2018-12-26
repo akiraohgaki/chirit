@@ -142,9 +142,15 @@ export default class StateManager {
     async _handleEvent(type, params = {}) {
         try {
             const eventParams = await this._eventHandler.call(type, params);
-            const actionState = await this._actionHandler.call(type, eventParams);
-            const storeState = await this._storeHandler.call(type, actionState);
-            this._viewHandler.call(type, storeState);
+            if (eventParams) {
+                const actionState = await this._actionHandler.call(type, eventParams);
+                if (actionState) {
+                    const storeState = await this._storeHandler.call(type, actionState);
+                    if (storeState) {
+                        this._viewHandler.call(type, storeState);
+                    }
+                }
+            }
         }
         catch (error) {
             console.error(error);
