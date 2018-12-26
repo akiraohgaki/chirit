@@ -7,6 +7,28 @@
  * @link        https://github.com/akiraohgaki/chirit
  */
 
+import Handler from './Handler.js';
+
+class TypeHandler extends Handler {
+
+    constructor(handler, options = {}) {
+        super(handler, options);
+        this.preAddHook = null;
+        this.postRemoveHook = null;
+    }
+
+    add(type, handler, options = {}) {
+        this.preAddHook(type);
+        super.add(type, handler, options);
+    }
+
+    remove(type, handler) {
+        super.remove(type, handler);
+        this.postRemoveHook(type);
+    }
+
+}
+
 export default class StateManager {
 
     constructor(target) {
@@ -17,38 +39,13 @@ export default class StateManager {
 
         this._target = target || document;
         this._states = new Map();
-        this._eventHandlers = new Map();
-        this._actionHandlers = new Map();
-        this._storeHandlers = new Map();
-        this._viewHandlers = new Map();
 
-        this._eventListener = (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            this._handleEvent(event.type, event.detail);
-        };
+        this._eventHandler = null;
+        this._actionHandler = null;
+        this._storeHandler = null;
+        this._viewHandler = null;
 
-        this._defaultEventHandler = (type, params = {}) => {
-            return params;
-        };
-
-        this._defaultActionHandler = () => {
-            return {};
-        };
-
-        this._defaultStoreHandler = (type, state = {}) => {
-            this._states.set(type, state);
-            return state;
-        };
-
-        this._defaultViewHandler = () => {
-            return {};
-        };
-
-        this.resetDefaultEventHandler();
-        this.resetDefaultActionHandler();
-        this.resetDefaultStoreHandler();
-        this.resetDefaultViewHandler();
+        this._setupHandlers();
     }
 
     get target() {
@@ -63,188 +60,95 @@ export default class StateManager {
         return this._states.get(type);
     }
 
-    setDefaultEventHandler(handler, options = {}) {
-        this._setDefaultHandler(this._eventHandlers, handler, options);
+    get eventHandler() {
+        return this._eventHandler;
     }
 
-    resetDefaultEventHandler() {
-        this._setDefaultHandler(this._eventHandlers, this._defaultEventHandler, {});
+    get actionHandler() {
+        return this._actionHandler;
     }
 
-    addEventHandler(type, handler, options = {}) {
-        this._addHandler(this._eventHandlers, type, handler, options);
+    get storeHandler() {
+        return this._storeHandler;
     }
 
-    removeEventHandler(type, handler) {
-        this._removeHandler(this._eventHandlers, type, handler);
-    }
-
-    setDefaultActionHandler(handler, options = {}) {
-        this._setDefaultHandler(this._actionHandlers, handler, options);
-    }
-
-    resetDefaultActionHandler() {
-        this._setDefaultHandler(this._actionHandlers, this._defaultActionHandler, {});
-    }
-
-    addActionHandler(type, handler, options = {}) {
-        this._addHandler(this._actionHandlers, type, handler, options);
-    }
-
-    removeActionHandler(type, handler) {
-        this._removeHandler(this._actionHandlers, type, handler);
-    }
-
-    setDefaultStoreHandler(handler, options = {}) {
-        this._setDefaultHandler(this._storeHandlers, handler, options);
-    }
-
-    resetDefaultStoreHandler() {
-        this._setDefaultHandler(this._storeHandlers, this._defaultStoreHandler, {});
-    }
-
-    addStoreHandler(type, handler, options = {}) {
-        this._addHandler(this._storeHandlers, type, handler, options);
-    }
-
-    removeStoreHandler(type, handler) {
-        this._removeHandler(this._storeHandlers, type, handler);
-    }
-
-    setDefaultViewHandler(handler, options = {}) {
-        this._setDefaultHandler(this._viewHandlers, handler, options);
-    }
-
-    resetDefaultViewHandler() {
-        this._setDefaultHandler(this._viewHandlers, this._defaultViewHandler, {});
-    }
-
-    addViewHandler(type, handler, options = {}) {
-        this._addHandler(this._viewHandlers, type, handler, options);
-    }
-
-    removeViewHandler(type, handler) {
-        this._removeHandler(this._viewHandlers, type, handler);
+    get viewHandler() {
+        return this._viewHandler;
     }
 
     dispatch(type, params = {}) {
         this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
     }
 
-    _setDefaultHandler(collection, handler, options = {}) {
-        if (typeof handler !== 'function') {
-            throw new TypeError(`"${handler}" is not a function`);
-        }
+    _setupHandlers() {
+        this._eventHandler = new TypeHandler((params) => {
+            return params;
+        });
 
-        collection.set('__default__', new Map([[handler, options]]));
-    }
+        this._actionHandler = new TypeHandler(() => {
+            return {};
+        });
 
-    _addHandler(collection, type, handler, options = {}) {
-        if (typeof handler !== 'function') {
-            throw new TypeError(`"${handler}" is not a function`);
-        }
+        this._storeHandler = new TypeHandler((state, options, type) => {
+            this._states.set(type, state);
+            return state;
+        });
 
-        if (!this._eventHandlers.has(type)
-            && !this._actionHandlers.has(type)
-            && !this._storeHandlers.has(type)
-            && !this._viewHandlers.has(type)
-        ) {
-            this._target.addEventListener(type, this._eventListener, false);
-            this._states.set(type, {});
-        }
+        this._viewHandler = new TypeHandler(() => {
+            return {};
+        });
 
-        const handlers = collection.get(type) || new Map();
-        handlers.set(handler, options);
-        collection.set(type, handlers);
-    }
+        const eventListener = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            this._handleEvent(event.type, event.detail);
+        };
 
-    _removeHandler(collection, type, handler) {
-        if (typeof handler !== 'function') {
-            throw new TypeError(`"${handler}" is not a function`);
-        }
-
-        if (collection.has(type)) {
-            const handlers = collection.get(type);
-            if (handlers.has(handler)) {
-                handlers.delete(handler);
-                if (handlers.size) {
-                    collection.set(type, handlers);
-                }
-                else {
-                    collection.delete(type);
-                }
+        const preAddHook = (type) => {
+            if (!this._eventHandler.has(type)
+                && !this._actionHandler.has(type)
+                && !this._storeHandler.has(type)
+                && !this._viewHandler.has(type)
+            ) {
+                this._target.addEventListener(type, eventListener, false);
+                this._states.set(type, {});
             }
-        }
+        };
 
-        if (!this._eventHandlers.has(type)
-            && !this._actionHandlers.has(type)
-            && !this._storeHandlers.has(type)
-            && !this._viewHandlers.has(type)
-        ) {
-            this._target.removeEventListener(type, this._eventListener, false);
-            this._states.delete(type);
-        }
+        const postRemoveHook = (type) => {
+            if (!this._eventHandler.has(type)
+                && !this._actionHandler.has(type)
+                && !this._storeHandler.has(type)
+                && !this._viewHandler.has(type)
+            ) {
+                this._target.removeEventListener(type, eventListener, false);
+                this._states.delete(type);
+            }
+        };
+
+        this._eventHandler.preAddHook = preAddHook;
+        this._eventHandler.postRemoveHook = postRemoveHook;
+
+        this._actionHandler.preAddHook = preAddHook;
+        this._actionHandler.postRemoveHook = postRemoveHook;
+
+        this._storeHandler.preAddHook = preAddHook;
+        this._storeHandler.postRemoveHook = postRemoveHook;
+
+        this._viewHandler.preAddHook = preAddHook;
+        this._viewHandler.postRemoveHook = postRemoveHook;
     }
 
     async _handleEvent(type, params = {}) {
         try {
-            let eventParams = {};
-            if (this._eventHandlers.has(type)) {
-                eventParams = await this._callHandlers(this._eventHandlers, type, params);
-            }
-
-            let actionState = {};
-            if (this._actionHandlers.has(type)) {
-                actionState = await this._callHandlers(this._actionHandlers, type, eventParams);
-            }
-
-            let storeState = {};
-            if (this._storeHandlers.has(type)) {
-                storeState = await this._callHandlers(this._storeHandlers, type, actionState);
-            }
-
-            //let viewData = {};
-            if (this._viewHandlers.has(type)) {
-                //viewData = await this._callHandlers(this._viewHandlers, type, storeState);
-                this._callHandlers(this._viewHandlers, type, storeState);
-            }
+            const eventParams = await this._eventHandler.call(type, params);
+            const actionState = await this._actionHandler.call(type, eventParams);
+            const storeState = await this._storeHandler.call(type, actionState);
+            this._viewHandler.call(type, storeState);
         }
         catch (error) {
             console.error(error);
         }
-    }
-
-    async _callHandlers(collection, type, data = {}) {
-        const handlers = collection.get(type);
-        const promises = [];
-
-        const [defaultHandler, defaultOptions] = collection.get('__default__').entries().next().value;
-        promises.push(new Promise((resolve) => {
-            const value = defaultHandler(type, data, defaultOptions);
-            if (value !== undefined) {
-                resolve(value);
-            }
-        }));
-
-        for (const [handler, options] of handlers) {
-            if (typeof handler === 'function') {
-                promises.push(new Promise((resolve) => {
-                    // If registered handler has no return value,
-                    // keep this promise with pending status so don't reach the next phase.
-                    const value = handler(data, options);
-                    if (value !== undefined) {
-                        resolve(value);
-                    }
-                }));
-            }
-        }
-
-        const values = await Promise.all(promises);
-        const mergedData = {};
-        for (const value of values) {
-            Object.assign(mergedData, value);
-        }
-        return mergedData;
     }
 
 }
