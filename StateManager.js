@@ -7,6 +7,28 @@
  * @link        https://github.com/akiraohgaki/chirit
  */
 
+import Handler from './Handler.js';
+
+class TypeHandler extends Handler {
+
+    constructor(handler, options = {}) {
+        super(handler, options);
+        this.preAddHook = null;
+        this.postRemoveHook = null;
+    }
+
+    add(type, handler, options = {}) {
+        this.preAddHook(type);
+        super.add(type, handler, options);
+    }
+
+    remove(type, handler) {
+        super.remove(type, handler);
+        this.postRemoveHook(type);
+    }
+
+}
+
 export default class StateManager {
 
     constructor(target) {
@@ -17,14 +39,13 @@ export default class StateManager {
 
         this._target = target || document;
         this._states = new Map();
-        this._actionTypes = new Map();
-        this._viewTypes = new Map();
 
-        this._listener = (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            this._handleEvent(event.type, event.detail);
-        };
+        this._eventHandler = null;
+        this._actionHandler = null;
+        this._storeHandler = null;
+        this._viewHandler = null;
+
+        this._setupHandlers();
     }
 
     get target() {
@@ -39,113 +60,102 @@ export default class StateManager {
         return this._states.get(type);
     }
 
-    registerAction(type, action, options = {}) {
-        const actions = this._actionTypes.get(type) || new Map();
-        if (!actions.size) {
-            this._states.set(type, {});
-            this._target.addEventListener(type, this._listener, false);
-        }
-        actions.set(action, options);
-        this._actionTypes.set(type, actions);
+    get eventHandler() {
+        return this._eventHandler;
     }
 
-    unregisterAction(type, action) {
-        if (this._actionTypes.has(type)) {
-            const actions = this._actionTypes.get(type);
-            if (actions.has(action)) {
-                actions.delete(action);
-                if (actions.size) {
-                    this._actionTypes.set(type, actions);
-                }
-                else {
-                    this._actionTypes.delete(type);
-                    this._states.delete(type);
-                    this._target.removeEventListener(type, this._listener, false);
-                }
-            }
-        }
+    get actionHandler() {
+        return this._actionHandler;
     }
 
-    registerView(type, view, options = {}) {
-        const views = this._viewTypes.get(type) || new Map();
-        views.set(view, options);
-        this._viewTypes.set(type, views);
+    get storeHandler() {
+        return this._storeHandler;
     }
 
-    unregisterView(type, view) {
-        if (this._viewTypes.has(type)) {
-            const views = this._viewTypes.get(type);
-            if (views.has(view)) {
-                views.delete(view);
-                if (views.size) {
-                    this._viewTypes.set(type, views);
-                }
-                else {
-                    this._viewTypes.delete(type);
-                }
-            }
-        }
+    get viewHandler() {
+        return this._viewHandler;
     }
 
     dispatch(type, params = {}) {
         this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
     }
 
-    _handleEvent(type, params) {
-        new Promise((resolve) => {
-            resolve(this._callActions(type, params));
-        })
-        .then((state) => {
-            this._callViews(type, state);
-        })
-        .catch((error) => {
-            console.error(error);
+    _setupHandlers() {
+        this._eventHandler = new TypeHandler((params) => {
+            return params;
         });
-    }
 
-    _callActions(type, params) {
-        if (!this._actionTypes.has(type)) {
-            throw new Error(`Undefined action type "${type}"`);
-        }
+        this._actionHandler = new TypeHandler(() => {
+            return {};
+        });
 
-        const actions = this._actionTypes.get(type);
-        const promises = [];
-        for (const [action, options] of actions) {
-            promises.push(new Promise((resolve) => {
-                const value = action(params, options);
-                if (value !== undefined) {
-                    resolve(value);
-                }
-            }));
-        }
-
-        return Promise.all(promises).then((values) => {
-            const state = {};
-            for (const value of values) {
-                Object.assign(state, value);
-            }
+        this._storeHandler = new TypeHandler((state, type) => {
             this._states.set(type, state);
             return state;
         });
+
+        this._viewHandler = new TypeHandler(() => {
+            return {};
+        });
+
+        const eventListener = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            this._handleEvent(event.type, event.detail);
+        };
+
+        const preAddHook = (type) => {
+            if (!this._eventHandler.has(type)
+                && !this._actionHandler.has(type)
+                && !this._storeHandler.has(type)
+                && !this._viewHandler.has(type)
+            ) {
+                this._target.addEventListener(type, eventListener, false);
+                this._states.set(type, {});
+            }
+        };
+
+        const postRemoveHook = (type) => {
+            if (!this._eventHandler.has(type)
+                && !this._actionHandler.has(type)
+                && !this._storeHandler.has(type)
+                && !this._viewHandler.has(type)
+            ) {
+                this._target.removeEventListener(type, eventListener, false);
+                this._states.delete(type);
+            }
+        };
+
+        this._eventHandler.preAddHook = preAddHook;
+        this._eventHandler.postRemoveHook = postRemoveHook;
+
+        this._actionHandler.preAddHook = preAddHook;
+        this._actionHandler.postRemoveHook = postRemoveHook;
+
+        this._storeHandler.preAddHook = preAddHook;
+        this._storeHandler.postRemoveHook = postRemoveHook;
+
+        this._viewHandler.preAddHook = preAddHook;
+        this._viewHandler.postRemoveHook = postRemoveHook;
     }
 
-    _callViews(type, state) {
-        if (!this._viewTypes.has(type)) {
-            return;
-        }
-
-        const views = this._viewTypes.get(type);
-        const promises = [];
-        for (const [view, options] of views) {
-            promises.push(new Promise((resolve) => {
-                const value = view(state, options);
-                if (value !== undefined) {
-                    resolve(value);
+    async _handleEvent(type, params = {}) {
+        try {
+            const eventParams = await this._eventHandler.call(type, params);
+            if (eventParams) {
+                const actionState = await this._actionHandler.call(type, eventParams);
+                if (actionState) {
+                    const storeState = await this._storeHandler.call(type, actionState);
+                    if (storeState) {
+                        //const viewData = await this._viewHandler.call(type, storeState);
+                        this._viewHandler.call(type, storeState);
+                    }
                 }
-            }));
+            }
         }
-
-        Promise.all(promises);
+        catch (error) {
+            console.error(error);
+        }
     }
 
 }

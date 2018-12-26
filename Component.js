@@ -29,7 +29,7 @@ export default class Component {
     }
 
     set state(state) {
-        this._mergeState(state);
+        this._combineState(state);
     }
 
     get state() {
@@ -37,7 +37,7 @@ export default class Component {
     }
 
     update(state = {}) {
-        this._mergeState(state);
+        this._combineState(state);
         this.preRender();
         this._target.innerHTML = this.render() || '';
         this.postRender();
@@ -55,7 +55,7 @@ export default class Component {
 
     complete() {}
 
-    _mergeState(state) {
+    _combineState(state) {
         Object.assign(this._state, state);
     }
 
