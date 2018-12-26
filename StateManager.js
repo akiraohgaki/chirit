@@ -89,7 +89,7 @@ export default class StateManager {
             return {};
         });
 
-        this._storeHandler = new TypeHandler((state, options, type) => {
+        this._storeHandler = new TypeHandler((state, type) => {
             this._states.set(type, state);
             return state;
         });
@@ -147,6 +147,7 @@ export default class StateManager {
                 if (actionState) {
                     const storeState = await this._storeHandler.call(type, actionState);
                     if (storeState) {
+                        //const viewData = await this._viewHandler.call(type, storeState);
                         this._viewHandler.call(type, storeState);
                     }
                 }

@@ -11,9 +11,12 @@ export default class Handler {
 
     constructor(handler, options = {}) {
         // handler:
-        // (data, options, type) => {
+        // (data, type) => {
         //     return {};
         // }
+        //
+        // options:
+        // Maybe use it for something control in the future
 
         this._initialHandlerCollection = new Map(); // [[handler, options]]
         this._defaultHandlerCollection = new Map(); // [[handler, options]]
@@ -72,16 +75,18 @@ export default class Handler {
 
         const promises = [];
 
-        const [handler, options] = this._defaultHandlerCollection.entries().next().value;
+        //const [handler, options] = this._defaultHandlerCollection.entries().next().value;
+        const [handler] = this._defaultHandlerCollection.entries().next().value;
         promises.push(new Promise((resolve) => {
-            resolve(handler(data, options, type));
+            resolve(handler(data, type));
         }));
 
         if (type && this._typeHandlersCollection.has(type)) {
             const typeHandlerCollection = this._typeHandlersCollection.get(type);
-            for (const [handler, options] of typeHandlerCollection) {
+            //for (const [handler, options] of typeHandlerCollection) {
+            for (const [handler] of typeHandlerCollection) {
                 promises.push(new Promise((resolve) => {
-                    resolve(handler(data, options, type));
+                    resolve(handler(data, type));
                 }));
             }
         }
