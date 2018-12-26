@@ -72,12 +72,10 @@ export default class Handler {
 
         const promises = [];
 
-        if (this._defaultHandlerCollection.size) {
-            const [handler, options] = this._defaultHandlerCollection.entries().next().value;
-            promises.push(new Promise((resolve) => {
-                resolve(handler(data, options, type));
-            }));
-        }
+        const [handler, options] = this._defaultHandlerCollection.entries().next().value;
+        promises.push(new Promise((resolve) => {
+            resolve(handler(data, options, type));
+        }));
 
         if (type && this._typeHandlersCollection.has(type)) {
             const typeHandlerCollection = this._typeHandlersCollection.get(type);
@@ -88,17 +86,17 @@ export default class Handler {
             }
         }
 
-        if (promises.length) {
-            const values = await Promise.all(promises);
-            if (!values.includes(false)) {
-                const combinedData = {};
-                for (const value of values) {
-                    Object.assign(combinedData, value);
-                }
-                return combinedData;
-            }
+        const values = await Promise.all(promises);
+
+        if (values.includes(false)) {
+            return null;
         }
-        return null;
+
+        const combinedData = {};
+        for (const value of values) {
+            Object.assign(combinedData, value);
+        }
+        return combinedData;
     }
 
     _checkTypeOfHandler(handler) {
