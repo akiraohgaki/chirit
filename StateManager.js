@@ -20,11 +20,13 @@ class TypeHandler extends Handler {
     add(type, handler, options = {}) {
         this.beforeAddHook(type);
         super.add(type, handler, options);
+        return this;
     }
 
     remove(type, handler) {
         super.remove(type, handler);
         this.afterRemoveHook(type);
+        return this;
     }
 
 }
