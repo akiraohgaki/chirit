@@ -143,17 +143,20 @@ export default class StateManager {
 
     async _handleEvent(type, params = {}) {
         try {
-            const eventParams = await this._eventHandler.call(params, type);
-            if (eventParams) {
-                const actionState = await this._actionHandler.call(eventParams, type);
-                if (actionState) {
-                    const storeState = await this._storeHandler.call(actionState, type);
-                    if (storeState) {
-                        //const viewData = await this._viewHandler.call(storeState, type);
-                        this._viewHandler.call(storeState, type);
-                    }
-                }
+            const passedParams = await this._eventHandler.call(params, type);
+            if (!passedParams) {
+                return;
             }
+            const state = await this._actionHandler.call(passedParams, type);
+            if (!state) {
+                return;
+            }
+            const passedState = await this._storeHandler.call(state, type);
+            if (!passedState) {
+                return;
+            }
+            //const data = await this._viewHandler.call(passedState, type);
+            this._viewHandler.call(passedState, type);
         }
         catch (error) {
             console.error(error);
