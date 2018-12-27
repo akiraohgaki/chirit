@@ -13,18 +13,18 @@ class TypeHandler extends Handler {
 
     constructor(handler, options = {}) {
         super(handler, options);
-        this.preAddHook = null;
-        this.postRemoveHook = null;
+        this.beforeAddHook = null;
+        this.afterRemoveHook = null;
     }
 
     add(type, handler, options = {}) {
-        this.preAddHook(type);
+        this.beforeAddHook(type);
         super.add(type, handler, options);
     }
 
     remove(type, handler) {
         super.remove(type, handler);
-        this.postRemoveHook(type);
+        this.afterRemoveHook(type);
     }
 
 }
@@ -104,7 +104,7 @@ export default class StateManager {
             this._handleEvent(event.type, event.detail);
         };
 
-        const preAddHook = (type) => {
+        const beforeAddHook = (type) => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
                 && !this._storeHandler.has(type)
@@ -115,7 +115,7 @@ export default class StateManager {
             }
         };
 
-        const postRemoveHook = (type) => {
+        const afterRemoveHook = (type) => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
                 && !this._storeHandler.has(type)
@@ -126,17 +126,17 @@ export default class StateManager {
             }
         };
 
-        this._eventHandler.preAddHook = preAddHook;
-        this._eventHandler.postRemoveHook = postRemoveHook;
+        this._eventHandler.beforeAddHook = beforeAddHook;
+        this._eventHandler.afterRemoveHook = afterRemoveHook;
 
-        this._actionHandler.preAddHook = preAddHook;
-        this._actionHandler.postRemoveHook = postRemoveHook;
+        this._actionHandler.beforeAddHook = beforeAddHook;
+        this._actionHandler.afterRemoveHook = afterRemoveHook;
 
-        this._storeHandler.preAddHook = preAddHook;
-        this._storeHandler.postRemoveHook = postRemoveHook;
+        this._storeHandler.beforeAddHook = beforeAddHook;
+        this._storeHandler.afterRemoveHook = afterRemoveHook;
 
-        this._viewHandler.preAddHook = preAddHook;
-        this._viewHandler.postRemoveHook = postRemoveHook;
+        this._viewHandler.beforeAddHook = beforeAddHook;
+        this._viewHandler.afterRemoveHook = afterRemoveHook;
     }
 
     async _handleEvent(type, params = {}) {

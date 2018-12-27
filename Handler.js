@@ -11,11 +11,12 @@ export default class Handler {
 
     constructor(handler, options = {}) {
         // handler:
-        // (data, type) => {
+        // (data = {}, type = '') => {
         //     return {};
         // }
         //
         // options:
+        // {}
         // Maybe use it for something control in the future
 
         this._initialHandlerCollection = new Map(); // [[handler, options]]
