@@ -40,7 +40,7 @@ export default class StateManager {
         }
 
         this._target = target || document;
-        this._states = new Map();
+        this._state = new Map();
 
         this._eventHandler = null;
         this._actionHandler = null;
@@ -54,12 +54,8 @@ export default class StateManager {
         return this._target;
     }
 
-    getStates() {
-        return this._states;
-    }
-
-    getState(type) {
-        return this._states.get(type);
+    get state() {
+        return this._state;
     }
 
     get eventHandler() {
@@ -92,7 +88,7 @@ export default class StateManager {
         });
 
         this._stateHandler = new TypeHandler((state, type) => {
-            this._states.set(type, state);
+            this._state.set(type, state);
             return state;
         });
 
@@ -113,7 +109,7 @@ export default class StateManager {
                 && !this._viewHandler.has(type)
             ) {
                 this._target.addEventListener(type, eventListener, false);
-                this._states.set(type, {});
+                this._state.set(type, {});
             }
         };
 
@@ -124,7 +120,7 @@ export default class StateManager {
                 && !this._viewHandler.has(type)
             ) {
                 this._target.removeEventListener(type, eventListener, false);
-                this._states.delete(type);
+                this._state.delete(type);
             }
         };
 
