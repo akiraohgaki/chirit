@@ -103,7 +103,7 @@ export default class StateManager {
         const eventListener = (event) => {
             event.preventDefault();
             event.stopPropagation();
-            this._handleEvent(event.type, event.detail);
+            this._callHandlers(event.detail, event.type);
         };
 
         const beforeAddHook = (type) => {
@@ -141,7 +141,7 @@ export default class StateManager {
         this._viewHandler.afterRemoveHook = afterRemoveHook;
     }
 
-    async _handleEvent(type, params = {}) {
+    async _callHandlers(params, type) {
         try {
             const passedParams = await this._eventHandler.call(params, type);
             if (!passedParams) {
