@@ -44,7 +44,7 @@ export default class StateManager {
 
         this._eventHandler = null;
         this._actionHandler = null;
-        this._storeHandler = null;
+        this._stateHandler = null;
         this._viewHandler = null;
 
         this._setupHandlers();
@@ -70,8 +70,8 @@ export default class StateManager {
         return this._actionHandler;
     }
 
-    get storeHandler() {
-        return this._storeHandler;
+    get stateHandler() {
+        return this._stateHandler;
     }
 
     get viewHandler() {
@@ -91,7 +91,7 @@ export default class StateManager {
             return {};
         });
 
-        this._storeHandler = new TypeHandler((state, type) => {
+        this._stateHandler = new TypeHandler((state, type) => {
             this._states.set(type, state);
             return state;
         });
@@ -109,7 +109,7 @@ export default class StateManager {
         const beforeAddHook = (type) => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
-                && !this._storeHandler.has(type)
+                && !this._stateHandler.has(type)
                 && !this._viewHandler.has(type)
             ) {
                 this._target.addEventListener(type, eventListener, false);
@@ -120,7 +120,7 @@ export default class StateManager {
         const afterRemoveHook = (type) => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
-                && !this._storeHandler.has(type)
+                && !this._stateHandler.has(type)
                 && !this._viewHandler.has(type)
             ) {
                 this._target.removeEventListener(type, eventListener, false);
@@ -134,8 +134,8 @@ export default class StateManager {
         this._actionHandler.beforeAddHook = beforeAddHook;
         this._actionHandler.afterRemoveHook = afterRemoveHook;
 
-        this._storeHandler.beforeAddHook = beforeAddHook;
-        this._storeHandler.afterRemoveHook = afterRemoveHook;
+        this._stateHandler.beforeAddHook = beforeAddHook;
+        this._stateHandler.afterRemoveHook = afterRemoveHook;
 
         this._viewHandler.beforeAddHook = beforeAddHook;
         this._viewHandler.afterRemoveHook = afterRemoveHook;
@@ -151,7 +151,7 @@ export default class StateManager {
             if (!state) {
                 return;
             }
-            const passedState = await this._storeHandler.call(state, type);
+            const passedState = await this._stateHandler.call(state, type);
             if (!passedState) {
                 return;
             }
