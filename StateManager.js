@@ -40,6 +40,7 @@ export default class StateManager {
         }
 
         this._target = target || document;
+        this._eventListener = this._eventListener.bind(this);
         this._state = new Map();
 
         this._eventHandler = null;
@@ -78,6 +79,12 @@ export default class StateManager {
         this._target.dispatchEvent(new CustomEvent(type, {detail: params}));
     }
 
+    _eventListener(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        this._callHandlers(event.detail, event.type);
+    }
+
     _setupHandlers() {
         this._eventHandler = new TypeHandler((params) => {
             return params;
@@ -96,19 +103,13 @@ export default class StateManager {
             return {};
         });
 
-        const eventListener = (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            this._callHandlers(event.detail, event.type);
-        };
-
         const beforeAddHook = (type) => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
                 && !this._stateHandler.has(type)
                 && !this._viewHandler.has(type)
             ) {
-                this._target.addEventListener(type, eventListener, false);
+                this._target.addEventListener(type, this._eventListener, false);
                 this._state.set(type, {});
             }
         };
@@ -119,7 +120,7 @@ export default class StateManager {
                 && !this._stateHandler.has(type)
                 && !this._viewHandler.has(type)
             ) {
-                this._target.removeEventListener(type, eventListener, false);
+                this._target.removeEventListener(type, this._eventListener, false);
                 this._state.delete(type);
             }
         };
