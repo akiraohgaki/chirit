@@ -11,15 +11,15 @@ import Handler from './Handler.js';
 
 class TypeHandler extends Handler {
 
-    constructor(handler, options = {}) {
-        super(handler, options);
+    constructor(handler) {
+        super(handler);
         this.beforeAddHook = null;
         this.afterRemoveHook = null;
     }
 
-    add(type, handler, options = {}) {
+    add(type, handler) {
         this.beforeAddHook(type);
-        super.add(type, handler, options);
+        super.add(type, handler);
         return this;
     }
 
@@ -82,7 +82,7 @@ export default class StateManager {
     _eventListener(event) {
         event.preventDefault();
         event.stopPropagation();
-        this._callHandlers(event.detail, event.type);
+        this._invokeHandlers(event.detail, event.type);
     }
 
     _setupHandlers() {
@@ -138,22 +138,22 @@ export default class StateManager {
         this._viewHandler.afterRemoveHook = afterRemoveHook;
     }
 
-    async _callHandlers(params, type) {
+    async _invokeHandlers(params, type) {
         try {
-            const passedParams = await this._eventHandler.call(params, type);
+            const passedParams = await this._eventHandler.invoke(params, type);
             if (!passedParams) {
                 return;
             }
-            const state = await this._actionHandler.call(passedParams, type);
+            const state = await this._actionHandler.invoke(passedParams, type);
             if (!state) {
                 return;
             }
-            const passedState = await this._stateHandler.call(state, type);
+            const passedState = await this._stateHandler.invoke(state, type);
             if (!passedState) {
                 return;
             }
-            //const data = await this._viewHandler.call(passedState, type);
-            this._viewHandler.call(passedState, type);
+            //const data = await this._viewHandler.invoke(passedState, type);
+            this._viewHandler.invoke(passedState, type);
         }
         catch (error) {
             console.error(error);
