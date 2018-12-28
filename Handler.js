@@ -65,7 +65,7 @@ export default class Handler {
         return this._typeHandlerCollections.has(type);
     }
 
-    async call(data = {}, type = '') {
+    async invoke(data = {}, type = '') {
         // This function make registered handlers wrapped into Promise and Promise.all().
         // And all return values of the handlers in the same type will combine finally, and return value as object.
         // If any handler returned false, will not values combine, and return value as null.
