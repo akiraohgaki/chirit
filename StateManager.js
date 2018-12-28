@@ -11,15 +11,15 @@ import Handler from './Handler.js';
 
 class TypeHandler extends Handler {
 
-    constructor(handler, options = {}) {
-        super(handler, options);
+    constructor(handler) {
+        super(handler);
         this.beforeAddHook = null;
         this.afterRemoveHook = null;
     }
 
-    add(type, handler, options = {}) {
+    add(type, handler) {
         this.beforeAddHook(type);
-        super.add(type, handler, options);
+        super.add(type, handler);
         return this;
     }
 
