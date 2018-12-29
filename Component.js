@@ -21,7 +21,7 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
         this.state = null;
-        this.forceUpdate = false;
+        this._forceUpdate = false;
         this._updateCount = 0;
         this.init();
     }
@@ -30,7 +30,7 @@ export default class Component extends HTMLElement {
 
     // Subclass should use componentConnected() instead of connectedCallback()
     connectedCallback() {
-        if (this.forceUpdate || !this._updateCount) {
+        if (this._forceUpdate || !this._updateCount) {
             this.update();
         }
         this.componentConnected();
@@ -47,20 +47,20 @@ export default class Component extends HTMLElement {
 
     // Subclass should use componentAttributeChanged() instead of attributeChangedCallback()
     attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
-        if (this.forceUpdate || !this._updateCount) {
+        if (this._forceUpdate || !this._updateCount) {
             this.update();
         }
         this.componentAttributeChanged(attributeName, oldValue, newValue, namespace);
     }
 
-    componentAttributeChanged(attributeName, oldValue, newValue, namespace) {}
+    componentAttributeChanged() {}
 
     // Subclass should use componentAdopted() instead of adoptedCallback()
     adoptedCallback(oldDocument, newDocument) {
         this.componentAdopted(oldDocument, newDocument);
     }
 
-    componentAdopted(oldDocument, newDocument) {}
+    componentAdopted() {}
 
     update(state) {
         if (state !== undefined) {
