@@ -41,8 +41,8 @@ export default class Handler {
         const typeHandlerCollection = this._typeHandlerCollections.get(type) || new Set();
         if (!typeHandlerCollection.has(handler)) {
             typeHandlerCollection.add(handler);
+            this._typeHandlerCollections.set(type, typeHandlerCollection);
         }
-        this._typeHandlerCollections.set(type, typeHandlerCollection);
         return this;
     }
 
