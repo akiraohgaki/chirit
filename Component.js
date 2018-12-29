@@ -9,51 +9,74 @@
 
 export default class Component extends HTMLElement {
 
-    // Subclass should use init() instead of constructor()
-    constructor() {
-        super();
-
-        this.state = null;
-
-        this.init();
-        this.update();
-        this.complete();
-    }
-
     //static get observedAttributes() {
+    //    return this.observedComponentAttributes;
+    //}
+
+    //static get observedComponentAttributes() {
     //    return [];
     //}
 
-    //connectedCallback() {}
+    // Subclass should use init() instead of constructor()
+    constructor() {
+        super();
+        this.state = null;
+        this.forceUpdate = false;
+        this._updateCount = 0;
+        this.init();
+    }
 
-    //disconnectedCallback() {}
+    init() {}
 
-    //attributeChangedCallback(attributeName, oldValue, newValue, namespace) {}
+    // Subclass should use componentConnected() instead of connectedCallback()
+    connectedCallback() {
+        if (this.forceUpdate || !this._updateCount) {
+            this.update();
+        }
+        this.componentConnected();
+    }
 
-    //adoptedCallback(oldDocument, newDocument) {}
+    componentConnected() {}
+
+    // Subclass should use componentDisconnected() instead of disconnectedCallback()
+    disconnectedCallback() {
+        this.componentDisconnected();
+    }
+
+    componentDisconnected() {}
+
+    // Subclass should use componentAttributeChanged() instead of attributeChangedCallback()
+    attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
+        if (this.forceUpdate || !this._updateCount) {
+            this.update();
+        }
+        this.componentAttributeChanged(attributeName, oldValue, newValue, namespace);
+    }
+
+    componentAttributeChanged(attributeName, oldValue, newValue, namespace) {}
+
+    // Subclass should use componentAdopted() instead of adoptedCallback()
+    adoptedCallback(oldDocument, newDocument) {
+        this.componentAdopted(oldDocument, newDocument);
+    }
+
+    componentAdopted(oldDocument, newDocument) {}
 
     update(state) {
         if (state !== undefined) {
             this.state = state;
         }
         this.beforeRender();
-        if (this.shadowRoot) {
-            this.shadowRoot.innerHTML = this.render() || '';
-        }
-        else {
-            this.innerHTML = this.render() || '';
-        }
+        const root = this.shadowRoot || this;
+        root.innerHTML = this.render() || '';
         this.afterRender();
+        this._updateCount++;
     }
-
-    init() {}
 
     beforeRender() {}
 
     render() {}
 
     afterRender() {}
-
-    complete() {}
 
 }
