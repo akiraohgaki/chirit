@@ -7,56 +7,53 @@
  * @link        https://github.com/akiraohgaki/chirit
  */
 
-export default class Component {
+export default class Component extends HTMLElement {
 
     // Subclass should use init() instead of constructor()
-    constructor(target, state = {}) {
-        // "target" should be Element object or selector string
-        if (typeof target === 'string') {
-            target = document.querySelector(target);
-        }
+    constructor() {
+        super();
 
-        this._target = target || document.createElement('div');
-        this._state = {};
+        this.state = null;
 
         this.init();
-        this.update(state);
+        this.update();
         this.complete();
     }
 
-    get target() {
-        return this._target;
-    }
+    //static get observedAttributes() {
+    //    return [];
+    //}
 
-    set state(state) {
-        this._combineState(state);
-    }
+    //connectedCallback() {}
 
-    get state() {
-        return this._state;
-    }
+    //disconnectedCallback() {}
 
-    update(state = {}) {
-        this._combineState(state);
-        this.preRender();
-        this._target.innerHTML = this.render() || '';
-        this.postRender();
+    //attributeChangedCallback(attributeName, oldValue, newValue, namespace) {}
+
+    //adoptedCallback(oldDocument, newDocument) {}
+
+    update(state) {
+        if (state !== undefined) {
+            this.state = state;
+        }
+        this.beforeRender();
+        if (this.shadowRoot) {
+            this.shadowRoot.innerHTML = this.render() || '';
+        }
+        else {
+            this.innerHTML = this.render() || '';
+        }
+        this.afterRender();
     }
 
     init() {}
 
-    preRender() {}
+    beforeRender() {}
 
-    render() {
-        return '';
-    }
+    render() {}
 
-    postRender() {}
+    afterRender() {}
 
     complete() {}
-
-    _combineState(state) {
-        Object.assign(this._state, state);
-    }
 
 }
