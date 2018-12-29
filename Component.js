@@ -10,12 +10,10 @@
 export default class Component extends HTMLElement {
 
     //static get observedAttributes() {
-    //    return this.observedComponentAttributes;
+    //    return this.componentObservedAttributes();
     //}
 
-    //static get observedComponentAttributes() {
-    //    return [];
-    //}
+    //static componentObservedAttributes() {}
 
     // Subclass should use init() instead of constructor()
     constructor() {
@@ -25,6 +23,10 @@ export default class Component extends HTMLElement {
         this._forceUpdate = false;
         this._updateCount = 0;
         this.init();
+    }
+
+    get root() {
+        return this.shadowRoot || this;
     }
 
     init() {}
@@ -73,8 +75,7 @@ export default class Component extends HTMLElement {
         }
 
         this.beforeRender();
-        const root = this.shadowRoot || this;
-        root.innerHTML = this.render() || '';
+        this.root.innerHTML = this.render() || '';
         this.afterRender();
 
         this._updateCount++;
