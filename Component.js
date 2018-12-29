@@ -21,6 +21,7 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
         this.state = null;
+        this._forceShadow = false;
         this._forceUpdate = false;
         this._updateCount = 0;
         this.init();
@@ -66,10 +67,16 @@ export default class Component extends HTMLElement {
         if (state !== undefined) {
             this.state = state;
         }
+
+        if (this._forceShadow && !this.shadowRoot) {
+            this.attachShadow({mode: 'open'});
+        }
+
         this.beforeRender();
         const root = this.shadowRoot || this;
         root.innerHTML = this.render() || '';
         this.afterRender();
+
         this._updateCount++;
     }
 
