@@ -19,13 +19,14 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
         this.state = null;
+        this._template = document.createElement('template');
         this._forceShadow = false;
         this._forceUpdate = false;
         this._updateCount = 0;
         this.init();
     }
 
-    get root() {
+    get contentRoot() {
         return this.shadowRoot || this;
     }
 
@@ -65,6 +66,18 @@ export default class Component extends HTMLElement {
 
     componentAdopted() {}
 
+    importTemplate(template) {
+        if (!(template instanceof HTMLTemplateElement)) {
+            throw new TypeError(`"${template}" is not a HTMLTemplateElement`);
+        }
+
+        this._template = template.cloneNode(true);
+    }
+
+    exportTemplate() {
+        return this._template.cloneNode(true);
+    }
+
     update(state) {
         if (state !== undefined) {
             this.state = state;
@@ -75,7 +88,12 @@ export default class Component extends HTMLElement {
         }
 
         this.beforeRender();
-        this.root.innerHTML = this.render() || '';
+        const content = this.render();
+        if (content !== undefined) {
+            this._template.innerHTML = content;
+        }
+        this.contentRoot.innerHTML = this._template.innerHTML;
+
         this.afterRender();
 
         this._updateCount++;
