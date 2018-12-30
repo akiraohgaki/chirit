@@ -9,12 +9,6 @@
 
 export default class Component extends HTMLElement {
 
-    //static get observedAttributes() {
-    //    return this.componentObservedAttributes();
-    //}
-
-    //static componentObservedAttributes() {}
-
     static define(name, options) {
         window.customElements.define(name, this, options);
     }
@@ -22,10 +16,8 @@ export default class Component extends HTMLElement {
     // Subclass should use init() instead of constructor()
     constructor() {
         super();
-        this.state = null;
+        this._state = null;
         this._template = document.createElement('template');
-        this._forceShadow = false;
-        this._forceUpdate = false;
         this._updateCount = 0;
         this.init();
     }
@@ -34,41 +26,13 @@ export default class Component extends HTMLElement {
         return this.shadowRoot || this;
     }
 
-    init() {}
-
-    // Subclass should use componentConnected() instead of connectedCallback()
-    connectedCallback() {
-        if (this._forceUpdate || !this._updateCount) {
-            this.update();
-        }
-        this.componentConnected();
+    set state(state) {
+        this._state = state;
     }
 
-    componentConnected() {}
-
-    // Subclass should use componentDisconnected() instead of disconnectedCallback()
-    disconnectedCallback() {
-        this.componentDisconnected();
+    get state() {
+        return this._state;
     }
-
-    componentDisconnected() {}
-
-    // Subclass should use componentAttributeChanged() instead of attributeChangedCallback()
-    attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
-        if (this._forceUpdate || !this._updateCount) {
-            this.update();
-        }
-        this.componentAttributeChanged(attributeName, oldValue, newValue, namespace);
-    }
-
-    componentAttributeChanged() {}
-
-    // Subclass should use componentAdopted() instead of adoptedCallback()
-    adoptedCallback(oldDocument, newDocument) {
-        this.componentAdopted(oldDocument, newDocument);
-    }
-
-    componentAdopted() {}
 
     importTemplate(template) {
         if (!(template instanceof HTMLTemplateElement)) {
@@ -84,30 +48,19 @@ export default class Component extends HTMLElement {
 
     update(state) {
         if (state !== undefined) {
-            this.state = state;
+            this._state = state;
         }
 
-        if (this._forceShadow && !this.shadowRoot) {
-            this.attachShadow({mode: 'open'});
-        }
-
-        this.beforeRender();
         const content = this.render();
         if (content !== undefined) {
             this._template.innerHTML = content;
         }
-        this.contentRoot.innerHTML = this._template.innerHTML;
-
-        this.afterRender();
+        this.contentRoot.textContent = null;
+        this.contentRoot.appendChild(this._template.content.cloneNode(true));
 
         this._updateCount++;
+        this.componentUpdated();
     }
-
-    beforeRender() {}
-
-    render() {}
-
-    afterRender() {}
 
     dispatch(type, data = null) {
         this.dispatchEvent(new CustomEvent(type, {
@@ -115,6 +68,58 @@ export default class Component extends HTMLElement {
             bubbles: true,
             composed: true
         }));
+    }
+
+    init() {}
+
+    render() {}
+
+    componentUpdated() {}
+
+    static get componentObservedAttributes() {
+        return [];
+    }
+
+    componentAttributeChanged() {}
+
+    componentConnected() {}
+
+    componentDisconnected() {}
+
+    componentAdopted() {}
+
+    // Subclass should use componentObservedAttributes() instead of observedAttributes()
+    static get observedAttributes() {
+        return this.componentObservedAttributes;
+    }
+
+    // Subclass should use componentAttributeChanged() instead of attributeChangedCallback()
+    attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
+        if (this._updateCount && oldValue !== newValue) {
+            this.update();
+        }
+        this.componentAttributeChanged(attributeName, oldValue, newValue, namespace);
+    }
+
+    // Subclass should use componentConnected() instead of connectedCallback()
+    connectedCallback() {
+        if (!this._updateCount) {
+            this.update();
+        }
+        this.componentConnected();
+    }
+
+    // Subclass should use componentDisconnected() instead of disconnectedCallback()
+    disconnectedCallback() {
+        this.componentDisconnected();
+    }
+
+    // Subclass should use componentAdopted() instead of adoptedCallback()
+    adoptedCallback(oldDocument, newDocument) {
+        if (!this._updateCount) {
+            this.update();
+        }
+        this.componentAdopted(oldDocument, newDocument);
     }
 
 }
