@@ -15,6 +15,10 @@ export default class Component extends HTMLElement {
 
     //static componentObservedAttributes() {}
 
+    static define(name, options) {
+        window.customElements.define(name, this, options);
+    }
+
     // Subclass should use init() instead of constructor()
     constructor() {
         super();
