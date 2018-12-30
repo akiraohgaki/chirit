@@ -105,4 +105,12 @@ export default class Component extends HTMLElement {
 
     afterRender() {}
 
+    dispatch(type, data = null) {
+        this.dispatchEvent(new CustomEvent(type, {
+            detail: data,
+            bubbles: true,
+            composed: true
+        }));
+    }
+
 }
