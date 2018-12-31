@@ -7,56 +7,119 @@
  * @link        https://github.com/akiraohgaki/chirit
  */
 
-export default class Component {
+export default class Component extends HTMLElement {
 
-    // Subclass should use init() instead of constructor()
-    constructor(target, state = {}) {
-        // "target" should be Element object or selector string
-        if (typeof target === 'string') {
-            target = document.querySelector(target);
-        }
-
-        this._target = target || document.createElement('div');
-        this._state = {};
-
-        this.init();
-        this.update(state);
-        this.complete();
+    static define(name, options) {
+        window.customElements.define(name, this, options);
     }
 
-    get target() {
-        return this._target;
+    // Subclass should use init() instead of constructor()
+    constructor() {
+        super();
+        this._state = null;
+        this._template = document.createElement('template');
+        this._updateCount = 0;
+        this.init();
+    }
+
+    get contentRoot() {
+        return this.shadowRoot || this;
     }
 
     set state(state) {
-        this._combineState(state);
+        this._state = state;
     }
 
     get state() {
         return this._state;
     }
 
-    update(state = {}) {
-        this._combineState(state);
-        this.preRender();
-        this._target.innerHTML = this.render() || '';
-        this.postRender();
+    importTemplate(template) {
+        if (!(template instanceof HTMLTemplateElement)) {
+            throw new TypeError(`"${template}" is not a HTMLTemplateElement`);
+        }
+
+        this._template = template.cloneNode(true);
+    }
+
+    exportTemplate() {
+        return this._template.cloneNode(true);
+    }
+
+    update(state) {
+        if (state !== undefined) {
+            this._state = state;
+        }
+
+        const content = this.render();
+        if (content !== undefined) {
+            this._template.innerHTML = content;
+        }
+        this.contentRoot.textContent = null;
+        this.contentRoot.appendChild(this._template.content.cloneNode(true));
+
+        this._updateCount++;
+        this.componentUpdated();
+    }
+
+    dispatch(type, data = null) {
+        this.dispatchEvent(new CustomEvent(type, {
+            detail: data,
+            bubbles: true,
+            composed: true
+        }));
     }
 
     init() {}
 
-    preRender() {}
+    render() {}
 
-    render() {
-        return '';
+    componentUpdated() {}
+
+    static get componentObservedAttributes() {
+        return [];
     }
 
-    postRender() {}
+    componentAttributeChanged() {}
 
-    complete() {}
+    componentConnected() {}
 
-    _combineState(state) {
-        Object.assign(this._state, state);
+    componentDisconnected() {}
+
+    componentAdopted() {}
+
+    // Subclass should use componentObservedAttributes() instead of observedAttributes()
+    static get observedAttributes() {
+        return this.componentObservedAttributes;
+    }
+
+    // Subclass should use componentAttributeChanged() instead of attributeChangedCallback()
+    attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
+        if (this._updateCount && oldValue !== newValue) {
+            this.update();
+        }
+        this.componentAttributeChanged(attributeName, oldValue, newValue, namespace);
+    }
+
+    // Subclass should use componentConnected() instead of connectedCallback()
+    connectedCallback() {
+        if (!this._updateCount) {
+            this.update();
+        }
+        this.componentConnected();
+    }
+
+    // Subclass should use componentDisconnected() instead of disconnectedCallback()
+    disconnectedCallback() {
+        this.componentDisconnected();
+    }
+
+    // Subclass should use componentAdopted() instead of adoptedCallback()
+    adoptedCallback(oldDocument, newDocument) {
+        if (!this._updateCount) {
+            this.update();
+        }
+        this.componentAdopted(oldDocument, newDocument);
     }
 
 }
