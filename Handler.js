@@ -21,29 +21,33 @@ export default class Handler {
         this.resetDefault();
     }
 
-    setDefault(handler) {
-        this._checkTypeOfHandler(handler);
-        this._defaultHandler = handler;
-        return this;
-    }
-
     resetDefault() {
         this.setDefault(this._initialHandler);
         return this;
     }
 
+    setDefault(handler) {
+        this._checkTypeOfHandler(handler);
+        this._defaultHandler = handler;
+        this.defaultChangedCallback(handler);
+        return this;
+    }
+
     add(type, handler) {
         this._checkTypeOfHandler(handler);
+        this.beforeAddCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type) || new Set();
         if (!typeHandlers.has(handler)) {
             typeHandlers.add(handler);
             this._typeHandlersCollection.set(type, typeHandlers);
+            this.afterAddCallback(type, handler);
         }
         return this;
     }
 
     remove(type, handler) {
         this._checkTypeOfHandler(handler);
+        this.beforeRemoveCallback(type, handler);
         if (this._typeHandlersCollection.has(type)) {
             const typeHandlers = this._typeHandlersCollection.get(type);
             if (typeHandlers.has(handler)) {
@@ -54,6 +58,7 @@ export default class Handler {
                 else {
                     this._typeHandlersCollection.delete(type);
                 }
+                this.afterRemoveCallback(type, handler);
             }
         }
         return this;
@@ -95,6 +100,16 @@ export default class Handler {
         }
         return combinedData;
     }
+
+    defaultChangedCallback() {}
+
+    beforeAddCallback() {}
+
+    afterAddCallback() {}
+
+    beforeRemoveCallback() {}
+
+    afterRemoveCallback() {}
 
     _checkTypeOfHandler(handler) {
         if (typeof handler !== 'function') {

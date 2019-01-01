@@ -9,28 +9,6 @@
 
 import Handler from './Handler.js';
 
-class TypeHandler extends Handler {
-
-    constructor(handler) {
-        super(handler);
-        this.beforeAddHook = null;
-        this.afterRemoveHook = null;
-    }
-
-    add(type, handler) {
-        this.beforeAddHook(type);
-        super.add(type, handler);
-        return this;
-    }
-
-    remove(type, handler) {
-        super.remove(type, handler);
-        this.afterRemoveHook(type);
-        return this;
-    }
-
-}
-
 export default class StateManager {
 
     constructor(target) {
@@ -86,24 +64,24 @@ export default class StateManager {
     }
 
     _setupHandlers() {
-        this._eventHandler = new TypeHandler((params) => {
+        this._eventHandler = new Handler((params) => {
             return params;
         });
 
-        this._actionHandler = new TypeHandler(() => {
+        this._actionHandler = new Handler(() => {
             return {};
         });
 
-        this._stateHandler = new TypeHandler((state, type) => {
+        this._stateHandler = new Handler((state, type) => {
             this._state.set(type, state);
             return state;
         });
 
-        this._viewHandler = new TypeHandler(() => {
+        this._viewHandler = new Handler(() => {
             return {};
         });
 
-        const beforeAddHook = (type) => {
+        const beforeAddCallback = (type) => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
                 && !this._stateHandler.has(type)
@@ -114,7 +92,7 @@ export default class StateManager {
             }
         };
 
-        const afterRemoveHook = (type) => {
+        const afterRemoveCallback = (type) => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
                 && !this._stateHandler.has(type)
@@ -125,17 +103,17 @@ export default class StateManager {
             }
         };
 
-        this._eventHandler.beforeAddHook = beforeAddHook;
-        this._eventHandler.afterRemoveHook = afterRemoveHook;
+        this._eventHandler.beforeAddCallback = beforeAddCallback;
+        this._eventHandler.afterRemoveCallback = afterRemoveCallback;
 
-        this._actionHandler.beforeAddHook = beforeAddHook;
-        this._actionHandler.afterRemoveHook = afterRemoveHook;
+        this._actionHandler.beforeAddCallback = beforeAddCallback;
+        this._actionHandler.afterRemoveCallback = afterRemoveCallback;
 
-        this._stateHandler.beforeAddHook = beforeAddHook;
-        this._stateHandler.afterRemoveHook = afterRemoveHook;
+        this._stateHandler.beforeAddCallback = beforeAddCallback;
+        this._stateHandler.afterRemoveCallback = afterRemoveCallback;
 
-        this._viewHandler.beforeAddHook = beforeAddHook;
-        this._viewHandler.afterRemoveHook = afterRemoveHook;
+        this._viewHandler.beforeAddCallback = beforeAddCallback;
+        this._viewHandler.afterRemoveCallback = afterRemoveCallback;
     }
 
     async _invokeHandlers(params, type) {
