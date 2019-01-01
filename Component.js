@@ -59,7 +59,7 @@ export default class Component extends HTMLElement {
         this.contentRoot.appendChild(this._template.content.cloneNode(true));
 
         this._updateCount++;
-        this.componentUpdated();
+        this.componentUpdatedCallback();
     }
 
     dispatch(type, data = null) {
@@ -74,52 +74,52 @@ export default class Component extends HTMLElement {
 
     render() {}
 
-    componentUpdated() {}
+    componentUpdatedCallback() {}
 
     static get componentObservedAttributes() {
         return [];
     }
 
-    componentAttributeChanged() {}
+    componentAttributeChangedCallback() {}
 
-    componentConnected() {}
+    componentConnectedCallback() {}
 
-    componentDisconnected() {}
+    componentDisconnectedCallback() {}
 
-    componentAdopted() {}
+    componentAdoptedCallback() {}
 
-    // Subclass should use componentObservedAttributes() instead of observedAttributes()
+    // Subclass should use componentObservedAttributes instead of observedAttributes
     static get observedAttributes() {
         return this.componentObservedAttributes;
     }
 
-    // Subclass should use componentAttributeChanged() instead of attributeChangedCallback()
+    // Subclass should use componentAttributeChangedCallback() instead of attributeChangedCallback()
     attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
         if (this._updateCount && oldValue !== newValue) {
             this.update();
         }
-        this.componentAttributeChanged(attributeName, oldValue, newValue, namespace);
+        this.componentAttributeChangedCallback(attributeName, oldValue, newValue, namespace);
     }
 
-    // Subclass should use componentConnected() instead of connectedCallback()
+    // Subclass should use componentConnectedCallback() instead of connectedCallback()
     connectedCallback() {
         if (!this._updateCount) {
             this.update();
         }
-        this.componentConnected();
+        this.componentConnectedCallback();
     }
 
-    // Subclass should use componentDisconnected() instead of disconnectedCallback()
+    // Subclass should use componentDisconnectedCallback() instead of disconnectedCallback()
     disconnectedCallback() {
-        this.componentDisconnected();
+        this.componentDisconnectedCallback();
     }
 
-    // Subclass should use componentAdopted() instead of adoptedCallback()
+    // Subclass should use componentAdoptedCallback() instead of adoptedCallback()
     adoptedCallback(oldDocument, newDocument) {
         if (!this._updateCount) {
             this.update();
         }
-        this.componentAdopted(oldDocument, newDocument);
+        this.componentAdoptedCallback(oldDocument, newDocument);
     }
 
 }
