@@ -19,6 +19,7 @@ export default class Component extends HTMLElement {
         this._state = null;
         this._template = document.createElement('template');
         this._updateCount = 0;
+        this.attachShadow({mode: 'open'});
         this.init();
     }
 
