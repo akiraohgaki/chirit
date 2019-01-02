@@ -13,18 +13,22 @@ export default class Component extends HTMLElement {
         window.customElements.define(name, this, options);
     }
 
-    // Subclass should use init() instead of constructor()
+    // Subclass should use init*() instead of constructor()
     constructor() {
         super();
+
         this._state = null;
-        this._template = document.createElement('template');
+        this._shadowRoot = null;
+        this._template = null;
         this._updateCount = 0;
-        this.attachShadow({mode: 'open'});
+
+        this.initShadow();
+        this.initTemplate();
         this.init();
     }
 
     get contentRoot() {
-        return this.shadowRoot || this;
+        return this._shadowRoot || this.shadowRoot || this;
     }
 
     set state(state) {
@@ -33,6 +37,13 @@ export default class Component extends HTMLElement {
 
     get state() {
         return this._state;
+    }
+
+    enableShadow(options = {}) {
+        this._shadowRoot = this.attachShadow(Object.assign(
+            {mode: 'open'},
+            options
+        ));
     }
 
     importTemplate(template) {
@@ -63,12 +74,20 @@ export default class Component extends HTMLElement {
         this.componentUpdatedCallback();
     }
 
-    dispatch(type, data = null) {
+    dispatch(type, detail = null) {
         this.dispatchEvent(new CustomEvent(type, {
-            detail: data,
+            detail: detail,
             bubbles: true,
             composed: true
         }));
+    }
+
+    initShadow() {
+        this.enableShadow();
+    }
+
+    initTemplate() {
+        this.importTemplate(document.createElement('template'));
     }
 
     init() {}
