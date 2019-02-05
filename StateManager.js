@@ -18,8 +18,8 @@ export default class StateManager {
         }
 
         this._target = target || document;
-        this._eventListener = this._eventListener.bind(this);
         this._state = new Map();
+        this._eventListener = this._eventListener.bind(this);
 
         this._eventHandler = null;
         this._actionHandler = null;

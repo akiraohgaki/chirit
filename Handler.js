@@ -18,6 +18,7 @@ export default class Handler {
         this._initialHandler = handler;
         this._defaultHandler = null;
         this._typeHandlersCollection = new Map(); // [[type, [handler]]]
+
         this.resetDefault();
     }
 

@@ -20,6 +20,7 @@ export default class Component extends HTMLElement {
         this._state = null;
         this._shadowRoot = null;
         this._template = null;
+
         this._updateCount = 0;
 
         this.initShadow();
