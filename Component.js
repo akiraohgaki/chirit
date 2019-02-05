@@ -17,7 +17,7 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
 
-        this._state = null;
+        this._state = {};
         this._shadowRoot = null;
         this._template = null;
 
@@ -28,16 +28,16 @@ export default class Component extends HTMLElement {
         this.init();
     }
 
-    get contentRoot() {
-        return this._shadowRoot || this.shadowRoot || this;
-    }
-
     set state(state) {
         this._state = state;
     }
 
     get state() {
         return this._state;
+    }
+
+    get contentRoot() {
+        return this._shadowRoot || this.shadowRoot || this;
     }
 
     enableShadow(options = {}) {
@@ -75,9 +75,9 @@ export default class Component extends HTMLElement {
         this.componentUpdatedCallback();
     }
 
-    dispatch(type, detail = null) {
+    dispatch(type, data = {}) {
         this.dispatchEvent(new CustomEvent(type, {
-            detail: detail,
+            detail: data,
             bubbles: true,
             composed: true
         }));
