@@ -26,7 +26,7 @@ export default class StateManager {
         this._stateHandler = null;
         this._viewHandler = null;
 
-        this._setupHandlers();
+        this._initHandlers();
     }
 
     get target() {
@@ -63,7 +63,7 @@ export default class StateManager {
         this._invokeHandlers(event.detail, event.type);
     }
 
-    _setupHandlers() {
+    _initHandlers() {
         this._eventHandler = new Handler((data) => {
             return data;
         });
