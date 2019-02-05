@@ -40,28 +40,11 @@ export default class Component extends HTMLElement {
         return this._shadowRoot || this.shadowRoot || this;
     }
 
-    enableShadow(options = {}) {
-        this._shadowRoot = this.attachShadow(Object.assign(
-            {mode: 'open'},
-            options
-        ));
-    }
-
-    importTemplate(template) {
-        if (!(template instanceof HTMLTemplateElement)) {
-            throw new TypeError(`"${template}" is not a HTMLTemplateElement`);
-        }
-
-        this._template = template.cloneNode(true);
-    }
-
-    exportTemplate() {
-        return this._template.cloneNode(true);
-    }
-
     update(state) {
         if (state !== undefined) {
+            const oldState = Object.assign({}, this._state);
             this._state = state;
+            this.componentStateChangedCallback(oldState, this._state);
         }
 
         const content = this.render();
@@ -83,6 +66,27 @@ export default class Component extends HTMLElement {
         }));
     }
 
+    enableShadow(options = {}) {
+        this._shadowRoot = this.attachShadow(Object.assign(
+            {mode: 'open'},
+            options
+        ));
+    }
+
+    importTemplate(template) {
+        if (!(template instanceof HTMLTemplateElement)) {
+            throw new TypeError(`"${template}" is not a HTMLTemplateElement`);
+        }
+
+        this._template = template.cloneNode(true);
+    }
+
+    exportTemplate() {
+        return this._template.cloneNode(true);
+    }
+
+    // Abstract methods
+
     initShadow() {
         this.enableShadow();
     }
@@ -94,6 +98,10 @@ export default class Component extends HTMLElement {
     init() {}
 
     render() {}
+
+    // Component lifecycle methods
+
+    componentStateChangedCallback() {}
 
     componentUpdatedCallback() {}
 
