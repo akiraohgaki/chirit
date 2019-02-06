@@ -50,28 +50,49 @@ export default class Component extends HTMLElement {
 
     update(state) {
         if (state !== undefined) {
-            const oldState = Object.assign({}, this._state);
-            this._state = state;
-            this.componentStateChangedCallback(oldState, this._state);
+            this.setState(state);
+            return;
         }
 
-        const content = this.render();
-        if (content !== undefined) {
-            this._template.innerHTML = content;
+        let content = this.render();
+        if (content === undefined) {
+            content = this.exportTemplate().content;
         }
-        this.contentRoot.textContent = null;
-        this.contentRoot.appendChild(this._template.content.cloneNode(true));
 
-        this._updateCount++;
-        this.componentUpdatedCallback();
+        this.setContent(content);
+
+        this._updatedCallback();
     }
 
-    dispatch(type, data = {}) {
-        this.dispatchEvent(new CustomEvent(type, {
-            detail: data,
-            bubbles: true,
-            composed: true
-        }));
+    setState(state) {
+        if (typeof state !== 'object' || state === null) {
+            throw new TypeError(`"${state}" is not an object`);
+        }
+
+        const oldState = Object.assign({}, this._state);
+        this._state = state;
+        const newState = Object.assign({}, this._state);
+
+        this._stateChangedCallback(oldState, newState);
+    }
+
+    setContent(content) {
+        // "content" should be Node object or string
+        if (typeof content === 'string') {
+            const template = document.createElement('template');
+            template.innerHTML = content;
+            content = template.content;
+        }
+
+        const oldContent = this._template.content.cloneNode(true);
+        this._template.textContent = null;
+        this._template.appendChild(content);
+        const newContent = this._template.content.cloneNode(true);
+
+        this.contentRoot.textContent = null;
+        this.contentRoot.appendChild(newContent);
+
+        this._contentChangedCallback(oldContent, newContent);
     }
 
     enableShadow(options = {}) {
@@ -90,6 +111,14 @@ export default class Component extends HTMLElement {
 
     exportTemplate() {
         return this._template.cloneNode(true);
+    }
+
+    dispatch(type, data = {}) {
+        this.dispatchEvent(new CustomEvent(type, {
+            detail: data,
+            bubbles: true,
+            composed: true
+        }));
     }
 
     // Abstract methods
@@ -154,6 +183,12 @@ export default class Component extends HTMLElement {
 
     // Subclass should use componentStateChangedCallback() instead of _stateChangedCallback()
     _stateChangedCallback(oldState, newState) {
+        //if (this._updateCount && JSON.stringify(oldState) !== JSON.stringify(newState)) {
+        //    this.update();
+        //}
+        if (this._updateCount) {
+            this.update();
+        }
         this.componentStateChangedCallback(oldState, newState);
     }
 
