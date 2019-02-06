@@ -40,6 +40,14 @@ export default class Component extends HTMLElement {
         return this._shadowRoot || this.shadowRoot || this;
     }
 
+    initShadow() {
+        this.enableShadow();
+    }
+
+    initTemplate() {
+        this.importTemplate(document.createElement('template'));
+    }
+
     update(state) {
         if (state !== undefined) {
             const oldState = Object.assign({}, this._state);
@@ -77,7 +85,6 @@ export default class Component extends HTMLElement {
         if (!(template instanceof HTMLTemplateElement)) {
             throw new TypeError(`"${template}" is not a HTMLTemplateElement`);
         }
-
         this._template = template.cloneNode(true);
     }
 
@@ -87,23 +94,11 @@ export default class Component extends HTMLElement {
 
     // Abstract methods
 
-    initShadow() {
-        this.enableShadow();
-    }
-
-    initTemplate() {
-        this.importTemplate(document.createElement('template'));
-    }
-
     init() {}
 
     render() {}
 
     // Component lifecycle methods
-
-    componentStateChangedCallback() {}
-
-    componentUpdatedCallback() {}
 
     static get componentObservedAttributes() {
         return [];
