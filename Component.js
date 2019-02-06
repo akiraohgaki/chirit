@@ -117,6 +117,12 @@ export default class Component extends HTMLElement {
 
     componentAdoptedCallback() {}
 
+    componentStateChangedCallback() {}
+
+    componentContentChangedCallback() {}
+
+    componentUpdatedCallback() {}
+
     // Subclass should use componentObservedAttributes instead of observedAttributes
     static get observedAttributes() {
         return this.componentObservedAttributes;
@@ -149,6 +155,22 @@ export default class Component extends HTMLElement {
             this.update();
         }
         this.componentAdoptedCallback(oldDocument, newDocument);
+    }
+
+    // Subclass should use componentStateChangedCallback() instead of _stateChangedCallback()
+    _stateChangedCallback(oldState, newState) {
+        this.componentStateChangedCallback(oldState, newState);
+    }
+
+    // Subclass should use componentContentChangedCallback() instead of _contentChangedCallback()
+    _contentChangedCallback(oldContent, newContent) {
+        this.componentContentChangedCallback(oldContent, newContent);
+    }
+
+    // Subclass should use componentUpdatedCallback() instead of _updatedCallback()
+    _updatedCallback() {
+        this._updateCount++;
+        this.componentUpdatedCallback();
     }
 
 }
