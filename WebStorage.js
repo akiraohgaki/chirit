@@ -10,7 +10,11 @@
 export default class WebStorage {
 
     constructor(type = 'local', prefix = '') {
-        switch (type) {
+        this._type = type;
+        this._prefix = prefix;
+        this._storage = null;
+
+        switch (this._type) {
             case 'local':
                 this._storage = window.localStorage;
                 break;
@@ -20,8 +24,6 @@ export default class WebStorage {
             default:
                 throw new Error('Storage type must be "local" or "session"');
         }
-        this._type = type;
-        this._prefix = prefix;
     }
 
     get type() {
