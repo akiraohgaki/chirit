@@ -29,11 +29,11 @@ export default class Component extends HTMLElement {
     }
 
     set state(state) {
-        this._state = state;
+        this.setState(state);
     }
 
     get state() {
-        return this._state;
+        return this.getState();
     }
 
     get contentRoot() {
@@ -48,22 +48,6 @@ export default class Component extends HTMLElement {
         this.importTemplate(document.createElement('template'));
     }
 
-    update(state) {
-        if (state !== undefined) {
-            this.setState(state);
-            return;
-        }
-
-        let content = this.render();
-        if (content === undefined) {
-            content = this.exportTemplate().content;
-        }
-
-        this.setContent(content);
-
-        this._updatedCallback();
-    }
-
     setState(state) {
         if (typeof state !== 'object' || state === null) {
             throw new TypeError(`"${state}" is not an object`);
@@ -74,6 +58,10 @@ export default class Component extends HTMLElement {
         const newState = Object.assign({}, this._state);
 
         this._stateChangedCallback(oldState, newState);
+    }
+
+    getState() {
+        return this._state;
     }
 
     setContent(content) {
@@ -121,13 +109,33 @@ export default class Component extends HTMLElement {
         }));
     }
 
+    update(state) {
+        if (state !== undefined) {
+            this.setState(state);
+        }
+        else {
+            this._update();
+        }
+    }
+
+    _update() {
+        let content = this.render();
+        if (typeof content !== 'string' && !content) {
+            content = this.exportTemplate().content;
+        }
+
+        this.setContent(content);
+
+        this._updatedCallback();
+    }
+
     // Abstract methods
 
     init() {}
 
     render() {}
 
-    // Component lifecycle methods
+    // Lifecycle methods
 
     static get componentObservedAttributes() {
         return [];
@@ -147,57 +155,53 @@ export default class Component extends HTMLElement {
 
     componentUpdatedCallback() {}
 
-    // Subclass should use componentObservedAttributes instead of observedAttributes
+    // Lifecycle methods in parent class
+
     static get observedAttributes() {
         return this.componentObservedAttributes;
     }
 
-    // Subclass should use componentAttributeChangedCallback() instead of attributeChangedCallback()
     attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
-        if (this._updateCount && oldValue !== newValue) {
-            this.update();
-        }
         this.componentAttributeChangedCallback(attributeName, oldValue, newValue, namespace);
-    }
-
-    // Subclass should use componentConnectedCallback() instead of connectedCallback()
-    connectedCallback() {
-        if (!this._updateCount) {
-            this.update();
+        if (this._updateCount && oldValue !== newValue) {
+            this._update();
         }
-        this.componentConnectedCallback();
     }
 
-    // Subclass should use componentDisconnectedCallback() instead of disconnectedCallback()
+    connectedCallback() {
+        this.componentConnectedCallback();
+        if (!this._updateCount) {
+            this._update();
+        }
+    }
+
     disconnectedCallback() {
         this.componentDisconnectedCallback();
     }
 
-    // Subclass should use componentAdoptedCallback() instead of adoptedCallback()
     adoptedCallback(oldDocument, newDocument) {
-        if (!this._updateCount) {
-            this.update();
-        }
         this.componentAdoptedCallback(oldDocument, newDocument);
+        if (!this._updateCount) {
+            this._update();
+        }
     }
 
-    // Subclass should use componentStateChangedCallback() instead of _stateChangedCallback()
+    // Additional lifecycle methods
+
     _stateChangedCallback(oldState, newState) {
+        this.componentStateChangedCallback(oldState, newState);
         //if (this._updateCount && JSON.stringify(oldState) !== JSON.stringify(newState)) {
         //    this.update();
         //}
         if (this._updateCount) {
-            this.update();
+            this._update();
         }
-        this.componentStateChangedCallback(oldState, newState);
     }
 
-    // Subclass should use componentContentChangedCallback() instead of _contentChangedCallback()
     _contentChangedCallback(oldContent, newContent) {
         this.componentContentChangedCallback(oldContent, newContent);
     }
 
-    // Subclass should use componentUpdatedCallback() instead of _updatedCallback()
     _updatedCallback() {
         this._updateCount++;
         this.componentUpdatedCallback();
