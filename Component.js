@@ -13,7 +13,6 @@ export default class Component extends HTMLElement {
         window.customElements.define(name, this, options);
     }
 
-    // Subclass should use init*() instead of constructor()
     constructor() {
         super();
 
