@@ -71,13 +71,13 @@ export default class Component extends HTMLElement {
             content = template.content;
         }
 
-        const oldContent = this._template.content.cloneNode(true);
-        this._template.textContent = null;
-        this._template.appendChild(content);
-        const newContent = this._template.content.cloneNode(true);
+        const oldContent = this.exportTemplate().content;
+        this._template.content.textContent = null;
+        this._template.content.appendChild(content);
+        const newContent = this.exportTemplate().content;
 
         this.contentRoot.textContent = null;
-        this.contentRoot.appendChild(newContent);
+        this.contentRoot.appendChild(newContent.cloneNode(true));
 
         this._contentChangedCallback(oldContent, newContent);
     }
