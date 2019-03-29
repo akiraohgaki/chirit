@@ -15,14 +15,17 @@ export default class WebStorage {
         this._storage = null;
 
         switch (this._type) {
-            case 'local':
+            case 'local': {
                 this._storage = window.localStorage;
                 break;
-            case 'session':
+            }
+            case 'session': {
                 this._storage = window.sessionStorage;
                 break;
-            default:
+            }
+            default: {
                 throw new Error('Storage type must be "local" or "session"');
+            }
         }
     }
 
