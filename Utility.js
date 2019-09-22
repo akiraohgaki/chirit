@@ -10,11 +10,12 @@
 export default class Utility {
 
     static parseQueryString(queryString) {
-        const queryString = queryString || window.location.search;
+        queryString = queryString || window.location.search;
+        queryString = queryString.split('?').pop();
 
         const params = {};
-        if (queryString.length > 1) {
-            const queries = queryString.substring(1).split('&');
+        if (queryString) {
+            const queries = queryString.split('&');
             for (const query of queries) {
                 const kv = query.split('=');
                 const key = decodeURIComponent(kv[0]);
