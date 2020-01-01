@@ -1,19 +1,14 @@
-/**
- * Chirit
- *
- * @author      Akira Ohgaki <akiraohgaki@gmail.com>
- * @copyright   2018, Akira Ohgaki
- * @license     https://opensource.org/licenses/BSD-2-Clause
- * @link        https://github.com/akiraohgaki/chirit
- */
+interface QueryStringObject {
+    [key: string]: string;
+}
 
 export default class Utility {
 
-    static parseQueryString(queryString) {
+    static parseQueryString(queryString?: string): QueryStringObject {
         queryString = queryString || window.location.search;
         queryString = queryString.split('?').pop();
 
-        const params = {};
+        const params: QueryStringObject = {};
         if (queryString) {
             const queries = queryString.split('&');
             for (const query of queries) {
@@ -26,9 +21,7 @@ export default class Utility {
         return params;
     }
 
-    static convertByteToHumanReadable(byte) {
-        byte = parseFloat(byte);
-
+    static convertByteToHumanReadable(byte: number): string {
         const kb = 1024;
         const mb = 1024 * kb;
         const gb = 1024 * mb;
@@ -69,8 +62,7 @@ export default class Utility {
         return text;
     }
 
-    static convertDatetimeToHumanReadable(datetime) {
-        // "datetime" should be ISO 8601 formatted string
+    static convertDatetimeToHumanReadable(datetime: string | number | Date): string {
         const today = new Date();
         const date = new Date(datetime);
         const timeDelta = today.getTime() - date.getTime();
@@ -130,9 +122,7 @@ export default class Utility {
         return text;
     }
 
-    static generateRandomString(length = 16, addition = '') {
-        length = parseInt(length, 10);
-
+    static generateRandomString(length: number = 16, addition: string = ''): string {
         const strings = '0123456789'
             + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             + 'abcdefghijklmnopqrstuvwxyz'

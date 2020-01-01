@@ -1,18 +1,12 @@
-/**
- * Chirit
- *
- * @author      Akira Ohgaki <akiraohgaki@gmail.com>
- * @copyright   2018, Akira Ohgaki
- * @license     https://opensource.org/licenses/BSD-2-Clause
- * @link        https://github.com/akiraohgaki/chirit
- */
-
 export default class WebStorage {
 
-    constructor(type = 'local', prefix = '') {
+    private _type: string;
+    private _prefix: string;
+    private _storage: Storage;
+
+    constructor(type: string = 'local', prefix: string = '') {
         this._type = type;
         this._prefix = prefix;
-        this._storage = null;
 
         switch (this._type) {
             case 'local': {
@@ -29,30 +23,30 @@ export default class WebStorage {
         }
     }
 
-    get type() {
+    get type(): string {
         return this._type;
     }
 
-    get prefix() {
+    get prefix(): string {
         return this._prefix;
     }
 
-    get length() {
+    get length(): number {
         return this._storage.length;
     }
 
-    key(index) {
+    key(index: number): string | null {
         return this._storage.key(index);
     }
 
-    setItem(key, value) {
+    setItem(key: string, value: any): void {
         this._storage.setItem(
             this._prefix + key,
             JSON.stringify({_key: key, _value: value})
         );
     }
 
-    getItem(key) {
+    getItem(key: string): any {
         const value = this._storage.getItem(this._prefix + key);
         if (value) {
             const deserializedValue = JSON.parse(value);
@@ -67,11 +61,11 @@ export default class WebStorage {
         return null;
     }
 
-    removeItem(key) {
+    removeItem(key: string): void {
         this._storage.removeItem(this._prefix + key);
     }
 
-    clear() {
+    clear(): void {
         this._storage.clear();
     }
 

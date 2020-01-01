@@ -1,41 +1,33 @@
-/**
- * Chirit
- *
- * @author      Akira Ohgaki <akiraohgaki@gmail.com>
- * @copyright   2018, Akira Ohgaki
- * @license     https://opensource.org/licenses/BSD-2-Clause
- * @link        https://github.com/akiraohgaki/chirit
- */
+interface HandlerFunction {
+    (data: any, type: string): any
+}
 
 export default class Handler {
 
-    constructor(handler) {
-        // handler:
-        // (data = {}, type = '') => {
-        //     return {};
-        // }
+    private _initialHandler: HandlerFunction;
+    private _defaultHandler: HandlerFunction;
+    private _typeHandlersCollection: Map<string, Set<HandlerFunction>>;
 
+    constructor(handler: HandlerFunction) {
         this._initialHandler = handler;
-        this._defaultHandler = null;
-        this._typeHandlersCollection = new Map(); // [[type, [handler]]]
-
-        this.resetDefault();
+        this._defaultHandler = this._initialHandler;
+        this._typeHandlersCollection = new Map();
     }
 
-    resetDefault() {
+    resetDefault(): this {
         this.setDefault(this._initialHandler);
         return this;
     }
 
-    setDefault(handler) {
-        this._checkTypeOfHandler(handler);
+    setDefault(handler: HandlerFunction): this {
+        //this._checkTypeOfHandler(handler);
         this._defaultHandler = handler;
         this.defaultChangedCallback(handler);
         return this;
     }
 
-    add(type, handler) {
-        this._checkTypeOfHandler(handler);
+    add(type: string, handler: HandlerFunction): this {
+        //this._checkTypeOfHandler(handler);
         this.beforeAddCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type) || new Set();
         if (!typeHandlers.has(handler)) {
@@ -46,30 +38,27 @@ export default class Handler {
         return this;
     }
 
-    remove(type, handler) {
-        this._checkTypeOfHandler(handler);
+    remove(type: string, handler: HandlerFunction): this {
+        //this._checkTypeOfHandler(handler);
         this.beforeRemoveCallback(type, handler);
-        if (this._typeHandlersCollection.has(type)) {
-            const typeHandlers = this._typeHandlersCollection.get(type);
-            if (typeHandlers.has(handler)) {
-                typeHandlers.delete(handler);
-                if (typeHandlers.size) {
-                    this._typeHandlersCollection.set(type, typeHandlers);
-                }
-                else {
-                    this._typeHandlersCollection.delete(type);
-                }
-                this.afterRemoveCallback(type, handler);
+        const typeHandlers = this._typeHandlersCollection.get(type);
+        if (typeHandlers && typeHandlers.delete(handler)) {
+            if (typeHandlers.size) {
+                this._typeHandlersCollection.set(type, typeHandlers);
             }
+            else {
+                this._typeHandlersCollection.delete(type);
+            }
+            this.afterRemoveCallback(type, handler);
         }
         return this;
     }
 
-    has(type) {
+    has(type: string): boolean {
         return this._typeHandlersCollection.has(type);
     }
 
-    async invoke(data = {}, type = '') {
+    async invoke(data: any = {}, type: string = ''): Promise<object | null> {
         // This function will wrap and call registered handlers with Promise and Promise.all().
         // And all return values of the same type of handlers will be combined in object finally.
         // If any handler returned false, will not combine values and return null.
@@ -80,8 +69,8 @@ export default class Handler {
             resolve(this._defaultHandler(data, type));
         }));
 
-        if (type && this._typeHandlersCollection.has(type)) {
-            const typeHandlers = this._typeHandlersCollection.get(type);
+        const typeHandlers = this._typeHandlersCollection.get(type);
+        if (typeHandlers) {
             for (const handler of typeHandlers) {
                 promises.push(new Promise((resolve) => {
                     resolve(handler(data, type));
@@ -102,20 +91,20 @@ export default class Handler {
         return combinedData;
     }
 
-    defaultChangedCallback() {}
+    defaultChangedCallback(handler: HandlerFunction): void {}
 
-    beforeAddCallback() {}
+    beforeAddCallback(type: string, handler: HandlerFunction): void {}
 
-    afterAddCallback() {}
+    afterAddCallback(type: string, handler: HandlerFunction): void {}
 
-    beforeRemoveCallback() {}
+    beforeRemoveCallback(type: string, handler: HandlerFunction): void {}
 
-    afterRemoveCallback() {}
+    afterRemoveCallback(type: string, handler: HandlerFunction): void {}
 
-    _checkTypeOfHandler(handler) {
+    /*private _checkTypeOfHandler(handler: HandlerFunction): void {
         if (typeof handler !== 'function') {
             throw new TypeError(`"${handler}" is not a function`);
         }
-    }
+    }*/
 
 }

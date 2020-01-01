@@ -1,70 +1,68 @@
-/**
- * Chirit
- *
- * @author      Akira Ohgaki <akiraohgaki@gmail.com>
- * @copyright   2018, Akira Ohgaki
- * @license     https://opensource.org/licenses/BSD-2-Clause
- * @link        https://github.com/akiraohgaki/chirit
- */
+interface StateObject {
+    [key: string]: any;
+}
 
 export default class Component extends HTMLElement {
 
-    static define(name, options) {
+    static define(name: string, options?: ElementDefinitionOptions): void {
         window.customElements.define(name, this, options);
     }
+
+    private _state: StateObject;
+    private _shadowRoot: ShadowRoot | null;
+    private _template: HTMLTemplateElement;
+    private _updateCount: number;
 
     constructor() {
         super();
 
         this._state = {};
         this._shadowRoot = null;
-        this._template = null;
-
+        this._template = document.createElement('template');
         this._updateCount = 0;
 
         this.initShadow();
-        this.initTemplate();
+        //this.initTemplate();
         this.init();
     }
 
-    set state(state) {
+    set state(state: StateObject) {
         this.setState(state);
     }
 
-    get state() {
+    get state(): StateObject {
         return this.getState();
     }
 
-    get contentRoot() {
+    get contentRoot(): ShadowRoot | this {
         return this._shadowRoot || this.shadowRoot || this;
     }
 
-    initShadow() {
+    initShadow(): void {
         this.enableShadow();
     }
 
-    initTemplate() {
+    /*initTemplate(): void {
         this.importTemplate(document.createElement('template'));
-    }
+    }*/
 
-    setState(state) {
-        if (typeof state !== 'object' || state === null) {
+    setState(state: StateObject): void {
+        /*if (typeof state !== 'object' || state === null) {
             throw new TypeError(`"${state}" is not an object`);
-        }
+        }*/
 
-        const oldState = Object.assign({}, this._state);
+        const oldState = {...this._state};
         this._state = state;
-        const newState = Object.assign({}, this._state);
+        const newState = {...this._state};
 
         this._stateChangedCallback(oldState, newState);
     }
 
-    getState() {
+    getState(): StateObject {
         return this._state;
     }
 
-    setContent(content) {
-        // "content" should be Node object or string
+    setContent(content: string | Node): void {
         if (typeof content === 'string') {
             const template = document.createElement('template');
             template.innerHTML = content;
@@ -82,25 +80,22 @@ export default class Component extends HTMLElement {
         this._contentChangedCallback(oldContent, newContent);
     }
 
-    enableShadow(options = {}) {
-        this._shadowRoot = this.attachShadow(Object.assign(
-            {mode: 'open'},
-            options
-        ));
+    enableShadow(options: object = {}): void {
+        this._shadowRoot = this.attachShadow({mode: 'open', ...options});
     }
 
-    importTemplate(template) {
-        if (!(template instanceof HTMLTemplateElement)) {
+    importTemplate(template: HTMLTemplateElement): void {
+        /*if (!(template instanceof HTMLTemplateElement)) {
             throw new TypeError(`"${template}" is not a HTMLTemplateElement`);
-        }
-        this._template = template.cloneNode(true);
+        }*/
+        this._template = template.cloneNode(true) as HTMLTemplateElement;
     }
 
-    exportTemplate() {
-        return this._template.cloneNode(true);
+    exportTemplate(): HTMLTemplateElement {
+        return this._template.cloneNode(true) as HTMLTemplateElement;
     }
 
-    dispatch(type, data = {}) {
+    dispatch(type: string, data: object = {}): void {
         this.dispatchEvent(new CustomEvent(type, {
             detail: data,
             bubbles: true,
@@ -108,7 +103,7 @@ export default class Component extends HTMLElement {
         }));
     }
 
-    update(state) {
+    update(state?: StateObject): void {
         if (state !== undefined) {
             this.setState(state);
         }
@@ -117,7 +112,7 @@ export default class Component extends HTMLElement {
         }
     }
 
-    _update() {
+    private _update(): void {
         let content = this.render();
         if (typeof content !== 'string' && !content) {
             content = this.exportTemplate().content;
@@ -130,55 +125,55 @@ export default class Component extends HTMLElement {
 
     // Abstract methods
 
-    init() {}
+    init(): void {}
 
-    render() {}
+    render(): string | Node | void {}
 
     // Lifecycle methods
 
-    static get componentObservedAttributes() {
+    static get componentObservedAttributes(): Array<string> {
         return [];
     }
 
-    componentAttributeChangedCallback() {}
+    componentAttributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string): void {}
 
-    componentConnectedCallback() {}
+    componentConnectedCallback(): void {}
 
-    componentDisconnectedCallback() {}
+    componentDisconnectedCallback(): void {}
 
-    componentAdoptedCallback() {}
+    componentAdoptedCallback(oldDocument: Document, newDocument: Document): void {}
 
-    componentStateChangedCallback() {}
+    componentStateChangedCallback(oldState: StateObject, newState: StateObject): void {}
 
-    componentContentChangedCallback() {}
+    componentContentChangedCallback(oldContent: Node, newContent: Node): void {}
 
-    componentUpdatedCallback() {}
+    componentUpdatedCallback(): void {}
 
     // Lifecycle methods in parent class
 
-    static get observedAttributes() {
+    static get observedAttributes(): Array<string> {
         return this.componentObservedAttributes;
     }
 
-    attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
+    attributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string): void {
         this.componentAttributeChangedCallback(attributeName, oldValue, newValue, namespace);
         if (this._updateCount && oldValue !== newValue) {
             this._update();
         }
     }
 
-    connectedCallback() {
+    connectedCallback(): void {
         this.componentConnectedCallback();
         if (!this._updateCount) {
             this._update();
         }
     }
 
-    disconnectedCallback() {
+    disconnectedCallback(): void {
         this.componentDisconnectedCallback();
     }
 
-    adoptedCallback(oldDocument, newDocument) {
+    adoptedCallback(oldDocument: Document, newDocument: Document): void {
         this.componentAdoptedCallback(oldDocument, newDocument);
         if (!this._updateCount) {
             this._update();
@@ -187,7 +182,7 @@ export default class Component extends HTMLElement {
 
     // Additional lifecycle methods
 
-    _stateChangedCallback(oldState, newState) {
+    private _stateChangedCallback(oldState: StateObject, newState: StateObject): void {
         this.componentStateChangedCallback(oldState, newState);
         //if (this._updateCount && JSON.stringify(oldState) !== JSON.stringify(newState)) {
         //    this.update();
@@ -197,11 +192,11 @@ export default class Component extends HTMLElement {
         }
     }
 
-    _contentChangedCallback(oldContent, newContent) {
+    private _contentChangedCallback(oldContent: Node, newContent: Node): void {
         this.componentContentChangedCallback(oldContent, newContent);
     }
 
-    _updatedCallback() {
+    private _updatedCallback(): void {
         this._updateCount++;
         this.componentUpdatedCallback();
     }

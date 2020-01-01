@@ -6,5 +6,12 @@
   "license": "BSD-2-Clause",
   "homepage": "https://github.com/akiraohgaki/chirit",
   "repository": "https://github.com/akiraohgaki/chirit",
-  "main": "Chirit.js"
+  "main": "dist/Chirit.js",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "*"
+  }
 }

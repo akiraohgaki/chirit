@@ -1,69 +1,28 @@
-/**
- * Chirit
- *
- * @author      Akira Ohgaki <akiraohgaki@gmail.com>
- * @copyright   2018, Akira Ohgaki
- * @license     https://opensource.org/licenses/BSD-2-Clause
- * @link        https://github.com/akiraohgaki/chirit
- */
+import Handler from './Handler';
 
-import Handler from './Handler.js';
+interface StateObject {
+    [key: string]: any;
+}
 
 export default class StateManager {
 
-    constructor(target) {
-        // "target" should be Element object or selector string
+    private _target: Node;
+    private _state: Map<string, StateObject>;
+    private _eventHandler: Handler;
+    private _actionHandler: Handler;
+    private _stateHandler: Handler;
+    private _viewHandler: Handler;
+
+    constructor(target?: Node | string) {
         if (typeof target === 'string') {
-            target = document.querySelector(target);
+            target = document.querySelector(target) || undefined;
         }
 
         this._target = target || document;
         this._state = new Map();
+
         this._eventListener = this._eventListener.bind(this);
 
-        this._eventHandler = null;
-        this._actionHandler = null;
-        this._stateHandler = null;
-        this._viewHandler = null;
-
-        this._initHandlers();
-    }
-
-    get target() {
-        return this._target;
-    }
-
-    get state() {
-        return this._state;
-    }
-
-    get eventHandler() {
-        return this._eventHandler;
-    }
-
-    get actionHandler() {
-        return this._actionHandler;
-    }
-
-    get stateHandler() {
-        return this._stateHandler;
-    }
-
-    get viewHandler() {
-        return this._viewHandler;
-    }
-
-    dispatch(type, data = {}) {
-        this._target.dispatchEvent(new CustomEvent(type, {detail: data}));
-    }
-
-    _eventListener(event) {
-        event.preventDefault();
-        event.stopPropagation();
-        this._invokeHandlers(event.detail, event.type);
-    }
-
-    _initHandlers() {
         this._eventHandler = new Handler((data) => {
             return data;
         });
@@ -81,24 +40,24 @@ export default class StateManager {
             return {};
         });
 
-        const beforeAddCallback = (type) => {
+        const beforeAddCallback = (type: string): void => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
                 && !this._stateHandler.has(type)
                 && !this._viewHandler.has(type)
             ) {
-                this._target.addEventListener(type, this._eventListener, false);
+                this._target.addEventListener(type, this._eventListener as EventListener, false);
                 this._state.set(type, {});
             }
         };
 
-        const afterRemoveCallback = (type) => {
+        const afterRemoveCallback = (type: string): void => {
             if (!this._eventHandler.has(type)
                 && !this._actionHandler.has(type)
                 && !this._stateHandler.has(type)
                 && !this._viewHandler.has(type)
             ) {
-                this._target.removeEventListener(type, this._eventListener, false);
+                this._target.removeEventListener(type, this._eventListener as EventListener, false);
                 this._state.delete(type);
             }
         };
@@ -116,7 +75,41 @@ export default class StateManager {
         this._viewHandler.afterRemoveCallback = afterRemoveCallback;
     }
 
-    async _invokeHandlers(data, type) {
+    get target(): Node {
+        return this._target;
+    }
+
+    get state(): Map<string, StateObject> {
+        return this._state;
+    }
+
+    get eventHandler(): Handler {
+        return this._eventHandler;
+    }
+
+    get actionHandler(): Handler {
+        return this._actionHandler;
+    }
+
+    get stateHandler(): Handler {
+        return this._stateHandler;
+    }
+
+    get viewHandler(): Handler {
+        return this._viewHandler;
+    }
+
+    dispatch(type: string, data: object = {}): void {
+        this._target.dispatchEvent(new CustomEvent(type, {detail: data}));
+    }
+
+    private _eventListener(event: CustomEvent<any>): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this._invokeHandlers(event.detail, event.type);
+    }
+
+    private async _invokeHandlers(data: object, type: string): Promise<void> {
         try {
             const eventRusult = await this._eventHandler.invoke(data, type);
             if (!eventRusult) {
