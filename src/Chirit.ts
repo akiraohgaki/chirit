@@ -1,8 +1,8 @@
-import Component from './Component';
-import StateManager from './StateManager';
-import Handler from './Handler';
-import WebStorage from './WebStorage';
-import Utility from './Utility';
+import Component from './Component.js';
+import StateManager from './StateManager.js';
+import Handler from './Handler.js';
+import WebStorage from './WebStorage.js';
+import Utility from './Utility.js';
 
 export default class Chirit {
 

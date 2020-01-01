@@ -1,4 +1,4 @@
-import Handler from './Handler';
+import Handler from './Handler.js';
 
 interface StateObject {
     [key: string]: any;
