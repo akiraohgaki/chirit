@@ -1,21 +1,15 @@
-interface QueryStringObject {
-    [key: string]: string;
-}
-
 export default class Utility {
 
-    static parseQueryString(queryString?: string): QueryStringObject {
+    static parseQueryString(queryString?: string): object {
         queryString = queryString || window.location.search;
         queryString = queryString.split('?').pop();
 
-        const params: QueryStringObject = {};
+        const params: {[key: string]: string} = {};
         if (queryString) {
             const queries = queryString.split('&');
             for (const query of queries) {
-                const kv = query.split('=');
-                const key = decodeURIComponent(kv[0]);
-                const value = (kv[1] !== undefined) ? decodeURIComponent(kv[1]) : '';
-                params[key] = value;
+                const [key, value = ''] = query.split('=');
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
             }
         }
         return params;
