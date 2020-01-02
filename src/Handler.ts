@@ -1,5 +1,5 @@
 interface HandlerFunction {
-    (data: any, type: string): any
+    (data?: any, type?: string): object | false
 }
 
 export default class Handler {
@@ -15,19 +15,16 @@ export default class Handler {
     }
 
     resetDefault(): this {
-        this.setDefault(this._initialHandler);
-        return this;
+        return this.setDefault(this._initialHandler);
     }
 
     setDefault(handler: HandlerFunction): this {
-        //this._checkTypeOfHandler(handler);
         this._defaultHandler = handler;
         this.defaultChangedCallback(handler);
         return this;
     }
 
     add(type: string, handler: HandlerFunction): this {
-        //this._checkTypeOfHandler(handler);
         this.beforeAddCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type) || new Set();
         if (!typeHandlers.has(handler)) {
@@ -39,7 +36,6 @@ export default class Handler {
     }
 
     remove(type: string, handler: HandlerFunction): this {
-        //this._checkTypeOfHandler(handler);
         this.beforeRemoveCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type);
         if (typeHandlers && typeHandlers.delete(handler)) {
@@ -58,32 +54,33 @@ export default class Handler {
         return this._typeHandlersCollection.has(type);
     }
 
-    async invoke(data: any = {}, type: string = ''): Promise<object | null> {
-        // This function will wrap and call registered handlers with Promise and Promise.all().
-        // And all return values of the same type of handlers will be combined in object finally.
-        // If any handler returned false, will not combine values and return null.
-
+    async invoke(data?: any, type?: string): Promise<object | null> {
+        // Wrap registered handlers with Promise and call those by Promise.all()
         const promises = [];
 
         promises.push(new Promise((resolve) => {
             resolve(this._defaultHandler(data, type));
         }));
 
-        const typeHandlers = this._typeHandlersCollection.get(type);
-        if (typeHandlers) {
-            for (const handler of typeHandlers) {
-                promises.push(new Promise((resolve) => {
-                    resolve(handler(data, type));
-                }));
+        if (type) {
+            const typeHandlers = this._typeHandlersCollection.get(type);
+            if (typeHandlers) {
+                for (const handler of typeHandlers) {
+                    promises.push(new Promise((resolve) => {
+                        resolve(handler(data, type));
+                    }));
+                }
             }
         }
 
         const values = await Promise.all(promises);
 
+        // If any handlers returned false as cancel, just return null
         if (values.includes(false)) {
             return null;
         }
 
+        // All return values from handlers will be combined in single object finally
         const combinedData = {};
         for (const value of values) {
             Object.assign(combinedData, value);
@@ -100,11 +97,5 @@ export default class Handler {
     beforeRemoveCallback(type: string, handler: HandlerFunction): void {}
 
     afterRemoveCallback(type: string, handler: HandlerFunction): void {}
-
-    /*private _checkTypeOfHandler(handler: HandlerFunction): void {
-        if (typeof handler !== 'function') {
-            throw new TypeError(`"${handler}" is not a function`);
-        }
-    }*/
 
 }
