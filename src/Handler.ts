@@ -1,5 +1,5 @@
 interface HandlerFunction {
-    (data?: any, type?: string): object | false
+    (data: object, type: string): object | false
 }
 
 export default class Handler {
@@ -54,10 +54,9 @@ export default class Handler {
         return this._typeHandlersCollection.has(type);
     }
 
-    async invoke(data?: any, type?: string): Promise<object | null> {
-        // Wrap registered handlers with Promise and call those by Promise.all()
+    async invoke(data: object = {}, type: string = ''): Promise<object | null> {
+        // Wrap registered handlers with Promise and call those promises by Promise.all()
         const promises = [];
-
         promises.push(new Promise((resolve) => {
             resolve(this._defaultHandler(data, type));
         }));
@@ -75,12 +74,12 @@ export default class Handler {
 
         const values = await Promise.all(promises);
 
-        // If any handlers returned false as cancel, just return null
+        // Combine all return values of handlers into single object
+        // If any handlers returned false, this function will return null
         if (values.includes(false)) {
             return null;
         }
 
-        // All return values from handlers will be combined in single object finally
         const combinedData = {};
         for (const value of values) {
             Object.assign(combinedData, value);
