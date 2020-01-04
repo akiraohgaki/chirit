@@ -1,8 +1,7 @@
 export default class Utility {
 
-    static parseQueryString(queryString?: string): object {
-        queryString = queryString || window.location.search;
-        queryString = queryString.split('?').pop();
+    static parseQueryString(queryString: string = window.location.search): object {
+        queryString = queryString.split('?').pop() || '';
 
         const params: {[key: string]: string} = {};
         if (queryString) {
