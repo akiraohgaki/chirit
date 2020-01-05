@@ -121,8 +121,10 @@ export default class StateManager {
             if (!stateResult) {
                 return;
             }
-            //const viewResult = await this._viewHandler.invoke(stateResult, type);
-            this._viewHandler.invoke(stateResult, type);
+            const viewResult = await this._viewHandler.invoke(stateResult, type);
+            if (!viewResult) {
+                return;
+            }
         }
         catch (error) {
             console.error(error);
