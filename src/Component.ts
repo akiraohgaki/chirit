@@ -48,7 +48,15 @@ export default class Component extends HTMLElement {
         return this._state;
     }
 
-    setContent(content: Node | string) {
+    dispatch(type: string, data: object = {}): void {
+        this.dispatchEvent(new CustomEvent(type, {
+            detail: data,
+            bubbles: true,
+            composed: true
+        }));
+    }
+
+    protected setContent(content: Node | string): void {
         if (content instanceof HTMLTemplateElement) {
             content = content.content;
         }
@@ -64,7 +72,7 @@ export default class Component extends HTMLElement {
         this.componentContentChangedCallback(oldContent, newContent);
     }
 
-    getContent(): Node {
+    protected getContent(): Node {
         const documentFragment = document.createDocumentFragment();
         if (this.contentRoot.hasChildNodes()) {
             const childNodes = this.contentRoot.childNodes;
@@ -75,17 +83,17 @@ export default class Component extends HTMLElement {
         return documentFragment;
     }
 
-    enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
+    protected enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
         this._shadowRoot = this.attachShadow(options);
     }
 
-    dispatch(type: string, data: object = {}): void {
-        this.dispatchEvent(new CustomEvent(type, {
-            detail: data,
-            bubbles: true,
-            composed: true
-        }));
+    private _update(): void {
+        this.render();
+        this._updateCount++;
+        this.componentUpdatedCallback();
     }
+
+    // Abstract methods
 
     protected initShadow(): void {
         this.enableShadow();
@@ -99,12 +107,6 @@ export default class Component extends HTMLElement {
 
     protected render(): void {
         this.setContent(this.template());
-    }
-
-    private _update(): void {
-        this.render();
-        this._updateCount++;
-        this.componentUpdatedCallback();
     }
 
     // Lifecycle callbacks
