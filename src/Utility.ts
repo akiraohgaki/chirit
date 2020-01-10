@@ -56,9 +56,8 @@ export default class Utility {
     }
 
     static convertDatetimeToHumanReadable(datetime: string | number | Date): string {
-        const today = new Date();
         const date = new Date(datetime);
-        const timeDelta = today.getTime() - date.getTime();
+        const today = new Date();
 
         const second = 1000;
         const minute = 60 * second;
@@ -68,8 +67,19 @@ export default class Utility {
         const month = 30 * day;
         const year = 365 * day;
 
+        let timeDelta = 0;
+        let timeExpression = '';
         let timeDistance = 0;
         let timeUnit = '';
+
+        if (date.getTime() < today.getTime()) {
+            timeDelta = today.getTime() - date.getTime();
+            timeExpression = 'ago';
+        }
+        else if (date.getTime() > today.getTime()) {
+            timeDelta = date.getTime() - today.getTime();
+            timeExpression = 'later';
+        }
 
         if (timeDelta < minute) {
             timeDistance = timeDelta / second;
@@ -107,10 +117,10 @@ export default class Utility {
             text = 'Just now';
         }
         else if (timeDistance === 1) {
-            text = `${timeDistance} ${timeUnit} ago`;
+            text = `${timeDistance} ${timeUnit} ${timeExpression}`;
         }
         else if (timeDistance > 1) {
-            text = `${timeDistance} ${timeUnit}s ago`;
+            text = `${timeDistance} ${timeUnit}s ${timeExpression}`;
         }
         return text;
     }
