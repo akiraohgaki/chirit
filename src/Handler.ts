@@ -2,17 +2,17 @@ interface DataDict {
     [key: string]: any;
 }
 
-interface HandlerFunction {
+interface HandlerFunc {
     (data: DataDict, type: string): DataDict | boolean;
 }
 
 export default class Handler {
 
-    private _initialHandler: HandlerFunction;
-    private _defaultHandler: HandlerFunction;
-    private _typeHandlersCollection: Map<string, Set<HandlerFunction>>;
+    private _initialHandler: HandlerFunc;
+    private _defaultHandler: HandlerFunc;
+    private _typeHandlersCollection: Map<string, Set<HandlerFunc>>;
 
-    constructor(handler: HandlerFunction) {
+    constructor(handler: HandlerFunc) {
         this._initialHandler = handler;
         this._defaultHandler = this._initialHandler;
         this._typeHandlersCollection = new Map();
@@ -22,13 +22,13 @@ export default class Handler {
         return this.setDefault(this._initialHandler);
     }
 
-    setDefault(handler: HandlerFunction): this {
+    setDefault(handler: HandlerFunc): this {
         this._defaultHandler = handler;
         this.defaultChangedCallback(handler);
         return this;
     }
 
-    add(type: string, handler: HandlerFunction): this {
+    add(type: string, handler: HandlerFunc): this {
         this.beforeAddCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type) || new Set();
         if (!typeHandlers.has(handler)) {
@@ -39,7 +39,7 @@ export default class Handler {
         return this;
     }
 
-    remove(type: string, handler: HandlerFunction): this {
+    remove(type: string, handler: HandlerFunc): this {
         this.beforeRemoveCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type);
         if (typeHandlers && typeHandlers.has(handler)) {
@@ -92,14 +92,14 @@ export default class Handler {
         return combinedData;
     }
 
-    defaultChangedCallback(handler: HandlerFunction): void {}
+    defaultChangedCallback(handler: HandlerFunc): void {}
 
-    beforeAddCallback(type: string, handler: HandlerFunction): void {}
+    beforeAddCallback(type: string, handler: HandlerFunc): void {}
 
-    afterAddCallback(type: string, handler: HandlerFunction): void {}
+    afterAddCallback(type: string, handler: HandlerFunc): void {}
 
-    beforeRemoveCallback(type: string, handler: HandlerFunction): void {}
+    beforeRemoveCallback(type: string, handler: HandlerFunc): void {}
 
-    afterRemoveCallback(type: string, handler: HandlerFunction): void {}
+    afterRemoveCallback(type: string, handler: HandlerFunc): void {}
 
 }
