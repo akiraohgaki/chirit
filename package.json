@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/akiraohgaki/chirit.git"
   },
-  "main": "dist/Chirit.js",
+  "main": "dist/chirit.js",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w"
