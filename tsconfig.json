@@ -1,16 +1,23 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "target": "ES2015",
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
     "allowJs": false,
     "declaration": true,
     "sourceMap": true,
     "removeComments": true,
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "Node",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "outDir": "./dist"
   },
   "include": [
     "src/**/*"
