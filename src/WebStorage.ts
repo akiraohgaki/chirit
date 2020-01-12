@@ -48,12 +48,17 @@ export default class WebStorage {
     getItem(key: string): any {
         const value = this._storage.getItem(this._prefix + key);
         if (value) {
-            const deserializedValue = JSON.parse(value);
-            if (deserializedValue
-                && deserializedValue._key === key
-                && deserializedValue._value !== undefined
-            ) {
-                return deserializedValue._value;
+            try {
+                const deserializedValue = JSON.parse(value);
+                if (deserializedValue
+                    && deserializedValue._key === key
+                    && deserializedValue._value !== undefined
+                ) {
+                    return deserializedValue._value;
+                }
+            }
+            catch {
+                return value;
             }
             return value;
         }
