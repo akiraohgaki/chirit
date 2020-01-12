@@ -148,17 +148,17 @@ export default class Component extends HTMLElement {
         return [];
     }
 
-    protected componentAttributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string): void {}
+    protected componentAttributeChangedCallback(_attributeName: string, _oldValue: string, _newValue: string, _namespace: string): void {}
 
     protected componentConnectedCallback(): void {}
 
     protected componentDisconnectedCallback(): void {}
 
-    protected componentAdoptedCallback(oldDocument: Node, newDocument: Node): void {}
+    protected componentAdoptedCallback(_oldDocument: Node, _newDocument: Node): void {}
 
-    protected componentStateChangedCallback(oldState: DataDict, newState: DataDict): void {}
+    protected componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void {}
 
-    protected componentContentChangedCallback(oldContent: Node, newContent: Node): void {}
+    protected componentContentChangedCallback(_oldContent: Node, _newContent: Node): void {}
 
     protected componentUpdatedCallback(): void {}
 

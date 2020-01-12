@@ -92,14 +92,14 @@ export default class Handler {
         return combinedData;
     }
 
-    defaultChangedCallback(handler: HandlerFunc): void {}
+    defaultChangedCallback(_handler: HandlerFunc): void {}
 
-    beforeAddCallback(type: string, handler: HandlerFunc): void {}
+    beforeAddCallback(_type: string, _handler: HandlerFunc): void {}
 
-    afterAddCallback(type: string, handler: HandlerFunc): void {}
+    afterAddCallback(_type: string, _handler: HandlerFunc): void {}
 
-    beforeRemoveCallback(type: string, handler: HandlerFunc): void {}
+    beforeRemoveCallback(_type: string, _handler: HandlerFunc): void {}
 
-    afterRemoveCallback(type: string, handler: HandlerFunc): void {}
+    afterRemoveCallback(_type: string, _handler: HandlerFunc): void {}
 
 }
