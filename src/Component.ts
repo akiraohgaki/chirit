@@ -1,10 +1,14 @@
+interface DataDict {
+    [key: string]: any;
+}
+
 export default class Component extends HTMLElement {
 
     static define(name: string, options?: ElementDefinitionOptions): void {
         window.customElements.define(name, this, options);
     }
 
-    private _state: object;
+    private _state: DataDict;
     private _shadowRoot: ShadowRoot | null;
     private _updateCount: number;
 
@@ -23,15 +27,15 @@ export default class Component extends HTMLElement {
         return this._shadowRoot || this.shadowRoot || this;
     }
 
-    set state(state: object) {
+    set state(state: DataDict) {
         this.setState(state);
     }
 
-    get state(): object {
+    get state(): DataDict {
         return this.getState();
     }
 
-    setState(state: object): void {
+    setState(state: DataDict): void {
         const oldState = {...this._state};
         this._state = state;
         const newState = {...this._state};
@@ -44,12 +48,12 @@ export default class Component extends HTMLElement {
         //}
     }
 
-    getState(): object {
+    getState(): DataDict {
         return this._state;
     }
 
-    dispatch(type: string, data: object = {}): void {
-        this.dispatchEvent(new CustomEvent(type, {
+    dispatch(type: string, data: DataDict = {}): boolean {
+        return this.dispatchEvent(new CustomEvent(type, {
             detail: data,
             bubbles: true,
             composed: true
@@ -93,7 +97,7 @@ export default class Component extends HTMLElement {
         this.componentUpdatedCallback();
     }
 
-    // Abstract methods
+    // Abstractable methods
 
     protected initShadow(): void {
         this.enableShadow();
@@ -152,7 +156,7 @@ export default class Component extends HTMLElement {
 
     protected componentAdoptedCallback(oldDocument: Node, newDocument: Node): void {}
 
-    protected componentStateChangedCallback(oldState: object, newState: object): void {}
+    protected componentStateChangedCallback(oldState: DataDict, newState: DataDict): void {}
 
     protected componentContentChangedCallback(oldContent: Node, newContent: Node): void {}
 

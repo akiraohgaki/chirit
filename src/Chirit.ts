@@ -4,4 +4,10 @@ import Handler from './Handler.js';
 import WebStorage from './WebStorage.js';
 import Utility from './Utility.js';
 
-export default {Component, StateManager, Handler, WebStorage, Utility};
+export default {
+    Component,
+    StateManager,
+    Handler,
+    WebStorage,
+    Utility
+};

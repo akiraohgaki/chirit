@@ -1,9 +1,13 @@
+interface QueryStringDict {
+    [key: string]: string;
+}
+
 export default class Utility {
 
-    static parseQueryString(queryString: string = window.location.search): object {
+    static parseQueryString(queryString: string = window.location.search): QueryStringDict {
         queryString = queryString.split('?').pop() || '';
 
-        const params: {[key: string]: string} = {};
+        const params: QueryStringDict = {};
         if (queryString) {
             const queries = queryString.split('&');
             for (const query of queries) {

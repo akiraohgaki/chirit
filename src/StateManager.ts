@@ -1,9 +1,13 @@
 import Handler from './Handler.js';
 
+interface DataDict {
+    [key: string]: any;
+}
+
 export default class StateManager {
 
     private _target: Node;
-    private _state: Map<string, object>;
+    private _state: Map<string, DataDict>;
     private _eventHandler: Handler;
     private _actionHandler: Handler;
     private _stateHandler: Handler;
@@ -55,7 +59,7 @@ export default class StateManager {
         return this._target;
     }
 
-    get state(): Map<string, object> {
+    get state(): Map<string, DataDict> {
         return this._state;
     }
 
@@ -75,11 +79,11 @@ export default class StateManager {
         return this._viewHandler;
     }
 
-    dispatch(type: string, data: object = {}): void {
-        this._target.dispatchEvent(new CustomEvent(type, {detail: data}));
+    dispatch(type: string, data: DataDict = {}): boolean {
+        return this._target.dispatchEvent(new CustomEvent(type, {detail: data}));
     }
 
-    private _eventListener(event: CustomEvent<any>): void {
+    private _eventListener(event: CustomEvent<DataDict>): void {
         event.preventDefault();
         event.stopPropagation();
         this._invokeHandlers(event.detail, event.type);
@@ -107,7 +111,7 @@ export default class StateManager {
         }
     }
 
-    private async _invokeHandlers(data: object, type: string): Promise<void> {
+    private async _invokeHandlers(data: DataDict, type: string): Promise<void> {
         try {
             const eventRusult = await this._eventHandler.invoke(data, type);
             if (!eventRusult) {

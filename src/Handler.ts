@@ -1,5 +1,9 @@
+interface DataDict {
+    [key: string]: any;
+}
+
 interface HandlerFunction {
-    (data: object, type: string): object | false
+    (data: DataDict, type: string): DataDict | boolean;
 }
 
 export default class Handler {
@@ -38,7 +42,8 @@ export default class Handler {
     remove(type: string, handler: HandlerFunction): this {
         this.beforeRemoveCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type);
-        if (typeHandlers && typeHandlers.delete(handler)) {
+        if (typeHandlers && typeHandlers.has(handler)) {
+            typeHandlers.delete(handler);
             if (typeHandlers.size) {
                 this._typeHandlersCollection.set(type, typeHandlers);
             }
@@ -54,7 +59,7 @@ export default class Handler {
         return this._typeHandlersCollection.has(type);
     }
 
-    async invoke(data: object = {}, type: string = ''): Promise<object | null> {
+    async invoke(data: DataDict = {}, type: string = ''): Promise<DataDict | null> {
         // Wrap registered handlers with Promise and call those promises by Promise.all()
         const promises = [];
         promises.push(new Promise((resolve) => {
