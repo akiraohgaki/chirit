@@ -10,6 +10,7 @@
     "url": "git+https://github.com/akiraohgaki/chirit.git"
   },
   "main": "dist/chirit.js",
+  "types": "dist/chirit.d.ts",
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w"
