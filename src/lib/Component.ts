@@ -1,6 +1,4 @@
-interface DataDict {
-    [key: string]: any;
-}
+import {DataDict} from './common';
 
 export default class Component extends HTMLElement {
 

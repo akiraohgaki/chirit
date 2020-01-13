@@ -1,8 +1,5 @@
+import {DataDict} from './common';
 import Handler from './Handler.js';
-
-interface DataDict {
-    [key: string]: any;
-}
 
 export default class StateManager {
 

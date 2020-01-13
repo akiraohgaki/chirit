@@ -1,8 +1,5 @@
+import {DataDict} from '../lib/common';
 import Chirit from '../chirit.js';
-
-interface DataDict {
-    [key: string]: any;
-}
 
 function _testUtility() {
     console.log('----Utility');

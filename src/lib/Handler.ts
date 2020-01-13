@@ -1,6 +1,4 @@
-interface DataDict {
-    [key: string]: any;
-}
+import {DataDict} from './common';
 
 interface HandlerFunc {
     (data: DataDict, type: string): DataDict | boolean;
