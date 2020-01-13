@@ -1,8 +1,8 @@
-import Component from './Component.js';
-import StateManager from './StateManager.js';
-import Handler from './Handler.js';
-import WebStorage from './WebStorage.js';
-import Utility from './Utility.js';
+import Component from './lib/Component.js';
+import StateManager from './lib/StateManager.js';
+import Handler from './lib/Handler.js';
+import WebStorage from './lib/WebStorage.js';
+import Utility from './lib/Utility.js';
 
 export default {
     Component,
