@@ -41,7 +41,7 @@ export default class WebStorage {
     setItem(key: string, value: any): void {
         this._storage.setItem(
             this._prefix + key,
-            JSON.stringify({_key: key, _value: value})
+            JSON.stringify({_k: key, _v: value})
         );
     }
 
@@ -51,16 +51,16 @@ export default class WebStorage {
             try {
                 const deserializedValue = JSON.parse(value);
                 if (deserializedValue
-                    && deserializedValue._key === key
-                    && deserializedValue._value !== undefined
+                    && deserializedValue._k === key
+                    && deserializedValue._v !== undefined
                 ) {
-                    return deserializedValue._value;
+                    return deserializedValue._v;
                 }
+                return value;
             }
             catch {
                 return value;
             }
-            return value;
         }
         return null;
     }
