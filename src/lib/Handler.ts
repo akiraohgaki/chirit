@@ -1,4 +1,4 @@
-import {DataDict} from './common';
+import {DataDict} from './common.js';
 
 interface HandlerFunc {
     (data: DataDict, type: string): DataDict | boolean;

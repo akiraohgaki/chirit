@@ -1,4 +1,4 @@
-import {DataDict} from './common';
+import {DataDict} from './common.js';
 import Handler from './Handler.js';
 
 export default class StateManager {

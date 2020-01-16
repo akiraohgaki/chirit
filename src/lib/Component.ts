@@ -1,4 +1,4 @@
-import {DataDict} from './common';
+import {DataDict} from './common.js';
 
 export default class Component extends HTMLElement {
 
