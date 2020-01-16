@@ -1,10 +1,12 @@
 import {DataDict} from './common.js';
 import Handler from './Handler.js';
 
+type StateCollection = Map<string, DataDict>;
+
 export default class StateManager {
 
     private _target: Node;
-    private _state: Map<string, DataDict>;
+    private _state: StateCollection;
     private _eventHandler: Handler;
     private _actionHandler: Handler;
     private _stateHandler: Handler;
@@ -56,7 +58,7 @@ export default class StateManager {
         return this._target;
     }
 
-    get state(): Map<string, DataDict> {
+    get state(): StateCollection {
         return this._state;
     }
 
