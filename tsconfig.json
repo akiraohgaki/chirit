@@ -8,7 +8,6 @@
     ],
     "allowJs": false,
     "declaration": true,
-    "declarationMap": true,
     "sourceMap": true,
     "removeComments": true,
     "strict": true,
