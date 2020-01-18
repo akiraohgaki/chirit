@@ -6,8 +6,8 @@ export default function() {
 
     console.log(Chirit.Utility.convertByteToHumanReadable(10000000000000000000000000));
 
-    console.log(Chirit.Utility.convertDatetimeToHumanReadable('2045-01-01'));
-    console.log(Chirit.Utility.convertDatetimeToHumanReadable(Date.now() - 1000000));
+    console.log(Chirit.Utility.convertDatetimeToHumanReadable('3000-01-01'));
+    console.log(Chirit.Utility.convertDatetimeToHumanReadable(Date.now() - 86400000));
     console.log(Chirit.Utility.convertDatetimeToHumanReadable(new Date()));
 
     console.log(Chirit.Utility.generateRandomString());

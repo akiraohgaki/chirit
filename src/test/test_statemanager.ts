@@ -1,7 +1,12 @@
 import Chirit from '../chirit.js';
 
 export default function() {
-    const stateManager = new Chirit.StateManager('body');
+    const element = document.createElement('div');
+    const id = `${Date.now()}`;
+    element.setAttribute('data-statemanager', id);
+    document.body.appendChild(element);
+
+    const stateManager = new Chirit.StateManager(`[data-statemanager="${id}"]`);
 
     console.log(stateManager.target);
 

@@ -61,5 +61,4 @@ export default async function() {
 
     const resultB2 = await handler.invoke({dummy: true}, 'B');
     console.log(resultB2);
-
 }

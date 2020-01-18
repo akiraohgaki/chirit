@@ -20,10 +20,25 @@ class TestComponent extends Chirit.Component {
         this.setContent(template);
 
         console.log(this.getContent());
+
+        this.contentRoot.addEventListener('click', (event) => {
+            const target = event.target as Element;
+            if (target.closest('[data-change="attribute"]')) {
+                this.setAttribute('text', `${new Date}`);
+            }
+            else if (target.closest('[data-change="state"]')) {
+                this.setState({text: `${new Date}`});
+            }
+        }, false);
     }
 
     template() {
-        return `<p>${this.getAttribute('text') || this.state.text}</p>`;
+        return `
+        <p>${this.getAttribute('text')}</p>
+        <p>${this.state.text}</p>
+        <button data-change="attribute">Change attribute</button>
+        <button data-change="state">Change state</button>
+        `;
     }
 
     static get componentObservedAttributes() {
@@ -61,12 +76,10 @@ class TestComponent extends Chirit.Component {
 
 }
 
-export default function() {
-    TestComponent.define('test-component');
+TestComponent.define('test-component');
 
-    if (!document.querySelector('test-component')) {
-        const template = document.createElement('template');
-        template.innerHTML = '<test-component text="Test"></test-component>';
-        document.body.appendChild(template.content);
-    }
+export default function() {
+    const template = document.createElement('template');
+    template.innerHTML = '<test-component text="Test"></test-component>';
+    document.body.appendChild(template.content);
 }
