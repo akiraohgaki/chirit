@@ -18,7 +18,6 @@ class TestComponent extends Chirit.Component {
         const template = document.createElement('template');
         template.innerHTML = `<p>${this.state.text}</p>`;
         this.setContent(template.content);
-
         console.log(this.getContent());
 
         this.contentRoot.addEventListener('click', (event) => {
