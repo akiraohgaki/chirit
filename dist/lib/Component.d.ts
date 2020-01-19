@@ -1,0 +1,35 @@
+import { DataDict } from './common.js';
+export default class Component extends HTMLElement {
+    static define(name: string, options?: ElementDefinitionOptions): void;
+    private _shadowRoot;
+    private _state;
+    private _updateCount;
+    constructor();
+    get contentRoot(): ShadowRoot | this;
+    set state(state: DataDict);
+    get state(): DataDict;
+    setState(state: DataDict): void;
+    getState(): DataDict;
+    setContent(content: DocumentFragment): void;
+    getContent(): DocumentFragment;
+    enableShadow(options?: ShadowRootInit): void;
+    dispatch(type: string, data?: DataDict): boolean;
+    private _update;
+    protected initShadow(): void;
+    protected init(): void;
+    template(): HTMLTemplateElement | string;
+    render(): void;
+    static get observedAttributes(): Array<string>;
+    attributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string): void;
+    connectedCallback(): void;
+    disconnectedCallback(): void;
+    adoptedCallback(oldDocument: Document, newDocument: Document): void;
+    static get componentObservedAttributes(): Array<string>;
+    componentAttributeChangedCallback(_attributeName: string, _oldValue: string, _newValue: string, _namespace: string): void;
+    componentConnectedCallback(): void;
+    componentDisconnectedCallback(): void;
+    componentAdoptedCallback(_oldDocument: Document, _newDocument: Document): void;
+    componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void;
+    componentContentChangedCallback(_oldContent: DocumentFragment, _newContent: DocumentFragment): void;
+    componentUpdatedCallback(): void;
+}
