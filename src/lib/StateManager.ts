@@ -5,14 +5,14 @@ type StateCollection = Map<string, DataDict>;
 
 export default class StateManager {
 
-    private _target: Node;
+    private _target: EventTarget;
     private _state: StateCollection;
     private _eventHandler: Handler;
     private _actionHandler: Handler;
     private _stateHandler: Handler;
     private _viewHandler: Handler;
 
-    constructor(target: Node | string = document) {
+    constructor(target: EventTarget | string = document) {
         if (typeof target === 'string') {
             target = document.querySelector(target) || document;
         }
@@ -54,7 +54,7 @@ export default class StateManager {
         this._viewHandler.afterRemoveCallback = this._handlerAfterRemoveCallback;
     }
 
-    get target(): Node {
+    get target(): EventTarget {
         return this._target;
     }
 

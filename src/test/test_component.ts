@@ -17,7 +17,7 @@ class TestComponent extends Chirit.Component {
 
         const template = document.createElement('template');
         template.innerHTML = `<p>${this.state.text}</p>`;
-        this.setContent(template);
+        this.setContent(template.content);
 
         console.log(this.getContent());
 
@@ -57,7 +57,7 @@ class TestComponent extends Chirit.Component {
         console.log('Disconnected');
     }
 
-    componentAdoptedCallback(oldDocument: Node, newDocument: Node) {
+    componentAdoptedCallback(oldDocument: Document, newDocument: Document) {
         console.log(oldDocument, newDocument);
     }
 
@@ -65,7 +65,7 @@ class TestComponent extends Chirit.Component {
         console.log(oldState, newState);
     }
 
-    componentContentChangedCallback(oldContent: Node, newContent: Node) {
+    componentContentChangedCallback(oldContent: DocumentFragment, newContent: DocumentFragment) {
         console.log(oldContent, newContent);
     }
 

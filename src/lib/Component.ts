@@ -58,15 +58,7 @@ export default class Component extends HTMLElement {
         }));
     }
 
-    protected setContent(content: Node | string): void {
-        if (content instanceof HTMLTemplateElement) {
-            content = content.content;
-        }
-        else if (typeof content === 'string') {
-            const template = document.createElement('template');
-            template.innerHTML = content;
-            content = template.content;
-        }
+    protected setContent(content: DocumentFragment): void {
         const oldContent = this.getContent();
         this.contentRoot.textContent = null;
         this.contentRoot.appendChild(content.cloneNode(true));
@@ -74,15 +66,15 @@ export default class Component extends HTMLElement {
         this.componentContentChangedCallback(oldContent, newContent);
     }
 
-    protected getContent(): Node {
-        const documentFragment = document.createDocumentFragment();
+    protected getContent(): DocumentFragment {
+        const content = document.createDocumentFragment();
         if (this.contentRoot.hasChildNodes()) {
             const childNodes = this.contentRoot.childNodes;
             for (let i = 0; i < childNodes.length; i++) {
-                documentFragment.appendChild(childNodes[i].cloneNode(true));
+                content.appendChild(childNodes[i].cloneNode(true));
             }
         }
-        return documentFragment;
+        return content;
     }
 
     protected enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
@@ -103,12 +95,18 @@ export default class Component extends HTMLElement {
 
     protected init(): void {}
 
-    protected template(): Node | string {
+    protected template(): HTMLTemplateElement | string {
         return '';
     }
 
     protected render(): void {
-        this.setContent(this.template());
+        let template = this.template();
+        if (typeof template === 'string') {
+            const templateElement = document.createElement('template');
+            templateElement.innerHTML = template;
+            template = templateElement;
+        }
+        this.setContent(template.content);
     }
 
     // Lifecycle callbacks
@@ -135,7 +133,7 @@ export default class Component extends HTMLElement {
         this.componentDisconnectedCallback();
     }
 
-    adoptedCallback(oldDocument: Node, newDocument: Node): void {
+    adoptedCallback(oldDocument: Document, newDocument: Document): void {
         this.componentAdoptedCallback(oldDocument, newDocument);
         if (!this._updateCount) {
             this._update();
@@ -152,11 +150,11 @@ export default class Component extends HTMLElement {
 
     protected componentDisconnectedCallback(): void {}
 
-    protected componentAdoptedCallback(_oldDocument: Node, _newDocument: Node): void {}
+    protected componentAdoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
     protected componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void {}
 
-    protected componentContentChangedCallback(_oldContent: Node, _newContent: Node): void {}
+    protected componentContentChangedCallback(_oldContent: DocumentFragment, _newContent: DocumentFragment): void {}
 
     protected componentUpdatedCallback(): void {}
 
