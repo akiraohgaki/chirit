@@ -6,15 +6,15 @@ export default class Component extends HTMLElement {
         window.customElements.define(name, this, options);
     }
 
-    private _state: DataDict;
     private _shadowRoot: ShadowRoot | null;
+    private _state: DataDict;
     private _updateCount: number;
 
     constructor() {
         super();
 
-        this._state = {};
         this._shadowRoot = null;
+        this._state = {};
         this._updateCount = 0;
 
         this.initShadow();
@@ -41,7 +41,8 @@ export default class Component extends HTMLElement {
         if (this._updateCount) {
             this._update();
         }
-        //if (this._updateCount && JSON.stringify(oldState) !== JSON.stringify(newState)) {
+        // Check the state difference if possible
+        //if (this._updateCount && this._checkStateDifference(oldState, newState)) {
         //    this._update();
         //}
     }
@@ -50,15 +51,7 @@ export default class Component extends HTMLElement {
         return this._state;
     }
 
-    dispatch(type: string, data: DataDict = {}): boolean {
-        return this.dispatchEvent(new CustomEvent(type, {
-            detail: data,
-            bubbles: true,
-            composed: true
-        }));
-    }
-
-    protected setContent(content: DocumentFragment): void {
+    setContent(content: DocumentFragment): void {
         const oldContent = this.getContent();
         this.contentRoot.textContent = null;
         this.contentRoot.appendChild(content.cloneNode(true));
@@ -66,7 +59,7 @@ export default class Component extends HTMLElement {
         this.componentContentChangedCallback(oldContent, newContent);
     }
 
-    protected getContent(): DocumentFragment {
+    getContent(): DocumentFragment {
         const content = document.createDocumentFragment();
         if (this.contentRoot.hasChildNodes()) {
             const childNodes = this.contentRoot.childNodes;
@@ -77,8 +70,16 @@ export default class Component extends HTMLElement {
         return content;
     }
 
-    protected enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
+    enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
         this._shadowRoot = this.attachShadow(options);
+    }
+
+    dispatch(type: string, data: DataDict = {}): boolean {
+        return this.dispatchEvent(new CustomEvent(type, {
+            detail: data,
+            bubbles: true,
+            composed: true
+        }));
     }
 
     private _update(): void {
@@ -87,7 +88,7 @@ export default class Component extends HTMLElement {
         this.componentUpdatedCallback();
     }
 
-    // Abstractable methods
+    // Overridable methods
 
     protected initShadow(): void {
         this.enableShadow();
@@ -95,11 +96,11 @@ export default class Component extends HTMLElement {
 
     protected init(): void {}
 
-    protected template(): HTMLTemplateElement | string {
+    template(): HTMLTemplateElement | string {
         return '';
     }
 
-    protected render(): void {
+    render(): void {
         let template = this.template();
         if (typeof template === 'string') {
             const templateElement = document.createElement('template');
@@ -109,7 +110,7 @@ export default class Component extends HTMLElement {
         this.setContent(template.content);
     }
 
-    // Lifecycle callbacks
+    // Lifecycle methods
 
     static get observedAttributes(): Array<string> {
         return this.componentObservedAttributes;
@@ -144,18 +145,18 @@ export default class Component extends HTMLElement {
         return [];
     }
 
-    protected componentAttributeChangedCallback(_attributeName: string, _oldValue: string, _newValue: string, _namespace: string): void {}
+    componentAttributeChangedCallback(_attributeName: string, _oldValue: string, _newValue: string, _namespace: string): void {}
 
-    protected componentConnectedCallback(): void {}
+    componentConnectedCallback(): void {}
 
-    protected componentDisconnectedCallback(): void {}
+    componentDisconnectedCallback(): void {}
 
-    protected componentAdoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
+    componentAdoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
-    protected componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void {}
+    componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void {}
 
-    protected componentContentChangedCallback(_oldContent: DocumentFragment, _newContent: DocumentFragment): void {}
+    componentContentChangedCallback(_oldContent: DocumentFragment, _newContent: DocumentFragment): void {}
 
-    protected componentUpdatedCallback(): void {}
+    componentUpdatedCallback(): void {}
 
 }
