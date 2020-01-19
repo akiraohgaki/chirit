@@ -1,31 +1,24 @@
-/**
- * Chirit
- *
- * @author      Akira Ohgaki <akiraohgaki@gmail.com>
- * @copyright   2018, Akira Ohgaki
- * @license     https://opensource.org/licenses/BSD-2-Clause
- * @link        https://github.com/akiraohgaki/chirit
- */
+interface QueryStringDict {
+    [key: string]: string;
+}
 
 export default class Utility {
 
-    static parseQueryString() {
-        const params = {};
-        if (window.location.search.length > 1) {
-            const queries = window.location.search.substring(1).split('&');
+    static parseQueryString(queryString: string = window.location.search): QueryStringDict {
+        queryString = queryString.split('?').pop() || '';
+
+        const params: QueryStringDict = {};
+        if (queryString) {
+            const queries = queryString.split('&');
             for (const query of queries) {
-                const kv = query.split('=');
-                const key = decodeURIComponent(kv[0]);
-                const value = (kv[1] !== undefined) ? decodeURIComponent(kv[1]) : '';
-                params[key] = value;
+                const [key, value = ''] = query.split('=');
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
             }
         }
         return params;
     }
 
-    static convertByteToHumanReadable(byte) {
-        byte = parseFloat(byte);
-
+    static convertByteToHumanReadable(byte: number): string {
         const kb = 1024;
         const mb = 1024 * kb;
         const gb = 1024 * mb;
@@ -66,11 +59,9 @@ export default class Utility {
         return text;
     }
 
-    static convertDatetimeToHumanReadable(datetime) {
-        // "datetime" should be ISO 8601 formatted string
-        const today = new Date();
+    static convertDatetimeToHumanReadable(datetime: string | number | Date): string {
         const date = new Date(datetime);
-        const timeDelta = today.getTime() - date.getTime();
+        const today = new Date();
 
         const second = 1000;
         const minute = 60 * second;
@@ -80,8 +71,19 @@ export default class Utility {
         const month = 30 * day;
         const year = 365 * day;
 
+        let timeDelta = 0;
+        let timeExpression = '';
         let timeDistance = 0;
         let timeUnit = '';
+
+        if (date.getTime() < today.getTime()) {
+            timeDelta = today.getTime() - date.getTime();
+            timeExpression = 'ago';
+        }
+        else if (date.getTime() > today.getTime()) {
+            timeDelta = date.getTime() - today.getTime();
+            timeExpression = 'later';
+        }
 
         if (timeDelta < minute) {
             timeDistance = timeDelta / second;
@@ -119,17 +121,15 @@ export default class Utility {
             text = 'Just now';
         }
         else if (timeDistance === 1) {
-            text = `${timeDistance} ${timeUnit} ago`;
+            text = `${timeDistance} ${timeUnit} ${timeExpression}`;
         }
         else if (timeDistance > 1) {
-            text = `${timeDistance} ${timeUnit}s ago`;
+            text = `${timeDistance} ${timeUnit}s ${timeExpression}`;
         }
         return text;
     }
 
-    static generateRandomString(length = 16, addition = '') {
-        length = parseInt(length, 10);
-
+    static generateRandomString(length: number = 16, addition: string = ''): string {
         const strings = '0123456789'
             + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
             + 'abcdefghijklmnopqrstuvwxyz'

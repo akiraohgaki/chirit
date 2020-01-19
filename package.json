@@ -5,6 +5,17 @@
   "author": "Akira Ohgaki",
   "license": "BSD-2-Clause",
   "homepage": "https://github.com/akiraohgaki/chirit",
-  "repository": "https://github.com/akiraohgaki/chirit",
-  "main": "Chirit.js"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akiraohgaki/chirit.git"
+  },
+  "main": "dist/chirit.js",
+  "types": "dist/chirit.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w"
+  },
+  "devDependencies": {
+    "typescript": "*"
+  }
 }
