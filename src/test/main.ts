@@ -1,4 +1,5 @@
 import test_component from './test_component.js';
+import test_nodecontent from './test_nodecontent.js';
 import test_statemanager from './test_statemanager.js';
 import test_handler from './test_handler.js';
 import test_webstorage from './test_webstorage.js';
@@ -13,6 +14,7 @@ function createButton(text: string, eventListener: EventListener): HTMLButtonEle
 
 const target = document.body;
 target.appendChild(createButton('test_component', test_component));
+target.appendChild(createButton('test_nodecontent', test_nodecontent));
 target.appendChild(createButton('test_statemanager', test_statemanager));
 target.appendChild(createButton('test_handler', test_handler));
 target.appendChild(createButton('test_webstorage', test_webstorage));
