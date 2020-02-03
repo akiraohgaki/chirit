@@ -3,7 +3,7 @@ import Chirit from '../chirit.js';
 class TestComponent extends Chirit.Component {
 
     initShadow() {
-        this.enableShadow({mode: 'closed'});
+        this.attachShadow({mode: 'closed'});
     }
 
     init() {

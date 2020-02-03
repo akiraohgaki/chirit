@@ -7,14 +7,12 @@ export default class Component extends HTMLElement {
         window.customElements.define(name, this, options);
     }
 
-    private _shadowRoot: ShadowRoot | null;
     private _state: DataDict;
     private _updateCount: number;
 
     constructor() {
         super();
 
-        this._shadowRoot = null;
         this._state = {};
         this._updateCount = 0;
 
@@ -23,7 +21,7 @@ export default class Component extends HTMLElement {
     }
 
     get contentRoot(): ShadowRoot | this {
-        return this._shadowRoot || this.shadowRoot || this;
+        return this.shadowRoot || this;
     }
 
     set state(state: DataDict) {
@@ -52,10 +50,6 @@ export default class Component extends HTMLElement {
         return this._state;
     }
 
-    enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
-        this._shadowRoot = this.attachShadow(options);
-    }
-
     dispatch(type: string, data: DataDict = {}): boolean {
         return this.contentRoot.dispatchEvent(new CustomEvent(type, {
             detail: data,
@@ -73,7 +67,7 @@ export default class Component extends HTMLElement {
     // Overridable methods
 
     protected initShadow(): void {
-        this.enableShadow();
+        this.attachShadow({mode: 'open'});
     }
 
     protected init(): void {}
