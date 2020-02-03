@@ -78,7 +78,6 @@ class TestComponent extends Chirit.Component {
 TestComponent.define('test-component');
 
 export default function() {
-    const template = document.createElement('template');
-    template.innerHTML = '<test-component text="Test"></test-component>';
-    document.body.appendChild(template.content);
+    const main = document.getElementById('main') as Element;
+    main.innerHTML = '<test-component text="Test"></test-component>';
 }

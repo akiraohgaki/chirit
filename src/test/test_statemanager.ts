@@ -2,8 +2,6 @@ import Chirit from '../chirit.js';
 
 export default function() {
     const element = document.createElement('div');
-    element.id = `statemanager-${Date.now()}`;
-    document.body.appendChild(element);
 
     const stateManager = new Chirit.StateManager(element);
 

@@ -1,4 +1,5 @@
 import {DataDict} from './common.js';
+import NodeContent from './NodeContent.js';
 
 export default class Component extends HTMLElement {
 
@@ -51,23 +52,17 @@ export default class Component extends HTMLElement {
         return this._state;
     }
 
-    setContent(content: DocumentFragment): void {
-        const oldContent = this.getContent();
-        this.contentRoot.textContent = null;
-        this.contentRoot.appendChild(content.cloneNode(true));
-        const newContent = this.getContent();
+    setContent(content: Node | NodeList | string): void {
+        const nodeContent = new NodeContent(this.contentRoot);
+        const oldContent = nodeContent.get();
+        nodeContent.update(content);
+        const newContent = nodeContent.get();
         this.componentContentChangedCallback(oldContent, newContent);
     }
 
     getContent(): DocumentFragment {
-        const content = document.createDocumentFragment();
-        if (this.contentRoot.hasChildNodes()) {
-            const childNodes = this.contentRoot.childNodes;
-            for (let i = 0; i < childNodes.length; i++) {
-                content.appendChild(childNodes[i].cloneNode(true));
-            }
-        }
-        return content;
+        const nodeContent = new NodeContent(this.contentRoot);
+        return nodeContent.get();
     }
 
     enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
@@ -96,18 +91,12 @@ export default class Component extends HTMLElement {
 
     protected init(): void {}
 
-    template(): HTMLTemplateElement | string {
+    template(): Node | NodeList | string {
         return '';
     }
 
     render(): void {
-        let template = this.template();
-        if (typeof template === 'string') {
-            const templateElement = document.createElement('template');
-            templateElement.innerHTML = template;
-            template = templateElement;
-        }
-        this.setContent(template.content);
+        this.setContent(this.template());
     }
 
     // Lifecycle methods
