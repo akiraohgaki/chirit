@@ -57,11 +57,6 @@ export default class Component extends HTMLElement {
         nodeContent.update(content);
     }
 
-    getContent(): DocumentFragment {
-        const nodeContent = new NodeContent(this.contentRoot);
-        return nodeContent.get();
-    }
-
     enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
         this._shadowRoot = this.attachShadow(options);
     }
