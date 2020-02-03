@@ -15,10 +15,6 @@ class TestComponent extends Chirit.Component {
         this.setState({text: 'Test'});
         console.log(this.getState());
 
-        const template = document.createElement('template');
-        template.innerHTML = `<p>${this.state.text}</p>`;
-        this.setContent(template.content);
-
         this.contentRoot.addEventListener('click', (event) => {
             const target = event.target as Element;
             if (target.closest('[data-change="attribute"]')) {
@@ -27,7 +23,7 @@ class TestComponent extends Chirit.Component {
             else if (target.closest('[data-change="state"]')) {
                 this.setState({text: `${new Date}`});
             }
-        }, false);
+        });
     }
 
     template() {

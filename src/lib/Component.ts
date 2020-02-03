@@ -42,7 +42,7 @@ export default class Component extends HTMLElement {
         if (this._updateCount) {
             this._update();
         }
-        // Check the state difference if possible
+        // Check if the state difference
         //if (this._updateCount && this._checkStateDifference(oldState, newState)) {
         //    this._update();
         //}
@@ -50,11 +50,6 @@ export default class Component extends HTMLElement {
 
     getState(): DataDict {
         return this._state;
-    }
-
-    setContent(content: Node | NodeList | string): void {
-        const nodeContent = new NodeContent(this.contentRoot);
-        nodeContent.update(content);
     }
 
     enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
@@ -88,7 +83,8 @@ export default class Component extends HTMLElement {
     }
 
     render(): void {
-        this.setContent(this.template());
+        const nodeContent = new NodeContent(this.contentRoot);
+        nodeContent.update(this.template());
     }
 
     // Lifecycle methods
