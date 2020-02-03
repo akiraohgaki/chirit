@@ -16,10 +16,6 @@ const handlers = new Map([
 
 const template = document.createElement('template');
 template.innerHTML = `
-<style>
-#nav {background-color: #eeeeee;}
-#nav button {margin: 10px;}
-</style>
 <nav id="nav">
 ${(() => {
     let buttons = '';
@@ -43,7 +39,7 @@ nav.addEventListener('click', (event) => {
         const handler = handlers.get(element.getAttribute('data-handler') as string);
         if (handler) {
             main.textContent = null;
-            console.clear();
+            console.log('--------------------------------');
             handler();
         }
     }
