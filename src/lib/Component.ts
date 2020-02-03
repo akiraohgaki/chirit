@@ -57,7 +57,7 @@ export default class Component extends HTMLElement {
     }
 
     dispatch(type: string, data: DataDict = {}): boolean {
-        return this.dispatchEvent(new CustomEvent(type, {
+        return this.contentRoot.dispatchEvent(new CustomEvent(type, {
             detail: data,
             bubbles: true,
             composed: true

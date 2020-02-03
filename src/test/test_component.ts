@@ -12,12 +12,8 @@ class TestComponent extends Chirit.Component {
         this.state = {dummy: true};
         console.log(this.state);
 
-        this.setState({text: 'Test'});
+        this.setState({text: 'State'});
         console.log(this.getState());
-
-        this.contentRoot.addEventListener('dummy', (event) => {
-            console.log(event);
-        });
 
         this.contentRoot.addEventListener('click', (event) => {
             const target = event.target as Element;
@@ -65,7 +61,6 @@ class TestComponent extends Chirit.Component {
 
     componentUpdatedCallback() {
         console.log('Updated');
-        console.log(this.dispatch('dummy', {dummy: true}));
     }
 
 }
@@ -74,5 +69,18 @@ TestComponent.define('test-component');
 
 export default function() {
     const main = document.getElementById('main') as Element;
-    main.innerHTML = '<test-component text="Test"></test-component>';
+    main.innerHTML = `
+    <div id="component-wrapper">
+    <test-component text="Attribute"></test-component>
+    </div>
+    `;
+
+    const wrapper = document.getElementById('component-wrapper') as Element;
+    const testComponent = wrapper.querySelector('test-component') as TestComponent;
+
+    wrapper.addEventListener('dummy', (event) => {
+        console.log(event);
+    });
+
+    console.log(testComponent.dispatch('dummy', {dummy: true}));
 }
