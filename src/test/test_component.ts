@@ -15,6 +15,10 @@ class TestComponent extends Chirit.Component {
         this.setState({text: 'Test'});
         console.log(this.getState());
 
+        this.contentRoot.addEventListener('dummy', (event) => {
+            console.log(event);
+        });
+
         this.contentRoot.addEventListener('click', (event) => {
             const target = event.target as Element;
             if (target.closest('[data-change="attribute"]')) {
