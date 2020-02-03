@@ -64,10 +64,6 @@ class TestComponent extends Chirit.Component {
         console.log(oldState, newState);
     }
 
-    componentContentChangedCallback(oldContent: DocumentFragment, newContent: DocumentFragment) {
-        console.log(oldContent, newContent);
-    }
-
     componentUpdatedCallback() {
         console.log('Updated');
         console.log(this.dispatch('dummy', {dummy: true}));

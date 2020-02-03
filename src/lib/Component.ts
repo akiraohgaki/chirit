@@ -54,10 +54,7 @@ export default class Component extends HTMLElement {
 
     setContent(content: Node | NodeList | string): void {
         const nodeContent = new NodeContent(this.contentRoot);
-        const oldContent = nodeContent.get();
         nodeContent.update(content);
-        const newContent = nodeContent.get();
-        this.componentContentChangedCallback(oldContent, newContent);
     }
 
     getContent(): DocumentFragment {
@@ -143,8 +140,6 @@ export default class Component extends HTMLElement {
     componentAdoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
     componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void {}
-
-    componentContentChangedCallback(_oldContent: DocumentFragment, _newContent: DocumentFragment): void {}
 
     componentUpdatedCallback(): void {}
 
