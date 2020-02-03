@@ -6,6 +6,7 @@ export default function() {
     <textarea id="nodecontent-src" style="width: 600px; height: 300px;"></textarea>
     <div id="nodecontent-methods">
     <button data-method="update">Update</button>
+    <button data-method="update-shallow">Update (shallow)</button>
     <button data-method="set">Set</button>
     <button data-method="get">Get</button>
     <button data-method="clear">Clear</button>
@@ -39,6 +40,7 @@ export default function() {
     console.log(nodeContent.get());
 
     nodeContent.update(template);
+    nodeContent.update(template, false);
     console.log(nodeContent.get());
     nodeContent.update(template.content);
     console.log(nodeContent.get());
@@ -55,6 +57,10 @@ export default function() {
             switch (method) {
                 case 'update': {
                     nodeContent.update(src.value || '');
+                    break;
+                }
+                case 'update-shallow': {
+                    nodeContent.update(src.value || '', false);
                     break;
                 }
                 case 'set': {
