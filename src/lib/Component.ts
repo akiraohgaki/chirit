@@ -78,11 +78,11 @@ export default class Component extends HTMLElement {
 
     protected init(): void {}
 
-    template(): Node | NodeList | string {
+    protected template(): Node | NodeList | string {
         return '';
     }
 
-    render(): void {
+    protected render(): void {
         const nodeContent = new NodeContent(this.contentRoot);
         nodeContent.update(this.template());
     }
