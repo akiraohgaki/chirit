@@ -3,7 +3,7 @@ import Chirit from '../chirit.js';
 class TestComponent extends Chirit.Component {
 
     initShadow() {
-        this.attachShadow({mode: 'closed'});
+        return this.attachShadow({mode: 'closed'});
     }
 
     init() {
@@ -17,11 +17,15 @@ class TestComponent extends Chirit.Component {
 
         this.contentRoot.addEventListener('click', (event) => {
             const target = event.target as Element;
-            if (target.closest('[data-change="attribute"]')) {
-                this.setAttribute('text', `${new Date}`);
-            }
-            else if (target.closest('[data-change="state"]')) {
-                this.setState({text: `${new Date}`});
+            switch (target.getAttribute('data-change')) {
+                case 'attribute': {
+                    this.setAttribute('text', `${new Date}`);
+                    break;
+                }
+                case 'state': {
+                    this.setState({text: `${new Date}`});
+                    break;
+                }
             }
         });
     }
@@ -82,5 +86,6 @@ export default function() {
         console.log(event);
     });
 
+    console.log(testComponent.contentRoot);
     console.log(testComponent.dispatch('dummy', {dummy: true}));
 }

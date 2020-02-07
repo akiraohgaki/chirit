@@ -5,7 +5,7 @@ export default function() {
     main.innerHTML = `
     <textarea id="nodecontent-src" style="width: 600px; height: 300px;"></textarea>
     <div id="nodecontent-methods">
-    <button data-method="update">Update</button>
+    <button data-method="update-deep">Update (deep)</button>
     <button data-method="update-shallow">Update (shallow)</button>
     <button data-method="set">Set</button>
     <button data-method="get">Get</button>
@@ -51,30 +51,26 @@ export default function() {
 
     methods.addEventListener('click', (event) => {
         const target = event.target as Element;
-        const element = target.closest('[data-method]');
-        if (element) {
-            const method = element.getAttribute('data-method') as string;
-            switch (method) {
-                case 'update': {
-                    nodeContent.update(src.value || '');
-                    break;
-                }
-                case 'update-shallow': {
-                    nodeContent.update(src.value || '', false);
-                    break;
-                }
-                case 'set': {
-                    nodeContent.set(src.value || '');
-                    break;
-                }
-                case 'get': {
-                    console.log(nodeContent.get());
-                    break;
-                }
-                case 'clear': {
-                    nodeContent.clear();
-                    break;
-                }
+        switch (target.getAttribute('data-method')) {
+            case 'update-deep': {
+                nodeContent.update(src.value || '', true);
+                break;
+            }
+            case 'update-shallow': {
+                nodeContent.update(src.value || '', false);
+                break;
+            }
+            case 'set': {
+                nodeContent.set(src.value || '');
+                break;
+            }
+            case 'get': {
+                console.log(nodeContent.get());
+                break;
+            }
+            case 'clear': {
+                nodeContent.clear();
+                break;
             }
         }
     });
