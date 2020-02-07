@@ -12,7 +12,7 @@ export default class StateManager {
     private _stateHandler: Handler;
     private _viewHandler: Handler;
 
-    constructor(target: EventTarget = document) {
+    constructor(target: EventTarget) {
         this._target = target;
         this._state = new Map();
 
