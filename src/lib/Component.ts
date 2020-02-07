@@ -108,9 +108,6 @@ export default class Component extends HTMLElement {
 
     adoptedCallback(oldDocument: Document, newDocument: Document): void {
         this.componentAdoptedCallback(oldDocument, newDocument);
-        if (!this._updateCount) {
-            this._update();
-        }
     }
 
     static get componentObservedAttributes(): Array<string> {
