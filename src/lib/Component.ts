@@ -7,21 +7,22 @@ export default class Component extends HTMLElement {
         window.customElements.define(name, this, options);
     }
 
+    private _shadowRoot: ShadowRoot | null;
     private _state: DataDict;
     private _updateCount: number;
 
     constructor() {
         super();
 
+        this._shadowRoot = this.initShadow();
         this._state = {};
         this._updateCount = 0;
 
-        this.initShadow();
         this.init();
     }
 
     get contentRoot(): ShadowRoot | this {
-        return this.shadowRoot || this;
+        return this._shadowRoot || this.shadowRoot || this;
     }
 
     set state(state: DataDict) {
@@ -40,7 +41,7 @@ export default class Component extends HTMLElement {
         if (this._updateCount) {
             this._update();
         }
-        // Check if the state difference
+        // Check if the state is difference
         //if (this._updateCount && this._checkStateDifference(oldState, newState)) {
         //    this._update();
         //}
@@ -66,8 +67,8 @@ export default class Component extends HTMLElement {
 
     // Overridable methods
 
-    protected initShadow(): void {
-        this.attachShadow({mode: 'open'});
+    protected initShadow(): ShadowRoot | null {
+        return this.attachShadow({mode: 'open'});
     }
 
     protected init(): void {}
