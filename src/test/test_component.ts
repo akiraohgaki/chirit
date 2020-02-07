@@ -75,17 +75,23 @@ export default function() {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
     <div id="component-wrapper">
+    <iframe id="component-iframe" style="display: none;"></iframe>
     <test-component text="Attribute"></test-component>
     </div>
     `;
 
     const wrapper = document.getElementById('component-wrapper') as Element;
+    const iframe = document.getElementById('component-iframe') as HTMLIFrameElement;
     const testComponent = wrapper.querySelector('test-component') as TestComponent;
+
+    iframe.contentDocument?.body.appendChild(testComponent);
+    wrapper.appendChild(testComponent);
+
+    console.log(testComponent.contentRoot);
 
     wrapper.addEventListener('dummy', (event) => {
         console.log(event);
     });
 
-    console.log(testComponent.contentRoot);
     console.log(testComponent.dispatch('dummy', {dummy: true}));
 }
