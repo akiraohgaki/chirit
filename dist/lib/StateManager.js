@@ -1,11 +1,8 @@
 import Handler from './Handler.js';
 export default class StateManager {
-    constructor(target = document) {
-        if (typeof target === 'string') {
-            target = document.querySelector(target) || document;
-        }
+    constructor(target) {
         this._target = target;
-        this._state = new Map();
+        this._stateCollection = new Map();
         this._eventHandler = new Handler((data) => {
             return data;
         });
@@ -13,7 +10,7 @@ export default class StateManager {
             return {};
         });
         this._stateHandler = new Handler((data, type) => {
-            this._state.set(type, data);
+            this._stateCollection.set(type, data);
             return data;
         });
         this._viewHandler = new Handler(() => {
@@ -35,7 +32,7 @@ export default class StateManager {
         return this._target;
     }
     get state() {
-        return this._state;
+        return this._stateCollection;
     }
     get eventHandler() {
         return this._eventHandler;
@@ -63,7 +60,7 @@ export default class StateManager {
             && !this._stateHandler.has(type)
             && !this._viewHandler.has(type)) {
             this._target.addEventListener(type, this._eventListener, false);
-            this._state.set(type, {});
+            this._stateCollection.set(type, {});
         }
     }
     _handlerAfterRemoveCallback(type) {
@@ -72,7 +69,7 @@ export default class StateManager {
             && !this._stateHandler.has(type)
             && !this._viewHandler.has(type)) {
             this._target.removeEventListener(type, this._eventListener, false);
-            this._state.delete(type);
+            this._stateCollection.delete(type);
         }
     }
     async _invokeHandlers(data, type) {

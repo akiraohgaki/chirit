@@ -1,4 +1,4 @@
-interface DataDict {
-    [key: string]: any;
+interface Dictionary<T = any> {
+    [key: string]: T;
 }
-export { DataDict };
+export { Dictionary };

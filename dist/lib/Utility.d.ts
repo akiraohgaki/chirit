@@ -1,10 +1,7 @@
-interface QueryStringDict {
-    [key: string]: string;
-}
+import { Dictionary } from './common.js';
 export default class Utility {
-    static parseQueryString(queryString?: string): QueryStringDict;
+    static parseQueryString(queryString?: string): Dictionary<string>;
     static convertByteToHumanReadable(byte: number): string;
     static convertDatetimeToHumanReadable(datetime: string | number | Date): string;
     static generateRandomString(length?: number, addition?: string): string;
 }
-export {};

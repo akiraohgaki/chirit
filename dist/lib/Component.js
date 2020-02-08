@@ -1,10 +1,10 @@
+import NodeContent from './NodeContent.js';
 export default class Component extends HTMLElement {
     constructor() {
         super();
-        this._shadowRoot = null;
+        this._shadowRoot = this.initShadow();
         this._state = {};
         this._updateCount = 0;
-        this.initShadow();
         this.init();
     }
     static define(name, options) {
@@ -31,28 +31,8 @@ export default class Component extends HTMLElement {
     getState() {
         return this._state;
     }
-    setContent(content) {
-        const oldContent = this.getContent();
-        this.contentRoot.textContent = null;
-        this.contentRoot.appendChild(content.cloneNode(true));
-        const newContent = this.getContent();
-        this.componentContentChangedCallback(oldContent, newContent);
-    }
-    getContent() {
-        const content = document.createDocumentFragment();
-        if (this.contentRoot.hasChildNodes()) {
-            const childNodes = this.contentRoot.childNodes;
-            for (let i = 0; i < childNodes.length; i++) {
-                content.appendChild(childNodes[i].cloneNode(true));
-            }
-        }
-        return content;
-    }
-    enableShadow(options = { mode: 'open' }) {
-        this._shadowRoot = this.attachShadow(options);
-    }
     dispatch(type, data = {}) {
-        return this.dispatchEvent(new CustomEvent(type, {
+        return this.contentRoot.dispatchEvent(new CustomEvent(type, {
             detail: data,
             bubbles: true,
             composed: true
@@ -64,20 +44,15 @@ export default class Component extends HTMLElement {
         this.componentUpdatedCallback();
     }
     initShadow() {
-        this.enableShadow();
+        return this.attachShadow({ mode: 'open' });
     }
     init() { }
     template() {
         return '';
     }
     render() {
-        let template = this.template();
-        if (typeof template === 'string') {
-            const templateElement = document.createElement('template');
-            templateElement.innerHTML = template;
-            template = templateElement;
-        }
-        this.setContent(template.content);
+        const nodeContent = new NodeContent(this.contentRoot);
+        nodeContent.update(this.template());
     }
     static get observedAttributes() {
         return this.componentObservedAttributes;
@@ -99,9 +74,6 @@ export default class Component extends HTMLElement {
     }
     adoptedCallback(oldDocument, newDocument) {
         this.componentAdoptedCallback(oldDocument, newDocument);
-        if (!this._updateCount) {
-            this._update();
-        }
     }
     static get componentObservedAttributes() {
         return [];
@@ -111,7 +83,6 @@ export default class Component extends HTMLElement {
     componentDisconnectedCallback() { }
     componentAdoptedCallback(_oldDocument, _newDocument) { }
     componentStateChangedCallback(_oldState, _newState) { }
-    componentContentChangedCallback(_oldContent, _newContent) { }
     componentUpdatedCallback() { }
 }
 //# sourceMappingURL=Component.js.map

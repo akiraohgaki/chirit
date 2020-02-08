@@ -1,21 +1,21 @@
-import { DataDict } from './common.js';
+import { Dictionary } from './common.js';
 import Handler from './Handler.js';
-declare type StateCollection = Map<string, DataDict>;
+declare type StateManagerStateCollection = Map<string, Dictionary<any>>;
 export default class StateManager {
     private _target;
-    private _state;
+    private _stateCollection;
     private _eventHandler;
     private _actionHandler;
     private _stateHandler;
     private _viewHandler;
-    constructor(target?: EventTarget | string);
+    constructor(target: EventTarget);
     get target(): EventTarget;
-    get state(): StateCollection;
+    get state(): StateManagerStateCollection;
     get eventHandler(): Handler;
     get actionHandler(): Handler;
     get stateHandler(): Handler;
     get viewHandler(): Handler;
-    dispatch(type: string, data?: DataDict): boolean;
+    dispatch(type: string, data?: Dictionary<any>): boolean;
     private _eventListener;
     private _handlerBeforeAddCallback;
     private _handlerAfterRemoveCallback;
