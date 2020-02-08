@@ -22,7 +22,7 @@ export default class WebStorage {
         }
     }
 
-    get type(): string {
+    get type(): WebStorageType {
         return this._type;
     }
 

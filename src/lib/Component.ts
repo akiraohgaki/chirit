@@ -1,4 +1,7 @@
-import {DataDict} from './common.js';
+import {Dictionary} from './common.js';
+import NodeContent from './NodeContent.js';
+
+type ComponentTemplate = Node | NodeList | string; // for NodeContent
 
 export default class Component extends HTMLElement {
 
@@ -7,17 +10,16 @@ export default class Component extends HTMLElement {
     }
 
     private _shadowRoot: ShadowRoot | null;
-    private _state: DataDict;
+    private _state: Dictionary<any>;
     private _updateCount: number;
 
     constructor() {
         super();
 
-        this._shadowRoot = null;
+        this._shadowRoot = this.initShadow();
         this._state = {};
         this._updateCount = 0;
 
-        this.initShadow();
         this.init();
     }
 
@@ -25,15 +27,15 @@ export default class Component extends HTMLElement {
         return this._shadowRoot || this.shadowRoot || this;
     }
 
-    set state(state: DataDict) {
+    set state(state: Dictionary<any>) {
         this.setState(state);
     }
 
-    get state(): DataDict {
+    get state(): Dictionary<any> {
         return this.getState();
     }
 
-    setState(state: DataDict): void {
+    setState(state: Dictionary<any>): void {
         const oldState = {...this._state};
         this._state = state;
         const newState = {...this._state};
@@ -41,41 +43,18 @@ export default class Component extends HTMLElement {
         if (this._updateCount) {
             this._update();
         }
-        // Check the state difference if possible
+        // Check if the state is difference
         //if (this._updateCount && this._checkStateDifference(oldState, newState)) {
         //    this._update();
         //}
     }
 
-    getState(): DataDict {
+    getState(): Dictionary<any> {
         return this._state;
     }
 
-    setContent(content: DocumentFragment): void {
-        const oldContent = this.getContent();
-        this.contentRoot.textContent = null;
-        this.contentRoot.appendChild(content.cloneNode(true));
-        const newContent = this.getContent();
-        this.componentContentChangedCallback(oldContent, newContent);
-    }
-
-    getContent(): DocumentFragment {
-        const content = document.createDocumentFragment();
-        if (this.contentRoot.hasChildNodes()) {
-            const childNodes = this.contentRoot.childNodes;
-            for (let i = 0; i < childNodes.length; i++) {
-                content.appendChild(childNodes[i].cloneNode(true));
-            }
-        }
-        return content;
-    }
-
-    enableShadow(options: ShadowRootInit = {mode: 'open'}): void {
-        this._shadowRoot = this.attachShadow(options);
-    }
-
-    dispatch(type: string, data: DataDict = {}): boolean {
-        return this.dispatchEvent(new CustomEvent(type, {
+    dispatch(type: string, data: Dictionary<any> = {}): boolean {
+        return this.contentRoot.dispatchEvent(new CustomEvent(type, {
             detail: data,
             bubbles: true,
             composed: true
@@ -90,24 +69,19 @@ export default class Component extends HTMLElement {
 
     // Overridable methods
 
-    protected initShadow(): void {
-        this.enableShadow();
+    protected initShadow(): ShadowRoot | null {
+        return this.attachShadow({mode: 'open'});
     }
 
     protected init(): void {}
 
-    template(): HTMLTemplateElement | string {
+    protected template(): ComponentTemplate {
         return '';
     }
 
-    render(): void {
-        let template = this.template();
-        if (typeof template === 'string') {
-            const templateElement = document.createElement('template');
-            templateElement.innerHTML = template;
-            template = templateElement;
-        }
-        this.setContent(template.content);
+    protected render(): void {
+        const nodeContent = new NodeContent(this.contentRoot);
+        nodeContent.update(this.template());
     }
 
     // Lifecycle methods
@@ -136,9 +110,6 @@ export default class Component extends HTMLElement {
 
     adoptedCallback(oldDocument: Document, newDocument: Document): void {
         this.componentAdoptedCallback(oldDocument, newDocument);
-        if (!this._updateCount) {
-            this._update();
-        }
     }
 
     static get componentObservedAttributes(): Array<string> {
@@ -153,9 +124,7 @@ export default class Component extends HTMLElement {
 
     componentAdoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
-    componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void {}
-
-    componentContentChangedCallback(_oldContent: DocumentFragment, _newContent: DocumentFragment): void {}
+    componentStateChangedCallback(_oldState: Dictionary<any>, _newState: Dictionary<any>): void {}
 
     componentUpdatedCallback(): void {}
 

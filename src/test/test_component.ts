@@ -3,7 +3,7 @@ import Chirit from '../chirit.js';
 class TestComponent extends Chirit.Component {
 
     initShadow() {
-        this.enableShadow({mode: 'closed'});
+        return this.attachShadow({mode: 'closed'});
     }
 
     init() {
@@ -12,23 +12,22 @@ class TestComponent extends Chirit.Component {
         this.state = {dummy: true};
         console.log(this.state);
 
-        this.setState({text: 'Test'});
+        this.setState({text: 'State'});
         console.log(this.getState());
-
-        const template = document.createElement('template');
-        template.innerHTML = `<p>${this.state.text}</p>`;
-        this.setContent(template.content);
-        console.log(this.getContent());
 
         this.contentRoot.addEventListener('click', (event) => {
             const target = event.target as Element;
-            if (target.closest('[data-change="attribute"]')) {
-                this.setAttribute('text', `${new Date}`);
+            switch (target.getAttribute('data-change')) {
+                case 'attribute': {
+                    this.setAttribute('text', `${new Date}`);
+                    break;
+                }
+                case 'state': {
+                    this.setState({text: `${new Date}`});
+                    break;
+                }
             }
-            else if (target.closest('[data-change="state"]')) {
-                this.setState({text: `${new Date}`});
-            }
-        }, false);
+        });
     }
 
     template() {
@@ -64,13 +63,8 @@ class TestComponent extends Chirit.Component {
         console.log(oldState, newState);
     }
 
-    componentContentChangedCallback(oldContent: DocumentFragment, newContent: DocumentFragment) {
-        console.log(oldContent, newContent);
-    }
-
     componentUpdatedCallback() {
         console.log('Updated');
-        console.log(this.dispatch('dummy', {dummy: true}));
     }
 
 }
@@ -78,7 +72,26 @@ class TestComponent extends Chirit.Component {
 TestComponent.define('test-component');
 
 export default function() {
-    const template = document.createElement('template');
-    template.innerHTML = '<test-component text="Test"></test-component>';
-    document.body.appendChild(template.content);
+    const main = document.getElementById('main') as Element;
+    main.innerHTML = `
+    <div id="component-wrapper">
+    <iframe id="component-iframe" style="display: none;"></iframe>
+    <test-component text="Attribute"></test-component>
+    </div>
+    `;
+
+    const wrapper = document.getElementById('component-wrapper') as Element;
+    const iframe = document.getElementById('component-iframe') as HTMLIFrameElement;
+    const testComponent = wrapper.querySelector('test-component') as TestComponent;
+
+    iframe.contentDocument?.body.appendChild(testComponent);
+    wrapper.appendChild(testComponent);
+
+    console.log(testComponent.contentRoot);
+
+    wrapper.addEventListener('dummy', (event) => {
+        console.log(event);
+    });
+
+    console.log(testComponent.dispatch('dummy', {dummy: true}));
 }

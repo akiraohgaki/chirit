@@ -1,16 +1,16 @@
-import {DataDict} from './common.js';
+import {Dictionary} from './common.js';
 
-interface HandlerFunc {
-    (data: DataDict, type: string): DataDict | boolean;
+interface HandlerFunction {
+    (data: Dictionary<any>, type: string): Dictionary<any> | boolean;
 }
 
 export default class Handler {
 
-    private _initialHandler: HandlerFunc;
-    private _defaultHandler: HandlerFunc;
-    private _typeHandlersCollection: Map<string, Set<HandlerFunc>>;
+    private _initialHandler: HandlerFunction;
+    private _defaultHandler: HandlerFunction;
+    private _typeHandlersCollection: Map<string, Set<HandlerFunction>>;
 
-    constructor(handler: HandlerFunc) {
+    constructor(handler: HandlerFunction) {
         this._initialHandler = handler;
         this._defaultHandler = this._initialHandler;
         this._typeHandlersCollection = new Map();
@@ -20,13 +20,13 @@ export default class Handler {
         return this.setDefault(this._initialHandler);
     }
 
-    setDefault(handler: HandlerFunc): this {
+    setDefault(handler: HandlerFunction): this {
         this._defaultHandler = handler;
         this.defaultChangedCallback(handler);
         return this;
     }
 
-    add(type: string, handler: HandlerFunc): this {
+    add(type: string, handler: HandlerFunction): this {
         this.beforeAddCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type) || new Set();
         if (!typeHandlers.has(handler)) {
@@ -37,7 +37,7 @@ export default class Handler {
         return this;
     }
 
-    remove(type: string, handler: HandlerFunc): this {
+    remove(type: string, handler: HandlerFunction): this {
         this.beforeRemoveCallback(type, handler);
         const typeHandlers = this._typeHandlersCollection.get(type);
         if (typeHandlers && typeHandlers.has(handler)) {
@@ -57,7 +57,7 @@ export default class Handler {
         return this._typeHandlersCollection.has(type);
     }
 
-    async invoke(data: DataDict = {}, type: string = ''): Promise<DataDict | null> {
+    async invoke(data: Dictionary<any> = {}, type: string = ''): Promise<Dictionary<any> | null> {
         // Wrap registered handlers with Promise and call those promises by Promise.all()
         const promises = [];
         promises.push(new Promise((resolve) => {
@@ -90,14 +90,14 @@ export default class Handler {
         return combinedData;
     }
 
-    defaultChangedCallback(_handler: HandlerFunc): void {}
+    defaultChangedCallback(_handler: HandlerFunction): void {}
 
-    beforeAddCallback(_type: string, _handler: HandlerFunc): void {}
+    beforeAddCallback(_type: string, _handler: HandlerFunction): void {}
 
-    afterAddCallback(_type: string, _handler: HandlerFunc): void {}
+    afterAddCallback(_type: string, _handler: HandlerFunction): void {}
 
-    beforeRemoveCallback(_type: string, _handler: HandlerFunc): void {}
+    beforeRemoveCallback(_type: string, _handler: HandlerFunction): void {}
 
-    afterRemoveCallback(_type: string, _handler: HandlerFunc): void {}
+    afterRemoveCallback(_type: string, _handler: HandlerFunction): void {}
 
 }
