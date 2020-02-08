@@ -93,10 +93,6 @@ export default class StateManager {
         }
     }
 
-    dispatch(type: string, data: Dictionary<any> = {}): boolean {
-        return this._target.dispatchEvent(new CustomEvent(type, {detail: data}));
-    }
-
     private _eventListener(event: CustomEvent<Dictionary<any>>): void {
         event.preventDefault();
         event.stopPropagation();
