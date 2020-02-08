@@ -1,12 +1,12 @@
-import {DataDict} from './common.js';
+import {Dictionary} from './common.js';
 import Handler from './Handler.js';
 
-type StateCollection = Map<string, DataDict>;
+type StateManagerStateCollection = Map<string, Dictionary<any>>;
 
 export default class StateManager {
 
     private _target: EventTarget;
-    private _state: StateCollection;
+    private _stateCollection: StateManagerStateCollection;
     private _eventHandler: Handler;
     private _actionHandler: Handler;
     private _stateHandler: Handler;
@@ -14,7 +14,7 @@ export default class StateManager {
 
     constructor(target: EventTarget) {
         this._target = target;
-        this._state = new Map();
+        this._stateCollection = new Map();
 
         this._eventHandler = new Handler((data) => {
             return data;
@@ -25,7 +25,7 @@ export default class StateManager {
         });
 
         this._stateHandler = new Handler((data, type) => {
-            this._state.set(type, data);
+            this._stateCollection.set(type, data);
             return data;
         });
 
@@ -54,8 +54,8 @@ export default class StateManager {
         return this._target;
     }
 
-    get state(): StateCollection {
-        return this._state;
+    get state(): StateManagerStateCollection {
+        return this._stateCollection;
     }
 
     get eventHandler(): Handler {
@@ -74,11 +74,11 @@ export default class StateManager {
         return this._viewHandler;
     }
 
-    dispatch(type: string, data: DataDict = {}): boolean {
+    dispatch(type: string, data: Dictionary<any> = {}): boolean {
         return this._target.dispatchEvent(new CustomEvent(type, {detail: data}));
     }
 
-    private _eventListener(event: CustomEvent<DataDict>): void {
+    private _eventListener(event: CustomEvent<Dictionary<any>>): void {
         event.preventDefault();
         event.stopPropagation();
         this._invokeHandlers(event.detail, event.type);
@@ -91,7 +91,7 @@ export default class StateManager {
             && !this._viewHandler.has(type)
         ) {
             this._target.addEventListener(type, this._eventListener as EventListener, false);
-            this._state.set(type, {});
+            this._stateCollection.set(type, {});
         }
     }
 
@@ -102,11 +102,11 @@ export default class StateManager {
             && !this._viewHandler.has(type)
         ) {
             this._target.removeEventListener(type, this._eventListener as EventListener, false);
-            this._state.delete(type);
+            this._stateCollection.delete(type);
         }
     }
 
-    private async _invokeHandlers(data: DataDict, type: string): Promise<void> {
+    private async _invokeHandlers(data: Dictionary<any>, type: string): Promise<void> {
         try {
             const eventRusult = await this._eventHandler.invoke(data, type);
             if (!eventRusult) {

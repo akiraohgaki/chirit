@@ -1,13 +1,11 @@
-interface QueryStringDict {
-    [key: string]: string;
-}
+import {Dictionary} from './common.js';
 
 export default class Utility {
 
-    static parseQueryString(queryString: string = window.location.search): QueryStringDict {
+    static parseQueryString(queryString: string = window.location.search): Dictionary<string> {
         queryString = queryString.split('?').pop() || '';
 
-        const params: QueryStringDict = {};
+        const params: Dictionary<string> = {};
         if (queryString) {
             const queries = queryString.split('&');
             for (const query of queries) {

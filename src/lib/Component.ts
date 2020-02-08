@@ -1,5 +1,7 @@
-import {DataDict} from './common.js';
+import {Dictionary} from './common.js';
 import NodeContent from './NodeContent.js';
+
+type ComponentTemplate = Node | NodeList | string; // for NodeContent
 
 export default class Component extends HTMLElement {
 
@@ -8,7 +10,7 @@ export default class Component extends HTMLElement {
     }
 
     private _shadowRoot: ShadowRoot | null;
-    private _state: DataDict;
+    private _state: Dictionary<any>;
     private _updateCount: number;
 
     constructor() {
@@ -25,15 +27,15 @@ export default class Component extends HTMLElement {
         return this._shadowRoot || this.shadowRoot || this;
     }
 
-    set state(state: DataDict) {
+    set state(state: Dictionary<any>) {
         this.setState(state);
     }
 
-    get state(): DataDict {
+    get state(): Dictionary<any> {
         return this.getState();
     }
 
-    setState(state: DataDict): void {
+    setState(state: Dictionary<any>): void {
         const oldState = {...this._state};
         this._state = state;
         const newState = {...this._state};
@@ -47,11 +49,11 @@ export default class Component extends HTMLElement {
         //}
     }
 
-    getState(): DataDict {
+    getState(): Dictionary<any> {
         return this._state;
     }
 
-    dispatch(type: string, data: DataDict = {}): boolean {
+    dispatch(type: string, data: Dictionary<any> = {}): boolean {
         return this.contentRoot.dispatchEvent(new CustomEvent(type, {
             detail: data,
             bubbles: true,
@@ -73,7 +75,7 @@ export default class Component extends HTMLElement {
 
     protected init(): void {}
 
-    protected template(): Node | NodeList | string {
+    protected template(): ComponentTemplate {
         return '';
     }
 
@@ -122,7 +124,7 @@ export default class Component extends HTMLElement {
 
     componentAdoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
-    componentStateChangedCallback(_oldState: DataDict, _newState: DataDict): void {}
+    componentStateChangedCallback(_oldState: Dictionary<any>, _newState: Dictionary<any>): void {}
 
     componentUpdatedCallback(): void {}
 

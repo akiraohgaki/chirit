@@ -1,3 +1,5 @@
+type NodeContentData = Node | NodeList | string;
+
 export default class NodeContent {
 
     private _target: Node;
@@ -10,7 +12,7 @@ export default class NodeContent {
         return this._target;
     }
 
-    update(content: Node | NodeList | string, deep: boolean = true): void {
+    update(content: NodeContentData, deep: boolean = true): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
             this._updateChildNodes(this._target, content, deep);
         }
@@ -19,7 +21,7 @@ export default class NodeContent {
         }
     }
 
-    set(content: Node | NodeList | string): void {
+    set(content: NodeContentData): void {
         this._target.textContent = null;
         if (content instanceof Document || content instanceof DocumentFragment) {
             this._target.appendChild(content.cloneNode(true));
@@ -37,7 +39,7 @@ export default class NodeContent {
         this._target.textContent = null;
     }
 
-    private _createDocumentFragment(content: Node | NodeList | string): DocumentFragment {
+    private _createDocumentFragment(content: NodeContentData): DocumentFragment {
         if (typeof content === 'string') {
             // !DOCTYPE, HTML, HEAD, BODY will be stripped inside HTMLTemplateElement
             const template = document.createElement('template');
