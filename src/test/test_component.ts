@@ -97,6 +97,7 @@ export default function() {
     wrapper.appendChild(testComponent);
 
     console.log(testComponent.contentRoot);
+    console.log(testComponent.state);
 
     wrapper.addEventListener('dummy', (event) => {
         console.log(event);
