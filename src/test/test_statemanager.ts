@@ -1,15 +1,17 @@
 import Chirit from '../chirit.js';
 
-export default function() {
-    const element = document.createElement('div');
+export default async function() {
+    const main = document.getElementById('main') as Element;
+    const target = document.createElement('div');
+    main.appendChild(target);
 
-    const stateManager = new Chirit.StateManager(element);
+    const stateManager = new Chirit.StateManager(target);
 
     console.log(stateManager.target);
 
     stateManager.eventHandler.add('A', (data) => {
         console.log(data);
-        return data.dispatch ? {event: true} : false;
+        return data.invoke ? {event: true} : false;
     });
 
     stateManager.actionHandler.add('A', (data) => {
@@ -38,5 +40,7 @@ export default function() {
 
     console.log(stateManager.state.get('B'));
 
-    console.log(stateManager.dispatch('A', {dispatch: true}));
+    await stateManager.invokeHandlers('A', {invoke: true});
+
+    target.dispatchEvent(new CustomEvent('A', {detail: {dispatch: true}}));
 }
