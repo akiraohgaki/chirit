@@ -1,13 +1,22 @@
 import Chirit from '../chirit.js';
 
-class TestComponent extends Chirit.Component {
+class BaseComponent extends Chirit.Component {
 
     initShadow() {
         return this.attachShadow({mode: 'closed'});
     }
 
+    initState() {
+        return {base: true};
+    }
+
+}
+
+class TestComponent extends BaseComponent {
+
     init() {
         console.log(this.contentRoot);
+        console.log(this.state);
 
         this.state = {dummy: true};
         console.log(this.state);
