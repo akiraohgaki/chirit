@@ -79,13 +79,13 @@ export default class Component extends HTMLElement {
 
     protected init(): void {}
 
-    protected template(): ComponentTemplate {
-        return '';
-    }
-
     protected render(): void {
         const nodeContent = new NodeContent(this.contentRoot);
         nodeContent.update(this.template());
+    }
+
+    protected template(): ComponentTemplate {
+        return '';
     }
 
     // Lifecycle methods
@@ -94,8 +94,8 @@ export default class Component extends HTMLElement {
         return this.componentObservedAttributes;
     }
 
-    attributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string): void {
-        this.componentAttributeChangedCallback(attributeName, oldValue, newValue, namespace);
+    attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null, namespace: string | null): void {
+        this.componentAttributeChangedCallback(name, oldValue, newValue, namespace);
         if (this._updateCount && oldValue !== newValue) {
             this._update();
         }
@@ -120,7 +120,7 @@ export default class Component extends HTMLElement {
         return [];
     }
 
-    componentAttributeChangedCallback(_attributeName: string, _oldValue: string, _newValue: string, _namespace: string): void {}
+    componentAttributeChangedCallback(_name: string, _oldValue: string | null, _newValue: string | null, _namespace: string | null): void {}
 
     componentConnectedCallback(): void {}
 
