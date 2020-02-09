@@ -17,7 +17,7 @@ export default class Component extends HTMLElement {
         super();
 
         this._shadowRoot = this.initShadow();
-        this._state = {};
+        this._state = this.initState();
         this._updateCount = 0;
 
         this.init();
@@ -71,6 +71,10 @@ export default class Component extends HTMLElement {
 
     protected initShadow(): ShadowRoot | null {
         return this.attachShadow({mode: 'open'});
+    }
+
+    protected initState(): Dictionary<any> {
+        return {};
     }
 
     protected init(): void {}
