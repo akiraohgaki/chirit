@@ -52,8 +52,10 @@ class TestComponent extends BaseComponent {
         return ['text'];
     }
 
-    componentAttributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string) {
-        console.log(attributeName, oldValue, newValue, namespace);
+    componentAttributeChangedCallback(name: string, oldValue: string | null, newValue: string | null, namespace: string | null) {
+        console.log(name, oldValue, newValue, namespace);
+        console.log('Update lock should work');
+        this.state = this.state;
     }
 
     componentConnectedCallback() {
