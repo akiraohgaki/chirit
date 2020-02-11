@@ -46,13 +46,28 @@ export default class StateManager {
     get viewHandler() {
         return this._viewHandler;
     }
-    dispatch(type, data = {}) {
-        return this._target.dispatchEvent(new CustomEvent(type, { detail: data }));
+    async invokeHandlers(type, data = {}) {
+        const eventRusult = await this._eventHandler.invoke(data, type);
+        if (!eventRusult) {
+            return;
+        }
+        const actionResult = await this._actionHandler.invoke(eventRusult, type);
+        if (!actionResult) {
+            return;
+        }
+        const stateResult = await this._stateHandler.invoke(actionResult, type);
+        if (!stateResult) {
+            return;
+        }
+        const viewResult = await this._viewHandler.invoke(stateResult, type);
+        if (!viewResult) {
+            return;
+        }
     }
     _eventListener(event) {
         event.preventDefault();
         event.stopPropagation();
-        this._invokeHandlers(event.detail, event.type);
+        this.invokeHandlers(event.type, event.detail);
     }
     _handlerBeforeAddCallback(type) {
         if (!this._eventHandler.has(type)
@@ -70,29 +85,6 @@ export default class StateManager {
             && !this._viewHandler.has(type)) {
             this._target.removeEventListener(type, this._eventListener, false);
             this._stateCollection.delete(type);
-        }
-    }
-    async _invokeHandlers(data, type) {
-        try {
-            const eventRusult = await this._eventHandler.invoke(data, type);
-            if (!eventRusult) {
-                return;
-            }
-            const actionResult = await this._actionHandler.invoke(eventRusult, type);
-            if (!actionResult) {
-                return;
-            }
-            const stateResult = await this._stateHandler.invoke(actionResult, type);
-            if (!stateResult) {
-                return;
-            }
-            const viewResult = await this._viewHandler.invoke(stateResult, type);
-            if (!viewResult) {
-                return;
-            }
-        }
-        catch (error) {
-            console.error(error);
         }
     }
 }

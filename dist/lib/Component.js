@@ -3,8 +3,9 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
         this._shadowRoot = this.initShadow();
-        this._state = {};
-        this._updateCount = 0;
+        this._state = this.initState();
+        this._updateLockCount = 0;
+        this._updatedCount = 0;
         this.init();
     }
     static define(name, options) {
@@ -23,8 +24,10 @@ export default class Component extends HTMLElement {
         const oldState = Object.assign({}, this._state);
         this._state = state;
         const newState = Object.assign({}, this._state);
+        this._updateLockCount++;
         this.componentStateChangedCallback(oldState, newState);
-        if (this._updateCount) {
+        this._updateLockCount--;
+        if (!this._updateLockCount && this._updatedCount) {
             this._update();
         }
     }
@@ -39,33 +42,43 @@ export default class Component extends HTMLElement {
         }));
     }
     _update() {
-        this.render();
-        this._updateCount++;
-        this.componentUpdatedCallback();
+        if (this.isConnected) {
+            this.render();
+            this._updatedCount++;
+            this.componentUpdatedCallback();
+        }
     }
     initShadow() {
         return this.attachShadow({ mode: 'open' });
     }
-    init() { }
-    template() {
-        return '';
+    initState() {
+        return {};
     }
+    init() { }
     render() {
         const nodeContent = new NodeContent(this.contentRoot);
         nodeContent.update(this.template());
     }
+    template() {
+        return '';
+    }
     static get observedAttributes() {
         return this.componentObservedAttributes;
     }
-    attributeChangedCallback(attributeName, oldValue, newValue, namespace) {
-        this.componentAttributeChangedCallback(attributeName, oldValue, newValue, namespace);
-        if (this._updateCount && oldValue !== newValue) {
+    attributeChangedCallback(name, oldValue, newValue, namespace) {
+        this._updateLockCount++;
+        this.componentAttributeChangedCallback(name, oldValue, newValue, namespace);
+        this._updateLockCount--;
+        if (!this._updateLockCount && this._updatedCount
+            && oldValue !== newValue) {
             this._update();
         }
     }
     connectedCallback() {
+        this._updateLockCount++;
         this.componentConnectedCallback();
-        if (!this._updateCount) {
+        this._updateLockCount--;
+        if (!this._updateLockCount && !this._updatedCount) {
             this._update();
         }
     }
@@ -78,7 +91,7 @@ export default class Component extends HTMLElement {
     static get componentObservedAttributes() {
         return [];
     }
-    componentAttributeChangedCallback(_attributeName, _oldValue, _newValue, _namespace) { }
+    componentAttributeChangedCallback(_name, _oldValue, _newValue, _namespace) { }
     componentConnectedCallback() { }
     componentDisconnectedCallback() { }
     componentAdoptedCallback(_oldDocument, _newDocument) { }

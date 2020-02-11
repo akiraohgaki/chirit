@@ -15,10 +15,9 @@ export default class StateManager {
     get actionHandler(): Handler;
     get stateHandler(): Handler;
     get viewHandler(): Handler;
-    dispatch(type: string, data?: Dictionary<any>): boolean;
+    invokeHandlers(type: string, data?: Dictionary<any>): Promise<void>;
     private _eventListener;
     private _handlerBeforeAddCallback;
     private _handlerAfterRemoveCallback;
-    private _invokeHandlers;
 }
 export {};
