@@ -49,6 +49,7 @@ export default class WebStorage {
         const value = this._storage.getItem(this._prefix + key);
         if (value) {
             try {
+                // Maybe got parse error if value is invalid JSON data
                 const deserializedValue = JSON.parse(value);
                 if (deserializedValue
                     && deserializedValue._k === key
@@ -56,14 +57,12 @@ export default class WebStorage {
                 ) {
                     return deserializedValue._v;
                 }
-                return value;
             }
-            catch (error) {
-                console.error(error);
+            catch {
                 return value;
             }
         }
-        return null;
+        return value;
     }
 
     removeItem(key: string): void {
