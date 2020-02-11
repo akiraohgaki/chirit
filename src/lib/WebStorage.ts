@@ -58,7 +58,8 @@ export default class WebStorage {
                 }
                 return value;
             }
-            catch {
+            catch (error) {
+                console.error(error);
                 return value;
             }
         }
