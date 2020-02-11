@@ -11,14 +11,16 @@ export default class Component extends HTMLElement {
 
     private _shadowRoot: ShadowRoot | null;
     private _state: Dictionary<any>;
-    private _updateCount: number;
+    private _updateLockCount: number;
+    private _updatedCount: number;
 
     constructor() {
         super();
 
         this._shadowRoot = this.initShadow();
-        this._state = {};
-        this._updateCount = 0;
+        this._state = this.initState();
+        this._updateLockCount = 0;
+        this._updatedCount = 0;
 
         this.init();
     }
@@ -39,12 +41,17 @@ export default class Component extends HTMLElement {
         const oldState = {...this._state};
         this._state = state;
         const newState = {...this._state};
+
+        this._updateLockCount++;
         this.componentStateChangedCallback(oldState, newState);
-        if (this._updateCount) {
+        this._updateLockCount--;
+
+        if (!this._updateLockCount && this._updatedCount) {
             this._update();
         }
-        // Check if the state is difference
-        //if (this._updateCount && this._checkStateDifference(oldState, newState)) {
+        //if (!this._updateLockCount && this._updatedCount
+        //    && !Utility.isSameObject(oldState, newState)
+        //) {
         //    this._update();
         //}
     }
@@ -62,9 +69,11 @@ export default class Component extends HTMLElement {
     }
 
     private _update(): void {
-        this.render();
-        this._updateCount++;
-        this.componentUpdatedCallback();
+        if (this.isConnected) {
+            this.render();
+            this._updatedCount++;
+            this.componentUpdatedCallback();
+        }
     }
 
     // Overridable methods
@@ -73,15 +82,19 @@ export default class Component extends HTMLElement {
         return this.attachShadow({mode: 'open'});
     }
 
-    protected init(): void {}
-
-    protected template(): ComponentTemplate {
-        return '';
+    protected initState(): Dictionary<any> {
+        return {};
     }
+
+    protected init(): void {}
 
     protected render(): void {
         const nodeContent = new NodeContent(this.contentRoot);
         nodeContent.update(this.template());
+    }
+
+    protected template(): ComponentTemplate {
+        return '';
     }
 
     // Lifecycle methods
@@ -90,16 +103,24 @@ export default class Component extends HTMLElement {
         return this.componentObservedAttributes;
     }
 
-    attributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string): void {
-        this.componentAttributeChangedCallback(attributeName, oldValue, newValue, namespace);
-        if (this._updateCount && oldValue !== newValue) {
+    attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null, namespace: string | null): void {
+        this._updateLockCount++;
+        this.componentAttributeChangedCallback(name, oldValue, newValue, namespace);
+        this._updateLockCount--;
+
+        if (!this._updateLockCount && this._updatedCount
+            && oldValue !== newValue
+        ) {
             this._update();
         }
     }
 
     connectedCallback(): void {
+        this._updateLockCount++;
         this.componentConnectedCallback();
-        if (!this._updateCount) {
+        this._updateLockCount--;
+
+        if (!this._updateLockCount && !this._updatedCount) {
             this._update();
         }
     }
@@ -116,7 +137,7 @@ export default class Component extends HTMLElement {
         return [];
     }
 
-    componentAttributeChangedCallback(_attributeName: string, _oldValue: string, _newValue: string, _namespace: string): void {}
+    componentAttributeChangedCallback(_name: string, _oldValue: string | null, _newValue: string | null, _namespace: string | null): void {}
 
     componentConnectedCallback(): void {}
 

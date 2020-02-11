@@ -74,14 +74,29 @@ export default class StateManager {
         return this._viewHandler;
     }
 
-    dispatch(type: string, data: Dictionary<any> = {}): boolean {
-        return this._target.dispatchEvent(new CustomEvent(type, {detail: data}));
+    async invokeHandlers(type: string, data: Dictionary<any> = {}): Promise<void> {
+        const eventRusult = await this._eventHandler.invoke(data, type);
+        if (!eventRusult) {
+            return;
+        }
+        const actionResult = await this._actionHandler.invoke(eventRusult, type);
+        if (!actionResult) {
+            return;
+        }
+        const stateResult = await this._stateHandler.invoke(actionResult, type);
+        if (!stateResult) {
+            return;
+        }
+        const viewResult = await this._viewHandler.invoke(stateResult, type);
+        if (!viewResult) {
+            return;
+        }
     }
 
     private _eventListener(event: CustomEvent<Dictionary<any>>): void {
         event.preventDefault();
         event.stopPropagation();
-        this._invokeHandlers(event.detail, event.type);
+        this.invokeHandlers(event.type, event.detail);
     }
 
     private _handlerBeforeAddCallback(type: string): void {
@@ -103,30 +118,6 @@ export default class StateManager {
         ) {
             this._target.removeEventListener(type, this._eventListener as EventListener, false);
             this._stateCollection.delete(type);
-        }
-    }
-
-    private async _invokeHandlers(data: Dictionary<any>, type: string): Promise<void> {
-        try {
-            const eventRusult = await this._eventHandler.invoke(data, type);
-            if (!eventRusult) {
-                return;
-            }
-            const actionResult = await this._actionHandler.invoke(eventRusult, type);
-            if (!actionResult) {
-                return;
-            }
-            const stateResult = await this._stateHandler.invoke(actionResult, type);
-            if (!stateResult) {
-                return;
-            }
-            const viewResult = await this._viewHandler.invoke(stateResult, type);
-            if (!viewResult) {
-                return;
-            }
-        }
-        catch (error) {
-            console.error(error);
         }
     }
 

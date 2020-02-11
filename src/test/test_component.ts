@@ -1,13 +1,22 @@
 import Chirit from '../chirit.js';
 
-class TestComponent extends Chirit.Component {
+class BaseComponent extends Chirit.Component {
 
     initShadow() {
         return this.attachShadow({mode: 'closed'});
     }
 
+    initState() {
+        return {base: true};
+    }
+
+}
+
+class TestComponent extends BaseComponent {
+
     init() {
         console.log(this.contentRoot);
+        console.log(this.state);
 
         this.state = {dummy: true};
         console.log(this.state);
@@ -43,8 +52,10 @@ class TestComponent extends Chirit.Component {
         return ['text'];
     }
 
-    componentAttributeChangedCallback(attributeName: string, oldValue: string, newValue: string, namespace: string) {
-        console.log(attributeName, oldValue, newValue, namespace);
+    componentAttributeChangedCallback(name: string, oldValue: string | null, newValue: string | null, namespace: string | null) {
+        console.log(name, oldValue, newValue, namespace);
+        console.log('Update lock should work');
+        this.state = this.state;
     }
 
     componentConnectedCallback() {
@@ -88,6 +99,7 @@ export default function() {
     wrapper.appendChild(testComponent);
 
     console.log(testComponent.contentRoot);
+    console.log(testComponent.state);
 
     wrapper.addEventListener('dummy', (event) => {
         console.log(event);
