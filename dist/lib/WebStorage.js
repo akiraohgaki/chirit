@@ -38,14 +38,12 @@ export default class WebStorage {
                     && deserializedValue._v !== undefined) {
                     return deserializedValue._v;
                 }
-                return value;
             }
-            catch (error) {
-                console.error(error);
+            catch (_a) {
                 return value;
             }
         }
-        return null;
+        return value;
     }
     removeItem(key) {
         this._storage.removeItem(this._prefix + key);
