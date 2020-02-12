@@ -12,8 +12,11 @@
   "main": "dist/chirit.js",
   "types": "dist/chirit.d.ts",
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc -w"
+    "clean": "rm -rf dist",
+    "build": "npm run clean && npm run tsc",
+    "watch": "npm run tsc-watch",
+    "tsc": "tsc",
+    "tsc-watch": "tsc -w"
   },
   "devDependencies": {
     "typescript": "*"
