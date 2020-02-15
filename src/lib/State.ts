@@ -32,8 +32,8 @@ export default class State {
         this._observerCollection.add(observer);
     }
 
-    removeObserver(observer: StateObserver): boolean {
-        return this._observerCollection.delete(observer);
+    removeObserver(observer: StateObserver): void {
+        this._observerCollection.delete(observer);
     }
 
     async update(data: Dictionary<any>): Promise<void> {
