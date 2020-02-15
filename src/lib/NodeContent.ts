@@ -1,4 +1,4 @@
-type NodeContentData = Node | NodeList | string;
+export type NodeContentData = Node | NodeList | string;
 
 export default class NodeContent {
 
