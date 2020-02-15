@@ -1,7 +1,7 @@
 import {Dictionary} from './common.js';
 
 export interface StateHandler {
-    (data: Dictionary<any>): Dictionary<any>;
+    (data: Dictionary<any>, currentData: Dictionary<any>): Dictionary<any>;
 }
 
 export default class State {
@@ -19,8 +19,7 @@ export default class State {
     }
 
     async update(data: Dictionary<any>): Promise<void> {
-        const newData = await Promise.resolve(this._handler(data));
-        this._data = {...this._data, ...newData};
+        this._data = await Promise.resolve(this._handler(data, this._data));
     }
 
     private _defaultHandler(data: Dictionary<any>): Dictionary<any> {
