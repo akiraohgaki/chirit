@@ -32,7 +32,7 @@ export default class State {
         this._observerCollection.add(observer);
     }
 
-    deleteObserver(observer: StateObserver): boolean {
+    removeObserver(observer: StateObserver): boolean {
         return this._observerCollection.delete(observer);
     }
 
