@@ -14,7 +14,9 @@ class BaseComponent extends Chirit.Component {
 
 class TestComponent extends BaseComponent {
 
-    init() {
+    constructor() {
+        super();
+
         console.log(this.contentRoot);
         console.log(this.state);
 
@@ -41,10 +43,10 @@ class TestComponent extends BaseComponent {
 
     template() {
         return `
-        <p>${this.getAttribute('text')}</p>
-        <p>${this.state.text}</p>
-        <button data-change="attribute">Change attribute</button>
-        <button data-change="state">Change state</button>
+            <p>${this.getAttribute('text')}</p>
+            <p>${this.state.text}</p>
+            <button data-change="attribute">Change attribute</button>
+            <button data-change="state">Change state</button>
         `;
     }
 
@@ -85,10 +87,10 @@ TestComponent.define('test-component');
 export default function() {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
-    <div id="component-wrapper">
-    <iframe id="component-iframe" style="display: none;"></iframe>
-    <test-component text="Attribute"></test-component>
-    </div>
+        <div id="component-wrapper">
+        <iframe id="component-iframe" style="display: none;"></iframe>
+        <test-component text="Attribute"></test-component>
+        </div>
     `;
 
     const wrapper = document.getElementById('component-wrapper') as Element;

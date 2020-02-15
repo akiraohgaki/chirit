@@ -1,46 +1,55 @@
 import Chirit from '../chirit.js';
 
 export default async function() {
-    const main = document.getElementById('main') as Element;
     const target = document.createElement('div');
-    main.appendChild(target);
 
     const stateManager = new Chirit.StateManager(target);
 
     console.log(stateManager.target);
 
-    stateManager.eventHandler.add('A', (data) => {
-        console.log(data);
-        return data.invoke ? {event: true} : false;
+    stateManager.createState('dummy');
+
+    console.log(stateManager.hasState('dummy'));
+
+    stateManager.removeState('dummy');
+
+    console.log('State re-creation should work');
+    stateManager.createState('dummy');
+    stateManager.createState('dummy',
+        {dummy: true},
+        () => {
+            return {handler: true};
+        },
+        [
+            () => {
+                console.log('observer');
+            },
+            (state) => {
+                console.log('observer');
+                console.log(state);
+            }
+        ]
+    );
+
+    console.log(stateManager.getState('dummy'));
+
+    await stateManager.updateState('dummy', {});
+
+    console.log(stateManager.getState('dummy'));
+
+    stateManager.setHandler('dummy', (data, state) => {
+        return {...state, ...data};
     });
 
-    stateManager.actionHandler.add('A', (data) => {
-        console.log(data);
-        return data.event ? {action: true} : false;
-    });
+    const observer = () => {
+        console.log('observer');
+    };
+    stateManager.addObserver('dummy', observer);
+    stateManager.removeObserver('dummy', observer);
 
-    stateManager.stateHandler.add('A', (data) => {
-        console.log(data);
-        return data.action ? {state: true} : false;
-    });
+    await stateManager.updateState('dummy', {update: true});
 
-    stateManager.viewHandler.add('A', (data) => {
-        console.log(data);
-        console.log(stateManager.state.get('A'));
-        return data.state ? {view: true} : false;
-    });
+    console.log(stateManager.getState('dummy'));
 
-    const dummyHandler = () => false;
-
-    stateManager.actionHandler.add('B', dummyHandler);
-
-    console.log(stateManager.state.get('B'));
-
-    stateManager.actionHandler.remove('B', dummyHandler);
-
-    console.log(stateManager.state.get('B'));
-
-    await stateManager.invokeHandlers('A', {invoke: true});
-
-    target.dispatchEvent(new CustomEvent('A', {detail: {dispatch: true}}));
+    target.dispatchEvent(new CustomEvent('dummy', {detail: {event: true}}));
 }

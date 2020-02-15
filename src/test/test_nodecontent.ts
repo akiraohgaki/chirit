@@ -3,15 +3,15 @@ import Chirit from '../chirit.js';
 export default function() {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
-    <textarea id="nodecontent-src" style="width: 600px; height: 300px;"></textarea>
-    <div id="nodecontent-methods">
-    <button data-method="update-deep">Update (deep)</button>
-    <button data-method="update-shallow">Update (shallow)</button>
-    <button data-method="set">Set</button>
-    <button data-method="get">Get</button>
-    <button data-method="clear">Clear</button>
-    </div>
-    <div id="nodecontent-content"></div>
+        <textarea id="nodecontent-src" style="width: 600px; height: 300px;"></textarea>
+        <div id="nodecontent-methods">
+        <button data-method="update-deep">Update (deep)</button>
+        <button data-method="update-shallow">Update (shallow)</button>
+        <button data-method="set">Set</button>
+        <button data-method="get">Get</button>
+        <button data-method="clear">Clear</button>
+        </div>
+        <div id="nodecontent-content"></div>
     `;
 
     const src = document.getElementById('nodecontent-src') as HTMLTextAreaElement;
@@ -20,11 +20,11 @@ export default function() {
 
     const template = document.createElement('template');
     template.innerHTML = `
-    <ul data-attr1="1" data-attr2="2" data-attr3="3">
-    <li>list1</li>
-    <li>list2</li>
-    <li>list3</li>
-    </ul>
+        <ul data-attr1="1" data-attr2="2" data-attr3="3">
+        <li>list1</li>
+        <li>list2</li>
+        <li>list3</li>
+        </ul>
     `;
     src.value = template.innerHTML;
 
@@ -74,5 +74,4 @@ export default function() {
             }
         }
     });
-
 }
