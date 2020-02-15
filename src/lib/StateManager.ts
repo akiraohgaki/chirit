@@ -26,6 +26,13 @@ export default class StateManager {
         return stateInstance;
     }
 
+    async updateState(name: string, data: Dictionary<any>): Promise<void> {
+        const state = this._stateCollection.get(name);
+        if (state) {
+            await state.update(data);
+        }
+    }
+
     getState(name: string): State | null {
         return this._stateCollection.get(name) || null;
     }
@@ -35,11 +42,8 @@ export default class StateManager {
         this._stateCollection.delete(name);
     }
 
-    async updateState(name: string, data: Dictionary<any>): Promise<void> {
-        const state = this._stateCollection.get(name);
-        if (state) {
-            await state.update(data);
-        }
+    hasState(name: string): boolean {
+        return this._stateCollection.has(name);
     }
 
     private _eventListener(event: CustomEvent<Dictionary<any>>): void {
