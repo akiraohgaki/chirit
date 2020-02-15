@@ -1,18 +1,15 @@
 import {Dictionary} from './common.js';
 import State, {StateHandler} from './State.js';
 
-interface StateManagerViewHandler {
+export interface StateManagerViewHandler {
     (data: Dictionary<any>): void;
 }
-
-type StateManagerStateCollection = Map<string, State>;
-type StateManagerViewCollection = Map<string, Set<StateManagerViewHandler>>;
 
 export default class StateManager {
 
     private _target: EventTarget;
-    private _stateCollection: StateManagerStateCollection;
-    private _viewCollection: StateManagerViewCollection;
+    private _stateCollection: Map<string, State>;
+    private _viewCollection: Map<string, Set<StateManagerViewHandler>>;
 
     constructor(target: EventTarget) {
         this._target = target;

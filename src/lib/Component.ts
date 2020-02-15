@@ -1,7 +1,5 @@
 import {Dictionary} from './common.js';
-import NodeContent from './NodeContent.js';
-
-type ComponentTemplate = Node | NodeList | string; // for NodeContent
+import NodeContent, {NodeContentData} from './NodeContent.js';
 
 export default class Component extends HTMLElement {
 
@@ -93,7 +91,7 @@ export default class Component extends HTMLElement {
         nodeContent.update(this.template());
     }
 
-    protected template(): ComponentTemplate {
+    protected template(): NodeContentData {
         return '';
     }
 
