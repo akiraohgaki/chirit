@@ -16,11 +16,14 @@ export default class StateManager {
         return this._target;
     }
 
-    createState(name: string, state?: Dictionary<any>, handler?: StateHandler, observers?: Iterable<StateObserver>): void {
-        if (!this._stateCollection.has(name)) {
-            this._stateCollection.set(name, new State(state, handler, observers));
-            this._target.addEventListener(name, this._eventListener as EventListener, false);
+    createState(name: string, state?: Dictionary<any>, handler?: StateHandler, observers?: Iterable<StateObserver>): State {
+        if (this._stateCollection.has(name)) {
+            this.removeState(name);
         }
+        const stateInstance = new State(state, handler, observers);
+        this._stateCollection.set(name, stateInstance);
+        this._target.addEventListener(name, this._eventListener as EventListener, false);
+        return stateInstance;
     }
 
     getState(name: string): State | null {
