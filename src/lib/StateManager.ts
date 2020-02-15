@@ -1,124 +1,76 @@
 import {Dictionary} from './common.js';
-import Handler from './Handler.js';
+import State, {StateHandler} from './State.js';
 
-type StateManagerStateCollection = Map<string, Dictionary<any>>;
+interface StateManagerViewHandler {
+    (data: Dictionary<any>): void;
+}
+
+type StateManagerStateCollection = Map<string, State>;
+type StateManagerViewCollection = Map<string, Set<StateManagerViewHandler>>;
 
 export default class StateManager {
 
     private _target: EventTarget;
     private _stateCollection: StateManagerStateCollection;
-    private _eventHandler: Handler;
-    private _actionHandler: Handler;
-    private _stateHandler: Handler;
-    private _viewHandler: Handler;
+    private _viewCollection: StateManagerViewCollection;
 
     constructor(target: EventTarget) {
         this._target = target;
         this._stateCollection = new Map();
-
-        this._eventHandler = new Handler((data) => {
-            return data;
-        });
-
-        this._actionHandler = new Handler(() => {
-            return {};
-        });
-
-        this._stateHandler = new Handler((data, type) => {
-            this._stateCollection.set(type, data);
-            return data;
-        });
-
-        this._viewHandler = new Handler(() => {
-            return {};
-        });
-
+        this._viewCollection = new Map();
         this._eventListener = this._eventListener.bind(this);
-        this._handlerBeforeAddCallback = this._handlerBeforeAddCallback.bind(this);
-        this._handlerAfterRemoveCallback = this._handlerAfterRemoveCallback.bind(this);
-
-        this._eventHandler.beforeAddCallback = this._handlerBeforeAddCallback;
-        this._eventHandler.afterRemoveCallback = this._handlerAfterRemoveCallback;
-
-        this._actionHandler.beforeAddCallback = this._handlerBeforeAddCallback;
-        this._actionHandler.afterRemoveCallback = this._handlerAfterRemoveCallback;
-
-        this._stateHandler.beforeAddCallback = this._handlerBeforeAddCallback;
-        this._stateHandler.afterRemoveCallback = this._handlerAfterRemoveCallback;
-
-        this._viewHandler.beforeAddCallback = this._handlerBeforeAddCallback;
-        this._viewHandler.afterRemoveCallback = this._handlerAfterRemoveCallback;
     }
 
     get target(): EventTarget {
         return this._target;
     }
 
-    get state(): StateManagerStateCollection {
-        return this._stateCollection;
-    }
-
-    get eventHandler(): Handler {
-        return this._eventHandler;
-    }
-
-    get actionHandler(): Handler {
-        return this._actionHandler;
-    }
-
-    get stateHandler(): Handler {
-        return this._stateHandler;
-    }
-
-    get viewHandler(): Handler {
-        return this._viewHandler;
-    }
-
-    async invokeHandlers(type: string, data: Dictionary<any> = {}): Promise<void> {
-        const eventRusult = await this._eventHandler.invoke(data, type);
-        if (!eventRusult) {
-            return;
+    createState(name: string, data?: Dictionary<any>, handler?: StateHandler): void {
+        if (!this._stateCollection.has(name)) {
+            this._stateCollection.set(name, new State(data, handler));
+            this._viewCollection.set(name, new Set());
+            this._target.addEventListener(name, this._eventListener as EventListener, false);
         }
-        const actionResult = await this._actionHandler.invoke(eventRusult, type);
-        if (!actionResult) {
-            return;
+    }
+
+    async updateState(name: string, data: Dictionary<any>): Promise<void> {
+        const state = this._stateCollection.get(name);
+        if (state) {
+            await state.update(data);
+            this._invokeViewHandlers(name, state.data);
         }
-        const stateResult = await this._stateHandler.invoke(actionResult, type);
-        if (!stateResult) {
-            return;
+    }
+
+    getState(name: string): Dictionary<any> | null {
+        return this._stateCollection.get(name)?.data || null;
+    }
+
+    deleteState(name: string): void {
+        this._target.removeEventListener(name, this._eventListener as EventListener, false);
+        this._viewCollection.delete(name);
+        this._stateCollection.delete(name);
+    }
+
+    addView(name: string, handler: StateManagerViewHandler): void {
+        const viewHandlers = this._viewCollection.get(name);
+        if (viewHandlers) {
+            viewHandlers.add(handler);
         }
-        const viewResult = await this._viewHandler.invoke(stateResult, type);
-        if (!viewResult) {
-            return;
+    }
+
+    private _invokeViewHandlers(name: string, data: Dictionary<any>): void {
+        const viewHandlers = this._viewCollection.get(name);
+        if (viewHandlers) {
+            for (const viewHandler of viewHandlers) {
+                viewHandler(data);
+            }
         }
     }
 
     private _eventListener(event: CustomEvent<Dictionary<any>>): void {
         event.preventDefault();
         event.stopPropagation();
-        this.invokeHandlers(event.type, event.detail);
-    }
-
-    private _handlerBeforeAddCallback(type: string): void {
-        if (!this._eventHandler.has(type)
-            && !this._actionHandler.has(type)
-            && !this._stateHandler.has(type)
-            && !this._viewHandler.has(type)
-        ) {
-            this._target.addEventListener(type, this._eventListener as EventListener, false);
-            this._stateCollection.set(type, {});
-        }
-    }
-
-    private _handlerAfterRemoveCallback(type: string): void {
-        if (!this._eventHandler.has(type)
-            && !this._actionHandler.has(type)
-            && !this._stateHandler.has(type)
-            && !this._viewHandler.has(type)
-        ) {
-            this._target.removeEventListener(type, this._eventListener as EventListener, false);
-            this._stateCollection.delete(type);
-        }
+        this.updateState(event.type, event.detail);
     }
 
 }
