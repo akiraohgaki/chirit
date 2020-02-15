@@ -6,7 +6,6 @@ export default class Component extends HTMLElement {
         this._state = this.initState();
         this._updateLockCount = 0;
         this._updatedCount = 0;
-        this.init();
     }
     static define(name, options) {
         window.customElements.define(name, this, options);
@@ -34,9 +33,9 @@ export default class Component extends HTMLElement {
     getState() {
         return this._state;
     }
-    dispatch(type, data = {}) {
+    dispatch(type, detail = {}) {
         return this.contentRoot.dispatchEvent(new CustomEvent(type, {
-            detail: data,
+            detail: detail,
             bubbles: true,
             composed: true
         }));
@@ -54,7 +53,6 @@ export default class Component extends HTMLElement {
     initState() {
         return {};
     }
-    init() { }
     render() {
         const nodeContent = new NodeContent(this.contentRoot);
         nodeContent.update(this.template());

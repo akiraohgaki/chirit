@@ -1,23 +1,17 @@
 import { Dictionary } from './common.js';
-import Handler from './Handler.js';
-declare type StateManagerStateCollection = Map<string, Dictionary<any>>;
+import { StateHandler, StateObserver } from './State.js';
 export default class StateManager {
     private _target;
     private _stateCollection;
-    private _eventHandler;
-    private _actionHandler;
-    private _stateHandler;
-    private _viewHandler;
     constructor(target: EventTarget);
     get target(): EventTarget;
-    get state(): StateManagerStateCollection;
-    get eventHandler(): Handler;
-    get actionHandler(): Handler;
-    get stateHandler(): Handler;
-    get viewHandler(): Handler;
-    invokeHandlers(type: string, data?: Dictionary<any>): Promise<void>;
+    hasState(name: string): boolean;
+    createState(name: string, state?: Dictionary<any>, handler?: StateHandler, observers?: Iterable<StateObserver>): void;
+    removeState(name: string): void;
+    getState(name: string): Dictionary<any> | null;
+    updateState(name: string, data: Dictionary<any>): Promise<void>;
+    setHandler(name: string, handler: StateHandler): void;
+    addObserver(name: string, observer: StateObserver): void;
+    removeObserver(name: string, observer: StateObserver): void;
     private _eventListener;
-    private _handlerBeforeAddCallback;
-    private _handlerAfterRemoveCallback;
 }
-export {};

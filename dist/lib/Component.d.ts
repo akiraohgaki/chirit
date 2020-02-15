@@ -1,24 +1,23 @@
 import { Dictionary } from './common.js';
-declare type ComponentTemplate = Node | NodeList | string;
+import { NodeContentData } from './NodeContent.js';
 export default class Component extends HTMLElement {
-    static define(name: string, options?: ElementDefinitionOptions): void;
     private _shadowRoot;
     private _state;
     private _updateLockCount;
     private _updatedCount;
     constructor();
+    static define(name: string, options?: ElementDefinitionOptions): void;
     get contentRoot(): ShadowRoot | this;
     set state(state: Dictionary<any>);
     get state(): Dictionary<any>;
     setState(state: Dictionary<any>): void;
     getState(): Dictionary<any>;
-    dispatch(type: string, data?: Dictionary<any>): boolean;
+    dispatch(type: string, detail?: Dictionary<any>): boolean;
     private _update;
     protected initShadow(): ShadowRoot | null;
     protected initState(): Dictionary<any>;
-    protected init(): void;
     protected render(): void;
-    protected template(): ComponentTemplate;
+    protected template(): NodeContentData;
     static get observedAttributes(): Array<string>;
     attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null, namespace: string | null): void;
     connectedCallback(): void;
@@ -32,4 +31,3 @@ export default class Component extends HTMLElement {
     componentStateChangedCallback(_oldState: Dictionary<any>, _newState: Dictionary<any>): void;
     componentUpdatedCallback(): void;
 }
-export {};

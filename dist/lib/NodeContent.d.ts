@@ -1,4 +1,4 @@
-declare type NodeContentData = Node | NodeList | string;
+export declare type NodeContentData = Node | NodeList | string;
 export default class NodeContent {
     private _target;
     constructor(target: Node);
@@ -12,4 +12,3 @@ export default class NodeContent {
     private _updateChild;
     private _updateAttributes;
 }
-export {};
