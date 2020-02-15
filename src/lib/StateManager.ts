@@ -16,6 +16,10 @@ export default class StateManager {
         return this._target;
     }
 
+    hasState(name: string): boolean {
+        return this._stateCollection.has(name);
+    }
+
     createState(name: string, state?: Dictionary<any>, handler?: StateHandler, observers?: Iterable<StateObserver>): void {
         if (this._stateCollection.has(name)) {
             this.removeState(name);
@@ -29,6 +33,10 @@ export default class StateManager {
         this._stateCollection.delete(name);
     }
 
+    getState(name: string): Dictionary<any> | null {
+        return this._stateCollection.get(name)?.state || null;
+    }
+
     async updateState(name: string, data: Dictionary<any>): Promise<void> {
         const state = this._stateCollection.get(name);
         if (state) {
@@ -36,12 +44,16 @@ export default class StateManager {
         }
     }
 
-    getState(name: string): Dictionary<any> | null {
-        return this._stateCollection.get(name)?.state || null;
+    setHandler(name: string, handler: StateHandler): void {
+        this._stateCollection.get(name)?.setHandler(handler);
     }
 
-    hasState(name: string): boolean {
-        return this._stateCollection.has(name);
+    addObserver(name: string, observer: StateObserver): void {
+        this._stateCollection.get(name)?.addObserver(observer);
+    }
+
+    removeObserver(name: string, observer: StateObserver): void {
+        this._stateCollection.get(name)?.removeObserver(observer);
     }
 
     private _eventListener(event: CustomEvent<Dictionary<any>>): void {
