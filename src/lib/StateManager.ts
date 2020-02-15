@@ -1,20 +1,14 @@
 import {Dictionary} from './common.js';
-import State, {StateHandler} from './State.js';
-
-export interface StateManagerViewHandler {
-    (data: Dictionary<any>): void;
-}
+import State, {StateHandler, StateObserver} from './State.js';
 
 export default class StateManager {
 
     private _target: EventTarget;
     private _stateCollection: Map<string, State>;
-    private _viewCollection: Map<string, Set<StateManagerViewHandler>>;
 
     constructor(target: EventTarget) {
         this._target = target;
         this._stateCollection = new Map();
-        this._viewCollection = new Map();
         this._eventListener = this._eventListener.bind(this);
     }
 
@@ -22,45 +16,26 @@ export default class StateManager {
         return this._target;
     }
 
-    createState(name: string, data?: Dictionary<any>, handler?: StateHandler): void {
+    createState(name: string, state?: Dictionary<any>, handler?: StateHandler, observers?: Iterable<StateObserver>): void {
         if (!this._stateCollection.has(name)) {
-            this._stateCollection.set(name, new State(data, handler));
-            this._viewCollection.set(name, new Set());
+            this._stateCollection.set(name, new State(state, handler, observers));
             this._target.addEventListener(name, this._eventListener as EventListener, false);
         }
+    }
+
+    getState(name: string): State | null {
+        return this._stateCollection.get(name) || null;
+    }
+
+    removeState(name: string): void {
+        this._target.removeEventListener(name, this._eventListener as EventListener, false);
+        this._stateCollection.delete(name);
     }
 
     async updateState(name: string, data: Dictionary<any>): Promise<void> {
         const state = this._stateCollection.get(name);
         if (state) {
             await state.update(data);
-            this._invokeViewHandlers(name, state.data);
-        }
-    }
-
-    getState(name: string): Dictionary<any> | null {
-        return this._stateCollection.get(name)?.data || null;
-    }
-
-    deleteState(name: string): void {
-        this._target.removeEventListener(name, this._eventListener as EventListener, false);
-        this._viewCollection.delete(name);
-        this._stateCollection.delete(name);
-    }
-
-    addView(name: string, handler: StateManagerViewHandler): void {
-        const viewHandlers = this._viewCollection.get(name);
-        if (viewHandlers) {
-            viewHandlers.add(handler);
-        }
-    }
-
-    private _invokeViewHandlers(name: string, data: Dictionary<any>): void {
-        const viewHandlers = this._viewCollection.get(name);
-        if (viewHandlers) {
-            for (const viewHandler of viewHandlers) {
-                viewHandler(data);
-            }
         }
     }
 
