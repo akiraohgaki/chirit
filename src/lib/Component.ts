@@ -19,8 +19,6 @@ export default class Component extends HTMLElement {
         this._state = this.initState();
         this._updateLockCount = 0;
         this._updatedCount = 0;
-
-        this.init();
     }
 
     get contentRoot(): ShadowRoot | this {
@@ -83,8 +81,6 @@ export default class Component extends HTMLElement {
     protected initState(): Dictionary<any> {
         return {};
     }
-
-    protected init(): void {}
 
     protected render(): void {
         const nodeContent = new NodeContent(this.contentRoot);
