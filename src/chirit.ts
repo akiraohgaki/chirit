@@ -2,7 +2,6 @@ import Component from './lib/Component.js';
 import NodeContent from './lib/NodeContent.js';
 import StateManager from './lib/StateManager.js';
 import State from './lib/State.js';
-import Handler from './lib/Handler.js';
 import WebStorage from './lib/WebStorage.js';
 import Utility from './lib/Utility.js';
 
@@ -11,7 +10,6 @@ export default {
     NodeContent,
     StateManager,
     State,
-    Handler,
     WebStorage,
     Utility
 };
