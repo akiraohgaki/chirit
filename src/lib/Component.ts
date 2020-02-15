@@ -3,10 +3,6 @@ import NodeContent, {NodeContentData} from './NodeContent.js';
 
 export default class Component extends HTMLElement {
 
-    static define(name: string, options?: ElementDefinitionOptions): void {
-        window.customElements.define(name, this, options);
-    }
-
     private _shadowRoot: ShadowRoot | null;
     private _state: Dictionary<any>;
     private _updateLockCount: number;
@@ -19,6 +15,10 @@ export default class Component extends HTMLElement {
         this._state = this.initState();
         this._updateLockCount = 0;
         this._updatedCount = 0;
+    }
+
+    static define(name: string, options?: ElementDefinitionOptions): void {
+        window.customElements.define(name, this, options);
     }
 
     get contentRoot(): ShadowRoot | this {
@@ -56,9 +56,9 @@ export default class Component extends HTMLElement {
         return this._state;
     }
 
-    dispatch(type: string, data: Dictionary<any> = {}): boolean {
+    dispatch(type: string, detail: Dictionary<any> = {}): boolean {
         return this.contentRoot.dispatchEvent(new CustomEvent(type, {
-            detail: data,
+            detail: detail,
             bubbles: true,
             composed: true
         }));
