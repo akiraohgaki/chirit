@@ -20,7 +20,7 @@ export default class State {
         this._observerCollection = new Set(observers);
     }
 
-    getState(): Dictionary<any> {
+    get state(): Dictionary<any> {
         return this._state;
     }
 
