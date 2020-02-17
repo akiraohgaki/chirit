@@ -7,23 +7,19 @@ export default async function() {
 
     console.log(stateManager.target);
 
-    stateManager.createState('dummy');
+    const stateA = stateManager.create('stateA');
+    stateManager.set('stateA', stateA);
+    console.log(stateManager.has('stateA'));
+    console.log(stateManager.get('stateA'));
+    stateManager.delete('stateA');
 
-    console.log(stateManager.hasState('dummy'));
-
-    stateManager.removeState('dummy');
-
-    console.log('State re-creation should work');
-    stateManager.createState('dummy');
-    stateManager.createState('dummy',
-        {dummy: true},
-        () => {
-            return {handler: true};
+    const stateB = stateManager.create(
+        'stateB',
+        {hasInitial: true},
+        (data: object, state: object) => {
+            return {hasHandler: true, ...state, ...data};
         },
         [
-            () => {
-                console.log('observer');
-            },
             (state) => {
                 console.log('observer');
                 console.log(state);
@@ -31,25 +27,7 @@ export default async function() {
         ]
     );
 
-    console.log(stateManager.getState('dummy'));
+    await stateB.update({update: true});
 
-    await stateManager.updateState('dummy', {});
-
-    console.log(stateManager.getState('dummy'));
-
-    stateManager.setHandler('dummy', (data, state) => {
-        return {...state, ...data};
-    });
-
-    const observer = () => {
-        console.log('observer');
-    };
-    stateManager.addObserver('dummy', observer);
-    stateManager.removeObserver('dummy', observer);
-
-    await stateManager.updateState('dummy', {update: true});
-
-    console.log(stateManager.getState('dummy'));
-
-    target.dispatchEvent(new CustomEvent('dummy', {detail: {event: true}}));
+    target.dispatchEvent(new CustomEvent('stateB', {detail: {updateFromEvent: true}}));
 }
