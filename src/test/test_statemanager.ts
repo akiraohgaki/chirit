@@ -11,7 +11,7 @@ export default async function() {
     stateManager.set('stateA', stateA);
     console.log(stateManager.has('stateA'));
     console.log(stateManager.get('stateA'));
-    stateManager.delete('stateA');
+    stateManager.remove('stateA');
 
     const stateB = stateManager.create(
         'stateB',

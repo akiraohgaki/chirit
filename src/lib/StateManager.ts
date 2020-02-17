@@ -23,13 +23,13 @@ export default class StateManager {
     }
 
     set(name: string, stateInstance: State): void {
-        this.delete(name);
+        this.remove(name);
 
         this._stateCollection.set(name, stateInstance);
         this._target.addEventListener(name, this._eventListener as EventListener, false);
     }
 
-    delete(name: string): void {
+    remove(name: string): void {
         if (this._stateCollection.delete(name)) {
             this._target.removeEventListener(name, this._eventListener as EventListener, false);
         }
