@@ -16,50 +16,44 @@ export default class StateManager {
         return this._target;
     }
 
-    hasState(name: string): boolean {
-        return this._stateCollection.has(name);
+    create(name: string, state?: Dictionary<any>, handler?: StateHandler, observers?: Iterable<StateObserver>): State {
+        const stateInstance = new State(state, handler, observers);
+        this.set(name, stateInstance);
+        return stateInstance;
     }
 
-    createState(name: string, state?: Dictionary<any>, handler?: StateHandler, observers?: Iterable<StateObserver>): void {
-        if (this._stateCollection.has(name)) {
-            this.removeState(name);
-        }
-        this._stateCollection.set(name, new State(state, handler, observers));
+    set(name: string, stateInstance: State): void {
+        this.delete(name);
+
+        this._stateCollection.set(name, stateInstance);
         this._target.addEventListener(name, this._eventListener as EventListener, false);
     }
 
-    removeState(name: string): void {
-        this._target.removeEventListener(name, this._eventListener as EventListener, false);
-        this._stateCollection.delete(name);
-    }
-
-    getState(name: string): Dictionary<any> | null {
-        return this._stateCollection.get(name)?.state || null;
-    }
-
-    async updateState(name: string, data: Dictionary<any>): Promise<void> {
-        const state = this._stateCollection.get(name);
-        if (state) {
-            await state.update(data);
+    delete(name: string): void {
+        if (this._stateCollection.delete(name)) {
+            this._target.removeEventListener(name, this._eventListener as EventListener, false);
         }
     }
 
-    setHandler(name: string, handler: StateHandler): void {
-        this._stateCollection.get(name)?.setHandler(handler);
+    get(name: string): State | undefined {
+        return this._stateCollection.get(name);
     }
 
-    addObserver(name: string, observer: StateObserver): void {
-        this._stateCollection.get(name)?.addObserver(observer);
+    has(name: string): boolean {
+        return this._stateCollection.has(name);
     }
 
-    removeObserver(name: string, observer: StateObserver): void {
-        this._stateCollection.get(name)?.removeObserver(observer);
+    private async _update(name: string, data: Dictionary<any>): Promise<void> {
+        const stateInstance = this._stateCollection.get(name);
+        if (stateInstance) {
+            await stateInstance.update(data);
+        }
     }
 
     private _eventListener(event: CustomEvent<Dictionary<any>>): void {
         event.preventDefault();
         event.stopPropagation();
-        this.updateState(event.type, event.detail);
+        this._update(event.type, event.detail);
     }
 
 }
