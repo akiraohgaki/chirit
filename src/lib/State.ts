@@ -38,10 +38,12 @@ export default class State {
 
     async update(data: Dictionary<any>): Promise<void> {
         this._state = await Promise.resolve(this._handler(data, this._state));
-        if (this._observerCollection.size) {
-            for (const observer of this._observerCollection) {
-                observer(this._state);
-            }
+        this._notifyObservers();
+    }
+
+    private _notifyObservers(): void {
+        for (const observer of this._observerCollection) {
+            observer(this._state);
         }
     }
 
