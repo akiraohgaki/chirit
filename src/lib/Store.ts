@@ -53,10 +53,10 @@ export default class Store {
         }
     }
 
-    dispatch(type: string, payload: Dictionary<any>): void {
+    async dispatch(type: string, payload: Dictionary<any>): Promise<void> {
         const handler = this._handlerCollection.get(type);
         if (handler) {
-            handler(this._state, payload);
+            await Promise.resolve(handler(this._state, payload));
 
             const observable = this._observableCollection.get(type);
             if (observable) {
