@@ -14,15 +14,15 @@ export default class Observable {
         return this._observerCollection.size;
     }
 
-    addObserver(observer: ObservableObserver): void {
+    subscribe(observer: ObservableObserver): void {
         this._observerCollection.add(observer);
     }
 
-    removeObserver(observer: ObservableObserver): void {
+    unsubscribe(observer: ObservableObserver): void {
         this._observerCollection.delete(observer);
     }
 
-    notifyObservers(data: any): void {
+    notify(data: any): void {
         if (this._observerCollection.size) {
             for (const observer of this._observerCollection) {
                 observer(data);

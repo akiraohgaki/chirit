@@ -33,20 +33,20 @@ export default class Store {
         this._handlerCollection.delete(type);
     }
 
-    addObserver(type: string, observer: StoreObserver): void {
+    subscribe(type: string, observer: StoreObserver): void {
         const observable = this._observableCollection.get(type);
         if (observable) {
-            observable.addObserver(observer);
+            observable.subscribe(observer);
         }
         else {
             this._observableCollection.set(type, new Observable([observer]));
         }
     }
 
-    removeObserver(type: string, observer: StoreObserver): void {
+    unsubscribe(type: string, observer: StoreObserver): void {
         const observable = this._observableCollection.get(type);
         if (observable) {
-            observable.removeObserver(observer);
+            observable.unsubscribe(observer);
             if (!observable.size) {
                 this._observableCollection.delete(type);
             }
@@ -60,7 +60,7 @@ export default class Store {
 
             const observable = this._observableCollection.get(type);
             if (observable) {
-                observable.notifyObservers(this._state);
+                observable.notify(this._state);
             }
         }
     }
