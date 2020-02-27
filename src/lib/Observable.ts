@@ -1,39 +1,35 @@
 interface ObservableObserver {
-    (data: any): void;
+    (value: any): void;
 }
 
 interface ObservableNotifyHandler {
-    (data: any, observer: ObservableObserver, option: any): void;
+    (value: any, observer: ObservableObserver, addition: any): void;
 }
 
 export default class Observable {
 
     private _observerCollection: Map<ObservableObserver, any>;
 
-    constructor(observers: Iterable<[ObservableObserver, any]> = []) {
-        this._observerCollection = new Map(observers);
+    constructor(entries: Iterable<[ObservableObserver, any]> = []) {
+        this._observerCollection = new Map(entries);
     }
 
-    get size(): number {
-        return this._observerCollection.size;
-    }
-
-    subscribe(observer: ObservableObserver, option: any = null): void {
-        this._observerCollection.set(observer, option);
+    subscribe(observer: ObservableObserver, addition: any = null): void {
+        this._observerCollection.set(observer, addition);
     }
 
     unsubscribe(observer: ObservableObserver): void {
         this._observerCollection.delete(observer);
     }
 
-    notify(data: any, handler?: ObservableNotifyHandler): void {
+    notify(value: any, handler?: ObservableNotifyHandler): void {
         if (this._observerCollection.size) {
-            for (const [observer, option] of this._observerCollection) {
+            for (const [observer, addition] of this._observerCollection) {
                 if (handler) {
-                    handler(data, observer, option);
+                    handler(value, observer, addition);
                 }
                 else {
-                    observer(data);
+                    observer(value);
                 }
             }
         }
