@@ -2,30 +2,39 @@ interface ObservableObserver {
     (data: any): void;
 }
 
+interface ObservableNotifyHandler {
+    (data: any, observer: ObservableObserver, option: any): void;
+}
+
 export default class Observable {
 
-    private _observerCollection: Set<ObservableObserver>;
+    private _observerCollection: Map<ObservableObserver, any>;
 
-    constructor(observers?: Iterable<ObservableObserver>) {
-        this._observerCollection = new Set(observers);
+    constructor(observers: Iterable<[ObservableObserver, any]> = []) {
+        this._observerCollection = new Map(observers);
     }
 
     get size(): number {
         return this._observerCollection.size;
     }
 
-    subscribe(observer: ObservableObserver): void {
-        this._observerCollection.add(observer);
+    subscribe(observer: ObservableObserver, option: any = null): void {
+        this._observerCollection.set(observer, option);
     }
 
     unsubscribe(observer: ObservableObserver): void {
         this._observerCollection.delete(observer);
     }
 
-    notify(data: any): void {
+    notify(data: any, handler?: ObservableNotifyHandler): void {
         if (this._observerCollection.size) {
-            for (const observer of this._observerCollection) {
-                observer(data);
+            for (const [observer, option] of this._observerCollection) {
+                if (handler) {
+                    handler(data, observer, option);
+                }
+                else {
+                    observer(data);
+                }
             }
         }
     }
