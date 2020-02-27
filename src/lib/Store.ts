@@ -13,12 +13,16 @@ export default class Store {
 
     private _state: Dictionary<any>;
     private _handlerCollection: Map<string, StoreHandler>;
-    private _observableCollection: Map<string, Observable>;
+    private _observable: Observable;
+    private _stateChangedKeyCollection: Set<string>;
 
     constructor(state: Dictionary<any> = {}) {
-        this._state = state;
+        this._state = this._createStateProxy(state);
         this._handlerCollection = new Map();
-        this._observableCollection = new Map();
+        this._observable = new Observable();
+        this._stateChangedKeyCollection = new Set();
+
+        this._notifyHandler = this._notifyHandler.bind(this);
     }
 
     get state(): Dictionary<any> {
@@ -33,24 +37,12 @@ export default class Store {
         this._handlerCollection.delete(type);
     }
 
-    subscribe(type: string, observer: StoreObserver): void {
-        const observable = this._observableCollection.get(type);
-        if (observable) {
-            observable.subscribe(observer);
-        }
-        else {
-            this._observableCollection.set(type, new Observable([observer]));
-        }
+    subscribe(observer: StoreObserver, steteKeys: Array<string> = []): void {
+        this._observable.subscribe(observer, steteKeys);
     }
 
-    unsubscribe(type: string, observer: StoreObserver): void {
-        const observable = this._observableCollection.get(type);
-        if (observable) {
-            observable.unsubscribe(observer);
-            if (!observable.size) {
-                this._observableCollection.delete(type);
-            }
-        }
+    unsubscribe(observer: StoreObserver): void {
+        this._observable.unsubscribe(observer);
     }
 
     async dispatch(type: string, payload: Dictionary<any>): Promise<void> {
@@ -58,10 +50,37 @@ export default class Store {
         if (handler) {
             await Promise.resolve(handler(this._state, payload));
 
-            const observable = this._observableCollection.get(type);
-            if (observable) {
-                observable.notify(this._state);
+            if (this._stateChangedKeyCollection.size) {
+                this._observable.notify(this._state, this._notifyHandler);
+                this._stateChangedKeyCollection.clear();
             }
+        }
+    }
+
+    private _createStateProxy(state: Dictionary<any>): Dictionary<any> {
+        return new Proxy(state, {
+            set: (target, key, value) => {
+                if (typeof key === 'string') {
+                    target[key] = value;
+                    this._stateChangedKeyCollection.add(key);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    private _notifyHandler(state: Dictionary<any>, observer: StoreObserver, stateKeys: Array<string>): void {
+        if (stateKeys.length) {
+            for (const key of stateKeys) {
+                if (this._stateChangedKeyCollection.has(key)) {
+                    observer(state);
+                    break;
+                }
+            }
+        }
+        else {
+            observer(state);
         }
     }
 
