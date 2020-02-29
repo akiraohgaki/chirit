@@ -3,7 +3,7 @@ interface ObservableObserver {
 }
 
 interface ObservableNotifyHandler {
-    (value: any, observer: ObservableObserver, addition: any): void;
+    (entry: [ObservableObserver, any], value: any): void;
 }
 
 export default class Observable {
@@ -24,11 +24,12 @@ export default class Observable {
 
     notify(value: any, handler?: ObservableNotifyHandler): void {
         if (this._observerCollection.size) {
-            for (const [observer, addition] of this._observerCollection) {
+            for (const entry of this._observerCollection) {
                 if (handler) {
-                    handler(value, observer, addition);
+                    handler(entry, value);
                 }
                 else {
+                    const [observer] = entry;
                     observer(value);
                 }
             }
