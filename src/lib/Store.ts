@@ -2,7 +2,7 @@ import {Dictionary} from './common.js';
 import Observable from './Observable.js';
 
 interface StoreHandler {
-    (state: Dictionary<any>, payload: Dictionary<any>): void;
+    (store: Store, payload: Dictionary<any>): void;
 }
 
 interface StoreObserver {
@@ -37,8 +37,8 @@ export default class Store {
         this._handlerCollection.delete(type);
     }
 
-    subscribe(observer: StoreObserver, steteKeys: Array<string> = []): void {
-        this._observable.subscribe(observer, steteKeys);
+    subscribe(observer: StoreObserver, observedStateKeys: Array<string> = []): void {
+        this._observable.subscribe(observer, observedStateKeys);
     }
 
     unsubscribe(observer: StoreObserver): void {
@@ -48,12 +48,15 @@ export default class Store {
     async dispatch(type: string, payload: Dictionary<any>): Promise<void> {
         const handler = this._handlerCollection.get(type);
         if (handler) {
-            await Promise.resolve(handler(this._state, payload));
+            await Promise.resolve(handler(this, payload));
+            this._notify();
+        }
+    }
 
-            if (this._stateChangedKeyCollection.size) {
-                this._observable.notify(this._state, this._notifyHandler);
-                this._stateChangedKeyCollection.clear();
-            }
+    private _notify(): void {
+        if (this._stateChangedKeyCollection.size) {
+            this._observable.notify(this._state, this._notifyHandler);
+            this._stateChangedKeyCollection.clear();
         }
     }
 
@@ -70,9 +73,10 @@ export default class Store {
         });
     }
 
-    private _notifyHandler(state: Dictionary<any>, observer: StoreObserver, stateKeys: Array<string>): void {
-        if (stateKeys.length) {
-            for (const key of stateKeys) {
+    private _notifyHandler(entry: [StoreObserver, Array<string>], state: Dictionary<any>): void {
+        const [observer, observedStateKeys] = entry;
+        if (observedStateKeys.length) {
+            for (const key of observedStateKeys) {
                 if (this._stateChangedKeyCollection.has(key)) {
                     observer(state);
                     break;
