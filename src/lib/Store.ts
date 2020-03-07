@@ -6,7 +6,7 @@ interface StoreHandler {
 }
 
 interface StoreObserver {
-    (state: Dictionary<any>): void;
+    (state: Dictionary<any>, observedStateKeys: Array<string>): void;
 }
 
 export default class Store {
@@ -73,18 +73,17 @@ export default class Store {
         });
     }
 
-    private _notifyHandler(entry: [StoreObserver, Array<string>], state: Dictionary<any>): void {
-        const [observer, observedStateKeys] = entry;
+    private _notifyHandler(state: Dictionary<any>, observer: StoreObserver, observedStateKeys: Array<string>): void {
         if (observedStateKeys.length) {
             for (const key of observedStateKeys) {
                 if (this._stateChangedKeyCollection.has(key)) {
-                    observer(state);
+                    observer(state, observedStateKeys);
                     break;
                 }
             }
         }
         else {
-            observer(state);
+            observer(state, observedStateKeys);
         }
     }
 
