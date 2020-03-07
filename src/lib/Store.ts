@@ -53,13 +53,6 @@ export default class Store {
         }
     }
 
-    private _notify(): void {
-        if (this._stateChangedKeyCollection.size) {
-            this._observable.notify(this._state, this._notifyHandler);
-            this._stateChangedKeyCollection.clear();
-        }
-    }
-
     private _createStateProxy(state: Dictionary<any>): Dictionary<any> {
         return new Proxy(state, {
             set: (target, key, value) => {
@@ -71,6 +64,13 @@ export default class Store {
                 return false;
             }
         });
+    }
+
+    private _notify(): void {
+        if (this._stateChangedKeyCollection.size) {
+            this._observable.notify(this._state, this._notifyHandler);
+            this._stateChangedKeyCollection.clear();
+        }
     }
 
     private _notifyHandler(state: Dictionary<any>, observer: StoreObserver, observedStateKeys: Array<string>): void {
