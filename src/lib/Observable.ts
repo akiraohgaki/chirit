@@ -1,36 +1,38 @@
 interface ObservableObserver {
-    (value: any, addition: any): void;
-}
-
-interface ObservableNotifyHandler {
-    (value: any, observer: ObservableObserver, addition: any): void;
+    (value: any): void;
 }
 
 export default class Observable {
 
-    private _observerCollection: Map<ObservableObserver, any>;
+    private _value: any;
+    private _observerCollection: Set<ObservableObserver>;
 
-    constructor(entries: Iterable<[ObservableObserver, any]> = []) {
-        this._observerCollection = new Map(entries);
+    constructor(value: any = null, observers: Iterable<ObservableObserver> = []) {
+        this._value = value;
+        this._observerCollection = new Set(observers);
     }
 
-    subscribe(observer: ObservableObserver, addition: any = null): void {
-        this._observerCollection.set(observer, addition);
+    set(value: any): void {
+        this._value = value;
+        this._notify();
+    }
+
+    get(): any {
+        return this._value;
+    }
+
+    subscribe(observer: ObservableObserver): void {
+        this._observerCollection.add(observer);
     }
 
     unsubscribe(observer: ObservableObserver): void {
         this._observerCollection.delete(observer);
     }
 
-    notify(value: any, handler?: ObservableNotifyHandler): void {
+    private _notify(): void {
         if (this._observerCollection.size) {
-            for (const [observer, addition] of this._observerCollection) {
-                if (handler) {
-                    handler(value, observer, addition);
-                }
-                else {
-                    observer(value, addition);
-                }
+            for (const observer of this._observerCollection) {
+                observer(this._value);
             }
         }
     }
