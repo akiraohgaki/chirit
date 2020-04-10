@@ -1,5 +1,6 @@
 import test_component from './test_component.js';
 import test_nodecontent from './test_nodecontent.js';
+import test_store from './test_store.js';
 import test_statemanager from './test_statemanager.js';
 import test_state from './test_state.js';
 import test_webstorage from './test_webstorage.js';
@@ -8,6 +9,7 @@ import test_utility from './test_utility.js';
 const handlerCollection = new Map([
     ['Component', test_component],
     ['NodeContent', test_nodecontent],
+    ['Store', test_store],
     ['StateManager', test_statemanager],
     ['State', test_state],
     ['WebStorage', test_webstorage],
