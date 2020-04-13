@@ -34,18 +34,16 @@ export default class Component extends HTMLElement {
     }
 
     update(): void {
-        if (this.isConnected) {
-            if (this._updateTimeoutId !== undefined) {
-                window.clearTimeout(this._updateTimeoutId);
-            }
-            this._updateTimeoutId = window.setTimeout(() => {
-                window.clearTimeout(this._updateTimeoutId);
-                this._updateTimeoutId = undefined;
-                this.render();
-                this._updateCount++;
-                this.updatedCallback();
-            }, this._updateDelay);
+        if (this._updateTimeoutId !== undefined) {
+            window.clearTimeout(this._updateTimeoutId);
         }
+        this._updateTimeoutId = window.setTimeout(() => {
+            window.clearTimeout(this._updateTimeoutId);
+            this._updateTimeoutId = undefined;
+            this.render();
+            this._updateCount++;
+            this.updatedCallback();
+        }, this._updateDelay);
     }
 
     // Overridable methods
