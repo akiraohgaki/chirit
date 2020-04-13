@@ -4,6 +4,7 @@ import NodeContent, {NodeContentData} from './NodeContent.js';
 export default class Component extends HTMLElement {
 
     private _shadowRoot: ShadowRoot | null;
+    private _attrs: Dictionary<string | null>;
     private _updateTimeoutId: number | undefined;
     private _updateDelay: number;
     private _updateCount: number;
@@ -12,6 +13,7 @@ export default class Component extends HTMLElement {
         super();
 
         this._shadowRoot = this.initShadow();
+        this._attrs = this.initAttrs();
         this._updateTimeoutId = undefined;
         this._updateDelay = 100;
         this._updateCount = 0;
@@ -23,6 +25,10 @@ export default class Component extends HTMLElement {
 
     get contentRoot(): ShadowRoot | this {
         return this._shadowRoot || this.shadowRoot || this;
+    }
+
+    get attrs(): Dictionary<string | null> {
+        return this._attrs;
     }
 
     dispatch(type: string, detail: Dictionary<any> = {}): boolean {
@@ -50,6 +56,37 @@ export default class Component extends HTMLElement {
 
     protected initShadow(): ShadowRoot | null {
         return this.attachShadow({mode: 'open'});
+    }
+
+    protected initAttrs(): Dictionary<string | null> {
+        return new Proxy({}, {
+            set: (_target, name, value) => {
+                if (typeof name === 'string' && typeof value === 'string') {
+                    this.setAttribute(name, value);
+                    return true;
+                }
+                return false;
+            },
+            get: (_target, name) => {
+                if (typeof name === 'string') {
+                    return this.getAttribute(name);
+                }
+                return null;
+            },
+            deleteProperty: (_target, name) => {
+                if (typeof name === 'string' && this.hasAttribute(name)) {
+                    this.removeAttribute(name);
+                    return true;
+                }
+                return false;
+            },
+            has: (_target, name) => {
+                if (typeof name === 'string' && this.hasAttribute(name)) {
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     protected render(): void {
