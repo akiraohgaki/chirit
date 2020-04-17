@@ -31,7 +31,7 @@ export default class Component extends HTMLElement {
         return this._attrs;
     }
 
-    dispatch(type: string, detail: Dictionary<any> = {}): boolean {
+    dispatch(type: string, detail?: any): boolean {
         return this.contentRoot.dispatchEvent(new CustomEvent(type, {
             detail: detail,
             bubbles: true,
