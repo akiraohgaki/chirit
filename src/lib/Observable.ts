@@ -1,13 +1,11 @@
-interface ObservableObserver {
-    (value: any): void;
-}
+import {Observer} from './common.js';
 
 export default class Observable {
 
     private _value: any;
-    private _observerCollection: Set<ObservableObserver>;
+    private _observerCollection: Set<Observer>;
 
-    constructor(value: any = null, observers: Iterable<ObservableObserver> = []) {
+    constructor(value: any = null, observers: Iterable<Observer> = []) {
         this._value = value;
         this._observerCollection = new Set(observers);
     }
@@ -21,11 +19,11 @@ export default class Observable {
         return this._value;
     }
 
-    subscribe(observer: ObservableObserver): void {
+    subscribe(observer: Observer): void {
         this._observerCollection.add(observer);
     }
 
-    unsubscribe(observer: ObservableObserver): void {
+    unsubscribe(observer: Observer): void {
         this._observerCollection.delete(observer);
     }
 

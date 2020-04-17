@@ -1,4 +1,4 @@
-export type NodeContentData = Node | NodeList | string;
+import {NodeContentData} from './common.js';
 
 export default class NodeContent {
 
@@ -48,13 +48,13 @@ export default class NodeContent {
         }
         // DocumentType may not be inserted inside DocumentFragment
         const documentFragment = document.createDocumentFragment();
-        if (content instanceof NodeList) {
+        if (content instanceof Node) {
+            documentFragment.appendChild(content.cloneNode(true));
+        }
+        else if (content instanceof NodeList) {
             for (let i = 0; i < content.length; i++) {
                 documentFragment.appendChild(content[i].cloneNode(true));
             }
-        }
-        else if (content instanceof Node) {
-            documentFragment.appendChild(content.cloneNode(true));
         }
         return documentFragment;
     }
