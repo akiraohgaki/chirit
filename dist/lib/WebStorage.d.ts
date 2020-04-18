@@ -1,4 +1,4 @@
-declare type WebStorageType = 'local' | 'session';
+import { WebStorageType } from './common.js';
 export default class WebStorage {
     private _type;
     private _prefix;
@@ -13,4 +13,3 @@ export default class WebStorage {
     removeItem(key: string): void;
     clear(): void;
 }
-export {};

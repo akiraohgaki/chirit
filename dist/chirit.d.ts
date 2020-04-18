@@ -1,14 +1,12 @@
 import Component from './lib/Component.js';
 import NodeContent from './lib/NodeContent.js';
-import StateManager from './lib/StateManager.js';
-import State from './lib/State.js';
+import Observable from './lib/Observable.js';
 import WebStorage from './lib/WebStorage.js';
 import Utility from './lib/Utility.js';
 declare const _default: {
     Component: typeof Component;
     NodeContent: typeof NodeContent;
-    StateManager: typeof StateManager;
-    State: typeof State;
+    Observable: typeof Observable;
     WebStorage: typeof WebStorage;
     Utility: typeof Utility;
 };

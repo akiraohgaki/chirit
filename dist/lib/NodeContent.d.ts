@@ -1,4 +1,4 @@
-export declare type NodeContentData = Node | NodeList | string;
+import { NodeContentData } from './common.js';
 export default class NodeContent {
     private _target;
     constructor(target: Node);
