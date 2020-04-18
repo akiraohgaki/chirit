@@ -21,14 +21,14 @@ class TestComponent extends Chirit.Component {
     }
 
     attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
-        super.attributeChangedCallback(name, oldValue, newValue);
         console.log('Attribute changed');
         console.log(name, oldValue, newValue);
+        super.attributeChangedCallback(name, oldValue, newValue);
     }
 
     connectedCallback() {
-        super.connectedCallback();
         console.log('Connected');
+        super.connectedCallback();
     }
 
     disconnectedCallback() {
