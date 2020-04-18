@@ -1,4 +1,4 @@
-type WebStorageType = 'local' | 'session';
+import {WebStorageType} from './common.js';
 
 export default class WebStorage {
 

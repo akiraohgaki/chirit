@@ -20,7 +20,7 @@ export default function() {
 
     const template = document.createElement('template');
     template.innerHTML = `
-        <ul data-attr1="1" data-attr2="2" data-attr3="3">
+        <ul data-a="a" data-b="b" data-c="c">
         <li>list1</li>
         <li>list2</li>
         <li>list3</li>
