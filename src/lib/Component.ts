@@ -43,14 +43,35 @@ export default class Component extends HTMLElement {
         if (this._updateTimeoutId !== undefined) {
             window.clearTimeout(this._updateTimeoutId);
         }
+
         this._updateTimeoutId = window.setTimeout(() => {
             window.clearTimeout(this._updateTimeoutId);
             this._updateTimeoutId = undefined;
-            this.render();
-            this._updateCount++;
-            this.updatedCallback();
+            this._updateImmediate();
         }, this._updateDelay);
     }
+
+    private _updateImmediate(): void {
+        this.render();
+        this._updateCount++;
+        this.updatedCallback();
+    }
+
+    // Lifecycle methods
+
+    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null): void {
+        if (this._updateCount && oldValue !== newValue) {
+            this.update();
+        }
+    }
+
+    connectedCallback(): void {
+        if (!this._updateCount) {
+            this._updateImmediate();
+        }
+    }
+
+    updatedCallback(): void {}
 
     // Overridable methods
 
@@ -97,21 +118,5 @@ export default class Component extends HTMLElement {
     protected template(): NodeContentData {
         return '';
     }
-
-    // Lifecycle methods
-
-    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null): void {
-        if (this._updateCount && oldValue !== newValue) {
-            this.update();
-        }
-    }
-
-    connectedCallback(): void {
-        if (!this._updateCount) {
-            this.update();
-        }
-    }
-
-    updatedCallback(): void {}
 
 }
