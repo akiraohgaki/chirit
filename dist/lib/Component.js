@@ -4,7 +4,7 @@ export default class Component extends HTMLElement {
         super();
         this._shadowRoot = this.initShadow();
         this._attrs = this.initAttrs();
-        this._updateTimeoutId = undefined;
+        this._updateTimerId = undefined;
         this._updateDelay = 100;
         this._updateCount = 0;
     }
@@ -25,12 +25,12 @@ export default class Component extends HTMLElement {
         }));
     }
     update() {
-        if (this._updateTimeoutId !== undefined) {
-            window.clearTimeout(this._updateTimeoutId);
+        if (this._updateTimerId !== undefined) {
+            window.clearTimeout(this._updateTimerId);
         }
-        this._updateTimeoutId = window.setTimeout(() => {
-            window.clearTimeout(this._updateTimeoutId);
-            this._updateTimeoutId = undefined;
+        this._updateTimerId = window.setTimeout(() => {
+            window.clearTimeout(this._updateTimerId);
+            this._updateTimerId = undefined;
             this._updateImmediate();
         }, this._updateDelay);
     }
@@ -39,7 +39,10 @@ export default class Component extends HTMLElement {
         this._updateCount++;
         this.updatedCallback();
     }
-    attributeChangedCallback(_name, oldValue, newValue) {
+    static get observedAttributes() {
+        return [];
+    }
+    attributeChangedCallback(_name, oldValue, newValue, _namespace) {
         if (this._updateCount && oldValue !== newValue) {
             this.update();
         }
@@ -49,6 +52,8 @@ export default class Component extends HTMLElement {
             this._updateImmediate();
         }
     }
+    disconnectedCallback() { }
+    adoptedCallback(_oldDocument, _newDocument) { }
     updatedCallback() { }
     initShadow() {
         return this.attachShadow({ mode: 'open' });
@@ -80,6 +85,24 @@ export default class Component extends HTMLElement {
                     return true;
                 }
                 return false;
+            },
+            ownKeys: () => {
+                const keys = [];
+                const attributes = Array.from(this.attributes);
+                for (const attribute of attributes) {
+                    keys.push(attribute.name);
+                }
+                return keys;
+            },
+            getOwnPropertyDescriptor: (_target, name) => {
+                if (typeof name === 'string' && this.hasAttribute(name)) {
+                    return {
+                        configurable: true,
+                        enumerable: true,
+                        value: this.getAttribute(name)
+                    };
+                }
+                return undefined;
             }
         });
     }

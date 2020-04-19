@@ -1,4 +1,4 @@
-import { Dictionary } from './common.js';
+import { Dictionary } from './types.js';
 export default class Utility {
     static parseQueryString(queryString?: string): Dictionary<string>;
     static convertByteToHumanReadable(byte: number): string;

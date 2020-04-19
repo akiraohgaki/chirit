@@ -1,8 +1,8 @@
-import { Dictionary, NodeContentData } from './common.js';
+import { Dictionary, NodeContentData } from './types.js';
 export default class Component extends HTMLElement {
     private _shadowRoot;
     private _attrs;
-    private _updateTimeoutId;
+    private _updateTimerId;
     private _updateDelay;
     private _updateCount;
     constructor();
@@ -12,8 +12,11 @@ export default class Component extends HTMLElement {
     dispatch(type: string, detail?: any): boolean;
     update(): void;
     private _updateImmediate;
-    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null): void;
+    static get observedAttributes(): Array<string>;
+    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void;
     connectedCallback(): void;
+    disconnectedCallback(): void;
+    adoptedCallback(_oldDocument: Document, _newDocument: Document): void;
     updatedCallback(): void;
     protected initShadow(): ShadowRoot | null;
     protected initAttrs(): Dictionary<string | null>;

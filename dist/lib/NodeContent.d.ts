@@ -1,4 +1,4 @@
-import { NodeContentData } from './common.js';
+import { NodeContentData } from './types.js';
 export default class NodeContent {
     private _target;
     constructor(target: Node);
