@@ -64,7 +64,7 @@ export default function() {
     main.innerHTML = `
         <div id="component-wrapper">
         <iframe id="component-iframe" style="display: none;"></iframe>
-        <test-component datetime="Date Time"></test-component>
+        <test-component datetime="${new Date}"></test-component>
         </div>
     `;
 
