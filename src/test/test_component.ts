@@ -73,7 +73,13 @@ export default function() {
     const testComponent = wrapper.querySelector('test-component') as TestComponent;
 
     console.log(testComponent.contentRoot);
+
     console.log(testComponent.attrs);
+    console.log('datetime' in testComponent.attrs);
+    console.log('dummy' in testComponent.attrs);
+    console.log(Reflect.ownKeys(testComponent.attrs));
+    console.log(Object.keys(testComponent.attrs));
+    console.log(JSON.stringify(testComponent.attrs));
 
     iframe.contentDocument?.body.appendChild(testComponent);
     wrapper.appendChild(testComponent);
