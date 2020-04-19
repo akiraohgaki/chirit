@@ -1,4 +1,4 @@
-import {Dictionary} from './common.js';
+import {Dictionary} from './types.js';
 
 export default class Utility {
 

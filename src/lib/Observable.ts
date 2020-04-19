@@ -1,4 +1,4 @@
-import {Observer} from './common.js';
+import {Observer} from './types.js';
 
 export default class Observable {
 
