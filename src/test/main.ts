@@ -5,11 +5,11 @@ import test_webstorage from './test_webstorage.js';
 import test_utility from './test_utility.js';
 
 const handlerCollection = new Map([
-    ['Component', test_component],
-    ['NodeContent', test_nodecontent],
-    ['Observable', test_observable],
-    ['WebStorage', test_webstorage],
-    ['Utility', test_utility]
+    ['test_component', test_component],
+    ['test_nodecontent', test_nodecontent],
+    ['test_observable', test_observable],
+    ['test_webstorage', test_webstorage],
+    ['test_utility', test_utility]
 ]);
 
 const template = document.createElement('template');
