@@ -63,7 +63,7 @@ export default class Component extends HTMLElement {
         return [];
     }
 
-    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace: string | null): void {
+    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
         if (this._updateCount && oldValue !== newValue) {
             this.update();
         }
