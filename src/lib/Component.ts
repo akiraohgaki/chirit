@@ -5,7 +5,7 @@ export default class Component extends HTMLElement {
 
     private _shadowRoot: ShadowRoot | null;
     private _attrs: Dictionary<string | null>;
-    private _updateTimeoutId: number | undefined;
+    private _updateTimerId: number | undefined;
     private _updateDelay: number;
     private _updateCount: number;
 
@@ -14,7 +14,7 @@ export default class Component extends HTMLElement {
 
         this._shadowRoot = this.initShadow();
         this._attrs = this.initAttrs();
-        this._updateTimeoutId = undefined;
+        this._updateTimerId = undefined;
         this._updateDelay = 100;
         this._updateCount = 0;
     }
@@ -40,13 +40,13 @@ export default class Component extends HTMLElement {
     }
 
     update(): void {
-        if (this._updateTimeoutId !== undefined) {
-            window.clearTimeout(this._updateTimeoutId);
+        if (this._updateTimerId !== undefined) {
+            window.clearTimeout(this._updateTimerId);
         }
 
-        this._updateTimeoutId = window.setTimeout(() => {
-            window.clearTimeout(this._updateTimeoutId);
-            this._updateTimeoutId = undefined;
+        this._updateTimerId = window.setTimeout(() => {
+            window.clearTimeout(this._updateTimerId);
+            this._updateTimerId = undefined;
             this._updateImmediate();
         }, this._updateDelay);
     }
