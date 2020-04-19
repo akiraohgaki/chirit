@@ -57,9 +57,13 @@ export default class Component extends HTMLElement {
         this.updatedCallback();
     }
 
-    // Lifecycle methods
+    // Lifecycle callbacks
 
-    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null): void {
+    static get observedAttributes(): Array<string> {
+        return [];
+    }
+
+    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace: string | null): void {
         if (this._updateCount && oldValue !== newValue) {
             this.update();
         }
@@ -70,6 +74,10 @@ export default class Component extends HTMLElement {
             this._updateImmediate();
         }
     }
+
+    disconnectedCallback(): void {}
+
+    adoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
     updatedCallback(): void {}
 
