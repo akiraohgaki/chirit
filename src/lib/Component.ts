@@ -1,4 +1,4 @@
-import {Dictionary, NodeContentData} from './common.js';
+import {Dictionary, NodeContentData} from './types.js';
 import NodeContent from './NodeContent.js';
 
 export default class Component extends HTMLElement {

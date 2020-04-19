@@ -1,4 +1,4 @@
-import {WebStorageType} from './common.js';
+import {WebStorageType} from './types.js';
 
 export default class WebStorage {
 
