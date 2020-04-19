@@ -114,6 +114,24 @@ export default class Component extends HTMLElement {
                     return true;
                 }
                 return false;
+            },
+            ownKeys: () => {
+                const keys = [];
+                const attributes = Array.from(this.attributes);
+                for (const attribute of attributes) {
+                    keys.push(attribute.name);
+                }
+                return keys;
+            },
+            getOwnPropertyDescriptor: (_target, name) => {
+                if (typeof name === 'string' && this.hasAttribute(name)) {
+                    return {
+                        configurable: true,
+                        enumerable: true,
+                        value: this.getAttribute(name)
+                    };
+                }
+                return undefined;
             }
         });
     }
