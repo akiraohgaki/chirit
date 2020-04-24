@@ -1,6 +1,6 @@
-import Chirit from '../../chirit.js';
+import {Component} from '../../chirit.js';
 
-export default class Root extends Chirit.Component {
+export default class Root extends Component {
 
     template() {
         return `

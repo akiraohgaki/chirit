@@ -1,6 +1,6 @@
-import Chirit from '../chirit.js';
+import {Component} from '../chirit.js';
 
-class TestComponent extends Chirit.Component {
+class TestComponent extends Component {
 
     constructor() {
         super();

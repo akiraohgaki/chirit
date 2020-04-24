@@ -1,18 +1,11 @@
-interface Dictionary<T> {
+export interface Dictionary<T> {
     [key: string]: T;
 }
 
-interface Observer {
+export interface Observer {
     (value: any): void;
 }
 
-type NodeContentData = string | Node | NodeList;
+export type NodeContentData = string | Node | NodeList;
 
-type WebStorageType = 'local' | 'session';
-
-export {
-    Dictionary,
-    Observer,
-    NodeContentData,
-    WebStorageType
-};
+export type WebStorageType = 'local' | 'session';

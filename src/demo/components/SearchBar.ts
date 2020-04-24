@@ -1,7 +1,7 @@
-import Chirit from '../../chirit.js';
+import {Component} from '../../chirit.js';
 import store from '../store/index.js';
 
-export default class SearchBar extends Chirit.Component {
+export default class SearchBar extends Component {
 
     constructor() {
         super();

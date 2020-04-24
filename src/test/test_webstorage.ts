@@ -1,7 +1,7 @@
-import Chirit from '../chirit.js';
+import {WebStorage} from '../chirit.js';
 
 export default function() {
-    const webStorage = new Chirit.WebStorage('session', 'test_');
+    const webStorage = new WebStorage('session', 'test_');
 
     console.log(webStorage.type);
     console.log(webStorage.prefix);

@@ -1,13 +1,5 @@
-import Component from './lib/Component.js';
-import NodeContent from './lib/NodeContent.js';
-import Observable from './lib/Observable.js';
-import WebStorage from './lib/WebStorage.js';
-import Utility from './lib/Utility.js';
-
-export default {
-    Component,
-    NodeContent,
-    Observable,
-    WebStorage,
-    Utility
-};
+export {default as Component} from './lib/Component.js';
+export {default as NodeContent} from './lib/NodeContent.js';
+export {default as Observable} from './lib/Observable.js';
+export {default as WebStorage} from './lib/WebStorage.js';
+export {default as Utility} from './lib/Utility.js';

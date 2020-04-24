@@ -1,6 +1,4 @@
-import Chirit from '../../chirit.js';
-
-type Observable = InstanceType<typeof Chirit.Observable>;
+import {Observable} from '../../chirit.js';
 
 interface State {
     searchResult: Observable;
@@ -12,7 +10,7 @@ export default class Store {
 
     constructor() {
         this._state = {
-            searchResult: new Chirit.Observable({})
+            searchResult: new Observable({})
         };
     }
 
