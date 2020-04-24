@@ -19,20 +19,6 @@ export default class MainContent extends Component {
                 margin: 0;
                 padding: 0;
             }
-            ul li {
-                display: flex;
-                margin: 0;
-                padding: 20px;
-            }
-            ul li img {
-                display: inline-block;
-                width: 100px;
-                height: 100px;
-                margin-right: 20px;
-            }
-            ul li span {
-                display: inline-block;
-            }
             </style>
 
             <ul>
@@ -43,11 +29,11 @@ export default class MainContent extends Component {
                     for (const result of searchResult.results) {
                         list += `
                             <li>
-                            <img src="${result.artworkUrl100}">
-                            <span>
-                            ${result.artistName}<br>
-                            ${result.collectionName}
-                            </span>
+                            <app-artist-album
+                                artwork="${result.artworkUrl100}"
+                                artist="${result.artistName}"
+                                album="${result.collectionName}">
+                            </app-artist-album>
                             </li>
                         `;
                     }
