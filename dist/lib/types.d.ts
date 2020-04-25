@@ -1,9 +1,8 @@
-interface Dictionary<T> {
+export interface Dictionary<T> {
     [key: string]: T;
 }
-interface Observer {
+export interface Observer {
     (value: any): void;
 }
-declare type NodeContentData = string | Node | NodeList;
-declare type WebStorageType = 'local' | 'session';
-export { Dictionary, Observer, NodeContentData, WebStorageType };
+export declare type NodeContentData = string | Node | NodeList;
+export declare type WebStorageType = 'local' | 'session';

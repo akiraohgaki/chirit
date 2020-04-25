@@ -1,11 +1,8 @@
 import { Observer } from './types.js';
 export default class Observable {
-    private _value;
     private _observerCollection;
-    constructor(value?: any, observers?: Iterable<Observer>);
-    set(value: any): void;
-    get(): any;
+    constructor(observers?: Iterable<Observer>);
     subscribe(observer: Observer): void;
     unsubscribe(observer: Observer): void;
-    private _notify;
+    notify(value: any): void;
 }

@@ -1,14 +1,6 @@
 export default class Observable {
-    constructor(value = null, observers = []) {
-        this._value = value;
+    constructor(observers = []) {
         this._observerCollection = new Set(observers);
-    }
-    set(value) {
-        this._value = value;
-        this._notify();
-    }
-    get() {
-        return this._value;
     }
     subscribe(observer) {
         this._observerCollection.add(observer);
@@ -16,10 +8,10 @@ export default class Observable {
     unsubscribe(observer) {
         this._observerCollection.delete(observer);
     }
-    _notify() {
+    notify(value) {
         if (this._observerCollection.size) {
             for (const observer of this._observerCollection) {
-                observer(this._value);
+                observer(value);
             }
         }
     }
