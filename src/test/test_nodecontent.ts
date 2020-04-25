@@ -1,4 +1,4 @@
-import Chirit from '../chirit.js';
+import {NodeContent} from '../chirit.js';
 
 export default function() {
     const main = document.getElementById('main') as Element;
@@ -28,7 +28,7 @@ export default function() {
     `;
     src.value = template.innerHTML;
 
-    const nodeContent = new Chirit.NodeContent(content);
+    const nodeContent = new NodeContent(content);
 
     console.log(nodeContent.target);
 
