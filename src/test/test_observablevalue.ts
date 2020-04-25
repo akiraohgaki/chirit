@@ -1,4 +1,4 @@
-import {Observable} from '../chirit.js';
+import {ObservableValue} from '../chirit.js';
 
 function observerA(value: number): void {
     console.log('observerA');
@@ -16,13 +16,13 @@ function observerC(value: number): void {
 }
 
 export default function() {
-    const observable = new Observable([observerA, observerB]);
+    const observableValue = new ObservableValue(0, [observerA, observerB]);
 
-    observable.notify(1);
+    observableValue.notify();
 
-    observable.subscribe(observerC);
+    observableValue.subscribe(observerC);
 
-    observable.unsubscribe(observerB);
+    observableValue.unsubscribe(observerB);
 
-    observable.notify(2);
+    observableValue.set(observableValue.get() + 1);
 }

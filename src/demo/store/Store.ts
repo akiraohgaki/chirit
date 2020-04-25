@@ -1,7 +1,7 @@
-import {Observable} from '../../chirit.js';
+import {ObservableValue} from '../../chirit.js';
 
 interface State {
-    searchResult: Observable;
+    searchResult: ObservableValue;
 }
 
 export default class Store {
@@ -10,7 +10,7 @@ export default class Store {
 
     constructor() {
         this._state = {
-            searchResult: new Observable({})
+            searchResult: new ObservableValue({})
         };
     }
 
