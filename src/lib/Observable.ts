@@ -1,22 +1,22 @@
 import {Observer} from './types.js';
 
-export default class Observable {
+export default class Observable<T = any> {
 
-    private _observerCollection: Set<Observer>;
+    private _observerCollection: Set<Observer<T>>;
 
-    constructor(observers: Iterable<Observer> = []) {
+    constructor(observers?: Iterable<Observer<T>>) {
         this._observerCollection = new Set(observers);
     }
 
-    subscribe(observer: Observer): void {
+    subscribe(observer: Observer<T>): void {
         this._observerCollection.add(observer);
     }
 
-    unsubscribe(observer: Observer): void {
+    unsubscribe(observer: Observer<T>): void {
         this._observerCollection.delete(observer);
     }
 
-    notify(value: any): void {
+    notify(value: T): void {
         if (this._observerCollection.size) {
             for (const observer of this._observerCollection) {
                 observer(value);

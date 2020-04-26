@@ -1,7 +1,11 @@
 import {ObservableValue} from '../../chirit.js';
 
+interface ApiResult {
+    [key: string]: any;
+}
+
 interface State {
-    searchResult: ObservableValue;
+    searchResult: ObservableValue<ApiResult>;
 }
 
 export default class Store {
