@@ -4,8 +4,8 @@ export default class Observable<T = any> {
 
     private _observerCollection: Set<Observer<T>>;
 
-    constructor(observers?: Iterable<Observer<T>>) {
-        this._observerCollection = new Set(observers);
+    constructor() {
+        this._observerCollection = new Set();
     }
 
     subscribe(observer: Observer<T>): void {

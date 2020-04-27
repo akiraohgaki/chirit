@@ -10,19 +10,14 @@ function observerB(value: number) {
     console.log(value);
 }
 
-function observerC(value: number) {
-    console.log('observerC');
-    console.log(value);
-}
-
 export default function() {
-    const observableValue = new ObservableValue(0, [observerA, observerB]);
+    const observableValue = new ObservableValue(0);
 
-    observableValue.set(observableValue.get() + 1);
-
-    observableValue.subscribe(observerC);
-
+    observableValue.subscribe(observerA);
+    observableValue.subscribe(observerB);
     observableValue.unsubscribe(observerB);
 
     observableValue.notify();
+
+    observableValue.set(observableValue.get() + 1);
 }

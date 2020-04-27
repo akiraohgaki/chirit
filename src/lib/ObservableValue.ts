@@ -1,12 +1,11 @@
-import {Observer} from './types.js';
 import Observable from './Observable.js';
 
 export default class ObservableValue<T> extends Observable<T> {
 
     private _value: T;
 
-    constructor(value: T, observers?: Iterable<Observer<any>>) {
-        super(observers);
+    constructor(value: T) {
+        super();
 
         this._value = value;
     }
