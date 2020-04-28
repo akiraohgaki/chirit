@@ -6,7 +6,7 @@ export default class WebStorage {
     private _prefix: string;
     private _storage: Storage;
 
-    constructor(type: WebStorageType = 'local', prefix: string = '') {
+    constructor(type: WebStorageType, prefix: string = '') {
         this._type = type;
         this._prefix = prefix;
 
