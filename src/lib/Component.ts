@@ -81,7 +81,7 @@ export default class Component extends HTMLElement {
 
     updatedCallback(): void {}
 
-    // Overridable methods
+    // For sub classes
 
     protected initShadow(): ShadowRoot | null {
         return this.attachShadow({mode: 'open'});

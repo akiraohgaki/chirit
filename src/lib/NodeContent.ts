@@ -86,14 +86,14 @@ export default class NodeContent {
             ) {
                 // Current child is same node type and/or same tag name
                 if (oldChild instanceof Element && newChild instanceof Element) {
-                    // Current child is like HTMLElement, SVGElement
+                    // Current child is Element like HTMLElement, SVGElement
                     this._updateAttributes(oldChild, newChild);
                     if (deep) {
                         this._updateChildNodes(oldChild, newChild, deep);
                     }
                 }
                 else if (oldChild instanceof CharacterData && newChild instanceof CharacterData) {
-                    // Current child is like Text, Comment, ProcessingInstruction
+                    // Current child is CharacterData like Text, Comment, ProcessingInstruction
                     if (oldChild.nodeValue !== newChild.nodeValue) {
                         oldChild.nodeValue = newChild.nodeValue;
                     }
