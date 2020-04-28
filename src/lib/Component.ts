@@ -5,18 +5,20 @@ export default class Component extends HTMLElement {
 
     private _shadowRoot: ShadowRoot | null;
     private _attrs: Dictionary<string | null>;
+    private _isUpdated: boolean;
+
     private _updateTimerId: number | undefined;
     private _updateDelay: number;
-    private _updateCount: number;
 
     constructor() {
         super();
 
         this._shadowRoot = this.initShadow();
         this._attrs = this.initAttrs();
+        this._isUpdated = false;
+
         this._updateTimerId = undefined;
         this._updateDelay = 100;
-        this._updateCount = 0;
     }
 
     static define(name: string, options?: ElementDefinitionOptions): void {
@@ -29,6 +31,10 @@ export default class Component extends HTMLElement {
 
     get attrs(): Dictionary<string | null> {
         return this._attrs;
+    }
+
+    get isUpdated(): boolean {
+        return this._isUpdated;
     }
 
     dispatch(type: string, detail?: any): boolean {
@@ -47,13 +53,13 @@ export default class Component extends HTMLElement {
         this._updateTimerId = window.setTimeout(() => {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
-            this._updateImmediate();
+            this.updateSync();
         }, this._updateDelay);
     }
 
-    private _updateImmediate(): void {
+    updateSync(): void {
         this.render();
-        this._updateCount++;
+        this._isUpdated = true;
         this.updatedCallback();
     }
 
@@ -64,14 +70,14 @@ export default class Component extends HTMLElement {
     }
 
     attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
-        if (this._updateCount && oldValue !== newValue) {
+        if (this.isUpdated && oldValue !== newValue) {
             this.update();
         }
     }
 
     connectedCallback(): void {
-        if (!this._updateCount) {
-            this._updateImmediate();
+        if (!this.isUpdated) {
+            this.updateSync();
         }
     }
 
