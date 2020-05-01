@@ -43,7 +43,7 @@ class TestComponent extends Component {
         console.log('Updated');
     }
 
-    initShadow() {
+    initContentRoot() {
         return this.attachShadow({mode: 'closed'});
     }
 

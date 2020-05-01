@@ -3,7 +3,7 @@ import NodeContent from './NodeContent.js';
 
 export default class Component extends HTMLElement {
 
-    private _shadowRoot: ShadowRoot | null;
+    private _contentRoot: Node;
     private _attrs: Dictionary<string | null>;
     private _isUpdated: boolean;
 
@@ -13,7 +13,7 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
 
-        this._shadowRoot = this.initShadow();
+        this._contentRoot = this.initContentRoot();
         this._attrs = this.initAttrs();
         this._isUpdated = false;
 
@@ -25,8 +25,8 @@ export default class Component extends HTMLElement {
         window.customElements.define(name, this, options);
     }
 
-    get contentRoot(): ShadowRoot | this {
-        return this._shadowRoot || this.shadowRoot || this;
+    get contentRoot(): Node {
+        return this._contentRoot;
     }
 
     get attrs(): Dictionary<string | null> {
@@ -89,7 +89,7 @@ export default class Component extends HTMLElement {
 
     // For sub classes
 
-    protected initShadow(): ShadowRoot | null {
+    protected initContentRoot(): Node {
         return this.attachShadow({mode: 'open'});
     }
 
