@@ -2,8 +2,8 @@ export interface Dictionary<T> {
     [key: string]: T;
 }
 
-export interface Observer {
-    (value: any): void;
+export interface Observer<T> {
+    (value: T): void;
 }
 
 export type NodeContentData = string | Node | NodeList;

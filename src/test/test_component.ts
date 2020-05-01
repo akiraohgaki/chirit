@@ -9,15 +9,14 @@ class TestComponent extends Component {
             const target = event.target as Element;
             if (target.hasAttribute('data-update')) {
                 // Scheduled update should work
-                this.attrs.datetime = 'dummy1';
-                this.attrs.datetime = 'dummy2';
                 this.attrs.datetime = `${new Date}`;
+                this.attrs.plus += '+';
             }
         });
     }
 
     static get observedAttributes() {
-        return ['datetime'];
+        return ['datetime', 'plus'];
     }
 
     attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
@@ -44,7 +43,7 @@ class TestComponent extends Component {
         console.log('Updated');
     }
 
-    initShadow() {
+    initContentRoot() {
         return this.attachShadow({mode: 'closed'});
     }
 
@@ -73,10 +72,11 @@ export default function() {
     const testComponent = wrapper.querySelector('test-component') as TestComponent;
 
     console.log(testComponent.contentRoot);
+    console.log(testComponent.isUpdated);
 
     console.log(testComponent.attrs);
     console.log('datetime' in testComponent.attrs);
-    console.log('dummy' in testComponent.attrs);
+    console.log('plus' in testComponent.attrs);
     console.log(Reflect.ownKeys(testComponent.attrs));
     console.log(Object.keys(testComponent.attrs));
     console.log(JSON.stringify(testComponent.attrs));
@@ -90,7 +90,8 @@ export default function() {
     console.log(testComponent.dispatch('dummy', {dummy: true}));
 
     // Scheduled update should work
+    testComponent.attrs.plus = '+';
     testComponent.update();
-    testComponent.update();
-    testComponent.update();
+
+    testComponent.updateSync();
 }
