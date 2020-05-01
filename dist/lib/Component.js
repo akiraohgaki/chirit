@@ -2,20 +2,23 @@ import NodeContent from './NodeContent.js';
 export default class Component extends HTMLElement {
     constructor() {
         super();
-        this._shadowRoot = this.initShadow();
+        this._contentRoot = this.initContentRoot();
         this._attrs = this.initAttrs();
+        this._isUpdated = false;
         this._updateTimerId = undefined;
         this._updateDelay = 100;
-        this._updateCount = 0;
     }
     static define(name, options) {
         window.customElements.define(name, this, options);
     }
     get contentRoot() {
-        return this._shadowRoot || this.shadowRoot || this;
+        return this._contentRoot;
     }
     get attrs() {
         return this._attrs;
+    }
+    get isUpdated() {
+        return this._isUpdated;
     }
     dispatch(type, detail) {
         return this.contentRoot.dispatchEvent(new CustomEvent(type, {
@@ -31,31 +34,31 @@ export default class Component extends HTMLElement {
         this._updateTimerId = window.setTimeout(() => {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
-            this._updateImmediate();
+            this.updateSync();
         }, this._updateDelay);
     }
-    _updateImmediate() {
+    updateSync() {
         this.render();
-        this._updateCount++;
+        this._isUpdated = true;
         this.updatedCallback();
     }
     static get observedAttributes() {
         return [];
     }
     attributeChangedCallback(_name, oldValue, newValue, _namespace) {
-        if (this._updateCount && oldValue !== newValue) {
+        if (this.isUpdated && oldValue !== newValue) {
             this.update();
         }
     }
     connectedCallback() {
-        if (!this._updateCount) {
-            this._updateImmediate();
+        if (!this.isUpdated) {
+            this.updateSync();
         }
     }
     disconnectedCallback() { }
     adoptedCallback(_oldDocument, _newDocument) { }
     updatedCallback() { }
-    initShadow() {
+    initContentRoot() {
         return this.attachShadow({ mode: 'open' });
     }
     initAttrs() {

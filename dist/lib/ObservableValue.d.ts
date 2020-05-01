@@ -1,9 +1,8 @@
-import { Observer } from './types.js';
 import Observable from './Observable.js';
-export default class ObservableValue extends Observable {
+export default class ObservableValue<T> extends Observable<T> {
     private _value;
-    constructor(value?: any, observers?: Iterable<Observer>);
-    set(value: any): void;
-    get(): any;
+    constructor(value: T);
+    set(value: T): void;
+    get(): T;
     notify(): void;
 }

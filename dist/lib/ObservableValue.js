@@ -1,7 +1,7 @@
 import Observable from './Observable.js';
 export default class ObservableValue extends Observable {
-    constructor(value = null, observers = []) {
-        super(observers);
+    constructor(value) {
+        super();
         this._value = value;
     }
     set(value) {

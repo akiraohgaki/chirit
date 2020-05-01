@@ -1,6 +1,6 @@
 export default class Observable {
-    constructor(observers = []) {
-        this._observerCollection = new Set(observers);
+    constructor() {
+        this._observerCollection = new Set();
     }
     subscribe(observer) {
         this._observerCollection.add(observer);

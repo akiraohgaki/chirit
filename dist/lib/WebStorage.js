@@ -1,5 +1,5 @@
 export default class WebStorage {
-    constructor(type = 'local', prefix = '') {
+    constructor(type, prefix = '') {
         this._type = type;
         this._prefix = prefix;
         switch (this._type) {

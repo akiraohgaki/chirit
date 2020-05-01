@@ -45,7 +45,7 @@ export default class NodeContent {
         }
         return documentFragment;
     }
-    _updateChildNodes(oldParent, newParent, deep = true) {
+    _updateChildNodes(oldParent, newParent, deep) {
         const oldChildNodes = Array.from(oldParent.childNodes);
         const newChildNodes = Array.from(newParent.childNodes);
         const maxLength = Math.max(oldChildNodes.length, newChildNodes.length);
@@ -53,7 +53,7 @@ export default class NodeContent {
             this._updateChild(oldParent, oldChildNodes[i] || null, newChildNodes[i] || null, deep);
         }
     }
-    _updateChild(parent, oldChild, newChild, deep = true) {
+    _updateChild(parent, oldChild, newChild, deep) {
         if (oldChild && !newChild) {
             parent.removeChild(oldChild);
         }

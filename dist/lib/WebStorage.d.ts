@@ -3,7 +3,7 @@ export default class WebStorage {
     private _type;
     private _prefix;
     private _storage;
-    constructor(type?: WebStorageType, prefix?: string);
+    constructor(type: WebStorageType, prefix?: string);
     get type(): WebStorageType;
     get prefix(): string;
     get length(): number;
