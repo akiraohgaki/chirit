@@ -1,12 +1,14 @@
 const http = require('http');
 const fs = require('fs');
 
+const port = 8080;
+
 const mimeTypes = {
     'html': 'text/html',
     'js': 'text/javascript',
     'css': 'text/css',
-    'svg': 'image/svg+xml',
-    'json': 'application/json'
+    'json': 'application/json',
+    'svg': 'image/svg+xml'
 };
 
 const httpHeaders = {
@@ -14,42 +16,56 @@ const httpHeaders = {
     'Cache-Control': 'no-cache'
 };
 
+function rewriteUrl(url) {
+    if (url.startsWith('/demo/')) {
+        return '/src/demo/index.html';
+    }
+    else if (url.startsWith('/test/')) {
+        return '/src/test/index.html';
+    }
+    return url;
+}
+
 http.createServer((req, res) => {
-    const sendErrorMessage = (statusCode, message) => {
-        res.writeHead(statusCode, {
-            ...httpHeaders,
-            'Content-Type': 'text/plain'
-        });
-        res.write(message);
-        res.end();
-    };
-
-    const sendFile = (path) => {
-        fs.readFile(path, (err, data) => {
-            if (!err) {
-                res.writeHead(200, {
-                    ...httpHeaders,
-                    'Content-Type': mimeTypes[path.split('.').pop()] || 'application/octet-stream'
-                });
-                res.write(data);
-                res.end();
-            }
-            else {
-                sendErrorMessage(404, 'Not Found');
-            }
-        });
-    };
-
     console.log(req.url);
 
-    if (req.url.startsWith('/demo/')) {
-        sendFile(`${__dirname}/src/demo/index.html`);
+    let url = rewriteUrl(req.url);
+    if (url.endsWith('/')) {
+        url += 'index.html';
     }
-    else if (req.url.startsWith('/test/')) {
-        sendFile(`${__dirname}/src/test/index.html`);
-    }
-    else {
-        sendFile(`${__dirname}/${req.url}`);
-    }
+
+    fs.readFile(__dirname + url, (err, data) => {
+        if (err) {
+            let statusCode = 0;
+            let message = '';
+
+            if (err.code === 'ENOENT') {
+                statusCode = 404;
+                message = 'Not Found';
+            }
+            else {
+                statusCode = 500;
+                message = 'Internal Server Error';
+            }
+
+            res.writeHead(statusCode, {
+                ...httpHeaders,
+                'Content-Type': 'text/plain'
+            });
+            res.end(message, 'utf-8');
+        }
+        else {
+            const ext = url.split('.').pop().toLowerCase();
+            const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+            res.writeHead(200, {
+                ...httpHeaders,
+                'Content-Type': contentType
+            });
+            res.end(data, 'utf-8');
+        }
+    });
 })
-.listen(8080);
+.listen(port);
+
+console.log(`Server is started at port ${port}`);
