@@ -33,11 +33,11 @@ export default class Router {
         this._routeCollection.delete(pattern);
     }
 
-    navigate(path: string): void {
+    navigate(url: string): void {
         if (this._routeCollection.size) {
             for (const [pattern, handler] of this._routeCollection) {
                 const params = {};
-                if (this._match(path, pattern, params)) {
+                if (this._match(url, pattern, params)) {
                     handler(params);
                     break;
                 }
@@ -45,8 +45,11 @@ export default class Router {
         }
     }
 
-    private _match(path: string, pattern: string, params: Dictionary<string>): boolean {
-        const match = path.match(new RegExp(pattern, 'gi'));
+    private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
+        // Replace :name to (?<name>\w+) but don't replace if it is (?:pattern)
+        pattern = pattern.replace(/([^?]):(\w+)/g, '$1(?<$2>\w+)');
+
+        const match = url.match(new RegExp(pattern, 'g'));
         if (match) {
             if (match.groups) {
                 Object.assign(params, match.groups);
@@ -59,17 +62,17 @@ export default class Router {
 }
 
 /*
-// https://example.com/users/123
-// https://example.com/#/users/123
-// <a route="/users/123"></a>
+// https://example.com/users/123/picture/1
+// https://example.com/#/users/123/picture/1
+// <a route="/users/123/picture/1"></a>
 
 const router = new Router('hash');
 
-router.setRoute('/users/(?<uid>.+)', (params) => {
-    console.log(params.uid);
+router.setRoute('/users/:uid/pic(\w*)/:pic', (params) => {
+    console.log(params.uid, params.pic);
 });
 router.setRoute('/users/', () => {});
 router.setRoute('.*', () => {});
 
-router.navigate('/users/123');
+router.navigate('/users/123/picture/1');
 */
