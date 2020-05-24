@@ -4,6 +4,7 @@ export default class Router {
 
     private _type: RouterType;
     private _routeCollection: Map<string, RouteHandler>;
+
     private _isRegExpNamedCaptureGroupsSupport: boolean;
 
     constructor(type: RouterType) {
@@ -22,9 +23,8 @@ export default class Router {
         }
 
         try {
-            // ES2018 RegExp named capture groups has currently not working in Firefox
-            // and Firefox will throw regexp syntax error
-            const matches = 'es2018'.match(new RegExp('(?<name>.*)'));
+            // RegExp named capture groups unsupported environment will throw regexp syntax error
+            const matches = 'RegExp named capturing'.match(new RegExp('(?<name>.+)'));
             this._isRegExpNamedCaptureGroupsSupport = matches?.groups?.name ? true : false;
         }
         catch {
@@ -57,25 +57,24 @@ export default class Router {
     }
 
     private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
-        // Replace :name to (?<name>[^/?#]+) but don't replace for (?:pattern)
-        pattern = '/' + pattern; // temporal first character
+        // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
+        pattern = '/' + pattern; // Temporal first character
         pattern = pattern.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)');
         pattern = pattern.substring(1);
 
         const groupNames: Array<string> = [];
         if (!this._isRegExpNamedCaptureGroupsSupport) {
-            // This is trick for RegExp named capture groups unsupported environment
-            // For now, does not work expected for capture groups within capture groups like ((pattern)(pattern))
+            // This is workaround for RegExp named capture groups unsupported environment
+            // and does not work expected for capture groups within capture groups like ((pattern)(pattern))
             pattern = pattern.replace(/\([^()]+\)/g, (substr) => {
                 if (substr.startsWith('(?:')) {
                     return substr;
                 }
                 else if (substr.startsWith('(?<')) {
-                    substr = substr.replace(/\(\?<(\w+)>([^)]+)\)/, (_substr, name, pattern) => {
+                    return substr.replace(/\(\?<(\w+)>(.+)\)/, (_substr, name, pattern) => {
                         groupNames.push(name);
                         return `(${pattern})`;
                     });
-                    return substr;
                 }
                 else {
                     groupNames.push('');
