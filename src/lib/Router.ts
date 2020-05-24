@@ -46,13 +46,41 @@ export default class Router {
     }
 
     private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
-        // Replace :name to (?<name>\w+) but don't replace if it is (?:pattern)
-        pattern = pattern.replace(/([^?]):(\w+)/g, '$1(?<$2>\w+)');
+        // Replace :name to (?<name>[^/?#]+) but don't replace if it is (?:pattern)
+        // However, ES2018 RegExp named capture groups has currently not working in Firefox
+        pattern = pattern.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)');
 
-        const match = url.match(new RegExp(pattern, 'g'));
-        if (match) {
-            if (match.groups) {
-                Object.assign(params, match.groups);
+        // Trick to RegExp named capture groups issue
+        const groupNames: Array<string> = [];
+        pattern = pattern.replace(/\([^()]+\)/g, (substr) => {
+            if (substr.startsWith('(?:')) {
+                return substr;
+            }
+            else if (substr.startsWith('(?<')) {
+                substr = substr.replace(/\(\?<(\w+)>([^)]+)\)/, (_substr, name, pattern) => {
+                    groupNames.push(name);
+                    return `(${pattern})`;
+                });
+                return substr;
+            }
+            else {
+                groupNames.push('');
+                return substr;
+            }
+        });
+
+        const matches = url.match(new RegExp(pattern));
+        if (matches) {
+            if (matches.groups) {
+                Object.assign(params, matches.groups);
+            }
+            // Trick to RegExp named capture groups issue
+            if (groupNames.length) {
+                for (let i = 0; i < groupNames.length; i++) {
+                    if (groupNames[i]) {
+                        params[groupNames[i]] = matches[i+1];
+                    }
+                }
             }
             return true;
         }
@@ -68,11 +96,17 @@ export default class Router {
 
 const router = new Router('hash');
 
-router.setRoute('/users/:uid/pic(\w*)/:pic', (params) => {
-    console.log(params.uid, params.pic);
+router.setRoute('/users/:uid/(pic)(?:\\w*)/(?<pic1>\\d+)-:pic2', (params) => {
+    console.log(params);
 });
-router.setRoute('/users/', () => {});
-router.setRoute('.*', () => {});
+router.setRoute('/users/', () => {
+    console.log('users');
+});
+router.setRoute('.*', () => {
+    console.log('any');
+});
 
-router.navigate('/users/123/picture/1');
+router.navigate('https://example.com/users/1-2_a.b/picture/1-A?key=val#hash');
+//router.navigate('/users/');
+//router.navigate('/');
 */
