@@ -4,6 +4,7 @@ export default class Router {
 
     private _type: RouterType;
     private _routeCollection: Map<string, RouteHandler>;
+    private _isRegExpNamedCaptureGroupsSupport: boolean;
 
     constructor(type: RouterType) {
         this._type = type;
@@ -18,6 +19,16 @@ export default class Router {
                 //...
                 break;
             }
+        }
+
+        try {
+            // ES2018 RegExp named capture groups has currently not working in Firefox
+            // and Firefox will throw regexp syntax error
+            const matches = 'es2018'.match(new RegExp('(?<name>.*)'));
+            this._isRegExpNamedCaptureGroupsSupport = matches?.groups?.name ? true : false;
+        }
+        catch {
+            this._isRegExpNamedCaptureGroupsSupport = false;
         }
     }
 
@@ -46,36 +57,39 @@ export default class Router {
     }
 
     private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
-        // Replace :name to (?<name>[^/?#]+) but don't replace if it is (?:pattern)
-        // However, ES2018 RegExp named capture groups has currently not working in Firefox
+        // Replace :name to (?<name>[^/?#]+) but don't replace for (?:pattern)
+        pattern = '/' + pattern; // temporal first character
         pattern = pattern.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)');
+        pattern = pattern.substring(1);
 
-        // Trick to RegExp named capture groups issue
         const groupNames: Array<string> = [];
-        pattern = pattern.replace(/\([^()]+\)/g, (substr) => {
-            if (substr.startsWith('(?:')) {
-                return substr;
-            }
-            else if (substr.startsWith('(?<')) {
-                substr = substr.replace(/\(\?<(\w+)>([^)]+)\)/, (_substr, name, pattern) => {
-                    groupNames.push(name);
-                    return `(${pattern})`;
-                });
-                return substr;
-            }
-            else {
-                groupNames.push('');
-                return substr;
-            }
-        });
+        if (!this._isRegExpNamedCaptureGroupsSupport) {
+            // This is trick for RegExp named capture groups unsupported environment
+            // For now, does not work expected for capture groups within capture groups like ((pattern)(pattern))
+            pattern = pattern.replace(/\([^()]+\)/g, (substr) => {
+                if (substr.startsWith('(?:')) {
+                    return substr;
+                }
+                else if (substr.startsWith('(?<')) {
+                    substr = substr.replace(/\(\?<(\w+)>([^)]+)\)/, (_substr, name, pattern) => {
+                        groupNames.push(name);
+                        return `(${pattern})`;
+                    });
+                    return substr;
+                }
+                else {
+                    groupNames.push('');
+                    return substr;
+                }
+            });
+        }
 
         const matches = url.match(new RegExp(pattern));
         if (matches) {
-            if (matches.groups) {
+            if (this._isRegExpNamedCaptureGroupsSupport && matches.groups) {
                 Object.assign(params, matches.groups);
             }
-            // Trick to RegExp named capture groups issue
-            if (groupNames.length) {
+            else if (!this._isRegExpNamedCaptureGroupsSupport && groupNames.length) {
                 for (let i = 0; i < groupNames.length; i++) {
                     if (groupNames[i]) {
                         params[groupNames[i]] = matches[i+1];
@@ -96,7 +110,7 @@ export default class Router {
 
 const router = new Router('hash');
 
-router.setRoute('/users/:uid/(pic)(?:\\w*)/(?<pic1>\\d+)-:pic2', (params) => {
+router.setRoute('/users/:uid/((pic)(?:\\w*))/((?<pic1>\\d+)-:pic2)', (params) => {
     console.log(params);
 });
 router.setRoute('/users/', () => {
