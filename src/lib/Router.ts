@@ -1,11 +1,19 @@
 import {Dictionary, RouterType, RouteHandler} from './types.js';
 
+let isRegExpNamedCaptureGroupsAvailable = false;
+try {
+    // RegExp named capture groups unsupported environment will throw regexp syntax error
+    const matches = 'RegExp named capturing'.match(new RegExp('(?<name>.+)'));
+    isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
+}
+catch {
+    isRegExpNamedCaptureGroupsAvailable = false;
+}
+
 export default class Router {
 
     private _type: RouterType;
     private _routeCollection: Map<string, RouteHandler>;
-
-    private _isRegExpNamedCaptureGroupsSupport: boolean;
 
     constructor(type: RouterType) {
         this._type = type;
@@ -20,15 +28,6 @@ export default class Router {
                 //...
                 break;
             }
-        }
-
-        try {
-            // RegExp named capture groups unsupported environment will throw regexp syntax error
-            const matches = 'RegExp named capturing'.match(new RegExp('(?<name>.+)'));
-            this._isRegExpNamedCaptureGroupsSupport = matches?.groups?.name ? true : false;
-        }
-        catch {
-            this._isRegExpNamedCaptureGroupsSupport = false;
         }
     }
 
@@ -62,7 +61,7 @@ export default class Router {
     }
 
     private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
-        if (this._isRegExpNamedCaptureGroupsSupport) {
+        if (isRegExpNamedCaptureGroupsAvailable) {
             const matches = url.match(new RegExp(pattern));
             if (matches) {
                 if (matches.groups) {
