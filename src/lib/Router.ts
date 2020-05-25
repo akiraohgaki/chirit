@@ -37,11 +37,11 @@ export default class Router {
     }
 
     setRoute(pattern: string, handler: RouteHandler): void {
-        this._routeCollection.set(pattern, handler);
+        this._routeCollection.set(this._fixPattern(pattern), handler);
     }
 
     removeRoute(pattern: string): void {
-        this._routeCollection.delete(pattern);
+        this._routeCollection.delete(this._fixPattern(pattern));
     }
 
     navigate(url: string): void {
@@ -56,48 +56,55 @@ export default class Router {
         }
     }
 
-    private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
+    private _fixPattern(pattern: string): string {
         // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
-        pattern = '/' + pattern; // Temporal first character
-        pattern = pattern.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)');
-        pattern = pattern.substring(1);
+        return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
+    }
 
-        const groupNames: Array<string> = [];
-        if (!this._isRegExpNamedCaptureGroupsSupport) {
-            // This is workaround for RegExp named capture groups unsupported environment
-            // and does not work expected for capture groups within capture groups like ((pattern)(pattern))
-            pattern = pattern.replace(/\([^()]+\)/g, (substr) => {
-                if (substr.startsWith('(?:')) {
-                    return substr;
+    private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
+        if (this._isRegExpNamedCaptureGroupsSupport) {
+            const matches = url.match(new RegExp(pattern));
+            if (matches) {
+                if (matches.groups) {
+                    Object.assign(params, matches.groups);
                 }
-                else if (substr.startsWith('(?<')) {
-                    return substr.replace(/\(\?<(\w+)>(.+)\)/, (_substr, name, pattern) => {
-                        groupNames.push(name);
-                        return `(${pattern})`;
-                    });
-                }
-                else {
-                    groupNames.push('');
-                    return substr;
-                }
-            });
-        }
-
-        const matches = url.match(new RegExp(pattern));
-        if (matches) {
-            if (this._isRegExpNamedCaptureGroupsSupport && matches.groups) {
-                Object.assign(params, matches.groups);
+                return true;
             }
-            else if (!this._isRegExpNamedCaptureGroupsSupport && groupNames.length) {
-                for (let i = 0; i < groupNames.length; i++) {
-                    if (groupNames[i]) {
-                        params[groupNames[i]] = matches[i+1];
+            return false;
+        }
+        else {
+            // This is workaround for RegExp named capture groups unsupported environment
+            // and does not work expected for named capture groups within named capture groups like (?<name>(?<name>pattern))
+            const groupNames: Array<string> = [];
+
+            const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
+            const patternA = pattern.replace(namedGroupRegExp, (_substring, name, pattern) => {
+                groupNames.push(name);
+                return `(${pattern})`;
+            });
+            const patternB = pattern.replace(namedGroupRegExp, '(?:$2)');
+
+            const matchesA = url.match(new RegExp(patternA));
+            const matchesB = url.match(new RegExp(patternB));
+
+            if (matchesA && matchesB) {
+                if (groupNames.length) {
+                    let iN = 0;
+                    let iB = 1;
+                    for (let iA = 1; iA < matchesA.length; iA++) {
+                        if (matchesA[iA] === matchesB[iB]) {
+                            iB++;
+                        }
+                        else {
+                            params[groupNames[iN]] = matchesA[iA];
+                            iN++;
+                        }
                     }
                 }
+                return true;
             }
-            return true;
+            return false;
         }
-        return false;
     }
 
 }
