@@ -108,25 +108,3 @@ export default class Router {
     }
 
 }
-
-/*
-// https://example.com/users/123/picture/1
-// https://example.com/#/users/123/picture/1
-// <a route="/users/123/picture/1"></a>
-
-const router = new Router('hash');
-
-router.setRoute('/users/:uid/((pic)(?:\\w*))/((?<pic1>\\d+)-:pic2)', (params) => {
-    console.log(params);
-});
-router.setRoute('/users/', () => {
-    console.log('users');
-});
-router.setRoute('.*', () => {
-    console.log('any');
-});
-
-router.navigate('https://example.com/users/1-2_a.b/picture/1-A?key=val#hash');
-//router.navigate('/users/');
-//router.navigate('/');
-*/
