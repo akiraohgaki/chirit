@@ -35,19 +35,19 @@ export default class Router {
         return this._type;
     }
 
-    setRoute(pattern: string, handler: RouteHandler): void {
-        this._routeCollection.set(this._fixPattern(pattern), handler);
+    setRoute(route: string, handler: RouteHandler): void {
+        this._routeCollection.set(this._fixRoute(route), handler);
     }
 
-    removeRoute(pattern: string): void {
-        this._routeCollection.delete(this._fixPattern(pattern));
+    removeRoute(route: string): void {
+        this._routeCollection.delete(this._fixRoute(route));
     }
 
     navigate(url: string): void {
         if (this._routeCollection.size) {
-            for (const [pattern, handler] of this._routeCollection) {
-                const params = {};
-                if (this._match(url, pattern, params)) {
+            for (const [route, handler] of this._routeCollection) {
+                const params = this._match(url, route);
+                if (params) {
                     handler(params);
                     break;
                 }
@@ -55,21 +55,22 @@ export default class Router {
         }
     }
 
-    private _fixPattern(pattern: string): string {
+    private _fixRoute(route: string): string {
         // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
-        return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
+        return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 
-    private _match(url: string, pattern: string, params: Dictionary<string>): boolean {
+    private _match(url: string, route: string): Dictionary<string> | null {
+        const params: Dictionary<string> = {};
+
         if (isRegExpNamedCaptureGroupsAvailable) {
-            const matches = url.match(new RegExp(pattern));
+            const matches = url.match(new RegExp(route));
             if (matches) {
                 if (matches.groups) {
                     Object.assign(params, matches.groups);
                 }
-                return true;
+                return params;
             }
-            return false;
         }
         else {
             // This is workaround for RegExp named capture groups unsupported environment
@@ -77,14 +78,14 @@ export default class Router {
             const groupNames: Array<string> = [];
 
             const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
-            const patternA = pattern.replace(namedGroupRegExp, (_substring, name, pattern) => {
+            const routePatternA = route.replace(namedGroupRegExp, (_substring, name, pattern) => {
                 groupNames.push(name);
                 return `(${pattern})`;
             });
-            const patternB = pattern.replace(namedGroupRegExp, '(?:$2)');
+            const routePatternB = route.replace(namedGroupRegExp, '(?:$2)');
 
-            const matchesA = url.match(new RegExp(patternA));
-            const matchesB = url.match(new RegExp(patternB));
+            const matchesA = url.match(new RegExp(routePatternA));
+            const matchesB = url.match(new RegExp(routePatternB));
 
             if (matchesA && matchesB) {
                 if (groupNames.length) {
@@ -100,10 +101,10 @@ export default class Router {
                         }
                     }
                 }
-                return true;
+                return params;
             }
-            return false;
         }
+        return null;
     }
 
 }
