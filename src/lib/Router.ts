@@ -19,16 +19,8 @@ export default class Router {
         this._type = type;
         this._routeCollection = new Map();
 
-        switch (this._type) {
-            case 'hash': {
-                //...
-                break;
-            }
-            case 'history': {
-                //...
-                break;
-            }
-        }
+        this._popstateEventHandler = this._popstateEventHandler.bind(this);
+        this._hashchangeEventHandler = this._hashchangeEventHandler.bind(this);
     }
 
     get type(): RouterType {
@@ -36,23 +28,71 @@ export default class Router {
     }
 
     setRoute(route: string, handler: RouteHandler): void {
+        if (!this._routeCollection.size) {
+            switch (this._type) {
+                case 'hash': {
+                    window.addEventListener('hashchange', this._hashchangeEventHandler);
+                    break;
+                }
+                case 'history': {
+                    window.addEventListener('popstate', this._popstateEventHandler);
+                    break;
+                }
+            }
+        }
         this._routeCollection.set(this._fixRoute(route), handler);
     }
 
     removeRoute(route: string): void {
         this._routeCollection.delete(this._fixRoute(route));
+        if (!this._routeCollection.size) {
+            switch (this._type) {
+                case 'hash': {
+                    window.removeEventListener('hashchange', this._hashchangeEventHandler);
+                    break;
+                }
+                case 'history': {
+                    window.removeEventListener('popstate', this._popstateEventHandler);
+                    break;
+                }
+            }
+        }
     }
 
     navigate(url: string): void {
+        this._navigate(url, true);
+    }
+
+    private _navigate(url: string, changeUrl: boolean): void {
         if (this._routeCollection.size) {
             for (const [route, handler] of this._routeCollection) {
                 const params = this._match(url, route);
                 if (params) {
+                    if (changeUrl) {
+                        switch (this._type) {
+                            case 'hash': {
+                                window.location.hash = url;
+                                break;
+                            }
+                            case 'history': {
+                                window.history.pushState({}, '', url);
+                                break;
+                            }
+                        }
+                    }
                     handler(params);
                     break;
                 }
             }
         }
+    }
+
+    private _hashchangeEventHandler(): void {
+        this._navigate(window.location.hash.substring(1), false);
+    }
+
+    private _popstateEventHandler(): void {
+        this._navigate(window.location.pathname, false);
     }
 
     private _fixRoute(route: string): string {
