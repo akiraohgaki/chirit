@@ -59,34 +59,34 @@ export default class Router {
         }
     }
 
-    navigate(url: string): void {
+    navigate(path: string): void {
         switch (this._type) {
             case 'hash': {
-                if (url === window.location.hash.substring(1)) {
-                    this._navigate(url);
+                if (path === window.location.hash.substring(1)) {
+                    this._navigate(path);
                 }
                 else {
-                    window.location.hash = url;
+                    window.location.hash = path;
                 }
                 break;
             }
             case 'history': {
-                if (url === window.location.pathname) {
-                    this._navigate(url);
+                if (path === window.location.pathname) {
+                    this._navigate(path);
                 }
                 else {
-                    window.history.pushState({}, '', url);
-                    this._navigate(url);
+                    window.history.pushState({}, '', path);
+                    this._navigate(path);
                 }
                 break;
             }
         }
     }
 
-    private _navigate(url: string): void {
+    private _navigate(path: string): void {
         if (this._routeCollection.size) {
             for (const [route, handler] of this._routeCollection) {
-                const params = this._match(url, route);
+                const params = this._match(path, route);
                 if (params) {
                     handler(params);
                     break;
@@ -108,11 +108,11 @@ export default class Router {
         return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 
-    private _match(url: string, route: string): Dictionary<string> | null {
+    private _match(path: string, route: string): Dictionary<string> | null {
         const params: Dictionary<string> = {};
 
         if (isRegExpNamedCaptureGroupsAvailable) {
-            const matches = url.match(new RegExp(route));
+            const matches = path.match(new RegExp(route));
             if (matches) {
                 if (matches.groups) {
                     Object.assign(params, matches.groups);
@@ -132,8 +132,8 @@ export default class Router {
             });
             const routePatternB = route.replace(namedGroupRegExp, '(?:$2)');
 
-            const matchesA = url.match(new RegExp(routePatternA));
-            const matchesB = url.match(new RegExp(routePatternB));
+            const matchesA = path.match(new RegExp(routePatternA));
+            const matchesB = path.match(new RegExp(routePatternB));
 
             if (matchesA && matchesB) {
                 if (groupNames.length) {
