@@ -60,26 +60,34 @@ export default class Router {
     }
 
     navigate(url: string): void {
-        this._navigate(url, true);
+        switch (this._type) {
+            case 'hash': {
+                if (url === window.location.hash.substring(1)) {
+                    this._navigate(url);
+                }
+                else {
+                    window.location.hash = url;
+                }
+                break;
+            }
+            case 'history': {
+                if (url === window.location.pathname) {
+                    this._navigate(url);
+                }
+                else {
+                    window.history.pushState({}, '', url);
+                    this._navigate(url);
+                }
+                break;
+            }
+        }
     }
 
-    private _navigate(url: string, changeUrl: boolean): void {
+    private _navigate(url: string): void {
         if (this._routeCollection.size) {
             for (const [route, handler] of this._routeCollection) {
                 const params = this._match(url, route);
                 if (params) {
-                    if (changeUrl) {
-                        switch (this._type) {
-                            case 'hash': {
-                                window.location.hash = url;
-                                break;
-                            }
-                            case 'history': {
-                                window.history.pushState({}, '', url);
-                                break;
-                            }
-                        }
-                    }
                     handler(params);
                     break;
                 }
@@ -88,11 +96,11 @@ export default class Router {
     }
 
     private _hashchangeEventHandler(): void {
-        this._navigate(window.location.hash.substring(1), false);
+        this._navigate(window.location.hash.substring(1));
     }
 
     private _popstateEventHandler(): void {
-        this._navigate(window.location.pathname, false);
+        this._navigate(window.location.pathname);
     }
 
     private _fixRoute(route: string): string {
