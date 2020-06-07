@@ -19,8 +19,8 @@ export default class Router {
         this._type = type;
         this._routeCollection = new Map();
 
-        this._popstateEventHandler = this._popstateEventHandler.bind(this);
         this._hashchangeEventHandler = this._hashchangeEventHandler.bind(this);
+        this._popstateEventHandler = this._popstateEventHandler.bind(this);
     }
 
     get type(): RouterType {
@@ -59,25 +59,45 @@ export default class Router {
         }
     }
 
-    navigate(path: string): void {
+    navigate(url: string): void {
+        const urlObj = new URL(url, window.location.href);
+
+        if (urlObj.origin !== window.location.origin) {
+            window.location.href = urlObj.href;
+            return;
+        }
+
         switch (this._type) {
             case 'hash': {
-                if (path === window.location.hash.substring(1)) {
-                    this._navigate(path);
+                // http://host/path/
+                //
+                // http://host/path/to?k=v#/hash -> http://host/path/to?k=v#/hash
+                // to?k=v#/hash -> http://host/path/to?k=v#/hash
+                // #/hash -> http://host/path/#/hash
+                // /hash -> http://host/hash
+                // hash -> http://host/path/hash
+                // ../ -> http://host/
+
+                if (urlObj.hash) {
+                    if (urlObj.pathname === window.location.pathname
+                        && urlObj.search === window.location.search
+                    ) {
+                        //window.location.hash = urlObj.hash.substring(1);
+                    }
+                    else {
+                        window.location.href = urlObj.href;
+                    }
                 }
                 else {
-                    window.location.hash = path;
+                    //window.location.hash = urlObj.pathname;
                 }
                 break;
             }
             case 'history': {
-                if (path === window.location.pathname) {
-                    this._navigate(path);
+                if (urlObj.href !== window.location.href) {
+                    window.history.pushState({}, '', urlObj.href);
                 }
-                else {
-                    window.history.pushState({}, '', path);
-                    this._navigate(path);
-                }
+                this._navigate(urlObj.pathname);
                 break;
             }
         }
