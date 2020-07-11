@@ -40,11 +40,13 @@ export default class Router {
                 }
             }
         }
+
         this._routeCollection.set(this._fixRoute(route), handler);
     }
 
     removeRoute(route: string): void {
         this._routeCollection.delete(this._fixRoute(route));
+
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
@@ -73,51 +75,53 @@ export default class Router {
     }
 
     private _navigateWithHash(url: string): void {
-        let virtualPath = '';
+        let newVirtualPath = '';
 
         if (url.startsWith('https://') || url.startsWith('http://')
             || url.includes('?') || url.includes('#')
         ) {
-            const newUrlObj = new URL(url, window.location.href);
-            const newUrlParts = newUrlObj.href.split('#');
+            const newUrl = new URL(url, window.location.href);
+            const newUrlParts = newUrl.href.split('#');
             const oldUrlParts = window.location.href.split('#');
+
             if (newUrlParts[0] !== oldUrlParts[0]) {
-                window.location.href = newUrlObj.href;
+                window.location.href = newUrl.href;
                 return;
             }
-            virtualPath = newUrlParts[1] || '';
+
+            newVirtualPath = newUrlParts[1] || '';
         }
         else {
-            virtualPath = url;
+            newVirtualPath = url;
         }
 
-        const oldVirtualUrlObj = new URL('/', window.location.href);
-        if (window.location.hash) {
-            oldVirtualUrlObj.pathname = window.location.hash.substring(1);
-        }
-        const newVirtualUrlObj = new URL(virtualPath, oldVirtualUrlObj.href);
-        if (newVirtualUrlObj.href !== oldVirtualUrlObj.href) {
-            window.location.hash = newVirtualUrlObj.pathname;
+        const oldVirtualPath = window.location.hash.substring(1);
+        const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
+        const newVirtualUrl = new URL(newVirtualPath, oldVirtualUrl.href);
+
+        if (newVirtualUrl.pathname !== oldVirtualPath) {
+            window.location.hash = newVirtualUrl.pathname;
             return;
         }
-        this._navigateToRoute(newVirtualUrlObj.pathname);
+
+        this._invoke(newVirtualUrl.pathname);
     }
 
     private _navigateWithHistory(url: string): void {
-        const newUrlObj = new URL(url, window.location.href);
+        const newUrl = new URL(url, window.location.href);
 
-        if (newUrlObj.origin !== window.location.origin) {
-            window.location.href = newUrlObj.href;
+        if (newUrl.origin !== window.location.origin) {
+            window.location.href = newUrl.href;
             return;
         }
 
-        if (newUrlObj.href !== window.location.href) {
-            window.history.pushState({}, '', newUrlObj.href);
+        if (newUrl.href !== window.location.href) {
+            window.history.pushState({}, '', newUrl.href);
         }
-        this._navigateToRoute(newUrlObj.pathname);
+        this._invoke(newUrl.pathname);
     }
 
-    private _navigateToRoute(path: string): void {
+    private _invoke(path: string): void {
         if (this._routeCollection.size) {
             for (const [route, handler] of this._routeCollection) {
                 const params = this._match(path, route);
@@ -130,11 +134,11 @@ export default class Router {
     }
 
     private _hashchangeEventHandler(): void {
-        this._navigateToRoute(window.location.hash.substring(1));
+        this._invoke(window.location.hash.substring(1));
     }
 
     private _popstateEventHandler(): void {
-        this._navigateToRoute(window.location.pathname);
+        this._invoke(window.location.pathname);
     }
 
     private _fixRoute(route: string): string {
