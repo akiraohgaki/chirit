@@ -31,11 +31,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.addEventListener('hashchange', this._hashchangeEventHandler);
+                    window.addEventListener('hashchange', this._hashchangeEventHandler, false);
                     break;
                 }
                 case 'history': {
-                    window.addEventListener('popstate', this._popstateEventHandler);
+                    window.addEventListener('popstate', this._popstateEventHandler, false);
                     break;
                 }
             }
@@ -48,11 +48,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.removeEventListener('hashchange', this._hashchangeEventHandler);
+                    window.removeEventListener('hashchange', this._hashchangeEventHandler, false);
                     break;
                 }
                 case 'history': {
-                    window.removeEventListener('popstate', this._popstateEventHandler);
+                    window.removeEventListener('popstate', this._popstateEventHandler, false);
                     break;
                 }
             }
@@ -60,50 +60,64 @@ export default class Router {
     }
 
     navigate(url: string): void {
-        const urlObj = new URL(url, window.location.href);
-
-        if (urlObj.origin !== window.location.origin) {
-            window.location.href = urlObj.href;
-            return;
-        }
-
         switch (this._type) {
             case 'hash': {
-                // http://host/path/
-                //
-                // http://host/path/to?k=v#/hash -> http://host/path/to?k=v#/hash
-                // to?k=v#/hash -> http://host/path/to?k=v#/hash
-                // #/hash -> http://host/path/#/hash
-                // /hash -> http://host/hash
-                // hash -> http://host/path/hash
-                // ../ -> http://host/
-
-                if (urlObj.hash) {
-                    if (urlObj.pathname === window.location.pathname
-                        && urlObj.search === window.location.search
-                    ) {
-                        //window.location.hash = urlObj.hash.substring(1);
-                    }
-                    else {
-                        window.location.href = urlObj.href;
-                    }
-                }
-                else {
-                    //window.location.hash = urlObj.pathname;
-                }
+                this._navigateWithHash(url);
                 break;
             }
             case 'history': {
-                if (urlObj.href !== window.location.href) {
-                    window.history.pushState({}, '', urlObj.href);
-                }
-                this._navigate(urlObj.pathname);
+                this._navigateWithHistory(url);
                 break;
             }
         }
     }
 
-    private _navigate(path: string): void {
+    private _navigateWithHash(url: string): void {
+        let virtualPath = '';
+
+        if (url.startsWith('https://') || url.startsWith('http://')
+            || url.includes('?') || url.includes('#')
+        ) {
+            const newUrlObj = new URL(url, window.location.href);
+            const newUrlParts = newUrlObj.href.split('#');
+            const oldUrlParts = window.location.href.split('#');
+            if (newUrlParts[0] !== oldUrlParts[0]) {
+                window.location.href = newUrlObj.href;
+                return;
+            }
+            virtualPath = newUrlParts[1] || '';
+        }
+        else {
+            virtualPath = url;
+        }
+
+        const oldVirtualUrlObj = new URL('/', window.location.href);
+        if (window.location.hash) {
+            oldVirtualUrlObj.pathname = window.location.hash.substring(1);
+        }
+        const newVirtualUrlObj = new URL(virtualPath, oldVirtualUrlObj.href);
+        if (newVirtualUrlObj.href !== oldVirtualUrlObj.href) {
+            window.location.hash = newVirtualUrlObj.pathname;
+            return;
+        }
+        this._navigateToRoute(newVirtualUrlObj.pathname);
+    }
+
+    private _navigateWithHistory(url: string): void {
+        const newUrlObj = new URL(url, window.location.href);
+
+        if (newUrlObj.origin !== window.location.origin) {
+            window.location.href = newUrlObj.href;
+            return;
+        }
+
+        if (newUrlObj.href !== window.location.href) {
+            window.history.pushState({}, '', newUrlObj.href);
+        }
+        this._navigateToRoute(newUrlObj.pathname);
+    }
+
+    private _navigateToRoute(path: string): void {
         if (this._routeCollection.size) {
             for (const [route, handler] of this._routeCollection) {
                 const params = this._match(path, route);
@@ -116,11 +130,11 @@ export default class Router {
     }
 
     private _hashchangeEventHandler(): void {
-        this._navigate(window.location.hash.substring(1));
+        this._navigateToRoute(window.location.hash.substring(1));
     }
 
     private _popstateEventHandler(): void {
-        this._navigate(window.location.pathname);
+        this._navigateToRoute(window.location.pathname);
     }
 
     private _fixRoute(route: string): string {
