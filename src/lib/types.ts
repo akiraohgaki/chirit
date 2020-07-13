@@ -8,4 +8,10 @@ export interface Observer<T> {
 
 export type NodeContentData = string | Node | NodeList;
 
+export type RouterType = 'hash' | 'history';
+
+export interface RouteHandler {
+    (params: Dictionary<string>): void;
+}
+
 export type WebStorageType = 'local' | 'session';

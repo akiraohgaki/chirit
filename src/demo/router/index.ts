@@ -1,0 +1,13 @@
+import {Router} from '../../chirit.js';
+import store from '../store/index.js';
+
+const router = new Router('history');
+
+router.setRoute('/demo/search/:term', (params) => {
+    store.search(params.term);
+});
+router.setRoute('/demo/.*', () => {
+    store.reset();
+});
+
+export default router;

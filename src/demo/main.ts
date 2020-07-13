@@ -1,4 +1,5 @@
 import './components/index.js';
+import router from './router/index.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -8,3 +9,5 @@ template.innerHTML = `
     </app-root>
 `;
 document.body.appendChild(template.content);
+
+router.navigate(window.location.href);
