@@ -133,14 +133,6 @@ export default class Router {
         }
     }
 
-    private _hashchangeEventHandler(): void {
-        this._invoke(window.location.hash.substring(1));
-    }
-
-    private _popstateEventHandler(): void {
-        this._invoke(window.location.pathname);
-    }
-
     private _fixRoute(route: string): string {
         // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
         return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
@@ -191,6 +183,14 @@ export default class Router {
             }
         }
         return null;
+    }
+
+    private _hashchangeEventHandler(): void {
+        this._invoke(window.location.hash.substring(1));
+    }
+
+    private _popstateEventHandler(): void {
+        this._invoke(window.location.pathname);
     }
 
 }
