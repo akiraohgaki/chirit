@@ -4,7 +4,6 @@ import test_observable from './test_observable.js';
 import test_observablevalue from './test_observablevalue.js';
 import test_router from './test_router.js';
 import test_webstorage from './test_webstorage.js';
-import test_utility from './test_utility.js';
 
 const handlerCollection = new Map([
     ['test_component', test_component],
@@ -12,8 +11,7 @@ const handlerCollection = new Map([
     ['test_observable', test_observable],
     ['test_observablevalue', test_observablevalue],
     ['test_router', test_router],
-    ['test_webstorage', test_webstorage],
-    ['test_utility', test_utility]
+    ['test_webstorage', test_webstorage]
 ]);
 
 const template = document.createElement('template');
