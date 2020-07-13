@@ -4,7 +4,9 @@ export default function() {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
         <div id="router-links">
-        <a href="${window.location.href}?k=v#/test/router/dummy">${window.location.href}?k=v#/test/router/dummy</a><br>
+        <a href="https://example.com/">https://example.com/</a><br>
+        <a href="${window.location.origin + window.location.pathname}?k=v#/test/router/dummy">${window.location.origin + window.location.pathname}?k=v#/test/router/dummy</a><br>
+        <a href="${window.location.pathname}?k=v#/test/router/dummy">${window.location.pathname}?k=v#/test/router/dummy</a><br>
         <a href="?k=v#/test/router/dummy">?k=v#/test/router/dummy</a><br>
         <a href="#/test/router/dummy">#/test/router/dummy</a><br>
         <a href="/test/router/dummy">/test/router/dummy</a><br>
