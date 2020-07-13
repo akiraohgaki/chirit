@@ -22,6 +22,10 @@ export default class Store {
         return this._state;
     }
 
+    reset() {
+        this._state.searchResult.set({});
+    }
+
     async search(term: string) {
         const response = await fetch(`https://itunes.apple.com/search?media=music&entity=album&term=${term}`);
         if (response.ok) {

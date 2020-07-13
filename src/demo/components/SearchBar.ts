@@ -1,5 +1,5 @@
 import {Component} from '../../chirit.js';
-import store from '../store/index.js';
+import router from '../router/index.js';
 
 export default class SearchBar extends Component {
 
@@ -10,7 +10,7 @@ export default class SearchBar extends Component {
             event.preventDefault();
             const target = event.target as Element;
             const inputElement = target.querySelector('input[name="term"]') as HTMLInputElement;
-            store.search(inputElement.value);
+            router.navigate(`/demo/search/${inputElement.value}`);
         });
     }
 
