@@ -13,10 +13,8 @@
   "types": "dist/chirit.d.ts",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && npm run tsc",
-    "watch": "npm run tsc-watch",
-    "tsc": "tsc",
-    "tsc-watch": "tsc -w",
+    "build": "tsc",
+    "watch": "tsc -w",
     "server": "node server.js"
   },
   "devDependencies": {
