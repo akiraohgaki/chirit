@@ -14,17 +14,14 @@ const handlerCollection = new Map([
     ['test_webstorage', test_webstorage]
 ]);
 
+let buttons = '';
+for (const key of handlerCollection.keys()) {
+    buttons += `<button data-handler-key="${key}">${key}</button>`;
+}
+
 const template = document.createElement('template');
 template.innerHTML = `
-    <nav id="nav">
-    ${(() => {
-        let buttons = '';
-        for (const key of handlerCollection.keys()) {
-            buttons += `<button data-handler-key="${key}">${key}</button>`;
-        }
-        return buttons;
-    })()}
-    </nav>
+    <nav id="nav">${buttons}</nav>
     <main id="main"></main>
 `;
 document.body.appendChild(template.content);

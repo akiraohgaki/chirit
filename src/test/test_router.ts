@@ -1,6 +1,6 @@
 import {Router} from '../chirit.js';
 
-export default function() {
+export default function(): void {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
         <div id="router-links">

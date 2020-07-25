@@ -15,39 +15,39 @@ class TestComponent extends Component {
         });
     }
 
-    static get observedAttributes() {
+    static get observedAttributes(): Array<string> {
         return ['datetime', 'plus'];
     }
 
-    attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
+    attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
         console.log('Attribute changed');
         console.log(name, oldValue, newValue);
         super.attributeChangedCallback(name, oldValue, newValue);
     }
 
-    connectedCallback() {
+    connectedCallback(): void {
         console.log('Connected');
         super.connectedCallback();
     }
 
-    disconnectedCallback() {
+    disconnectedCallback(): void {
         console.log('Disconnected');
     }
 
-    adoptedCallback(oldDocument: Document, newDocment: Document) {
+    adoptedCallback(oldDocument: Document, newDocment: Document): void {
         console.log('Adopted');
         console.log(oldDocument, newDocment);
     }
 
-    updatedCallback() {
+    updatedCallback(): void {
         console.log('Updated');
     }
 
-    initContentRoot() {
+    initContentRoot(): ShadowRoot {
         return this.attachShadow({mode: 'closed'});
     }
 
-    template() {
+    template(): string {
         return `
             <p>${this.attrs.datetime}</p>
             <button data-update>Update</button>
@@ -58,7 +58,7 @@ class TestComponent extends Component {
 
 TestComponent.define('test-component');
 
-export default function() {
+export default function(): void {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
         <div id="component-wrapper">

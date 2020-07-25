@@ -1,6 +1,6 @@
 import {NodeContent} from '../chirit.js';
 
-export default function() {
+export default function(): void {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
         <textarea id="nodecontent-src" style="width: 600px; height: 300px;"></textarea>
