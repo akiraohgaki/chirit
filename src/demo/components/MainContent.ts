@@ -9,7 +9,23 @@ export default class MainContent extends Component {
         store.state.searchResult.subscribe(this.update.bind(this));
     }
 
-    template() {
+    template(): string {
+        let list = '';
+        const searchResult = store.state.searchResult.get();
+        if (searchResult.resultCount) {
+            for (const result of searchResult.results) {
+                list += `
+                    <li>
+                    <app-artist-album
+                        artwork="${result.artworkUrl100}"
+                        artist="${result.artistName}"
+                        album="${result.collectionName}">
+                    </app-artist-album>
+                    </li>
+                `;
+            }
+        }
+
         return `
             <style>
             :host {
@@ -21,26 +37,7 @@ export default class MainContent extends Component {
             }
             </style>
 
-            <ul>
-            ${(() => {
-                let list = '';
-                const searchResult = store.state.searchResult.get();
-                if (searchResult.resultCount) {
-                    for (const result of searchResult.results) {
-                        list += `
-                            <li>
-                            <app-artist-album
-                                artwork="${result.artworkUrl100}"
-                                artist="${result.artistName}"
-                                album="${result.collectionName}">
-                            </app-artist-album>
-                            </li>
-                        `;
-                    }
-                }
-                return list;
-            })()}
-            </ul>
+            <ul>${list}</ul>
         `;
     }
 

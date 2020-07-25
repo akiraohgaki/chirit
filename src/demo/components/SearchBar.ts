@@ -14,7 +14,7 @@ export default class SearchBar extends Component {
         });
     }
 
-    template() {
+    template(): string {
         return `
             <style>
             :host {

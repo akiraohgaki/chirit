@@ -2,11 +2,11 @@ import {Component} from '../../chirit.js';
 
 export default class ArtistAlbum extends Component {
 
-    static get observedAttributes() {
+    static get observedAttributes(): Array<string> {
         return ['artwork', 'artist', 'album'];
     }
 
-    template() {
+    template(): string {
         return `
             <style>
             :host {

@@ -2,7 +2,7 @@ import {Component} from '../../chirit.js';
 
 export default class Root extends Component {
 
-    template() {
+    template(): string {
         return `
             <style>
             :host {
