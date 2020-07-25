@@ -65,7 +65,6 @@ http.createServer((req, res) => {
             res.end(data, 'utf-8');
         }
     });
-})
-.listen(port);
+}).listen(port);
 
 console.log(`Server is started at port ${port}`);
