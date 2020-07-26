@@ -1,40 +1,51 @@
 const http = require('http');
 const fs = require('fs');
 
-const port = 8080;
-
-const mimeTypes = {
-    'html': 'text/html',
-    'js': 'text/javascript',
-    'css': 'text/css',
-    'json': 'application/json',
-    'svg': 'image/svg+xml'
+const additionalConfig = {
+    rewriteRules: [
+        ['^/demo/', '/src/demo/index.html'],
+        ['^/test/', '/src/test/index.html']
+    ]
 };
 
-const httpHeaders = {
-    'Pragma': 'no-cache',
-    'Cache-Control': 'no-cache'
+const config = {
+    port: 8080,
+    documentRoot: __dirname,
+    directoryIndex: 'index.html',
+    headers: {
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache'
+    },
+    mimeTypes: {
+        'html': 'text/html',
+        'js': 'text/javascript',
+        'css': 'text/css',
+        'json': 'application/json',
+        'svg': 'image/svg+xml'
+    },
+    rewriteRules: [],
+    ...additionalConfig
 };
-
-function rewriteUrl(url) {
-    if (url.startsWith('/demo/')) {
-        return '/src/demo/index.html';
-    }
-    else if (url.startsWith('/test/')) {
-        return '/src/test/index.html';
-    }
-    return url;
-}
 
 http.createServer((req, res) => {
     console.log(req.url);
 
-    let url = rewriteUrl(req.url);
-    if (url.endsWith('/')) {
-        url += 'index.html';
+    let url = req.url;
+
+    if (config.rewriteRules.length) {
+        for (const [pattern, path] of config.rewriteRules) {
+            if (url.search(new RegExp(pattern)) !== -1) {
+                url = path;
+                break;
+            }
+        }
     }
 
-    fs.readFile(__dirname + url, (err, data) => {
+    if (url.endsWith('/')) {
+        url += config.directoryIndex;
+    }
+
+    fs.readFile(config.documentRoot + url, (err, data) => {
         if (err) {
             let statusCode = 0;
             let message = '';
@@ -49,22 +60,22 @@ http.createServer((req, res) => {
             }
 
             res.writeHead(statusCode, {
-                ...httpHeaders,
+                ...config.headers,
                 'Content-Type': 'text/plain'
             });
             res.end(message, 'utf-8');
         }
         else {
             const ext = url.split('.').pop().toLowerCase();
-            const contentType = mimeTypes[ext] || 'application/octet-stream';
+            const contentType = config.mimeTypes[ext] || 'application/octet-stream';
 
             res.writeHead(200, {
-                ...httpHeaders,
+                ...config.headers,
                 'Content-Type': contentType
             });
             res.end(data, 'utf-8');
         }
     });
-}).listen(port);
+}).listen(config.port);
 
-console.log(`Server is started at port ${port}`);
+console.log(`Server is started at port ${config.port}`);
