@@ -46,11 +46,12 @@ export default class NodeContent {
         return documentFragment;
     }
     _updateChildNodes(oldParent, newParent, deep) {
+        var _a, _b;
         const oldChildNodes = Array.from(oldParent.childNodes);
         const newChildNodes = Array.from(newParent.childNodes);
         const maxLength = Math.max(oldChildNodes.length, newChildNodes.length);
         for (let i = 0; i < maxLength; i++) {
-            this._updateChild(oldParent, oldChildNodes[i] || null, newChildNodes[i] || null, deep);
+            this._updateChild(oldParent, (_a = oldChildNodes[i]) !== null && _a !== void 0 ? _a : null, (_b = newChildNodes[i]) !== null && _b !== void 0 ? _b : null, deep);
         }
     }
     _updateChild(parent, oldChild, newChild, deep) {

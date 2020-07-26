@@ -12,6 +12,6 @@ export default class Router {
     private _invoke;
     private _fixRoute;
     private _match;
-    private _hashchangeEventHandler;
-    private _popstateEventHandler;
+    private _handleHashchangeEvent;
+    private _handlePopstateEvent;
 }
