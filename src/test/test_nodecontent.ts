@@ -53,15 +53,15 @@ export default function(): void {
         const target = event.target as Element;
         switch (target.getAttribute('data-method')) {
             case 'update-deep': {
-                nodeContent.update(src.value || '', true);
+                nodeContent.update(src.value, true);
                 break;
             }
             case 'update-shallow': {
-                nodeContent.update(src.value || '', false);
+                nodeContent.update(src.value, false);
                 break;
             }
             case 'set': {
-                nodeContent.set(src.value || '');
+                nodeContent.set(src.value);
                 break;
             }
             case 'get': {

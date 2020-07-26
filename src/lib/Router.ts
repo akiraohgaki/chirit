@@ -2,7 +2,7 @@ import {Dictionary, RouterType, RouteHandler} from './types.js';
 
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {
-    // RegExp named capture groups unsupported environment will throw regexp syntax error
+    // RegExp throw regexp syntax error if RegExp named capture groups is not available
     const matches = 'RegExp named capturing'.match(new RegExp('(?<name>.+)'));
     isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
 }
@@ -19,8 +19,8 @@ export default class Router {
         this._type = type;
         this._routeCollection = new Map();
 
-        this._hashchangeEventHandler = this._hashchangeEventHandler.bind(this);
-        this._popstateEventHandler = this._popstateEventHandler.bind(this);
+        this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
+        this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
     }
 
     get type(): RouterType {
@@ -31,11 +31,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.addEventListener('hashchange', this._hashchangeEventHandler, false);
+                    window.addEventListener('hashchange', this._handleHashchangeEvent, false);
                     break;
                 }
                 case 'history': {
-                    window.addEventListener('popstate', this._popstateEventHandler, false);
+                    window.addEventListener('popstate', this._handlePopstateEvent, false);
                     break;
                 }
             }
@@ -50,11 +50,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.removeEventListener('hashchange', this._hashchangeEventHandler, false);
+                    window.removeEventListener('hashchange', this._handleHashchangeEvent, false);
                     break;
                 }
                 case 'history': {
-                    window.removeEventListener('popstate', this._popstateEventHandler, false);
+                    window.removeEventListener('popstate', this._handlePopstateEvent, false);
                     break;
                 }
             }
@@ -77,7 +77,7 @@ export default class Router {
     private _navigateWithHash(url: string): void {
         let newVirtualPath = '';
 
-        if (url.startsWith('https://') || url.startsWith('http://')
+        if (url.search(new RegExp('^https?://')) !== -1
             || url.includes('?') || url.includes('#')
         ) {
             const newUrl = new URL(url, window.location.href);
@@ -89,7 +89,7 @@ export default class Router {
                 return;
             }
 
-            newVirtualPath = newUrlParts[1] || '';
+            newVirtualPath = newUrlParts[1] ?? '';
         }
         else {
             newVirtualPath = url;
@@ -135,6 +135,7 @@ export default class Router {
 
     private _fixRoute(route: string): string {
         // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
+        // Just in case if the string starts with ":", prepend "/" to the string then remove it after the replace work
         return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 
@@ -185,11 +186,11 @@ export default class Router {
         return null;
     }
 
-    private _hashchangeEventHandler(): void {
+    private _handleHashchangeEvent(): void {
         this._invoke(window.location.hash.substring(1));
     }
 
-    private _popstateEventHandler(): void {
+    private _handlePopstateEvent(): void {
         this._invoke(window.location.pathname);
     }
 

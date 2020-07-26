@@ -66,8 +66,8 @@ export default class NodeContent {
         for (let i = 0; i < maxLength; i++) {
             this._updateChild(
                 oldParent,
-                oldChildNodes[i] || null,
-                newChildNodes[i] || null,
+                oldChildNodes[i] ?? null,
+                newChildNodes[i] ?? null,
                 deep
             );
         }
