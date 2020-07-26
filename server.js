@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 
-const additionalConfig = {
+const configOverride = {
     rewriteRules: [
         ['^/demo/', '/src/demo/index.html'],
         ['^/test/', '/src/test/index.html']
@@ -24,7 +24,7 @@ const config = {
         'svg': 'image/svg+xml'
     },
     rewriteRules: [],
-    ...additionalConfig
+    ...configOverride
 };
 
 http.createServer((req, res) => {
