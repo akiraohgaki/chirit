@@ -5,7 +5,7 @@ export default class NodeContent {
     get target() {
         return this._target;
     }
-    update(content, deep = true) {
+    update(content, deep = false) {
         if (content instanceof Document || content instanceof DocumentFragment) {
             this._updateChildNodes(this._target, content, deep);
         }

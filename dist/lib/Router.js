@@ -1,7 +1,7 @@
 var _a;
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {
-    const matches = 'RegExp named capturing'.match(new RegExp('(?<name>.+)'));
+    const matches = 'Named capture groups'.match(/(?<name>.+)/);
     isRegExpNamedCaptureGroupsAvailable = ((_a = matches === null || matches === void 0 ? void 0 : matches.groups) === null || _a === void 0 ? void 0 : _a.name) ? true : false;
 }
 catch (_b) {
@@ -62,8 +62,7 @@ export default class Router {
     _navigateWithHash(url) {
         var _a;
         let newVirtualPath = '';
-        if (url.search(new RegExp('^https?://')) !== -1
-            || url.includes('?') || url.includes('#')) {
+        if (url.search(/^https?:\/\/|\?|#/) !== -1) {
             const newUrl = new URL(url, window.location.href);
             const newUrlParts = newUrl.href.split('#');
             const oldUrlParts = window.location.href.split('#');

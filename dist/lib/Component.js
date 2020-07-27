@@ -111,7 +111,7 @@ export default class Component extends HTMLElement {
     }
     render() {
         const nodeContent = new NodeContent(this.contentRoot);
-        nodeContent.update(this.template());
+        nodeContent.update(this.template(), true);
     }
     template() {
         return '';
