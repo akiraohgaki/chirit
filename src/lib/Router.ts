@@ -3,7 +3,7 @@ import {Dictionary, RouterType, RouteHandler} from './types.js';
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {
     // RegExp throw regexp syntax error if RegExp named capture groups is not available
-    const matches = 'RegExp named capturing'.match(new RegExp('(?<name>.+)'));
+    const matches = 'Named capture groups'.match(/(?<name>.+)/);
     isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
 }
 catch {
@@ -77,9 +77,7 @@ export default class Router {
     private _navigateWithHash(url: string): void {
         let newVirtualPath = '';
 
-        if (url.search(new RegExp('^https?://')) !== -1
-            || url.includes('?') || url.includes('#')
-        ) {
+        if (url.search(/^https?:\/\/|\?|#/) !== -1) {
             const newUrl = new URL(url, window.location.href);
             const newUrlParts = newUrl.href.split('#');
             const oldUrlParts = window.location.href.split('#');

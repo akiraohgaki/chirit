@@ -68,6 +68,7 @@ http.createServer((req, res) => {
         else {
             const ext = url.split('.').pop().toLowerCase();
             const contentType = config.mimeTypes[ext] || 'application/octet-stream';
+            //const contentType = config.mimeTypes[ext] ?? 'application/octet-stream';
 
             res.writeHead(200, {
                 ...config.headers,
