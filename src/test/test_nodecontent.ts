@@ -39,12 +39,12 @@ export default function(): void {
     nodeContent.set(template.content.childNodes);
     console.log(nodeContent.get());
 
-    nodeContent.update(template);
+    nodeContent.update(template, true);
     nodeContent.update(template, false);
     console.log(nodeContent.get());
-    nodeContent.update(template.content);
+    nodeContent.update(template.content, true);
     console.log(nodeContent.get());
-    nodeContent.update(template.content.childNodes);
+    nodeContent.update(template.content.childNodes, true);
     console.log(nodeContent.get());
 
     nodeContent.clear();

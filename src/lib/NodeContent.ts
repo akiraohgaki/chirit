@@ -12,7 +12,7 @@ export default class NodeContent {
         return this._target;
     }
 
-    update(content: NodeContentData, deep: boolean = true): void {
+    update(content: NodeContentData, deep: boolean = false): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
             this._updateChildNodes(this._target, content, deep);
         }

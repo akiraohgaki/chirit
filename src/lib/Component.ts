@@ -144,7 +144,7 @@ export default class Component extends HTMLElement {
 
     protected render(): void {
         const nodeContent = new NodeContent(this.contentRoot);
-        nodeContent.update(this.template());
+        nodeContent.update(this.template(), true);
     }
 
     protected template(): NodeContentData {
