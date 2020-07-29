@@ -31,11 +31,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.addEventListener('hashchange', this._handleHashchangeEvent, false);
+                    window.addEventListener('hashchange', this._handleHashchangeEvent);
                     break;
                 }
                 case 'history': {
-                    window.addEventListener('popstate', this._handlePopstateEvent, false);
+                    window.addEventListener('popstate', this._handlePopstateEvent);
                     break;
                 }
             }
@@ -50,11 +50,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.removeEventListener('hashchange', this._handleHashchangeEvent, false);
+                    window.removeEventListener('hashchange', this._handleHashchangeEvent);
                     break;
                 }
                 case 'history': {
-                    window.removeEventListener('popstate', this._handlePopstateEvent, false);
+                    window.removeEventListener('popstate', this._handlePopstateEvent);
                     break;
                 }
             }
