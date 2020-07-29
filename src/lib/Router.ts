@@ -77,7 +77,7 @@ export default class Router {
     private _navigateWithHash(url: string): void {
         let newVirtualPath = '';
 
-        if (url.search(/^https?:\/\/|\?|#/) !== -1) {
+        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
             const newUrl = new URL(url, window.location.href);
             const newUrlParts = newUrl.href.split('#');
             const oldUrlParts = window.location.href.split('#');
