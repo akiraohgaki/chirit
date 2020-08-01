@@ -13,10 +13,12 @@ catch {
 export default class Router {
 
     private _type: RouterType;
+    private _base: string;
     private _routeCollection: Map<string, RouteHandler>;
 
-    constructor(type: RouterType) {
+    constructor(type: RouterType, base: string = '') {
         this._type = type;
+        this._base = (base && !base.endsWith('/')) ? base + '/' : base;
         this._routeCollection = new Map();
 
         this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
@@ -27,15 +29,19 @@ export default class Router {
         return this._type;
     }
 
+    get base(): string {
+        return this._base;
+    }
+
     setRoute(route: string, handler: RouteHandler): void {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.addEventListener('hashchange', this._handleHashchangeEvent, false);
+                    window.addEventListener('hashchange', this._handleHashchangeEvent);
                     break;
                 }
                 case 'history': {
-                    window.addEventListener('popstate', this._handlePopstateEvent, false);
+                    window.addEventListener('popstate', this._handlePopstateEvent);
                     break;
                 }
             }
@@ -50,11 +56,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.removeEventListener('hashchange', this._handleHashchangeEvent, false);
+                    window.removeEventListener('hashchange', this._handleHashchangeEvent);
                     break;
                 }
                 case 'history': {
-                    window.removeEventListener('popstate', this._handlePopstateEvent, false);
+                    window.removeEventListener('popstate', this._handlePopstateEvent);
                     break;
                 }
             }
@@ -77,7 +83,7 @@ export default class Router {
     private _navigateWithHash(url: string): void {
         let newVirtualPath = '';
 
-        if (url.search(/^https?:\/\/|\?|#/) !== -1) {
+        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
             const newUrl = new URL(url, window.location.href);
             const newUrlParts = newUrl.href.split('#');
             const oldUrlParts = window.location.href.split('#');
@@ -90,7 +96,7 @@ export default class Router {
             newVirtualPath = newUrlParts[1] ?? '';
         }
         else {
-            newVirtualPath = url;
+            newVirtualPath = this._fixUrl(url);
         }
 
         const oldVirtualPath = window.location.hash.substring(1);
@@ -106,7 +112,7 @@ export default class Router {
     }
 
     private _navigateWithHistory(url: string): void {
-        const newUrl = new URL(url, window.location.href);
+        const newUrl = new URL(this._fixUrl(url), window.location.href);
 
         if (newUrl.origin !== window.location.origin) {
             window.location.href = newUrl.href;
@@ -135,6 +141,10 @@ export default class Router {
         // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
         // Just in case if the string starts with ":", prepend "/" to the string then remove it after the replace work
         return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
+    }
+
+    private _fixUrl(url: string): string {
+        return (this._base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this._base + url : url;
     }
 
     private _match(path: string, route: string): Dictionary<string> | null {

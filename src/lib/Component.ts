@@ -63,8 +63,6 @@ export default class Component extends HTMLElement {
         this.updatedCallback();
     }
 
-    // Lifecycle callbacks
-
     static get observedAttributes(): Array<string> {
         return [];
     }
@@ -81,13 +79,14 @@ export default class Component extends HTMLElement {
         }
     }
 
-    disconnectedCallback(): void {}
+    disconnectedCallback(): void {
+    }
 
-    adoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
+    adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
+    }
 
-    updatedCallback(): void {}
-
-    // For sub classes
+    updatedCallback(): void {
+    }
 
     protected initContentRoot(): Node {
         return this.attachShadow({mode: 'open'});

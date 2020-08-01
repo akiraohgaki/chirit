@@ -11,7 +11,7 @@ export default function(): void {
         <a href="#/test/router/dummy">#/test/router/dummy</a><br>
         <a href="/test/router/dummy">/test/router/dummy</a><br>
         <a href="/test/router/0-1">/test/router/0-1</a><br>
-        <a href="2-3">2-3</a><br>
+        <a href="router/2-3">router/2-3</a><br>
         <a href="./">./</a><br>
         <a href="../">../</a>
         </div>
@@ -19,14 +19,15 @@ export default function(): void {
 
     const links = document.getElementById('router-links') as Element;
 
-    const router = new Router('hash');
+    const router = new Router('hash', '/test/');
 
     console.log(router.type);
+    console.log(router.base);
 
-    router.setRoute('/test/router/dummy', () => {
+    router.setRoute('^/test/router/dummy', () => {
         console.log('dummy');
     });
-    router.setRoute('/test/router/:param1-(?<param2>.+)', (params) => {
+    router.setRoute('^/test/router/:param1-(?<param2>.+)', (params) => {
         console.log(window.location.href);
         console.log(params);
     });
@@ -35,7 +36,7 @@ export default function(): void {
         console.log(params);
     });
 
-    router.removeRoute('/test/router/dummy');
+    router.removeRoute('^/test/router/dummy');
 
     router.navigate(window.location.href);
 
