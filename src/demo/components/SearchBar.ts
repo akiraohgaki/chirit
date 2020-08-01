@@ -10,7 +10,7 @@ export default class SearchBar extends Component {
             event.preventDefault();
             const target = event.target as Element;
             const inputElement = target.querySelector('input[name="term"]') as HTMLInputElement;
-            router.navigate(`/demo/search/${inputElement.value}`);
+            router.navigate(`search/${inputElement.value}`);
         });
     }
 
