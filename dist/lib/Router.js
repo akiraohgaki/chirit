@@ -8,8 +8,9 @@ catch (_b) {
     isRegExpNamedCaptureGroupsAvailable = false;
 }
 export default class Router {
-    constructor(type) {
+    constructor(type, base = '') {
         this._type = type;
+        this._base = (base && !base.endsWith('/')) ? base + '/' : base;
         this._routeCollection = new Map();
         this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
         this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
@@ -17,15 +18,18 @@ export default class Router {
     get type() {
         return this._type;
     }
+    get base() {
+        return this._base;
+    }
     setRoute(route, handler) {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.addEventListener('hashchange', this._handleHashchangeEvent, false);
+                    window.addEventListener('hashchange', this._handleHashchangeEvent);
                     break;
                 }
                 case 'history': {
-                    window.addEventListener('popstate', this._handlePopstateEvent, false);
+                    window.addEventListener('popstate', this._handlePopstateEvent);
                     break;
                 }
             }
@@ -37,11 +41,11 @@ export default class Router {
         if (!this._routeCollection.size) {
             switch (this._type) {
                 case 'hash': {
-                    window.removeEventListener('hashchange', this._handleHashchangeEvent, false);
+                    window.removeEventListener('hashchange', this._handleHashchangeEvent);
                     break;
                 }
                 case 'history': {
-                    window.removeEventListener('popstate', this._handlePopstateEvent, false);
+                    window.removeEventListener('popstate', this._handlePopstateEvent);
                     break;
                 }
             }
@@ -62,7 +66,7 @@ export default class Router {
     _navigateWithHash(url) {
         var _a;
         let newVirtualPath = '';
-        if (url.search(/^https?:\/\/|\?|#/) !== -1) {
+        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
             const newUrl = new URL(url, window.location.href);
             const newUrlParts = newUrl.href.split('#');
             const oldUrlParts = window.location.href.split('#');
@@ -73,7 +77,7 @@ export default class Router {
             newVirtualPath = (_a = newUrlParts[1]) !== null && _a !== void 0 ? _a : '';
         }
         else {
-            newVirtualPath = url;
+            newVirtualPath = this._fixUrl(url);
         }
         const oldVirtualPath = window.location.hash.substring(1);
         const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
@@ -85,7 +89,7 @@ export default class Router {
         this._invoke(newVirtualUrl.pathname);
     }
     _navigateWithHistory(url) {
-        const newUrl = new URL(url, window.location.href);
+        const newUrl = new URL(this._fixUrl(url), window.location.href);
         if (newUrl.origin !== window.location.origin) {
             window.location.href = newUrl.href;
             return;
@@ -108,6 +112,9 @@ export default class Router {
     }
     _fixRoute(route) {
         return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
+    }
+    _fixUrl(url) {
+        return (this._base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this._base + url : url;
     }
     _match(path, route) {
         const params = {};

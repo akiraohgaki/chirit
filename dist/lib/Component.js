@@ -55,9 +55,12 @@ export default class Component extends HTMLElement {
             this.updateSync();
         }
     }
-    disconnectedCallback() { }
-    adoptedCallback(_oldDocument, _newDocument) { }
-    updatedCallback() { }
+    disconnectedCallback() {
+    }
+    adoptedCallback(_oldDocument, _newDocument) {
+    }
+    updatedCallback() {
+    }
     initContentRoot() {
         return this.attachShadow({ mode: 'open' });
     }
