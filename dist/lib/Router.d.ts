@@ -11,7 +11,7 @@ export default class Router {
     navigate(url: string): void;
     private _navigateWithHash;
     private _navigateWithHistory;
-    private _invoke;
+    private _invokeRouteHandler;
     private _fixRoute;
     private _fixUrl;
     private _match;

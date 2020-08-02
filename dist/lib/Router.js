@@ -77,8 +77,9 @@ export default class Router {
             newVirtualPath = (_a = newUrlParts[1]) !== null && _a !== void 0 ? _a : '';
         }
         else {
-            newVirtualPath = this._fixUrl(url);
+            newVirtualPath = url;
         }
+        newVirtualPath = this._fixUrl(newVirtualPath);
         const oldVirtualPath = window.location.hash.substring(1);
         const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
         const newVirtualUrl = new URL(newVirtualPath, oldVirtualUrl.href);
@@ -86,10 +87,11 @@ export default class Router {
             window.location.hash = newVirtualUrl.pathname;
             return;
         }
-        this._invoke(newVirtualUrl.pathname);
+        this._invokeRouteHandler(newVirtualUrl.pathname);
     }
     _navigateWithHistory(url) {
-        const newUrl = new URL(this._fixUrl(url), window.location.href);
+        const newPath = this._fixUrl(url);
+        const newUrl = new URL(newPath, window.location.href);
         if (newUrl.origin !== window.location.origin) {
             window.location.href = newUrl.href;
             return;
@@ -97,9 +99,9 @@ export default class Router {
         if (newUrl.href !== window.location.href) {
             window.history.pushState({}, '', newUrl.href);
         }
-        this._invoke(newUrl.pathname);
+        this._invokeRouteHandler(newUrl.pathname);
     }
-    _invoke(path) {
+    _invokeRouteHandler(path) {
         if (this._routeCollection.size) {
             for (const [route, handler] of this._routeCollection) {
                 const params = this._match(path, route);
@@ -157,10 +159,10 @@ export default class Router {
         return null;
     }
     _handleHashchangeEvent() {
-        this._invoke(window.location.hash.substring(1));
+        this._invokeRouteHandler(window.location.hash.substring(1));
     }
     _handlePopstateEvent() {
-        this._invoke(window.location.pathname);
+        this._invokeRouteHandler(window.location.pathname);
     }
 }
 //# sourceMappingURL=Router.js.map
