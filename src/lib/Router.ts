@@ -81,7 +81,7 @@ export default class Router {
     }
 
     private _navigateWithHash(url: string): void {
-        let newVirtualPath = '';
+        let newVirtualPath = url;
 
         if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
             const newUrl = new URL(url, window.location.href);
@@ -95,13 +95,10 @@ export default class Router {
 
             newVirtualPath = newUrlParts[1] ?? '';
         }
-        else {
-            newVirtualPath = this._fixUrl(url);
-        }
 
         const oldVirtualPath = window.location.hash.substring(1);
         const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
-        const newVirtualUrl = new URL(newVirtualPath, oldVirtualUrl.href);
+        const newVirtualUrl = new URL(this._fixUrl(newVirtualPath), oldVirtualUrl.href);
 
         if (newVirtualUrl.pathname !== oldVirtualPath) {
             window.location.hash = newVirtualUrl.pathname;
