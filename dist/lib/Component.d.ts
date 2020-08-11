@@ -1,4 +1,5 @@
-import { Dictionary, NodeContentData } from './types.js';
+import { NodeContentData } from './types.js';
+import ElementAttributesProxy from './ElementAttributesProxy.js';
 export default class Component extends HTMLElement {
     private _contentRoot;
     private _attrs;
@@ -8,7 +9,7 @@ export default class Component extends HTMLElement {
     constructor();
     static define(name: string, options?: ElementDefinitionOptions): void;
     get contentRoot(): Node;
-    get attrs(): Dictionary<string | null>;
+    get attrs(): ElementAttributesProxy;
     get isUpdated(): boolean;
     dispatch(type: string, detail?: any): boolean;
     update(): void;
@@ -20,7 +21,7 @@ export default class Component extends HTMLElement {
     adoptedCallback(_oldDocument: Document, _newDocument: Document): void;
     updatedCallback(): void;
     protected initContentRoot(): Node;
-    protected initAttrs(): Dictionary<string | null>;
+    protected initAttrs(): ElementAttributesProxy;
     protected render(): void;
     protected template(): NodeContentData;
 }

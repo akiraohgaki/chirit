@@ -1,4 +1,5 @@
 import NodeContent from './NodeContent.js';
+import ElementAttributesProxy from './ElementAttributesProxy.js';
 export default class Component extends HTMLElement {
     constructor() {
         super();
@@ -65,52 +66,7 @@ export default class Component extends HTMLElement {
         return this.attachShadow({ mode: 'open' });
     }
     initAttrs() {
-        return new Proxy({}, {
-            set: (_target, name, value) => {
-                if (typeof name === 'string' && typeof value === 'string') {
-                    this.setAttribute(name, value);
-                    return true;
-                }
-                return false;
-            },
-            get: (_target, name) => {
-                if (typeof name === 'string') {
-                    return this.getAttribute(name);
-                }
-                return null;
-            },
-            deleteProperty: (_target, name) => {
-                if (typeof name === 'string' && this.hasAttribute(name)) {
-                    this.removeAttribute(name);
-                    return true;
-                }
-                return false;
-            },
-            has: (_target, name) => {
-                if (typeof name === 'string' && this.hasAttribute(name)) {
-                    return true;
-                }
-                return false;
-            },
-            ownKeys: () => {
-                const keys = [];
-                const attributes = Array.from(this.attributes);
-                for (const attribute of attributes) {
-                    keys.push(attribute.name);
-                }
-                return keys;
-            },
-            getOwnPropertyDescriptor: (_target, name) => {
-                if (typeof name === 'string' && this.hasAttribute(name)) {
-                    return {
-                        configurable: true,
-                        enumerable: true,
-                        value: this.getAttribute(name)
-                    };
-                }
-                return undefined;
-            }
-        });
+        return new ElementAttributesProxy(this);
     }
     render() {
         const nodeContent = new NodeContent(this.contentRoot);
