@@ -1,10 +1,11 @@
-import {Dictionary, NodeContentData} from './types.js';
+import {NodeContentData} from './types.js';
 import NodeContent from './NodeContent.js';
+import ElementAttributesProxy from './ElementAttributesProxy.js';
 
 export default class Component extends HTMLElement {
 
     private _contentRoot: Node;
-    private _attrs: Dictionary<string | null>;
+    private _attrs: ElementAttributesProxy;
     private _isUpdated: boolean;
 
     private _updateTimerId: number | undefined;
@@ -29,7 +30,7 @@ export default class Component extends HTMLElement {
         return this._contentRoot;
     }
 
-    get attrs(): Dictionary<string | null> {
+    get attrs(): ElementAttributesProxy {
         return this._attrs;
     }
 
@@ -92,53 +93,8 @@ export default class Component extends HTMLElement {
         return this.attachShadow({mode: 'open'});
     }
 
-    protected initAttrs(): Dictionary<string | null> {
-        return new Proxy({}, {
-            set: (_target, name, value) => {
-                if (typeof name === 'string' && typeof value === 'string') {
-                    this.setAttribute(name, value);
-                    return true;
-                }
-                return false;
-            },
-            get: (_target, name) => {
-                if (typeof name === 'string') {
-                    return this.getAttribute(name);
-                }
-                return null;
-            },
-            deleteProperty: (_target, name) => {
-                if (typeof name === 'string' && this.hasAttribute(name)) {
-                    this.removeAttribute(name);
-                    return true;
-                }
-                return false;
-            },
-            has: (_target, name) => {
-                if (typeof name === 'string' && this.hasAttribute(name)) {
-                    return true;
-                }
-                return false;
-            },
-            ownKeys: () => {
-                const keys = [];
-                const attributes = Array.from(this.attributes);
-                for (const attribute of attributes) {
-                    keys.push(attribute.name);
-                }
-                return keys;
-            },
-            getOwnPropertyDescriptor: (_target, name) => {
-                if (typeof name === 'string' && this.hasAttribute(name)) {
-                    return {
-                        configurable: true,
-                        enumerable: true,
-                        value: this.getAttribute(name)
-                    };
-                }
-                return undefined;
-            }
-        });
+    protected initAttrs(): ElementAttributesProxy {
+        return new ElementAttributesProxy(this);
     }
 
     protected render(): void {
