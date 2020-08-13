@@ -1,11 +1,10 @@
 export default class ElementAttributesProxy {
 
-    [key: string]: string | null;
+    [key: string]: string;
 
     constructor(target: Element) {
         return new Proxy({}, {
             set: (_target, name, value) => {
-                value = value ?? '';
                 if (typeof name === 'string' && typeof value === 'string') {
                     target.setAttribute(name, value);
                     return true;
