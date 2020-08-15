@@ -12,10 +12,11 @@ export default class ElementAttributesProxy {
                 return false;
             },
             get: (_target, name) => {
-                if (typeof name === 'string') {
+                // Return undefined instead of null if attribute is not exist
+                if (typeof name === 'string' && target.hasAttribute(name)) {
                     return target.getAttribute(name);
                 }
-                return null;
+                return undefined;
             },
             deleteProperty: (_target, name) => {
                 if (typeof name === 'string' && target.hasAttribute(name)) {
