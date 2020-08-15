@@ -9,10 +9,11 @@ export default function(): void {
     attrs.title = 'dummy';
     attrs['data-dummy'] = 'dummy';
 
+    delete attrs.href;
+
+    console.log(attrs.href);
     console.log(attrs.title);
-
-    delete attrs.title;
-
+    
     console.log('href' in attrs);
     console.log('title' in attrs);
 
