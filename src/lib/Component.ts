@@ -15,7 +15,7 @@ export default class Component extends HTMLElement {
         super();
 
         this._contentRoot = this.initContentRoot();
-        this._attrs = this.initAttrs();
+        this._attrs = new ElementAttributesProxy(this);
         this._isUpdated = false;
 
         this._updateTimerId = undefined;
@@ -91,10 +91,6 @@ export default class Component extends HTMLElement {
 
     protected initContentRoot(): Node {
         return this.attachShadow({mode: 'open'});
-    }
-
-    protected initAttrs(): ElementAttributesProxy {
-        return new ElementAttributesProxy(this);
     }
 
     protected render(): void {
