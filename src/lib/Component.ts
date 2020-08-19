@@ -5,6 +5,7 @@ import ElementAttributesProxy from './ElementAttributesProxy.js';
 export default class Component extends HTMLElement {
 
     private _contentRoot: Node;
+    private _content: NodeContent;
     private _attrs: ElementAttributesProxy;
     private _isUpdated: boolean;
 
@@ -15,6 +16,7 @@ export default class Component extends HTMLElement {
         super();
 
         this._contentRoot = this.initContentRoot();
+        this._content = new NodeContent(this._contentRoot);
         this._attrs = new ElementAttributesProxy(this);
         this._isUpdated = false;
 
@@ -28,6 +30,10 @@ export default class Component extends HTMLElement {
 
     get contentRoot(): Node {
         return this._contentRoot;
+    }
+
+    get content(): NodeContent {
+        return this._content;
     }
 
     get attrs(): ElementAttributesProxy {
@@ -94,8 +100,7 @@ export default class Component extends HTMLElement {
     }
 
     protected render(): void {
-        const nodeContent = new NodeContent(this.contentRoot);
-        nodeContent.update(this.template(), true);
+        this.content.update(this.template(), true);
     }
 
     protected template(): NodeContentData {
