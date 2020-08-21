@@ -1,4 +1,4 @@
-import {Dictionary, RouterType, RouteHandler} from './types.js';
+import {Dictionary, RouterMode, RouteHandler} from './types.js';
 
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {
@@ -12,12 +12,12 @@ catch {
 
 export default class Router {
 
-    private _type: RouterType;
+    private _mode: RouterMode;
     private _base: string;
     private _routeCollection: Map<string, RouteHandler>;
 
-    constructor(type: RouterType, base: string = '') {
-        this._type = type;
+    constructor(mode: RouterMode, base: string = '') {
+        this._mode = mode;
         this._base = (base && !base.endsWith('/')) ? base + '/' : base;
         this._routeCollection = new Map();
 
@@ -25,8 +25,8 @@ export default class Router {
         this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
     }
 
-    get type(): RouterType {
-        return this._type;
+    get mode(): RouterMode {
+        return this._mode;
     }
 
     get base(): string {
@@ -35,7 +35,7 @@ export default class Router {
 
     setRoute(route: string, handler: RouteHandler): void {
         if (!this._routeCollection.size) {
-            switch (this._type) {
+            switch (this._mode) {
                 case 'hash': {
                     window.addEventListener('hashchange', this._handleHashchangeEvent);
                     break;
@@ -54,7 +54,7 @@ export default class Router {
         this._routeCollection.delete(this._fixRoute(route));
 
         if (!this._routeCollection.size) {
-            switch (this._type) {
+            switch (this._mode) {
                 case 'hash': {
                     window.removeEventListener('hashchange', this._handleHashchangeEvent);
                     break;
@@ -68,7 +68,7 @@ export default class Router {
     }
 
     navigate(url: string): void {
-        switch (this._type) {
+        switch (this._mode) {
             case 'hash': {
                 this._navigateWithHash(url);
                 break;
