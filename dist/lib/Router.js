@@ -8,22 +8,22 @@ catch (_b) {
     isRegExpNamedCaptureGroupsAvailable = false;
 }
 export default class Router {
-    constructor(type, base = '') {
-        this._type = type;
+    constructor(mode, base = '') {
+        this._mode = mode;
         this._base = (base && !base.endsWith('/')) ? base + '/' : base;
         this._routeCollection = new Map();
         this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
         this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
     }
-    get type() {
-        return this._type;
+    get mode() {
+        return this._mode;
     }
     get base() {
         return this._base;
     }
     setRoute(route, handler) {
         if (!this._routeCollection.size) {
-            switch (this._type) {
+            switch (this._mode) {
                 case 'hash': {
                     window.addEventListener('hashchange', this._handleHashchangeEvent);
                     break;
@@ -39,7 +39,7 @@ export default class Router {
     removeRoute(route) {
         this._routeCollection.delete(this._fixRoute(route));
         if (!this._routeCollection.size) {
-            switch (this._type) {
+            switch (this._mode) {
                 case 'hash': {
                     window.removeEventListener('hashchange', this._handleHashchangeEvent);
                     break;
@@ -52,7 +52,7 @@ export default class Router {
         }
     }
     navigate(url) {
-        switch (this._type) {
+        switch (this._mode) {
             case 'hash': {
                 this._navigateWithHash(url);
                 break;

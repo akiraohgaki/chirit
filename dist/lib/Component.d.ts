@@ -1,15 +1,17 @@
 import { NodeContentData } from './types.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
+import NodeContent from './NodeContent.js';
 export default class Component extends HTMLElement {
-    private _contentRoot;
     private _attrs;
+    private _content;
     private _isUpdated;
     private _updateTimerId;
     private _updateDelay;
     constructor();
     static define(name: string, options?: ElementDefinitionOptions): void;
-    get contentRoot(): Node;
     get attrs(): ElementAttributesProxy;
+    get content(): NodeContent;
+    get contentRoot(): Node;
     get isUpdated(): boolean;
     dispatch(type: string, detail?: any): boolean;
     update(): void;
@@ -21,7 +23,6 @@ export default class Component extends HTMLElement {
     adoptedCallback(_oldDocument: Document, _newDocument: Document): void;
     updatedCallback(): void;
     protected initContentRoot(): Node;
-    protected initAttrs(): ElementAttributesProxy;
     protected render(): void;
     protected template(): NodeContentData;
 }

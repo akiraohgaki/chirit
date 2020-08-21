@@ -1,4 +1,4 @@
 export default class ElementAttributesProxy {
-    [key: string]: string | null;
+    [key: string]: string;
     constructor(target: Element);
 }

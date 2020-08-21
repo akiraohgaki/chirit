@@ -1,8 +1,8 @@
 export default class WebStorage {
-    constructor(type, prefix = '') {
-        this._type = type;
+    constructor(mode, prefix = '') {
+        this._mode = mode;
         this._prefix = prefix;
-        switch (this._type) {
+        switch (this._mode) {
             case 'local': {
                 this._storage = window.localStorage;
                 break;
@@ -13,8 +13,8 @@ export default class WebStorage {
             }
         }
     }
-    get type() {
-        return this._type;
+    get mode() {
+        return this._mode;
     }
     get prefix() {
         return this._prefix;

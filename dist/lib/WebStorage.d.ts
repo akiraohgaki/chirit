@@ -1,10 +1,10 @@
-import { WebStorageType } from './types.js';
+import { WebStorageMode } from './types.js';
 export default class WebStorage {
-    private _type;
+    private _mode;
     private _prefix;
     private _storage;
-    constructor(type: WebStorageType, prefix?: string);
-    get type(): WebStorageType;
+    constructor(mode: WebStorageMode, prefix?: string);
+    get mode(): WebStorageMode;
     get prefix(): string;
     get length(): number;
     key(index: number): string | null;

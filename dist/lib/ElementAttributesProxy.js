@@ -2,7 +2,6 @@ export default class ElementAttributesProxy {
     constructor(target) {
         return new Proxy({}, {
             set: (_target, name, value) => {
-                value = value !== null && value !== void 0 ? value : '';
                 if (typeof name === 'string' && typeof value === 'string') {
                     target.setAttribute(name, value);
                     return true;
@@ -10,10 +9,10 @@ export default class ElementAttributesProxy {
                 return false;
             },
             get: (_target, name) => {
-                if (typeof name === 'string') {
+                if (typeof name === 'string' && target.hasAttribute(name)) {
                     return target.getAttribute(name);
                 }
-                return null;
+                return undefined;
             },
             deleteProperty: (_target, name) => {
                 if (typeof name === 'string' && target.hasAttribute(name)) {

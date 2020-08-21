@@ -1,10 +1,10 @@
-import NodeContent from './NodeContent.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
+import NodeContent from './NodeContent.js';
 export default class Component extends HTMLElement {
     constructor() {
         super();
-        this._contentRoot = this.initContentRoot();
-        this._attrs = this.initAttrs();
+        this._attrs = new ElementAttributesProxy(this);
+        this._content = new NodeContent(this.initContentRoot());
         this._isUpdated = false;
         this._updateTimerId = undefined;
         this._updateDelay = 100;
@@ -12,11 +12,14 @@ export default class Component extends HTMLElement {
     static define(name, options) {
         window.customElements.define(name, this, options);
     }
-    get contentRoot() {
-        return this._contentRoot;
-    }
     get attrs() {
         return this._attrs;
+    }
+    get content() {
+        return this._content;
+    }
+    get contentRoot() {
+        return this._content.target;
     }
     get isUpdated() {
         return this._isUpdated;
@@ -65,12 +68,8 @@ export default class Component extends HTMLElement {
     initContentRoot() {
         return this.attachShadow({ mode: 'open' });
     }
-    initAttrs() {
-        return new ElementAttributesProxy(this);
-    }
     render() {
-        const nodeContent = new NodeContent(this.contentRoot);
-        nodeContent.update(this.template(), true);
+        this.content.update(this.template(), true);
     }
     template() {
         return '';

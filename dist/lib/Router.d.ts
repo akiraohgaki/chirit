@@ -1,10 +1,10 @@
-import { RouterType, RouteHandler } from './types.js';
+import { RouterMode, RouteHandler } from './types.js';
 export default class Router {
-    private _type;
+    private _mode;
     private _base;
     private _routeCollection;
-    constructor(type: RouterType, base?: string);
-    get type(): RouterType;
+    constructor(mode: RouterMode, base?: string);
+    get mode(): RouterMode;
     get base(): string;
     setRoute(route: string, handler: RouteHandler): void;
     removeRoute(route: string): void;
