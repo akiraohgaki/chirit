@@ -3,7 +3,7 @@ import {WebStorage} from '../chirit.js';
 export default function(): void {
     const webStorage = new WebStorage('session', 'test_');
 
-    console.log(webStorage.type);
+    console.log(webStorage.mode);
     console.log(webStorage.prefix);
 
     sessionStorage.setItem(`${webStorage.prefix}item0`, 'dummy');

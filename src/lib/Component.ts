@@ -1,11 +1,11 @@
 import {NodeContentData} from './types.js';
-import NodeContent from './NodeContent.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
+import NodeContent from './NodeContent.js';
 
 export default class Component extends HTMLElement {
 
-    private _contentRoot: Node;
     private _attrs: ElementAttributesProxy;
+    private _content: NodeContent;
     private _isUpdated: boolean;
 
     private _updateTimerId: number | undefined;
@@ -14,8 +14,8 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
 
-        this._contentRoot = this.initContentRoot();
-        this._attrs = this.initAttrs();
+        this._attrs = new ElementAttributesProxy(this);
+        this._content = new NodeContent(this.initContentRoot());
         this._isUpdated = false;
 
         this._updateTimerId = undefined;
@@ -26,12 +26,16 @@ export default class Component extends HTMLElement {
         window.customElements.define(name, this, options);
     }
 
-    get contentRoot(): Node {
-        return this._contentRoot;
-    }
-
     get attrs(): ElementAttributesProxy {
         return this._attrs;
+    }
+
+    get content(): NodeContent {
+        return this._content;
+    }
+
+    get contentRoot(): Node {
+        return this._content.target;
     }
 
     get isUpdated(): boolean {
@@ -93,13 +97,8 @@ export default class Component extends HTMLElement {
         return this.attachShadow({mode: 'open'});
     }
 
-    protected initAttrs(): ElementAttributesProxy {
-        return new ElementAttributesProxy(this);
-    }
-
     protected render(): void {
-        const nodeContent = new NodeContent(this.contentRoot);
-        nodeContent.update(this.template(), true);
+        this.content.update(this.template(), true);
     }
 
     protected template(): NodeContentData {

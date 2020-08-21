@@ -1,16 +1,16 @@
-import {WebStorageType} from './types.js';
+import {WebStorageMode} from './types.js';
 
 export default class WebStorage {
 
-    private _type: WebStorageType;
+    private _mode: WebStorageMode;
     private _prefix: string;
     private _storage: Storage;
 
-    constructor(type: WebStorageType, prefix: string = '') {
-        this._type = type;
+    constructor(mode: WebStorageMode, prefix: string = '') {
+        this._mode = mode;
         this._prefix = prefix;
 
-        switch (this._type) {
+        switch (this._mode) {
             case 'local': {
                 this._storage = window.localStorage;
                 break;
@@ -22,8 +22,8 @@ export default class WebStorage {
         }
     }
 
-    get type(): WebStorageType {
-        return this._type;
+    get mode(): WebStorageMode {
+        return this._mode;
     }
 
     get prefix(): string {

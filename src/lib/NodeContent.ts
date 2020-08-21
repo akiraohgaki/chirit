@@ -23,6 +23,7 @@ export default class NodeContent {
 
     set(content: NodeContentData): void {
         this._target.textContent = null;
+
         if (content instanceof Document || content instanceof DocumentFragment) {
             this._target.appendChild(content.cloneNode(true));
         }
@@ -46,6 +47,7 @@ export default class NodeContent {
             template.innerHTML = content;
             return template.content;
         }
+
         // DocumentType may not be inserted inside DocumentFragment
         const documentFragment = document.createDocumentFragment();
         if (content instanceof Node) {
@@ -63,6 +65,7 @@ export default class NodeContent {
         const oldChildNodes = Array.from(oldParent.childNodes);
         const newChildNodes = Array.from(newParent.childNodes);
         const maxLength = Math.max(oldChildNodes.length, newChildNodes.length);
+
         for (let i = 0; i < maxLength; i++) {
             this._updateChild(
                 oldParent,
@@ -88,6 +91,7 @@ export default class NodeContent {
                 if (oldChild instanceof Element && newChild instanceof Element) {
                     // Current child is Element like HTMLElement, SVGElement
                     this._updateAttributes(oldChild, newChild);
+
                     if (deep) {
                         this._updateChildNodes(oldChild, newChild, deep);
                     }
@@ -114,11 +118,13 @@ export default class NodeContent {
     private _updateAttributes(oldParent: Element, newParent: Element): void {
         const oldAttributes = Array.from(oldParent.attributes);
         const newAttributes = Array.from(newParent.attributes);
+
         for (const attribute of oldAttributes) {
             if (!newParent.hasAttribute(attribute.name)) {
                 oldParent.removeAttribute(attribute.name);
             }
         }
+
         for (const attribute of newAttributes) {
             if (!oldParent.hasAttribute(attribute.name)
                 || oldParent.getAttribute(attribute.name) !== attribute.value

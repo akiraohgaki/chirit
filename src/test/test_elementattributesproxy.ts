@@ -7,12 +7,13 @@ export default function(): void {
 
     attrs.href = 'dummy';
     attrs.title = 'dummy';
-    attrs['data-dummy'] = null;
+    attrs['data-dummy'] = 'dummy';
 
+    delete attrs.href;
+
+    console.log(attrs.href);
     console.log(attrs.title);
-
-    delete attrs.title;
-
+    
     console.log('href' in attrs);
     console.log('title' in attrs);
 
