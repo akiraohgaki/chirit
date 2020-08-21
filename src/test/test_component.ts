@@ -71,8 +71,9 @@ export default function(): void {
     const iframe = document.getElementById('component-iframe') as HTMLIFrameElement;
     const testComponent = wrapper.querySelector('test-component') as TestComponent;
 
-    console.log(testComponent.contentRoot);
     console.log(testComponent.attrs);
+    console.log(testComponent.content);
+    console.log(testComponent.contentRoot);
     console.log(testComponent.isUpdated);
 
     iframe.contentDocument?.body.appendChild(testComponent);

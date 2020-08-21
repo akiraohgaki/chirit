@@ -21,7 +21,7 @@ export default function(): void {
 
     const router = new Router('hash', '/test/');
 
-    console.log(router.type);
+    console.log(router.mode);
     console.log(router.base);
 
     router.setRoute('^/test/router/dummy', () => {
