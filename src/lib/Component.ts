@@ -43,7 +43,7 @@ export default class Component extends HTMLElement {
     }
 
     dispatch(type: string, detail?: any): boolean {
-        return this.contentRoot.dispatchEvent(new CustomEvent(type, {
+        return this._content.target.dispatchEvent(new CustomEvent(type, {
             detail: detail,
             bubbles: true,
             composed: true
