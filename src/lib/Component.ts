@@ -35,7 +35,7 @@ export default class Component extends HTMLElement {
     }
 
     get contentRoot(): Node {
-        return this._content.target;
+        return this._content.container;
     }
 
     get isUpdated(): boolean {
@@ -43,7 +43,7 @@ export default class Component extends HTMLElement {
     }
 
     dispatch(type: string, detail?: any): boolean {
-        return this._content.target.dispatchEvent(new CustomEvent(type, {
+        return this._content.container.dispatchEvent(new CustomEvent(type, {
             detail: detail,
             bubbles: true,
             composed: true

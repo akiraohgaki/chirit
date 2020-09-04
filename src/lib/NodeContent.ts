@@ -2,42 +2,42 @@ import {NodeContentData} from './types.js';
 
 export default class NodeContent {
 
-    private _target: Node;
+    private _container: Node;
 
-    constructor(target: Node) {
-        this._target = target;
+    constructor(container: Node) {
+        this._container = container;
     }
 
-    get target(): Node {
-        return this._target;
+    get container(): Node {
+        return this._container;
     }
 
     update(content: NodeContentData, deep: boolean = false): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._updateChildNodes(this._target, content, deep);
+            this._updateChildNodes(this._container, content, deep);
         }
         else {
-            this._updateChildNodes(this._target, this._createDocumentFragment(content), deep);
+            this._updateChildNodes(this._container, this._createDocumentFragment(content), deep);
         }
     }
 
     set(content: NodeContentData): void {
-        this._target.textContent = null;
+        this._container.textContent = null;
 
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._target.appendChild(content.cloneNode(true));
+            this._container.appendChild(content.cloneNode(true));
         }
         else {
-            this._target.appendChild(this._createDocumentFragment(content));
+            this._container.appendChild(this._createDocumentFragment(content));
         }
     }
 
     get(): DocumentFragment {
-        return this._createDocumentFragment(this._target.childNodes);
+        return this._createDocumentFragment(this._container.childNodes);
     }
 
     clear(): void {
-        this._target.textContent = null;
+        this._container.textContent = null;
     }
 
     private _createDocumentFragment(content: NodeContentData): DocumentFragment {
