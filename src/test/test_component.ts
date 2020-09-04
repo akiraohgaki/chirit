@@ -5,7 +5,7 @@ class TestComponent extends Component {
     constructor() {
         super();
 
-        this.contentRoot.addEventListener('click', (event) => {
+        this.content.container.addEventListener('click', (event) => {
             const target = event.target as Element;
             if (target.hasAttribute('data-update')) {
                 // Scheduled update should work
@@ -43,7 +43,7 @@ class TestComponent extends Component {
         console.log('Updated');
     }
 
-    initContentRoot(): ShadowRoot {
+    initContentContainer(): ShadowRoot {
         return this.attachShadow({mode: 'closed'});
     }
 
@@ -73,7 +73,6 @@ export default function(): void {
 
     console.log(testComponent.attrs);
     console.log(testComponent.content);
-    console.log(testComponent.contentRoot);
     console.log(testComponent.isUpdated);
 
     iframe.contentDocument?.body.appendChild(testComponent);
