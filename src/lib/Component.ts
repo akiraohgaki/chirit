@@ -15,7 +15,7 @@ export default class Component extends HTMLElement {
         super();
 
         this._attrs = new ElementAttributesProxy(this);
-        this._content = new NodeContent(this.initContentRoot());
+        this._content = new NodeContent(this.initContentContainer());
         this._isUpdated = false;
 
         this._updateTimerId = undefined;
@@ -32,10 +32,6 @@ export default class Component extends HTMLElement {
 
     get content(): NodeContent {
         return this._content;
-    }
-
-    get contentRoot(): Node {
-        return this._content.container;
     }
 
     get isUpdated(): boolean {
@@ -93,7 +89,7 @@ export default class Component extends HTMLElement {
     updatedCallback(): void {
     }
 
-    protected initContentRoot(): Node {
+    protected initContentContainer(): Node {
         return this.attachShadow({mode: 'open'});
     }
 
