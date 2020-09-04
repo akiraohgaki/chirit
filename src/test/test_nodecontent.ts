@@ -11,11 +11,11 @@ export default function(): void {
         <button data-method="get">Get</button>
         <button data-method="clear">Clear</button>
         </div>
-        <div id="nodecontent-content"></div>
+        <div id="nodecontent-container"></div>
     `;
 
     const src = document.getElementById('nodecontent-src') as HTMLTextAreaElement;
-    const content = document.getElementById('nodecontent-content') as Element;
+    const container = document.getElementById('nodecontent-container') as Element;
     const methods = document.getElementById('nodecontent-methods') as Element;
 
     const template = document.createElement('template');
@@ -28,9 +28,9 @@ export default function(): void {
     `;
     src.value = template.innerHTML;
 
-    const nodeContent = new NodeContent(content);
+    const nodeContent = new NodeContent(container);
 
-    console.log(nodeContent.target);
+    console.log(nodeContent.container);
 
     nodeContent.set(template);
     console.log(nodeContent.get());
