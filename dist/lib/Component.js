@@ -4,7 +4,7 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
         this._attrs = new ElementAttributesProxy(this);
-        this._content = new NodeContent(this.initContentRoot());
+        this._content = new NodeContent(this.initContentContainer());
         this._isUpdated = false;
         this._updateTimerId = undefined;
         this._updateDelay = 100;
@@ -18,14 +18,11 @@ export default class Component extends HTMLElement {
     get content() {
         return this._content;
     }
-    get contentRoot() {
-        return this._content.target;
-    }
     get isUpdated() {
         return this._isUpdated;
     }
     dispatch(type, detail) {
-        return this.contentRoot.dispatchEvent(new CustomEvent(type, {
+        return this._content.container.dispatchEvent(new CustomEvent(type, {
             detail: detail,
             bubbles: true,
             composed: true
@@ -65,7 +62,7 @@ export default class Component extends HTMLElement {
     }
     updatedCallback() {
     }
-    initContentRoot() {
+    initContentContainer() {
         return this.attachShadow({ mode: 'open' });
     }
     render() {

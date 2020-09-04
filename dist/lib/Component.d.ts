@@ -11,7 +11,6 @@ export default class Component extends HTMLElement {
     static define(name: string, options?: ElementDefinitionOptions): void;
     get attrs(): ElementAttributesProxy;
     get content(): NodeContent;
-    get contentRoot(): Node;
     get isUpdated(): boolean;
     dispatch(type: string, detail?: any): boolean;
     update(): void;
@@ -22,7 +21,7 @@ export default class Component extends HTMLElement {
     disconnectedCallback(): void;
     adoptedCallback(_oldDocument: Document, _newDocument: Document): void;
     updatedCallback(): void;
-    protected initContentRoot(): Node;
+    protected initContentContainer(): Node;
     protected render(): void;
     protected template(): NodeContentData;
 }

@@ -1,8 +1,8 @@
 import { NodeContentData } from './types.js';
 export default class NodeContent {
-    private _target;
-    constructor(target: Node);
-    get target(): Node;
+    private _container;
+    constructor(container: Node);
+    get container(): Node;
     update(content: NodeContentData, deep?: boolean): void;
     set(content: NodeContentData): void;
     get(): DocumentFragment;

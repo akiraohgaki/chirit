@@ -1,32 +1,32 @@
 export default class NodeContent {
-    constructor(target) {
-        this._target = target;
+    constructor(container) {
+        this._container = container;
     }
-    get target() {
-        return this._target;
+    get container() {
+        return this._container;
     }
     update(content, deep = false) {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._updateChildNodes(this._target, content, deep);
+            this._updateChildNodes(this._container, content, deep);
         }
         else {
-            this._updateChildNodes(this._target, this._createDocumentFragment(content), deep);
+            this._updateChildNodes(this._container, this._createDocumentFragment(content), deep);
         }
     }
     set(content) {
-        this._target.textContent = null;
+        this._container.textContent = null;
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._target.appendChild(content.cloneNode(true));
+            this._container.appendChild(content.cloneNode(true));
         }
         else {
-            this._target.appendChild(this._createDocumentFragment(content));
+            this._container.appendChild(this._createDocumentFragment(content));
         }
     }
     get() {
-        return this._createDocumentFragment(this._target.childNodes);
+        return this._createDocumentFragment(this._container.childNodes);
     }
     clear() {
-        this._target.textContent = null;
+        this._container.textContent = null;
     }
     _createDocumentFragment(content) {
         if (typeof content === 'string') {
