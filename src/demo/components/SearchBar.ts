@@ -6,7 +6,7 @@ export default class SearchBar extends Component {
     constructor() {
         super();
 
-        this.contentRoot.addEventListener('submit', (event) => {
+        this.content.container.addEventListener('submit', (event) => {
             event.preventDefault();
             const target = event.target as Element;
             const inputElement = target.querySelector('input[name="term"]') as HTMLInputElement;
