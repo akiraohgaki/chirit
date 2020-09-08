@@ -49,7 +49,7 @@ class TestComponent extends Component {
 
     template(): string {
         return `
-            <p>${this.attrs.datetime}</p>
+            <span>${this.attrs.datetime}</span>
             <button data-update>Update</button>
         `;
     }

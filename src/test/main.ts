@@ -16,14 +16,40 @@ const handlerCollection = new Map([
     ['test_webstorage', test_webstorage]
 ]);
 
-let buttons = '';
+let listItems = '';
 for (const key of handlerCollection.keys()) {
-    buttons += `<button data-handler-key="${key}">${key}</button>`;
+    listItems += `<li><a href="#" data-handler="${key}">${key}</a></li>`;
 }
 
 const template = document.createElement('template');
 template.innerHTML = `
-    <nav id="nav">${buttons}</nav>
+    <style>
+    #nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    #nav ul li {
+        display: inline-block;
+        margin: 0;
+        padding: 0.4em;
+    }
+    #nav a {
+        display: inline-block;
+        padding: 0.6em;
+        border-radius: 1.2em;
+        text-decoration: none;
+        font: 12px/1 system-ui;
+        color: ghostwhite;
+        background: deepskyblue;
+        transition: background 0.3s;
+    }
+    #nav a:hover {
+        background: dodgerblue;
+    }
+    </style>
+
+    <nav id="nav"><ul>${listItems}</ul></nav>
     <main id="main"></main>
 `;
 document.body.appendChild(template.content);
@@ -32,13 +58,14 @@ const nav = document.getElementById('nav') as Element;
 const main = document.getElementById('main') as Element;
 
 nav.addEventListener('click', (event) => {
+    event.preventDefault();
     const target = event.target as Element;
-    const handlerKey = target.getAttribute('data-handler-key');
+    const handlerKey = target.getAttribute('data-handler');
     if (handlerKey) {
         const handler = handlerCollection.get(handlerKey);
         if (handler) {
             main.textContent = null;
-            console.log('--------------------------------');
+            console.log(`---- ${handlerKey} ----`);
             handler();
         }
     }
