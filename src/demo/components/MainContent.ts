@@ -1,26 +1,30 @@
 import {Component} from '../../chirit.js';
 import store from '../store/index.js';
+import {escapeHtml} from './utils.js';
 
 export default class MainContent extends Component {
 
     constructor() {
         super();
-
         store.state.searchResult.subscribe(this.update.bind(this));
     }
 
     template(): string {
-        let list = '';
+        const searchTerm = store.state.searchTerm.get();
         const searchResult = store.state.searchResult.get();
+
+        const title = searchTerm ? `Search for <q>${escapeHtml(searchTerm)}</q>` : '';
+
+        let listItems = '';
         if (searchResult.resultCount) {
             for (const result of searchResult.results) {
-                list += `
+                listItems += `
                     <li>
-                    <app-artist-album
+                    <demo-artist-album
                         artwork="${result.artworkUrl100}"
-                        artist="${result.artistName}"
-                        album="${result.collectionName}">
-                    </app-artist-album>
+                        album="${escapeHtml(result.collectionName)}"
+                        artist="${escapeHtml(result.artistName)}">
+                    </demo-artist-album>
                     </li>
                 `;
             }
@@ -31,13 +35,30 @@ export default class MainContent extends Component {
             :host {
                 display: block;
             }
+            :host * {
+                box-sizing: border-box;
+            }
+            h2 {
+                text-align: center;
+                font: 16px/1 system-ui;
+                color: var(--fg-color);
+            }
             ul {
+                display: flex;
+                flex-flow: row wrap;
+                justify-content: center;
+                list-style: none;
+                max-width: 1000px;
                 margin: 0;
                 padding: 0;
             }
+            ul li {
+                padding: 1em;
+            }
             </style>
 
-            <ul>${list}</ul>
+            <h2>${title}</h2>
+            <ul>${listItems}</ul>
         `;
     }
 

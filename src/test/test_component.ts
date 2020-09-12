@@ -4,15 +4,7 @@ class TestComponent extends Component {
 
     constructor() {
         super();
-
-        this.content.container.addEventListener('click', (event) => {
-            const target = event.target as Element;
-            if (target.hasAttribute('data-update')) {
-                // Scheduled update should work
-                this.attrs.datetime = `${new Date}`;
-                this.attrs.plus += '+';
-            }
-        });
+        this._handleClick = this._handleClick.bind(this);
     }
 
     static get observedAttributes(): Array<string> {
@@ -28,10 +20,12 @@ class TestComponent extends Component {
     connectedCallback(): void {
         console.log('Connected');
         super.connectedCallback();
+        this.content.container.addEventListener('click', this._handleClick);
     }
 
     disconnectedCallback(): void {
         console.log('Disconnected');
+        this.content.container.removeEventListener('click', this._handleClick);
     }
 
     adoptedCallback(oldDocument: Document, newDocment: Document): void {
@@ -49,9 +43,18 @@ class TestComponent extends Component {
 
     template(): string {
         return `
-            <p>${this.attrs.datetime}</p>
+            <span>${this.attrs.datetime}</span>
             <button data-update>Update</button>
         `;
+    }
+
+    private _handleClick(event: Event): void {
+        const target = event.target as Element;
+        if (target.hasAttribute('data-update')) {
+            // Scheduled update should work
+            this.attrs.datetime = `${new Date}`;
+            this.attrs.plus += '+';
+        }
     }
 
 }

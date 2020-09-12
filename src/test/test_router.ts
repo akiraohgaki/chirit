@@ -3,18 +3,18 @@ import {Router} from '../chirit.js';
 export default function(): void {
     const main = document.getElementById('main') as Element;
     main.innerHTML = `
-        <div id="router-links">
-        <a href="https://example.com/">https://example.com/</a><br>
-        <a href="${window.location.origin + window.location.pathname}?k=v#/test/router/dummy">${window.location.origin + window.location.pathname}?k=v#/test/router/dummy</a><br>
-        <a href="${window.location.pathname}?k=v#/test/router/dummy">${window.location.pathname}?k=v#/test/router/dummy</a><br>
-        <a href="?k=v#/test/router/dummy">?k=v#/test/router/dummy</a><br>
-        <a href="#/test/router/dummy">#/test/router/dummy</a><br>
-        <a href="/test/router/dummy">/test/router/dummy</a><br>
-        <a href="/test/router/0-1">/test/router/0-1</a><br>
-        <a href="router/2-3">router/2-3</a><br>
-        <a href="./">./</a><br>
-        <a href="../">../</a>
-        </div>
+        <ul id="router-links">
+        <li><a href="https://example.com/">https://example.com/</a></li>
+        <li><a href="${window.location.origin + window.location.pathname}?k=v#/test/router/dummy">${window.location.origin + window.location.pathname}?k=v#/test/router/dummy</a></li>
+        <li><a href="${window.location.pathname}?k=v#/test/router/dummy">${window.location.pathname}?k=v#/test/router/dummy</a></li>
+        <li><a href="?k=v#/test/router/dummy">?k=v#/test/router/dummy</a></li>
+        <li><a href="#/test/router/dummy">#/test/router/dummy</a></li>
+        <li><a href="/test/router/dummy">/test/router/dummy</a></li>
+        <li><a href="/test/router/0-1">/test/router/0-1</a></li>
+        <li><a href="router/2-3">router/2-3</a></li>
+        <li><a href="./">./</a></li>
+        <li><a href="../">../</a></li>
+        </ul>
     `;
 
     const links = document.getElementById('router-links') as Element;
