@@ -16,7 +16,7 @@ export default class Root extends Component {
                 display: flex;
                 flex-flow: column nowrap;
                 align-items: center;
-                padding: 20px;
+                padding: 1em;
             }
             nav {
                 background: var(--bg-color-2nd);

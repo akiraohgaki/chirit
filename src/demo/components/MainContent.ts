@@ -5,7 +5,6 @@ export default class MainContent extends Component {
 
     constructor() {
         super();
-
         store.state.searchResult.subscribe(this.update.bind(this));
     }
 
@@ -14,16 +13,16 @@ export default class MainContent extends Component {
         const searchResult = store.state.searchResult.get();
 
         const title = searchTerm ? `Search for <q>${searchTerm}</q>` : '';
-        let listItems = '';
 
+        let listItems = '';
         if (searchResult.resultCount) {
             for (const result of searchResult.results) {
                 listItems += `
                     <li>
                     <demo-artist-album
                         artwork="${result.artworkUrl100}"
-                        artist="${result.artistName}"
-                        album="${result.collectionName}">
+                        album="${result.collectionName}"
+                        artist="${result.artistName}">
                     </demo-artist-album>
                     </li>
                 `;
@@ -48,12 +47,12 @@ export default class MainContent extends Component {
                 flex-flow: row wrap;
                 justify-content: center;
                 list-style: none;
-                max-width: 900px;
+                max-width: 1000px;
                 margin: 0;
                 padding: 0;
             }
             ul li {
-                padding: 10px;
+                padding: 1em;
             }
             </style>
 

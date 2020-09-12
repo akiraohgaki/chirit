@@ -5,13 +5,16 @@ export default class SearchBar extends Component {
 
     constructor() {
         super();
+        this._handleSubmit = this._handleSubmit.bind(this);
+    }
 
-        this.content.container.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const target = event.target as Element;
-            const inputElement = target.querySelector('input[name="term"]') as HTMLInputElement;
-            router.navigate(`search/${encodeURIComponent(inputElement.value)}`);
-        });
+    connectedCallback(): void {
+        super.connectedCallback();
+        this.content.container.addEventListener('submit', this._handleSubmit);
+    }
+
+    disconnectedCallback(): void {
+        this.content.container.removeEventListener('submit', this._handleSubmit);
     }
 
     template(): string {
@@ -19,8 +22,8 @@ export default class SearchBar extends Component {
             <style>
             :host {
                 display: inline-block;
-                width: 480px;
-                height: 32px;
+                width: 500px;
+                height: 40px;
             }
             :host * {
                 box-sizing: border-box;
@@ -62,6 +65,13 @@ export default class SearchBar extends Component {
             <input type="submit" value="Search">
             </form>
         `;
+    }
+
+    private _handleSubmit(event: Event): void {
+        event.preventDefault();
+        const target = event.target as Element;
+        const inputElement = target.querySelector('input[name="term"]') as HTMLInputElement;
+        router.navigate(`search/${encodeURIComponent(inputElement.value)}`);
     }
 
 }

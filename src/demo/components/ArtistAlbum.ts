@@ -1,9 +1,24 @@
 import {Component} from '../../chirit.js';
+import router from '../router/index.js';
 
 export default class ArtistAlbum extends Component {
 
+    constructor() {
+        super();
+        this._handleClick = this._handleClick.bind(this);
+    }
+
     static get observedAttributes(): Array<string> {
-        return ['artwork', 'artist', 'album'];
+        return ['artwork', 'album', 'artist'];
+    }
+
+    connectedCallback(): void {
+        super.connectedCallback();
+        this.content.container.addEventListener('click', this._handleClick);
+    }
+
+    disconnectedCallback(): void {
+        this.content.container.removeEventListener('click', this._handleClick);
     }
 
     template(): string {
@@ -20,32 +35,45 @@ export default class ArtistAlbum extends Component {
                 flex-flow: column nowrap;
                 width: 200px;
             }
-            .artwork,
-            .album,
-            .artist {
-                display: block;
-                font: 14px/1.4 system-ui;
-            }
-            .artwork {
+            img {
+                display: inline-block;
+                width: 200px;
                 height: 200px;
             }
-            .album {
-                margin: 5px 0;
-                font-weight: bold;
+            h4 {
+                margin: 0.6em 0;
+                font: 14px/1.4 system-ui;
                 color: var(--fg-color);
             }
-            .artist {
-                font-size: 12px;
+            p {
+                margin: 0;
+                font: 12px/1.4 system-ui;
                 color: var(--fg-color-2nd);
+            }
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
             }
             </style>
 
             <div>
-            <img class="artwork" src="${this.attrs.artwork}">
-            <h4 class="album">${this.attrs.album}</h4>
-            <span class="artist">${this.attrs.artist}</span>
+            <img src="${this.attrs.artwork}">
+            <h4><a href="#" data-url="search/${encodeURIComponent(this.attrs.album)}">${this.attrs.album}</a></h4>
+            <p><a href="#" data-url="search/${encodeURIComponent(this.attrs.artist)}">${this.attrs.artist}</a></p>
             </div>
         `;
+    }
+
+    private _handleClick(event: Event): void {
+        event.preventDefault();
+        const target = event.target as Element;
+        const url = target.getAttribute('data-url');
+        if (url) {
+            router.navigate(url);
+        }
     }
 
 }
