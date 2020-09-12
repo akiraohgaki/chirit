@@ -5,15 +5,15 @@ const template = document.createElement('template');
 template.innerHTML = `
     <style>
     :root {
-        --fg-color: #ffffff;
-        --fg-color-2nd: #e4e3e3;
-        --bg-color: #1b262c;
-        --bg-color-2nd: #1b262c;
+        --fg-color: #eeeeee;
+        --fg-color-2nd: #aaaaaa;
+        --bg-color: #222831;
+        --bg-color-2nd: #222831;
 
-        --widget-fg-color: #ffffff;
-        --widget-fg-color-2nd: #e4e3e3;
-        --widget-bg-color: #1b262c;
-        --widget-border-color: #6a2c70;
+        --widget-fg-color: #eeeeee;
+        --widget-fg-color-2nd: #aaaaaa;
+        --widget-bg-color: #222831;
+        --widget-border-color: #393e46;
     }
     </style>
 

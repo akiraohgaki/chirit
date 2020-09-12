@@ -20,6 +20,12 @@ export default class Store {
             searchResult: new ObservableValue({})
         };
         this._webStorage = new WebStorage('session', 'demo_');
+
+        this._state.searchResult.subscribe(() => {
+            if (document.scrollingElement) {
+                document.scrollingElement.scrollTop = 0;
+            }
+        });
     }
 
     get state(): State {

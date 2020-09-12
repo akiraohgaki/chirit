@@ -37,6 +37,7 @@ export default class ArtistAlbum extends Component {
             }
             img {
                 display: inline-block;
+                box-shadow: 0 0 0.4em rgba(0, 0, 0, 0.3);
                 width: 200px;
                 height: 200px;
             }

@@ -22,6 +22,7 @@ export default class SearchBar extends Component {
             <style>
             :host {
                 display: inline-block;
+                box-shadow: 0 0 0.4em rgba(0, 0, 0, 0.3);
                 width: 500px;
                 height: 40px;
             }
