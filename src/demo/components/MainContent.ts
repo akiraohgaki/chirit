@@ -1,5 +1,6 @@
 import {Component} from '../../chirit.js';
 import store from '../store/index.js';
+import {escapeHtml} from './utils.js';
 
 export default class MainContent extends Component {
 
@@ -12,7 +13,7 @@ export default class MainContent extends Component {
         const searchTerm = store.state.searchTerm.get();
         const searchResult = store.state.searchResult.get();
 
-        const title = searchTerm ? `Search for <q>${searchTerm}</q>` : '';
+        const title = searchTerm ? `Search for <q>${escapeHtml(searchTerm)}</q>` : '';
 
         let listItems = '';
         if (searchResult.resultCount) {
@@ -21,8 +22,8 @@ export default class MainContent extends Component {
                     <li>
                     <demo-artist-album
                         artwork="${result.artworkUrl100}"
-                        album="${result.collectionName}"
-                        artist="${result.artistName}">
+                        album="${escapeHtml(result.collectionName)}"
+                        artist="${escapeHtml(result.artistName)}">
                     </demo-artist-album>
                     </li>
                 `;

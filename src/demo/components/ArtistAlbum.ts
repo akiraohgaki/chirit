@@ -1,5 +1,6 @@
 import {Component} from '../../chirit.js';
 import router from '../router/index.js';
+import {escapeHtml} from './utils.js';
 
 export default class ArtistAlbum extends Component {
 
@@ -62,8 +63,8 @@ export default class ArtistAlbum extends Component {
 
             <div>
             <img src="${this.attrs.artwork}">
-            <h4><a href="#" data-url="search/${encodeURIComponent(this.attrs.album)}">${this.attrs.album}</a></h4>
-            <p><a href="#" data-url="search/${encodeURIComponent(this.attrs.artist)}">${this.attrs.artist}</a></p>
+            <h4><a href="#" data-url="search/${encodeURIComponent(this.attrs.album)}">${escapeHtml(this.attrs.album)}</a></h4>
+            <p><a href="#" data-url="search/${encodeURIComponent(this.attrs.artist)}">${escapeHtml(this.attrs.artist)}</a></p>
             </div>
         `;
     }
