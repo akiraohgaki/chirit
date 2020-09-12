@@ -10,7 +10,7 @@ export default class SearchBar extends Component {
             event.preventDefault();
             const target = event.target as Element;
             const inputElement = target.querySelector('input[name="term"]') as HTMLInputElement;
-            router.navigate(`search/${inputElement.value}`);
+            router.navigate(`search/${encodeURIComponent(inputElement.value)}`);
         });
     }
 
@@ -18,15 +18,48 @@ export default class SearchBar extends Component {
         return `
             <style>
             :host {
-                display: block;
+                display: inline-block;
+                width: 480px;
+                height: 32px;
+            }
+            :host * {
+                box-sizing: border-box;
+            }
+            form {
+                display: flex;
+                flex-flow: row nowrap;
+                width: 100%;
+                height: 100%;
             }
             input {
-                width: 400px;
+                -moz-appearance: none;
+                -webkit-appearance: none;
+                appearance: none;
+                outline: none;
+                border: 2px solid var(--widget-border-color);
+                font: 14px/1 system-ui;
+            }
+            input[type="text"] {
+                flex: auto;
+                border-right-width: 0;
+                border-radius: 5px 0 0 5px;
+                color: var(--widget-fg-color);
+                background: var(--widget-bg-color);
+            }
+            input[type="submit"] {
+                border-left-width: 0;
+                border-radius: 0 5px 5px 0;
+                color: var(--widget-fg-color-2nd);
+                background: var(--widget-border-color);
+            }
+            input[type="submit"]:hover {
+                color: var(--widget-fg-color);
             }
             </style>
 
             <form>
-            <input type="search" name="term" value="" placeholder="Search for Artist Album">
+            <input type="text" name="term" value="" placeholder="Search for Artist Album">
+            <input type="submit" value="Search">
             </form>
         `;
     }

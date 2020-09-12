@@ -8,9 +8,21 @@ export default class Root extends Component {
             :host {
                 display: block;
             }
+            :host * {
+                box-sizing: border-box;
+            }
             nav,
             article {
-                display: block;
+                display: flex;
+                flex-flow: column nowrap;
+                align-items: center;
+                padding: 20px;
+            }
+            nav {
+                background: var(--bg-color-2nd);
+            }
+            article {
+                background: var(--bg-color);
             }
             </style>
 

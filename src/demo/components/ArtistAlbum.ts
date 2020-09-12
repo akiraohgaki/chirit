@@ -10,31 +10,40 @@ export default class ArtistAlbum extends Component {
         return `
             <style>
             :host {
-                display: block;
+                display: inline-block;
+            }
+            :host * {
+                box-sizing: border-box;
             }
             div {
-                box-sizing: border-box;
                 display: flex;
-                width: 100%;
-                padding: 20px;
+                flex-flow: column nowrap;
+                width: 200px;
             }
-            div img {
-                display: inline-block;
-                width: 100px;
-                height: 100px;
-                margin-right: 20px;
+            .artwork,
+            .album,
+            .artist {
+                display: block;
+                font: 14px/1.4 system-ui;
             }
-            div span {
-                display: inline-block;
+            .artwork {
+                height: 200px;
+            }
+            .album {
+                margin: 5px 0;
+                font-weight: bold;
+                color: var(--fg-color);
+            }
+            .artist {
+                font-size: 12px;
+                color: var(--fg-color-2nd);
             }
             </style>
 
             <div>
-            <img src="${this.attrs.artwork}">
-            <span>
-            ${this.attrs.artist}<br>
-            ${this.attrs.album}
-            </span>
+            <img class="artwork" src="${this.attrs.artwork}">
+            <h4 class="album">${this.attrs.album}</h4>
+            <span class="artist">${this.attrs.artist}</span>
             </div>
         `;
     }
