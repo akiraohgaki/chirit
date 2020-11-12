@@ -33,12 +33,8 @@ class TestComponent extends Component {
         console.log(oldDocument, newDocment);
     }
 
-    updatedCallback(): void {
-        console.log('Updated');
-    }
-
-    initContentContainer(): ShadowRoot {
-        return this.attachShadow({mode: 'closed'});
+    renderedCallback(): void {
+        console.log('Rendered');
     }
 
     template(): string {
@@ -51,7 +47,6 @@ class TestComponent extends Component {
     private _handleClick(event: Event): void {
         const target = event.target as Element;
         if (target.hasAttribute('data-update')) {
-            // Scheduled update should work
             this.attrs.datetime = `${new Date}`;
             this.attrs.plus += '+';
         }
@@ -76,7 +71,6 @@ export default function(): void {
 
     console.log(testComponent.attrs);
     console.log(testComponent.content);
-    console.log(testComponent.isUpdated);
 
     iframe.contentDocument?.body.appendChild(testComponent);
     wrapper.appendChild(testComponent);
@@ -86,9 +80,7 @@ export default function(): void {
     });
     console.log(testComponent.dispatch('dummy', {dummy: true}));
 
-    // Scheduled update should work
     testComponent.attrs.plus = '+';
-    testComponent.update();
-
-    testComponent.updateSync();
+    testComponent.render();
+    testComponent.renderSync();
 }
