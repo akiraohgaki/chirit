@@ -5,11 +5,8 @@ export default function(): void {
     main.innerHTML = `
         <textarea id="nodecontent-src" style="width: 600px; height: 300px;"></textarea>
         <div id="nodecontent-methods">
-        <button data-method="update-deep">Update (deep)</button>
-        <button data-method="update-shallow">Update (shallow)</button>
-        <button data-method="set">Set</button>
+        <button data-method="update">Update</button>
         <button data-method="get">Get</button>
-        <button data-method="clear">Clear</button>
         </div>
         <div id="nodecontent-container"></div>
     `;
@@ -32,44 +29,24 @@ export default function(): void {
 
     console.log(nodeContent.container);
 
-    nodeContent.set(template);
+    nodeContent.update(template);
     console.log(nodeContent.get());
-    nodeContent.set(template.content);
+    nodeContent.update(template.content);
     console.log(nodeContent.get());
-    nodeContent.set(template.content.childNodes);
+    nodeContent.update(template.content.childNodes);
     console.log(nodeContent.get());
-
-    nodeContent.update(template, true);
-    nodeContent.update(template, false);
+    nodeContent.update('');
     console.log(nodeContent.get());
-    nodeContent.update(template.content, true);
-    console.log(nodeContent.get());
-    nodeContent.update(template.content.childNodes, true);
-    console.log(nodeContent.get());
-
-    nodeContent.clear();
 
     methods.addEventListener('click', (event) => {
         const target = event.target as Element;
         switch (target.getAttribute('data-method')) {
-            case 'update-deep': {
-                nodeContent.update(src.value, true);
-                break;
-            }
-            case 'update-shallow': {
-                nodeContent.update(src.value, false);
-                break;
-            }
-            case 'set': {
-                nodeContent.set(src.value);
+            case 'update': {
+                nodeContent.update(src.value);
                 break;
             }
             case 'get': {
                 console.log(nodeContent.get());
-                break;
-            }
-            case 'clear': {
-                nodeContent.clear();
                 break;
             }
         }

@@ -12,32 +12,17 @@ export default class NodeContent {
         return this._container;
     }
 
-    update(content: NodeContentData, deep: boolean = false): void {
+    update(content: NodeContentData): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._updateChildNodes(this._container, content, deep);
+            this._updateChildNodes(this._container, content);
         }
         else {
-            this._updateChildNodes(this._container, this._createDocumentFragment(content), deep);
-        }
-    }
-
-    set(content: NodeContentData): void {
-        this._container.textContent = null;
-
-        if (content instanceof Document || content instanceof DocumentFragment) {
-            this._container.appendChild(content.cloneNode(true));
-        }
-        else {
-            this._container.appendChild(this._createDocumentFragment(content));
+            this._updateChildNodes(this._container, this._createDocumentFragment(content));
         }
     }
 
     get(): DocumentFragment {
         return this._createDocumentFragment(this._container.childNodes);
-    }
-
-    clear(): void {
-        this._container.textContent = null;
     }
 
     private _createDocumentFragment(content: NodeContentData): DocumentFragment {
@@ -61,22 +46,21 @@ export default class NodeContent {
         return documentFragment;
     }
 
-    private _updateChildNodes(oldParent: Node, newParent: Node, deep: boolean): void {
+    private _updateChildNodes(oldParent: Node, newParent: Node): void {
         const oldChildNodes = Array.from(oldParent.childNodes);
         const newChildNodes = Array.from(newParent.childNodes);
         const maxLength = Math.max(oldChildNodes.length, newChildNodes.length);
 
         for (let i = 0; i < maxLength; i++) {
-            this._updateChild(
+            this._updateChildNode(
                 oldParent,
                 oldChildNodes[i] ?? null,
-                newChildNodes[i] ?? null,
-                deep
+                newChildNodes[i] ?? null
             );
         }
     }
 
-    private _updateChild(parent: Node, oldChild: Node | null, newChild: Node | null, deep: boolean): void {
+    private _updateChildNode(parent: Node, oldChild: Node | null, newChild: Node | null): void {
         if (oldChild && !newChild) {
             parent.removeChild(oldChild);
         }
@@ -91,10 +75,8 @@ export default class NodeContent {
                 if (oldChild instanceof Element && newChild instanceof Element) {
                     // Current child is Element like HTMLElement, SVGElement
                     this._updateAttributes(oldChild, newChild);
-
-                    if (deep) {
-                        this._updateChildNodes(oldChild, newChild, deep);
-                    }
+                    // Update recursively
+                    this._updateChildNodes(oldChild, newChild);
                 }
                 else if (oldChild instanceof CharacterData && newChild instanceof CharacterData) {
                     // Current child is CharacterData like Text, Comment, ProcessingInstruction
@@ -104,7 +86,6 @@ export default class NodeContent {
                 }
                 else {
                     // Current child is any other node type like DocumentType
-                    // Just replace it for now
                     parent.replaceChild(newChild.cloneNode(true), oldChild);
                 }
             }
