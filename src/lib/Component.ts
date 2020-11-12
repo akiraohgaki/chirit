@@ -94,7 +94,7 @@ export default class Component extends HTMLElement {
     }
 
     protected render(): void {
-        this.content.update(this.template(), true);
+        this.content.update(this.template());
     }
 
     protected template(): NodeContentData {
