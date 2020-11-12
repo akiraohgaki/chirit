@@ -4,10 +4,10 @@ export default class Component extends HTMLElement {
     constructor() {
         super();
         this._attrs = new ElementAttributesProxy(this);
-        this._content = new NodeContent(this.initContentContainer());
-        this._isUpdated = false;
-        this._updateTimerId = undefined;
-        this._updateDelay = 100;
+        this._content = new NodeContent(this.attachShadow({ mode: 'open' }));
+        this._isRendered = false;
+        this._renderTimerId = undefined;
+        this._renderDelay = 100;
     }
     static define(name, options) {
         window.customElements.define(name, this, options);
@@ -18,9 +18,6 @@ export default class Component extends HTMLElement {
     get content() {
         return this._content;
     }
-    get isUpdated() {
-        return this._isUpdated;
-    }
     dispatch(type, detail) {
         return this._content.container.dispatchEvent(new CustomEvent(type, {
             detail: detail,
@@ -28,45 +25,39 @@ export default class Component extends HTMLElement {
             composed: true
         }));
     }
-    update() {
-        if (this._updateTimerId !== undefined) {
-            window.clearTimeout(this._updateTimerId);
+    render() {
+        if (this._renderTimerId !== undefined) {
+            window.clearTimeout(this._renderTimerId);
         }
-        this._updateTimerId = window.setTimeout(() => {
-            window.clearTimeout(this._updateTimerId);
-            this._updateTimerId = undefined;
-            this.updateSync();
-        }, this._updateDelay);
+        this._renderTimerId = window.setTimeout(() => {
+            window.clearTimeout(this._renderTimerId);
+            this._renderTimerId = undefined;
+            this.renderSync();
+        }, this._renderDelay);
     }
-    updateSync() {
-        this.render();
-        this._isUpdated = true;
-        this.updatedCallback();
+    renderSync() {
+        this._content.update(this.template());
+        this._isRendered = true;
+        this.renderedCallback();
     }
     static get observedAttributes() {
         return [];
     }
     attributeChangedCallback(_name, oldValue, newValue, _namespace) {
-        if (this.isUpdated && oldValue !== newValue) {
-            this.update();
+        if (this._isRendered && oldValue !== newValue) {
+            this.render();
         }
     }
     connectedCallback() {
-        if (!this.isUpdated) {
-            this.updateSync();
+        if (!this._isRendered) {
+            this.renderSync();
         }
     }
     disconnectedCallback() {
     }
     adoptedCallback(_oldDocument, _newDocument) {
     }
-    updatedCallback() {
-    }
-    initContentContainer() {
-        return this.attachShadow({ mode: 'open' });
-    }
-    render() {
-        this.content.update(this.template(), true);
+    renderedCallback() {
     }
     template() {
         return '';

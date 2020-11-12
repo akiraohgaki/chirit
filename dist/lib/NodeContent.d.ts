@@ -3,12 +3,10 @@ export default class NodeContent {
     private _container;
     constructor(container: Node);
     get container(): Node;
-    update(content: NodeContentData, deep?: boolean): void;
-    set(content: NodeContentData): void;
+    update(content: NodeContentData): void;
     get(): DocumentFragment;
-    clear(): void;
     private _createDocumentFragment;
     private _updateChildNodes;
-    private _updateChild;
+    private _updateChildNode;
     private _updateAttributes;
 }

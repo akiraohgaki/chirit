@@ -5,28 +5,16 @@ export default class NodeContent {
     get container() {
         return this._container;
     }
-    update(content, deep = false) {
+    update(content) {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._updateChildNodes(this._container, content, deep);
+            this._updateChildNodes(this._container, content);
         }
         else {
-            this._updateChildNodes(this._container, this._createDocumentFragment(content), deep);
-        }
-    }
-    set(content) {
-        this._container.textContent = null;
-        if (content instanceof Document || content instanceof DocumentFragment) {
-            this._container.appendChild(content.cloneNode(true));
-        }
-        else {
-            this._container.appendChild(this._createDocumentFragment(content));
+            this._updateChildNodes(this._container, this._createDocumentFragment(content));
         }
     }
     get() {
         return this._createDocumentFragment(this._container.childNodes);
-    }
-    clear() {
-        this._container.textContent = null;
     }
     _createDocumentFragment(content) {
         if (typeof content === 'string') {
@@ -45,16 +33,16 @@ export default class NodeContent {
         }
         return documentFragment;
     }
-    _updateChildNodes(oldParent, newParent, deep) {
+    _updateChildNodes(oldParent, newParent) {
         var _a, _b;
         const oldChildNodes = Array.from(oldParent.childNodes);
         const newChildNodes = Array.from(newParent.childNodes);
         const maxLength = Math.max(oldChildNodes.length, newChildNodes.length);
         for (let i = 0; i < maxLength; i++) {
-            this._updateChild(oldParent, (_a = oldChildNodes[i]) !== null && _a !== void 0 ? _a : null, (_b = newChildNodes[i]) !== null && _b !== void 0 ? _b : null, deep);
+            this._updateChildNode(oldParent, (_a = oldChildNodes[i]) !== null && _a !== void 0 ? _a : null, (_b = newChildNodes[i]) !== null && _b !== void 0 ? _b : null);
         }
     }
-    _updateChild(parent, oldChild, newChild, deep) {
+    _updateChildNode(parent, oldChild, newChild) {
         if (oldChild && !newChild) {
             parent.removeChild(oldChild);
         }
@@ -66,9 +54,7 @@ export default class NodeContent {
                 && oldChild.nodeName === newChild.nodeName) {
                 if (oldChild instanceof Element && newChild instanceof Element) {
                     this._updateAttributes(oldChild, newChild);
-                    if (deep) {
-                        this._updateChildNodes(oldChild, newChild, deep);
-                    }
+                    this._updateChildNodes(oldChild, newChild);
                 }
                 else if (oldChild instanceof CharacterData && newChild instanceof CharacterData) {
                     if (oldChild.nodeValue !== newChild.nodeValue) {
