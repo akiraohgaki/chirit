@@ -22,6 +22,28 @@ export default class Component extends HTMLElement {
         this._renderDelay = 100;
     }
 
+    static get observedAttributes(): Array<string> {
+        return [];
+    }
+
+    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
+        if (this._isRendered && oldValue !== newValue) {
+            this.render();
+        }
+    }
+
+    connectedCallback(): void {
+        if (!this._isRendered) {
+            this.render();
+        }
+    }
+
+    disconnectedCallback(): void {
+    }
+
+    adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
+    }
+
     static define(name: string, options?: ElementDefinitionOptions): void {
         window.customElements.define(name, this, options);
     }
@@ -50,36 +72,11 @@ export default class Component extends HTMLElement {
         this._renderTimerId = window.setTimeout(() => {
             window.clearTimeout(this._renderTimerId);
             this._renderTimerId = undefined;
-            this.renderSync();
+
+            this._content.update(this.template());
+            this._isRendered = true;
+            this.renderedCallback();
         }, this._renderDelay);
-    }
-
-    renderSync(): void {
-        this._content.update(this.template());
-        this._isRendered = true;
-        this.renderedCallback();
-    }
-
-    static get observedAttributes(): Array<string> {
-        return [];
-    }
-
-    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
-        if (this._isRendered && oldValue !== newValue) {
-            this.render();
-        }
-    }
-
-    connectedCallback(): void {
-        if (!this._isRendered) {
-            this.renderSync();
-        }
-    }
-
-    disconnectedCallback(): void {
-    }
-
-    adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
     }
 
     renderedCallback(): void {
