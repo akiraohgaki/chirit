@@ -82,5 +82,4 @@ export default function(): void {
 
     testComponent.attrs.plus = '+';
     testComponent.render();
-    testComponent.renderSync();
 }
