@@ -7,9 +7,9 @@ export default class Component extends HTMLElement {
     private _attrs: ElementAttributesProxy;
     private _content: NodeContent;
 
-    private _isRendered: boolean;
-    private _renderTimerId: number | undefined;
-    private _renderDelay: number;
+    private _isInitialUpdated: boolean;
+    private _updateTimerId: number | undefined;
+    private _updateDelay: number;
 
     constructor() {
         super();
@@ -17,9 +17,9 @@ export default class Component extends HTMLElement {
         this._attrs = new ElementAttributesProxy(this);
         this._content = new NodeContent(this.attachShadow({mode: 'open'}));
 
-        this._isRendered = false;
-        this._renderTimerId = undefined;
-        this._renderDelay = 100;
+        this._isInitialUpdated = false;
+        this._updateTimerId = undefined;
+        this._updateDelay = 100;
     }
 
     static get observedAttributes(): Array<string> {
@@ -27,14 +27,14 @@ export default class Component extends HTMLElement {
     }
 
     attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
-        if (this._isRendered && oldValue !== newValue) {
-            this.render();
+        if (this._isInitialUpdated && oldValue !== newValue) {
+            this.update();
         }
     }
 
     connectedCallback(): void {
-        if (!this._isRendered) {
-            this.render();
+        if (!this._isInitialUpdated) {
+            this.updateSync();
         }
     }
 
@@ -64,22 +64,27 @@ export default class Component extends HTMLElement {
         }));
     }
 
-    render(): void {
-        if (this._renderTimerId !== undefined) {
-            window.clearTimeout(this._renderTimerId);
+    update(): void {
+        if (this._updateTimerId !== undefined) {
+            window.clearTimeout(this._updateTimerId);
         }
 
-        this._renderTimerId = window.setTimeout(() => {
-            window.clearTimeout(this._renderTimerId);
-            this._renderTimerId = undefined;
-
-            this._content.update(this.template());
-            this._isRendered = true;
-            this.renderedCallback();
-        }, this._renderDelay);
+        this._updateTimerId = window.setTimeout(() => {
+            window.clearTimeout(this._updateTimerId);
+            this._updateTimerId = undefined;
+            this._updateSync();
+        }, this._updateDelay);
     }
 
-    renderedCallback(): void {
+    updateSync(): void {
+        this._content.update(this.template());
+        if (!this._isInitialUpdated) {
+            this._isInitialUpdated = true;
+        }
+        this.updatedCallback();
+    }
+
+    updatedCallback(): void {
     }
 
     protected template(): NodeContentData {
