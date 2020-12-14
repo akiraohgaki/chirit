@@ -1,14 +1,14 @@
 import {NodeContentData} from './types.js';
 
-export default class NodeContent {
+export default class NodeContent<T extends Node> {
 
-    private _container: Node;
+    private _container: T;
 
-    constructor(container: Node) {
+    constructor(container: T) {
         this._container = container;
     }
 
-    get container(): Node {
+    get container(): T {
         return this._container;
     }
 

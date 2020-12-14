@@ -5,7 +5,7 @@ import NodeContent from './NodeContent.js';
 export default class Component extends HTMLElement {
 
     private _attrs: ElementAttributesProxy;
-    private _content: NodeContent;
+    private _content: NodeContent<ShadowRoot>;
 
     private _isInitialUpdated: boolean;
     private _updateTimerId: number | undefined;
@@ -52,7 +52,7 @@ export default class Component extends HTMLElement {
         return this._attrs;
     }
 
-    get content(): NodeContent {
+    get content(): NodeContent<ShadowRoot> {
         return this._content;
     }
 
