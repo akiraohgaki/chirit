@@ -72,15 +72,17 @@ export default class Component extends HTMLElement {
         this._updateTimerId = window.setTimeout(() => {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
-            this._updateSync();
+            this.updateSync();
         }, this._updateDelay);
     }
 
     updateSync(): void {
         this._content.update(this.template());
+
         if (!this._isInitialUpdated) {
             this._isInitialUpdated = true;
         }
+
         this.updatedCallback();
     }
 
