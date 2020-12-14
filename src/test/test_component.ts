@@ -33,8 +33,8 @@ class TestComponent extends Component {
         console.log(oldDocument, newDocment);
     }
 
-    renderedCallback(): void {
-        console.log('Rendered');
+    updatedCallback(): void {
+        console.log('Updated');
     }
 
     template(): string {
@@ -81,5 +81,6 @@ export default function(): void {
     console.log(testComponent.dispatch('dummy', {dummy: true}));
 
     testComponent.attrs.plus = '+';
-    testComponent.render();
+    testComponent.update();
+    testComponent.updateSync();
 }
