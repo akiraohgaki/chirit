@@ -6,7 +6,7 @@ export default class MainContent extends Component {
 
     constructor() {
         super();
-        store.state.searchResult.subscribe(this.render.bind(this));
+        store.state.searchResult.subscribe(this.update.bind(this));
     }
 
     template(): string {
