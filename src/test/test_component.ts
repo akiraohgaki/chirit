@@ -3,45 +3,59 @@ import {Component} from '../chirit.js';
 class TestComponent extends Component {
 
     constructor() {
+        console.log('constructor');
         super();
+        console.log(this.updatedCount);
         this._handleClick = this._handleClick.bind(this);
     }
 
+    createContentContainer(): ShadowRoot {
+        return this.attachShadow({mode: 'closed'});
+    }
+
     static get observedAttributes(): Array<string> {
+        console.log('observedAttributes');
         return ['datetime', 'plus'];
     }
 
     attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
-        console.log('Attribute changed');
+        console.log('attributeChangedCallback');
         console.log(name, oldValue, newValue);
         super.attributeChangedCallback(name, oldValue, newValue);
     }
 
     connectedCallback(): void {
-        console.log('Connected');
+        console.log('connectedCallback');
         super.connectedCallback();
         this.content.container.addEventListener('click', this._handleClick);
     }
 
     disconnectedCallback(): void {
-        console.log('Disconnected');
+        console.log('disconnectedCallback');
         this.content.container.removeEventListener('click', this._handleClick);
     }
 
     adoptedCallback(oldDocument: Document, newDocment: Document): void {
-        console.log('Adopted');
+        console.log('adoptedCallback');
         console.log(oldDocument, newDocment);
     }
 
-    updatedCallback(): void {
-        console.log('Updated');
+    render(): void {
+        console.log('render');
+        super.render();
     }
 
     template(): string {
+        console.log('template');
         return `
             <span>${this.attrs.datetime}</span>
             <button data-update>Update</button>
         `;
+    }
+
+    updatedCallback(): void {
+        console.log('updatedCallback');
+        console.log(this.updatedCount);
     }
 
     private _handleClick(event: Event): void {
@@ -67,20 +81,22 @@ export default function(): void {
 
     const wrapper = document.getElementById('component-wrapper') as Element;
     const iframe = document.getElementById('component-iframe') as HTMLIFrameElement;
-    const testComponent = wrapper.querySelector('test-component') as TestComponent;
-
-    console.log(testComponent.attrs);
-    console.log(testComponent.content);
+    const testComponent = wrapper.querySelector('test-component') as Component;
 
     iframe.contentDocument?.body.appendChild(testComponent);
     wrapper.appendChild(testComponent);
+
+    testComponent.attrs.plus = '+';
+    testComponent.update();
+    testComponent.updateSync();
+
+    console.log(testComponent.updatedCount);
+
+    console.log(testComponent.attrs);
+    console.log(testComponent.content);
 
     wrapper.addEventListener('dummy', (event) => {
         console.log(event);
     });
     console.log(testComponent.dispatch('dummy', {dummy: true}));
-
-    testComponent.attrs.plus = '+';
-    testComponent.update();
-    testComponent.updateSync();
 }
