@@ -1,58 +1,25 @@
 import {NodeContentData} from './types.js';
+import CustomElement from './CustomElement.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
 import NodeContent from './NodeContent.js';
 
-export default class Component extends HTMLElement {
+export default class Component extends CustomElement {
 
     private _attrs: ElementAttributesProxy;
-    private _content: NodeContent<ShadowRoot>;
-
-    private _isInitialUpdated: boolean;
-    private _updateTimerId: number | undefined;
-    private _updateDelay: number;
+    private _content: NodeContent<Element | DocumentFragment>;
 
     constructor() {
         super();
 
         this._attrs = new ElementAttributesProxy(this);
-        this._content = new NodeContent(this.attachShadow({mode: 'open'}));
-
-        this._isInitialUpdated = false;
-        this._updateTimerId = undefined;
-        this._updateDelay = 100;
-    }
-
-    static get observedAttributes(): Array<string> {
-        return [];
-    }
-
-    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
-        if (this._isInitialUpdated && oldValue !== newValue) {
-            this.update();
-        }
-    }
-
-    connectedCallback(): void {
-        if (!this._isInitialUpdated) {
-            this.updateSync();
-        }
-    }
-
-    disconnectedCallback(): void {
-    }
-
-    adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
-    }
-
-    static define(name: string, options?: ElementDefinitionOptions): void {
-        window.customElements.define(name, this, options);
+        this._content = new NodeContent(this.createContentContainer());
     }
 
     get attrs(): ElementAttributesProxy {
         return this._attrs;
     }
 
-    get content(): NodeContent<ShadowRoot> {
+    get content(): NodeContent<Element | DocumentFragment> {
         return this._content;
     }
 
@@ -64,29 +31,12 @@ export default class Component extends HTMLElement {
         }));
     }
 
-    update(): void {
-        if (this._updateTimerId !== undefined) {
-            window.clearTimeout(this._updateTimerId);
-        }
-
-        this._updateTimerId = window.setTimeout(() => {
-            window.clearTimeout(this._updateTimerId);
-            this._updateTimerId = undefined;
-            this.updateSync();
-        }, this._updateDelay);
+    protected createContentContainer(): Element | DocumentFragment {
+        return this.attachShadow({mode: 'open'});
     }
 
-    updateSync(): void {
+    protected render(): void {
         this._content.update(this.template());
-
-        if (!this._isInitialUpdated) {
-            this._isInitialUpdated = true;
-        }
-
-        this.updatedCallback();
-    }
-
-    updatedCallback(): void {
     }
 
     protected template(): NodeContentData {
