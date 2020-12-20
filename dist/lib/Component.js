@@ -1,33 +1,11 @@
+import CustomElement from './CustomElement.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
 import NodeContent from './NodeContent.js';
-export default class Component extends HTMLElement {
+export default class Component extends CustomElement {
     constructor() {
         super();
         this._attrs = new ElementAttributesProxy(this);
-        this._content = new NodeContent(this.attachShadow({ mode: 'open' }));
-        this._isInitialUpdated = false;
-        this._updateTimerId = undefined;
-        this._updateDelay = 100;
-    }
-    static get observedAttributes() {
-        return [];
-    }
-    attributeChangedCallback(_name, oldValue, newValue, _namespace) {
-        if (this._isInitialUpdated && oldValue !== newValue) {
-            this.update();
-        }
-    }
-    connectedCallback() {
-        if (!this._isInitialUpdated) {
-            this.updateSync();
-        }
-    }
-    disconnectedCallback() {
-    }
-    adoptedCallback(_oldDocument, _newDocument) {
-    }
-    static define(name, options) {
-        window.customElements.define(name, this, options);
+        this._content = new NodeContent(this.createContentContainer());
     }
     get attrs() {
         return this._attrs;
@@ -42,24 +20,11 @@ export default class Component extends HTMLElement {
             composed: true
         }));
     }
-    update() {
-        if (this._updateTimerId !== undefined) {
-            window.clearTimeout(this._updateTimerId);
-        }
-        this._updateTimerId = window.setTimeout(() => {
-            window.clearTimeout(this._updateTimerId);
-            this._updateTimerId = undefined;
-            this.updateSync();
-        }, this._updateDelay);
+    createContentContainer() {
+        return this.attachShadow({ mode: 'open' });
     }
-    updateSync() {
+    render() {
         this._content.update(this.template());
-        if (!this._isInitialUpdated) {
-            this._isInitialUpdated = true;
-        }
-        this.updatedCallback();
-    }
-    updatedCallback() {
     }
     template() {
         return '';

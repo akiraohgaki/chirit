@@ -1,24 +1,15 @@
 import { NodeContentData } from './types.js';
+import CustomElement from './CustomElement.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
 import NodeContent from './NodeContent.js';
-export default class Component extends HTMLElement {
+export default class Component extends CustomElement {
     private _attrs;
     private _content;
-    private _isInitialUpdated;
-    private _updateTimerId;
-    private _updateDelay;
     constructor();
-    static get observedAttributes(): Array<string>;
-    attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void;
-    connectedCallback(): void;
-    disconnectedCallback(): void;
-    adoptedCallback(_oldDocument: Document, _newDocument: Document): void;
-    static define(name: string, options?: ElementDefinitionOptions): void;
     get attrs(): ElementAttributesProxy;
-    get content(): NodeContent<ShadowRoot>;
+    get content(): NodeContent<Element | DocumentFragment>;
     dispatch(type: string, detail?: any): boolean;
-    update(): void;
-    updateSync(): void;
-    updatedCallback(): void;
+    protected createContentContainer(): Element | DocumentFragment;
+    protected render(): void;
     protected template(): NodeContentData;
 }
