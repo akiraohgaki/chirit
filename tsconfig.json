@@ -6,7 +6,6 @@
             "ESNext",
             "DOM"
         ],
-        "allowJs": false,
         "declaration": true,
         "sourceMap": true,
         "removeComments": true,
