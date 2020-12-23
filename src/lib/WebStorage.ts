@@ -4,6 +4,7 @@ export default class WebStorage {
 
     private _mode: WebStorageMode;
     private _prefix: string;
+
     private _storage: Storage;
 
     constructor(mode: WebStorageMode, prefix: string = '') {
