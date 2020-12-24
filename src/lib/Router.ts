@@ -26,16 +26,16 @@ class RouterBase {
         return this._base;
     }
 
-    setRoute(route: string, handler: RouteHandler): void {
+    setRoute(pattern: string, handler: RouteHandler): void {
         if (!this._routeCollection.size) {
             this.addEventListener();
         }
 
-        this._routeCollection.set(this._fixRoute(route), handler);
+        this._routeCollection.set(this._fixRoutePattern(pattern), handler);
     }
 
-    removeRoute(route: string): void {
-        this._routeCollection.delete(this._fixRoute(route));
+    removeRoute(pattern: string): void {
+        this._routeCollection.delete(this._fixRoutePattern(pattern));
 
         if (!this._routeCollection.size) {
             this.removeEventListener();
@@ -53,8 +53,8 @@ class RouterBase {
 
     protected invokeRouteHandler(path: string): void {
         if (this._routeCollection.size) {
-            for (const [route, handler] of this._routeCollection) {
-                const params = this._match(path, route);
+            for (const [pattern, handler] of this._routeCollection) {
+                const params = this._match(path, pattern);
                 if (params) {
                     handler(params);
                     break;
@@ -63,21 +63,21 @@ class RouterBase {
         }
     }
 
-    protected fixUrl(url: string): string {
+    protected resolveBaseUrl(url: string): string {
         return (this._base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this._base + url : url;
     }
 
-    private _fixRoute(route: string): string {
+    private _fixRoutePattern(pattern: string): string {
         // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
         // Just in case if the string starts with ":", prepend "/" to the string then remove it after the replace work
-        return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
+        return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 
-    private _match(path: string, route: string): Dictionary<string> | null {
+    private _match(path: string, pattern: string): Dictionary<string> | null {
         const params: Dictionary<string> = {};
 
         if (isRegExpNamedCaptureGroupsAvailable) {
-            const matches = path.match(new RegExp(route));
+            const matches = path.match(new RegExp(pattern));
             if (matches) {
                 if (matches.groups) {
                     Object.assign(params, matches.groups);
@@ -91,14 +91,14 @@ class RouterBase {
             const groupNames: Array<string> = [];
 
             const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
-            const routePatternA = route.replace(namedGroupRegExp, (_substring, name, pattern) => {
-                groupNames.push(name);
-                return `(${pattern})`;
+            const patternA = pattern.replace(namedGroupRegExp, (_substring, groupName, groupPattern) => {
+                groupNames.push(groupName);
+                return `(${groupPattern})`;
             });
-            const routePatternB = route.replace(namedGroupRegExp, '(?:$2)');
+            const patternB = pattern.replace(namedGroupRegExp, '(?:$2)');
 
-            const matchesA = path.match(new RegExp(routePatternA));
-            const matchesB = path.match(new RegExp(routePatternB));
+            const matchesA = path.match(new RegExp(patternA));
+            const matchesB = path.match(new RegExp(patternB));
 
             if (matchesA && matchesB) {
                 if (groupNames.length) {
@@ -149,11 +149,9 @@ class HashModeRouter extends RouterBase {
             newVirtualPath = url;
         }
 
-        newVirtualPath = this.fixUrl(newVirtualPath);
-
         const oldVirtualPath = window.location.hash.substring(1);
         const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
-        const newVirtualUrl = new URL(newVirtualPath, oldVirtualUrl.href);
+        const newVirtualUrl = new URL(this.resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
 
         if (newVirtualUrl.pathname !== oldVirtualPath) {
             window.location.hash = newVirtualUrl.pathname;
@@ -186,8 +184,7 @@ class HistoryModeRouter extends RouterBase {
     }
 
     navigate(url: string): void {
-        const newPath = this.fixUrl(url);
-        const newUrl = new URL(newPath, window.location.href);
+        const newUrl = new URL(this.resolveBaseUrl(url), window.location.href);
 
         if (newUrl.origin !== window.location.origin) {
             window.location.href = newUrl.href;
@@ -244,12 +241,12 @@ export default class Router {
         return this._router.base;
     }
 
-    setRoute(route: string, handler: RouteHandler): void {
-        this._router.setRoute(route, handler);
+    setRoute(pattern: string, handler: RouteHandler): void {
+        this._router.setRoute(pattern, handler);
     }
 
-    removeRoute(route: string): void {
-        this._router.removeRoute(route);
+    removeRoute(pattern: string): void {
+        this._router.removeRoute(pattern);
     }
 
     navigate(url: string): void {
