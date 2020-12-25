@@ -6,7 +6,7 @@ export default function(): void {
         <textarea id="nodecontent-src" style="width: 600px; height: 300px;"></textarea>
         <div id="nodecontent-methods">
         <button data-method="update">Update</button>
-        <button data-method="get">Get</button>
+        <button data-method="clone">Clone</button>
         </div>
         <div id="nodecontent-container"></div>
     `;
@@ -30,13 +30,13 @@ export default function(): void {
     console.log(nodeContent.container);
 
     nodeContent.update(template);
-    console.log(nodeContent.get());
+    console.log(nodeContent.clone());
     nodeContent.update(template.content);
-    console.log(nodeContent.get());
+    console.log(nodeContent.clone());
     nodeContent.update(template.content.childNodes);
-    console.log(nodeContent.get());
+    console.log(nodeContent.clone());
     nodeContent.update('');
-    console.log(nodeContent.get());
+    console.log(nodeContent.clone());
 
     methods.addEventListener('click', (event) => {
         const target = event.target as Element;
@@ -45,8 +45,8 @@ export default function(): void {
                 nodeContent.update(src.value);
                 break;
             }
-            case 'get': {
-                console.log(nodeContent.get());
+            case 'clone': {
+                console.log(nodeContent.clone());
                 break;
             }
         }
