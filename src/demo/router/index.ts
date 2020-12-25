@@ -3,10 +3,10 @@ import store from '../store/index.js';
 
 const router = new Router('history', '/demo/');
 
-router.setRoute('^/demo/search/:term', (params) => {
+router.setRoute(`^${router.base}search/:term`, (params) => {
     store.search(decodeURIComponent(params.term));
 });
-router.setRoute('^/demo/.*', () => {
+router.setRoute(`^${router.base}.*`, () => {
     store.reset();
 });
 

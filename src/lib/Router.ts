@@ -10,129 +10,51 @@ catch {
     isRegExpNamedCaptureGroupsAvailable = false;
 }
 
-export default class Router {
+class RouterBase {
 
-    private _mode: RouterMode;
     private _base: string;
+
     private _routeCollection: Map<string, RouteHandler>;
 
-    constructor(mode: RouterMode, base: string = '') {
-        this._mode = mode;
+    constructor(base: string = '') {
         this._base = (base && !base.endsWith('/')) ? base + '/' : base;
+
         this._routeCollection = new Map();
-
-        this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
-        this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
-    }
-
-    get mode(): RouterMode {
-        return this._mode;
     }
 
     get base(): string {
         return this._base;
     }
 
-    setRoute(route: string, handler: RouteHandler): void {
+    setRoute(pattern: string, handler: RouteHandler): void {
         if (!this._routeCollection.size) {
-            switch (this._mode) {
-                case 'hash': {
-                    window.addEventListener('hashchange', this._handleHashchangeEvent);
-                    break;
-                }
-                case 'history': {
-                    window.addEventListener('popstate', this._handlePopstateEvent);
-                    break;
-                }
-            }
+            this.addEventListener();
         }
 
-        this._routeCollection.set(this._fixRoute(route), handler);
+        this._routeCollection.set(this._fixRoutePattern(pattern), handler);
     }
 
-    removeRoute(route: string): void {
-        this._routeCollection.delete(this._fixRoute(route));
+    removeRoute(pattern: string): void {
+        this._routeCollection.delete(this._fixRoutePattern(pattern));
 
         if (!this._routeCollection.size) {
-            switch (this._mode) {
-                case 'hash': {
-                    window.removeEventListener('hashchange', this._handleHashchangeEvent);
-                    break;
-                }
-                case 'history': {
-                    window.removeEventListener('popstate', this._handlePopstateEvent);
-                    break;
-                }
-            }
+            this.removeEventListener();
         }
     }
 
-    navigate(url: string): void {
-        switch (this._mode) {
-            case 'hash': {
-                this._navigateWithHash(url);
-                break;
-            }
-            case 'history': {
-                this._navigateWithHistory(url);
-                break;
-            }
-        }
+    navigate(_url: string): void {
     }
 
-    private _navigateWithHash(url: string): void {
-        let newVirtualPath = '';
-
-        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
-            const newUrl = new URL(url, window.location.href);
-            const newUrlParts = newUrl.href.split('#');
-            const oldUrlParts = window.location.href.split('#');
-
-            if (newUrlParts[0] !== oldUrlParts[0]) {
-                window.location.href = newUrl.href;
-                return;
-            }
-
-            newVirtualPath = newUrlParts[1] ?? '';
-        }
-        else {
-            newVirtualPath = url;
-        }
-
-        newVirtualPath = this._fixUrl(newVirtualPath);
-
-        const oldVirtualPath = window.location.hash.substring(1);
-        const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
-        const newVirtualUrl = new URL(newVirtualPath, oldVirtualUrl.href);
-
-        if (newVirtualUrl.pathname !== oldVirtualPath) {
-            window.location.hash = newVirtualUrl.pathname;
-            return;
-        }
-
-        this._invokeRouteHandler(newVirtualUrl.pathname);
+    protected addEventListener(): void {
     }
 
-    private _navigateWithHistory(url: string): void {
-        const newPath = this._fixUrl(url);
-        const newUrl = new URL(newPath, window.location.href);
-
-        if (newUrl.origin !== window.location.origin) {
-            window.location.href = newUrl.href;
-            return;
-        }
-
-        if (newUrl.href !== window.location.href) {
-            window.history.pushState({}, '', newUrl.href);
-        }
-
-        this._invokeRouteHandler(newUrl.pathname);
+    protected removeEventListener(): void {
     }
 
-    private _invokeRouteHandler(path: string): void {
+    protected invokeRouteHandler(path: string): void {
         if (this._routeCollection.size) {
-            for (const [route, handler] of this._routeCollection) {
-                const params = this._match(path, route);
+            for (const [pattern, handler] of this._routeCollection) {
+                const params = this._match(path, pattern);
                 if (params) {
                     handler(params);
                     break;
@@ -141,21 +63,21 @@ export default class Router {
         }
     }
 
-    private _fixRoute(route: string): string {
-        // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
-        // Just in case if the string starts with ":", prepend "/" to the string then remove it after the replace work
-        return `/${route}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
-    }
-
-    private _fixUrl(url: string): string {
+    protected resolveBaseUrl(url: string): string {
         return (this._base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this._base + url : url;
     }
 
-    private _match(path: string, route: string): Dictionary<string> | null {
+    private _fixRoutePattern(pattern: string): string {
+        // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
+        // Just in case if the string starts with ":", prepend "/" to the string then remove it after the replace work
+        return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
+    }
+
+    private _match(path: string, pattern: string): Dictionary<string> | null {
         const params: Dictionary<string> = {};
 
         if (isRegExpNamedCaptureGroupsAvailable) {
-            const matches = path.match(new RegExp(route));
+            const matches = path.match(new RegExp(pattern));
             if (matches) {
                 if (matches.groups) {
                     Object.assign(params, matches.groups);
@@ -169,14 +91,14 @@ export default class Router {
             const groupNames: Array<string> = [];
 
             const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
-            const routePatternA = route.replace(namedGroupRegExp, (_substring, name, pattern) => {
-                groupNames.push(name);
-                return `(${pattern})`;
+            const patternA = pattern.replace(namedGroupRegExp, (_substring, groupName, groupPattern) => {
+                groupNames.push(groupName);
+                return `(${groupPattern})`;
             });
-            const routePatternB = route.replace(namedGroupRegExp, '(?:$2)');
+            const patternB = pattern.replace(namedGroupRegExp, '(?:$2)');
 
-            const matchesA = path.match(new RegExp(routePatternA));
-            const matchesB = path.match(new RegExp(routePatternB));
+            const matchesA = path.match(new RegExp(patternA));
+            const matchesB = path.match(new RegExp(patternB));
 
             if (matchesA && matchesB) {
                 if (groupNames.length) {
@@ -198,12 +120,137 @@ export default class Router {
         return null;
     }
 
+}
+
+class HashModeRouter extends RouterBase {
+
+    constructor(base: string = '') {
+        super(base);
+
+        this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
+    }
+
+    navigate(url: string): void {
+        let newVirtualPath = '';
+
+        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
+            const newUrl = new URL(url, window.location.href);
+            const newUrlParts = newUrl.href.split('#');
+            const oldUrlParts = window.location.href.split('#');
+
+            if (newUrlParts[0] !== oldUrlParts[0]) {
+                window.location.href = newUrl.href;
+                return;
+            }
+
+            newVirtualPath = newUrlParts[1] ?? '';
+        }
+        else {
+            newVirtualPath = url;
+        }
+
+        const oldVirtualPath = window.location.hash.substring(1);
+        const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
+        const newVirtualUrl = new URL(this.resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
+
+        if (newVirtualUrl.pathname !== oldVirtualPath) {
+            window.location.hash = newVirtualUrl.pathname;
+            return;
+        }
+
+        this.invokeRouteHandler(newVirtualUrl.pathname);
+    }
+
+    protected addEventListener(): void {
+        window.addEventListener('hashchange', this._handleHashchangeEvent);
+    }
+
+    protected removeEventListener(): void {
+        window.removeEventListener('hashchange', this._handleHashchangeEvent);
+    }
+
     private _handleHashchangeEvent(): void {
-        this._invokeRouteHandler(window.location.hash.substring(1));
+        this.invokeRouteHandler(window.location.hash.substring(1));
+    }
+
+}
+
+class HistoryModeRouter extends RouterBase {
+
+    constructor(base: string = '') {
+        super(base);
+
+        this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
+    }
+
+    navigate(url: string): void {
+        const newUrl = new URL(this.resolveBaseUrl(url), window.location.href);
+
+        if (newUrl.origin !== window.location.origin) {
+            window.location.href = newUrl.href;
+            return;
+        }
+
+        if (newUrl.href !== window.location.href) {
+            window.history.pushState({}, '', newUrl.href);
+        }
+
+        this.invokeRouteHandler(newUrl.pathname);
+    }
+
+    protected addEventListener(): void {
+        window.addEventListener('popstate', this._handlePopstateEvent);
+    }
+
+    protected removeEventListener(): void {
+        window.removeEventListener('popstate', this._handlePopstateEvent);
     }
 
     private _handlePopstateEvent(): void {
-        this._invokeRouteHandler(window.location.pathname);
+        this.invokeRouteHandler(window.location.pathname);
+    }
+
+}
+
+export default class Router {
+
+    private _mode: RouterMode;
+
+    private _router: HashModeRouter | HistoryModeRouter;
+
+    constructor(mode: RouterMode, base: string = '') {
+        this._mode = mode;
+
+        switch (this._mode) {
+            case 'hash': {
+                this._router = new HashModeRouter(base);
+                break;
+            }
+            case 'history': {
+                this._router = new HistoryModeRouter(base);
+                break;
+            }
+        }
+    }
+
+    get mode(): RouterMode {
+        return this._mode;
+    }
+
+    get base(): string {
+        return this._router.base;
+    }
+
+    setRoute(pattern: string, handler: RouteHandler): void {
+        this._router.setRoute(pattern, handler);
+    }
+
+    removeRoute(pattern: string): void {
+        this._router.removeRoute(pattern);
+    }
+
+    navigate(url: string): void {
+        this._router.navigate(url);
     }
 
 }
