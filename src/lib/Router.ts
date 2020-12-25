@@ -1,4 +1,4 @@
-import {Dictionary, RouterMode, RouteHandler} from './types.js';
+import {Dictionary, RouteHandler, RouterMode} from './types.js';
 
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {

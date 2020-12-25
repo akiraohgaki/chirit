@@ -1,4 +1,4 @@
-import {NodeContentData} from './types.js';
+import {ComponentContentContainer, NodeContentData} from './types.js';
 import CustomElement from './CustomElement.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
 import NodeContent from './NodeContent.js';
@@ -6,7 +6,7 @@ import NodeContent from './NodeContent.js';
 export default class Component extends CustomElement {
 
     private _attrs: ElementAttributesProxy;
-    private _content: NodeContent<Element | DocumentFragment>;
+    private _content: NodeContent<ComponentContentContainer>;
 
     constructor() {
         super();
@@ -19,7 +19,7 @@ export default class Component extends CustomElement {
         return this._attrs;
     }
 
-    get content(): NodeContent<Element | DocumentFragment> {
+    get content(): NodeContent<ComponentContentContainer> {
         return this._content;
     }
 
@@ -31,7 +31,7 @@ export default class Component extends CustomElement {
         }));
     }
 
-    protected createContentContainer(): Element | DocumentFragment {
+    protected createContentContainer(): ComponentContentContainer {
         return this.attachShadow({mode: 'open'});
     }
 
