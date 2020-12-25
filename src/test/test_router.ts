@@ -24,10 +24,10 @@ export default function(): void {
     console.log(router.mode);
     console.log(router.base);
 
-    router.setRoute('^/test/router/dummy', () => {
+    router.setRoute(`^${router.base}router/dummy`, () => {
         console.log('dummy');
     });
-    router.setRoute('^/test/router/:param1-(?<param2>.+)', (params) => {
+    router.setRoute(`^${router.base}router/:param1-(?<param2>.+)`, (params) => {
         console.log(window.location.href);
         console.log(params);
     });
@@ -36,7 +36,7 @@ export default function(): void {
         console.log(params);
     });
 
-    router.removeRoute('^/test/router/dummy');
+    router.removeRoute(`^${router.base}router/dummy`);
 
     router.navigate(window.location.href);
 
