@@ -21,7 +21,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    get(): DocumentFragment {
+    clone(): DocumentFragment {
         return this._createDocumentFragment(this._container.childNodes);
     }
 
