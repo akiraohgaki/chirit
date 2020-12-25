@@ -122,7 +122,7 @@ class RouterBase {
 
 }
 
-class HashModeRouter extends RouterBase {
+class HashRouter extends RouterBase {
 
     constructor(base: string = '') {
         super(base);
@@ -175,7 +175,7 @@ class HashModeRouter extends RouterBase {
 
 }
 
-class HistoryModeRouter extends RouterBase {
+class HistoryRouter extends RouterBase {
 
     constructor(base: string = '') {
         super(base);
@@ -216,18 +216,18 @@ export default class Router {
 
     private _mode: RouterMode;
 
-    private _router: HashModeRouter | HistoryModeRouter;
+    private _router: HashRouter | HistoryRouter;
 
     constructor(mode: RouterMode, base: string = '') {
         this._mode = mode;
 
         switch (this._mode) {
             case 'hash': {
-                this._router = new HashModeRouter(base);
+                this._router = new HashRouter(base);
                 break;
             }
             case 'history': {
-                this._router = new HistoryModeRouter(base);
+                this._router = new HistoryRouter(base);
                 break;
             }
         }
