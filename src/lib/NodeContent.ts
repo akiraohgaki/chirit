@@ -95,20 +95,23 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchAttributes(original: Element, diff: Element): void {
-        const originalAttributes = Array.from(original.attributes);
-        const diffAttributes = Array.from(diff.attributes);
-
-        for (const attribute of originalAttributes) {
-            if (!diff.hasAttribute(attribute.name)) {
-                original.removeAttribute(attribute.name);
+        if (original.hasAttributes()) {
+            const attributes = Array.from(original.attributes);
+            for (const attribute of attributes) {
+                if (!diff.hasAttribute(attribute.name)) {
+                    original.removeAttribute(attribute.name);
+                }
             }
         }
 
-        for (const attribute of diffAttributes) {
-            if (!original.hasAttribute(attribute.name)
-                || original.getAttribute(attribute.name) !== attribute.value
-            ) {
-                original.setAttribute(attribute.name, attribute.value);
+        if (diff.hasAttributes()) {
+            const attributes = Array.from(diff.attributes);
+            for (const attribute of attributes) {
+                if (!original.hasAttribute(attribute.name)
+                    || original.getAttribute(attribute.name) !== attribute.value
+                ) {
+                    original.setAttribute(attribute.name, attribute.value);
+                }
             }
         }
     }
