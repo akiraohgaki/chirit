@@ -38,7 +38,7 @@ export default class NodeContent<T extends Node> {
         if (content instanceof Node) {
             documentFragment.appendChild(content.cloneNode(true));
         }
-        else if (content instanceof NodeList) {
+        else if (content instanceof NodeList && content.length) {
             for (let i = 0; i < content.length; i++) {
                 documentFragment.appendChild(content[i].cloneNode(true));
             }
@@ -47,16 +47,18 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchChildNodes(original: Node, diff: Node): void {
-        const originalChildNodes = Array.from(original.childNodes);
-        const diffChildNodes = Array.from(diff.childNodes);
+        const originalChildNodes = original.childNodes;
+        const diffChildNodes = diff.childNodes;
         const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
 
-        for (let i = 0; i < maxLength; i++) {
-            this._patchNode(
-                original,
-                originalChildNodes[i] ?? null,
-                diffChildNodes[i] ?? null
-            );
+        if (maxLength) {
+            for (let i = 0; i < maxLength; i++) {
+                this._patchNode(
+                    original,
+                    originalChildNodes[i] ?? null,
+                    diffChildNodes[i] ?? null
+                );
+            }
         }
     }
 
@@ -96,21 +98,21 @@ export default class NodeContent<T extends Node> {
 
     private _patchAttributes(original: Element, diff: Element): void {
         if (original.hasAttributes()) {
-            const attributes = Array.from(original.attributes);
-            for (const attribute of attributes) {
-                if (!diff.hasAttribute(attribute.name)) {
-                    original.removeAttribute(attribute.name);
+            const originalAttributes = original.attributes;
+            for (let i = 0; i < originalAttributes.length; i++) {
+                if (!diff.hasAttribute(originalAttributes[i].name)) {
+                    original.removeAttribute(originalAttributes[i].name);
                 }
             }
         }
 
         if (diff.hasAttributes()) {
-            const attributes = Array.from(diff.attributes);
-            for (const attribute of attributes) {
-                if (!original.hasAttribute(attribute.name)
-                    || original.getAttribute(attribute.name) !== attribute.value
+            const diffAttributes = diff.attributes;
+            for (let i = 0; i < diffAttributes.length; i++) {
+                if (!original.hasAttribute(diffAttributes[i].name)
+                    || original.getAttribute(diffAttributes[i].name) !== diffAttributes[i].value
                 ) {
-                    original.setAttribute(attribute.name, attribute.value);
+                    original.setAttribute(diffAttributes[i].name, diffAttributes[i].value);
                 }
             }
         }
