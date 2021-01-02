@@ -125,6 +125,7 @@ class RouterBase {
 class HashRouter extends RouterBase {
 
     constructor(base: string = '') {
+        // The base should be set as base path represented within url fragment
         super(base);
 
         this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
