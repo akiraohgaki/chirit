@@ -1,11 +1,15 @@
 import {NodeContentData} from './types.js';
 
+const containerCollection = new WeakSet();
+
 export default class NodeContent<T extends Node> {
 
     private _container: T;
 
     constructor(container: T) {
         this._container = container;
+
+        containerCollection.add(this._container);
     }
 
     get container(): T {
@@ -33,7 +37,8 @@ export default class NodeContent<T extends Node> {
             return template.content;
         }
 
-        // DocumentType may not be inserted inside DocumentFragment
+        // DocumentType may not be inserted into DocumentFragment
+        // ShadowRoot will not be cloneable also not be listed in NodeList
         const documentFragment = document.createDocumentFragment();
         if (content instanceof Node) {
             documentFragment.appendChild(content.cloneNode(true));
@@ -76,8 +81,11 @@ export default class NodeContent<T extends Node> {
                 if (original instanceof Element && diff instanceof Element) {
                     // The Element will be like HTMLElement, SVGElement
                     this._patchAttributes(original, diff);
-                    // Continue patching recursively
-                    this._patchChildNodes(original, diff);
+                    // Continue patching recursively to the Element subtree
+                    // but only normal Element that not managed by this class
+                    if (!containerCollection.has(original)) {
+                        this._patchChildNodes(original, diff);
+                    }
                 }
                 else if (original instanceof CharacterData && diff instanceof CharacterData) {
                     // The CharacterData will be like Text, Comment, ProcessingInstruction
