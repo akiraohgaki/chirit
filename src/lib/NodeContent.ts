@@ -31,14 +31,14 @@ export default class NodeContent<T extends Node> {
 
     private _createDocumentFragment(content: NodeContentData): DocumentFragment {
         if (typeof content === 'string') {
-            // !DOCTYPE, HTML, HEAD, BODY will be stripped inside HTMLTemplateElement
+            // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement
             const template = document.createElement('template');
             template.innerHTML = content;
             return template.content;
         }
 
-        // DocumentType may not be inserted into DocumentFragment
-        // ShadowRoot will not be cloneable also not be listed in NodeList
+        // Some node types like DocumentType will not insert into DocumentFragment
+        // ShadowRoot will not cloneable also not included in NodeList
         const documentFragment = document.createDocumentFragment();
         if (content instanceof Node) {
             documentFragment.appendChild(content.cloneNode(true));
@@ -52,8 +52,8 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchChildNodes(original: Node, diff: Node): void {
-        // Convert NodeList to array because NodeList from Node.childNodes is live
-        // and it's index will changes when the node subtree has changed
+        // Convert NodeList to array because NodeList of Node.childNodes is live
+        // and it's index will change when that node's children has changed
         const originalChildNodes = Array.from(original.childNodes);
         const diffChildNodes = Array.from(diff.childNodes);
         const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
@@ -83,8 +83,7 @@ export default class NodeContent<T extends Node> {
                 if (original instanceof Element && diff instanceof Element) {
                     // The Element will be like HTMLElement, SVGElement
                     this._patchAttributes(original, diff);
-                    // Continue patching recursively to the Element subtree
-                    // but only normal Element that not managed by this class
+                    // Continue patching recursively if the Element is normal node that not managed by this class
                     if (!containerCollection.has(original)) {
                         this._patchChildNodes(original, diff);
                     }
@@ -96,7 +95,8 @@ export default class NodeContent<T extends Node> {
                     }
                 }
                 else {
-                    // Any other node type like DocumentType, just replace it for now
+                    // The Node is any other node types like DocumentType
+                    // Just replace it for now
                     parent.replaceChild(diff.cloneNode(true), original);
                 }
             }
@@ -107,8 +107,8 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchAttributes(original: Element, diff: Element): void {
-        // Convert NamedNodeMap to array because NamedNodeMap from Element.attributes is live
-        // and it's index will changes when the element attributes has changed
+        // Convert NamedNodeMap to array because NamedNodeMap of Element.attributes is live
+        // and it's index will change when that element's attributes has changed
         if (original.hasAttributes()) {
             const originalAttributes = Array.from(original.attributes);
             for (let i = 0; i < originalAttributes.length; i++) {
