@@ -52,8 +52,10 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchChildNodes(original: Node, diff: Node): void {
-        const originalChildNodes = original.childNodes;
-        const diffChildNodes = diff.childNodes;
+        // Convert NodeList to array because NodeList from Node.childNodes is live
+        // and it's index will changes when the node subtree has changed
+        const originalChildNodes = Array.from(original.childNodes);
+        const diffChildNodes = Array.from(diff.childNodes);
         const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
 
         if (maxLength) {
@@ -105,8 +107,10 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchAttributes(original: Element, diff: Element): void {
+        // Convert NamedNodeMap to array because NamedNodeMap from Element.attributes is live
+        // and it's index will changes when the element attributes has changed
         if (original.hasAttributes()) {
-            const originalAttributes = original.attributes;
+            const originalAttributes = Array.from(original.attributes);
             for (let i = 0; i < originalAttributes.length; i++) {
                 if (!diff.hasAttribute(originalAttributes[i].name)) {
                     original.removeAttribute(originalAttributes[i].name);
@@ -115,7 +119,7 @@ export default class NodeContent<T extends Node> {
         }
 
         if (diff.hasAttributes()) {
-            const diffAttributes = diff.attributes;
+            const diffAttributes = Array.from(diff.attributes);
             for (let i = 0; i < diffAttributes.length; i++) {
                 if (!original.hasAttribute(diffAttributes[i].name)
                     || original.getAttribute(diffAttributes[i].name) !== diffAttributes[i].value
