@@ -3,6 +3,8 @@ export default class ElementAttributesProxy {
     [key: string]: string;
 
     constructor(target: Element) {
+        //const targetRef = new WeakRef(target);
+
         return new Proxy({}, {
             set: (_target, name, value) => {
                 if (typeof name === 'string' && typeof value === 'string') {

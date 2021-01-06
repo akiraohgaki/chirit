@@ -9,6 +9,7 @@ export default class NodeContent<T extends Node> {
     constructor(container: T) {
         containerCollection.add(container);
 
+        //this._containerRef = new WeakRef(container);
         this._container = container;
     }
 
