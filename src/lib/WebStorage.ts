@@ -50,7 +50,7 @@ export default class WebStorage {
         const value = this._storage.getItem(this._prefix + key);
         if (value) {
             try {
-                // JSON.parse() throw parse error if value is invalid JSON data
+                // JSON.parse() will throw parse error if the value is invalid JSON data
                 const deserializedValue = JSON.parse(value);
                 if (deserializedValue
                     && deserializedValue._k === key

@@ -3,6 +3,8 @@ export default class ElementAttributesProxy {
     [key: string]: string;
 
     constructor(target: Element) {
+        //const targetRef = new WeakRef(target);
+
         return new Proxy({}, {
             set: (_target, name, value) => {
                 if (typeof name === 'string' && typeof value === 'string') {
@@ -33,9 +35,11 @@ export default class ElementAttributesProxy {
             },
             ownKeys: () => {
                 const keys = [];
-                const attributes = Array.from(target.attributes);
-                for (const attribute of attributes) {
-                    keys.push(attribute.name);
+                if (target.hasAttributes()) {
+                    const attributes = target.attributes;
+                    for (let i = 0; i < attributes.length; i++) {
+                        keys.push(attributes[i].name);
+                    }
                 }
                 return keys;
             },

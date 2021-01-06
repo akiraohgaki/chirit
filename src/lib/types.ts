@@ -6,12 +6,14 @@ export interface Observer<T> {
     (value: T): void;
 }
 
-export type NodeContentData = string | Node | NodeList;
-
-export type RouterMode = 'hash' | 'history';
-
 export interface RouteHandler {
     (params: Dictionary<string>): void;
 }
+
+export type ComponentContentContainer = Element | DocumentFragment;
+
+export type NodeContentData = string | Node | NodeList;
+
+export type RouterMode = 'hash' | 'history';
 
 export type WebStorageMode = 'local' | 'session';

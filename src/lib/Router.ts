@@ -1,8 +1,8 @@
-import {Dictionary, RouterMode, RouteHandler} from './types.js';
+import {Dictionary, RouteHandler, RouterMode} from './types.js';
 
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {
-    // RegExp throw regexp syntax error if RegExp named capture groups is not available
+    // RegExp will throw regexp syntax error if RegExp named capture groups is not available
     const matches = 'Named capture groups'.match(/(?<name>.+)/);
     isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
 }
@@ -68,8 +68,8 @@ class RouterBase {
     }
 
     private _fixRoutePattern(pattern: string): string {
-        // Replace :name to (?<name>[^/?#]+) but don't replace for non-capturing groups like (?:pattern)
-        // Just in case if the string starts with ":", prepend "/" to the string then remove it after the replace work
+        // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups like (?:pattern)
+        // Just in case, the pattern may start with ":" so prepend "/" to the pattern then remove it when replacement finished
         return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 
@@ -87,7 +87,7 @@ class RouterBase {
         }
         else {
             // This is workaround for RegExp named capture groups unsupported environment
-            // and does not work expected for named capture groups within named capture groups like (?<name>(?<name>pattern))
+            // but does not work expected in case of named capture groups within named capture groups like (?<name>(?<name>pattern))
             const groupNames: Array<string> = [];
 
             const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
@@ -122,9 +122,10 @@ class RouterBase {
 
 }
 
-class HashModeRouter extends RouterBase {
+class HashRouter extends RouterBase {
 
     constructor(base: string = '') {
+        // The base should be base path part of path represented with URL fragment
         super(base);
 
         this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
@@ -175,7 +176,7 @@ class HashModeRouter extends RouterBase {
 
 }
 
-class HistoryModeRouter extends RouterBase {
+class HistoryRouter extends RouterBase {
 
     constructor(base: string = '') {
         super(base);
@@ -216,18 +217,18 @@ export default class Router {
 
     private _mode: RouterMode;
 
-    private _router: HashModeRouter | HistoryModeRouter;
+    private _router: HashRouter | HistoryRouter;
 
     constructor(mode: RouterMode, base: string = '') {
         this._mode = mode;
 
         switch (this._mode) {
             case 'hash': {
-                this._router = new HashModeRouter(base);
+                this._router = new HashRouter(base);
                 break;
             }
             case 'history': {
-                this._router = new HistoryModeRouter(base);
+                this._router = new HistoryRouter(base);
                 break;
             }
         }
