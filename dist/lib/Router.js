@@ -91,7 +91,7 @@ class RouterBase {
         return null;
     }
 }
-class HashModeRouter extends RouterBase {
+class HashRouter extends RouterBase {
     constructor(base = '') {
         super(base);
         this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
@@ -131,7 +131,7 @@ class HashModeRouter extends RouterBase {
         this.invokeRouteHandler(window.location.hash.substring(1));
     }
 }
-class HistoryModeRouter extends RouterBase {
+class HistoryRouter extends RouterBase {
     constructor(base = '') {
         super(base);
         this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
@@ -162,11 +162,11 @@ export default class Router {
         this._mode = mode;
         switch (this._mode) {
             case 'hash': {
-                this._router = new HashModeRouter(base);
+                this._router = new HashRouter(base);
                 break;
             }
             case 'history': {
-                this._router = new HistoryModeRouter(base);
+                this._router = new HistoryRouter(base);
                 break;
             }
         }

@@ -4,9 +4,9 @@ export default class NodeContent<T extends Node> {
     constructor(container: T);
     get container(): T;
     update(content: NodeContentData): void;
-    get(): DocumentFragment;
+    clone(): DocumentFragment;
     private _createDocumentFragment;
-    private _updateChildNodes;
-    private _updateChildNode;
-    private _updateAttributes;
+    private _patchChildNodes;
+    private _patchNode;
+    private _patchAttributes;
 }

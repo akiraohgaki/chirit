@@ -1,4 +1,4 @@
-import { NodeContentData } from './types.js';
+import { ComponentContentContainer, NodeContentData } from './types.js';
 import CustomElement from './CustomElement.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
 import NodeContent from './NodeContent.js';
@@ -7,9 +7,9 @@ export default class Component extends CustomElement {
     private _content;
     constructor();
     get attrs(): ElementAttributesProxy;
-    get content(): NodeContent<Element | DocumentFragment>;
+    get content(): NodeContent<ComponentContentContainer>;
     dispatch(type: string, detail?: any): boolean;
-    protected createContentContainer(): Element | DocumentFragment;
+    protected createContentContainer(): ComponentContentContainer;
     protected render(): void;
     protected template(): NodeContentData;
 }

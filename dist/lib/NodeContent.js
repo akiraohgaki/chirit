@@ -1,5 +1,7 @@
+const containerCollection = new WeakSet();
 export default class NodeContent {
     constructor(container) {
+        containerCollection.add(container);
         this._container = container;
     }
     get container() {
@@ -7,13 +9,13 @@ export default class NodeContent {
     }
     update(content) {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._updateChildNodes(this._container, content);
+            this._patchChildNodes(this._container, content);
         }
         else {
-            this._updateChildNodes(this._container, this._createDocumentFragment(content));
+            this._patchChildNodes(this._container, this._createDocumentFragment(content));
         }
     }
-    get() {
+    clone() {
         return this._createDocumentFragment(this._container.childNodes);
     }
     _createDocumentFragment(content) {
@@ -26,62 +28,70 @@ export default class NodeContent {
         if (content instanceof Node) {
             documentFragment.appendChild(content.cloneNode(true));
         }
-        else if (content instanceof NodeList) {
+        else if (content instanceof NodeList && content.length) {
             for (let i = 0; i < content.length; i++) {
                 documentFragment.appendChild(content[i].cloneNode(true));
             }
         }
         return documentFragment;
     }
-    _updateChildNodes(oldParent, newParent) {
+    _patchChildNodes(original, diff) {
         var _a, _b;
-        const oldChildNodes = Array.from(oldParent.childNodes);
-        const newChildNodes = Array.from(newParent.childNodes);
-        const maxLength = Math.max(oldChildNodes.length, newChildNodes.length);
-        for (let i = 0; i < maxLength; i++) {
-            this._updateChildNode(oldParent, (_a = oldChildNodes[i]) !== null && _a !== void 0 ? _a : null, (_b = newChildNodes[i]) !== null && _b !== void 0 ? _b : null);
+        const originalChildNodes = Array.from(original.childNodes);
+        const diffChildNodes = Array.from(diff.childNodes);
+        const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
+        if (maxLength) {
+            for (let i = 0; i < maxLength; i++) {
+                this._patchNode(original, (_a = originalChildNodes[i]) !== null && _a !== void 0 ? _a : null, (_b = diffChildNodes[i]) !== null && _b !== void 0 ? _b : null);
+            }
         }
     }
-    _updateChildNode(parent, oldChild, newChild) {
-        if (oldChild && !newChild) {
-            parent.removeChild(oldChild);
+    _patchNode(parent, original, diff) {
+        if (original && !diff) {
+            parent.removeChild(original);
         }
-        else if (!oldChild && newChild) {
-            parent.appendChild(newChild.cloneNode(true));
+        else if (!original && diff) {
+            parent.appendChild(diff.cloneNode(true));
         }
-        else if (oldChild && newChild) {
-            if (oldChild.nodeType === newChild.nodeType
-                && oldChild.nodeName === newChild.nodeName) {
-                if (oldChild instanceof Element && newChild instanceof Element) {
-                    this._updateAttributes(oldChild, newChild);
-                    this._updateChildNodes(oldChild, newChild);
+        else if (original && diff) {
+            if (original.nodeType === diff.nodeType
+                && original.nodeName === diff.nodeName) {
+                if (original instanceof Element && diff instanceof Element) {
+                    this._patchAttributes(original, diff);
+                    if (!containerCollection.has(original)) {
+                        this._patchChildNodes(original, diff);
+                    }
                 }
-                else if (oldChild instanceof CharacterData && newChild instanceof CharacterData) {
-                    if (oldChild.nodeValue !== newChild.nodeValue) {
-                        oldChild.nodeValue = newChild.nodeValue;
+                else if (original instanceof CharacterData && diff instanceof CharacterData) {
+                    if (original.nodeValue !== diff.nodeValue) {
+                        original.nodeValue = diff.nodeValue;
                     }
                 }
                 else {
-                    parent.replaceChild(newChild.cloneNode(true), oldChild);
+                    parent.replaceChild(diff.cloneNode(true), original);
                 }
             }
             else {
-                parent.replaceChild(newChild.cloneNode(true), oldChild);
+                parent.replaceChild(diff.cloneNode(true), original);
             }
         }
     }
-    _updateAttributes(oldParent, newParent) {
-        const oldAttributes = Array.from(oldParent.attributes);
-        const newAttributes = Array.from(newParent.attributes);
-        for (const attribute of oldAttributes) {
-            if (!newParent.hasAttribute(attribute.name)) {
-                oldParent.removeAttribute(attribute.name);
+    _patchAttributes(original, diff) {
+        if (original.hasAttributes()) {
+            const originalAttributes = Array.from(original.attributes);
+            for (let i = 0; i < originalAttributes.length; i++) {
+                if (!diff.hasAttribute(originalAttributes[i].name)) {
+                    original.removeAttribute(originalAttributes[i].name);
+                }
             }
         }
-        for (const attribute of newAttributes) {
-            if (!oldParent.hasAttribute(attribute.name)
-                || oldParent.getAttribute(attribute.name) !== attribute.value) {
-                oldParent.setAttribute(attribute.name, attribute.value);
+        if (diff.hasAttributes()) {
+            const diffAttributes = Array.from(diff.attributes);
+            for (let i = 0; i < diffAttributes.length; i++) {
+                if (!original.hasAttribute(diffAttributes[i].name)
+                    || original.getAttribute(diffAttributes[i].name) !== diffAttributes[i].value) {
+                    original.setAttribute(diffAttributes[i].name, diffAttributes[i].value);
+                }
             }
         }
     }

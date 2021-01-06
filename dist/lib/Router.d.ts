@@ -1,4 +1,4 @@
-import { RouterMode, RouteHandler } from './types.js';
+import { RouteHandler, RouterMode } from './types.js';
 export default class Router {
     private _mode;
     private _router;
