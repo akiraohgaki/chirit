@@ -7,9 +7,9 @@ export default class NodeContent<T extends Node> {
     private _container: T;
 
     constructor(container: T) {
-        this._container = container;
+        containerCollection.add(container);
 
-        containerCollection.add(this._container);
+        this._container = container;
     }
 
     get container(): T {
