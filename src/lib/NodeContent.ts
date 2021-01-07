@@ -30,7 +30,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    fixOnevent(context: object): void {
+    fixOnevent(context?: object): void {
         this._fixChildNodesOneventHandlers(this._container, context);
     }
 
@@ -135,7 +135,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    private _fixChildNodesOneventHandlers(target: Node, context: object): void {
+    private _fixChildNodesOneventHandlers(target: Node, context?: object): void {
         if (target.hasChildNodes()) {
             const childNodes = target.childNodes;
             for (let i = 0; i < childNodes.length; i++) {
@@ -146,7 +146,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    private _fixOneventHandlers(target: Element, context: object): void {
+    private _fixOneventHandlers(target: Element, context?: object): void {
         if (target.hasAttributes()) {
             const attributes = Array.from(target.attributes);
             for (const attribute of attributes) {
@@ -156,7 +156,7 @@ export default class NodeContent<T extends Node> {
                     if (onevent in target && typeof elementWithOnevent[onevent] === 'function') {
                         const handler = new Function(attribute.value);
                         target.removeAttribute(attribute.name);
-                        elementWithOnevent[onevent] = handler.bind(context);
+                        elementWithOnevent[onevent] = handler.bind(context ?? target);
                     }
                 }
             }
