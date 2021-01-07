@@ -17,6 +17,10 @@ export default class NodeContent<T extends Node> {
         return this._container;
     }
 
+    clone(): DocumentFragment {
+        return this._createDocumentFragment(this._container.childNodes);
+    }
+
     update(content: NodeContentData): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
             this._patchChildNodes(this._container, content);
@@ -26,8 +30,8 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    clone(): DocumentFragment {
-        return this._createDocumentFragment(this._container.childNodes);
+    fixOnevent(context: object): void {
+        this._fixChildNodesOneventHandlers(this._container, context);
     }
 
     private _createDocumentFragment(content: NodeContentData): DocumentFragment {
@@ -128,6 +132,37 @@ export default class NodeContent<T extends Node> {
                     original.setAttribute(diffAttributes[i].name, diffAttributes[i].value);
                 }
             }
+        }
+    }
+
+    private _fixChildNodesOneventHandlers(target: Node, context: object): void {
+        if (target.hasChildNodes()) {
+            const childNodes = target.childNodes;
+            for (let i = 0; i < childNodes.length; i++) {
+                if (childNodes[i] instanceof Element) {
+                    this._fixOneventHandlers(childNodes[i] as Element, context);
+                }
+            }
+        }
+    }
+
+    private _fixOneventHandlers(target: Element, context: object): void {
+        if (target.hasAttributes()) {
+            const attributes = Array.from(target.attributes);
+            for (const attribute of attributes) {
+                if (attribute.name.search(/^on\w+/i) !== -1) {
+                    const onevent = attribute.name.toLowerCase();
+                    const elementWithOnevent = (target as any) as {[key: string]: {(event: Event): unknown}};
+                    if (onevent in target && typeof elementWithOnevent[onevent] === 'function') {
+                        const handler = new Function(attribute.value);
+                        target.removeAttribute(attribute.name);
+                        elementWithOnevent[onevent] = handler.bind(context);
+                    }
+                }
+            }
+        }
+        if (!containerCollection.has(target)) {
+            this._fixChildNodesOneventHandlers(target, context);
         }
     }
 
