@@ -53,13 +53,13 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchChildNodes(original: Node, diff: Node): void {
-        // Convert NodeList to array because NodeList of Node.childNodes is live
-        // and it's index will change when that node's children has changed
-        const originalChildNodes = Array.from(original.childNodes);
-        const diffChildNodes = Array.from(diff.childNodes);
-        const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
+        if (original.hasChildNodes() || diff.hasChildNodes()) {
+            // Convert NodeList to array because NodeList of Node.childNodes is live
+            // and it's index will change when that node's children has changed
+            const originalChildNodes = Array.from(original.childNodes);
+            const diffChildNodes = Array.from(diff.childNodes);
+            const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
 
-        if (maxLength) {
             for (let i = 0; i < maxLength; i++) {
                 this._patchNode(
                     original,
