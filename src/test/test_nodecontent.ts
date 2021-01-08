@@ -20,12 +20,19 @@ export default function(): void {
         <ul data-a="a" data-b="b" data-c="c">
         <li>list1</li>
         <li>list2</li>
-        <li>list3</li>
+        <li onclick="this.handleClick(event)">list3</li>
         </ul>
     `;
     src.value = template.innerHTML;
 
-    const nodeContent = new NodeContent(container);
+    const context = {
+        handleClick: (event: Event) => {
+            console.log(event);
+            event.preventDefault();
+        }
+    };
+
+    const nodeContent = new NodeContent(container, context);
 
     console.log(nodeContent.container);
 

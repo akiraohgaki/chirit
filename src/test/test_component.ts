@@ -6,10 +6,10 @@ class TestComponent extends Component {
         console.log('constructor');
         super();
         console.log(this.updatedCount);
-        this._handleClick = this._handleClick.bind(this);
     }
 
-    createContentContainer(): ShadowRoot {
+    protected createContentContainer(): ShadowRoot {
+        console.log('createContentContainer');
         return this.attachShadow({mode: 'closed'});
     }
 
@@ -27,12 +27,10 @@ class TestComponent extends Component {
     connectedCallback(): void {
         console.log('connectedCallback');
         super.connectedCallback();
-        this.content.container.addEventListener('click', this._handleClick);
     }
 
     disconnectedCallback(): void {
         console.log('disconnectedCallback');
-        this.content.container.removeEventListener('click', this._handleClick);
     }
 
     adoptedCallback(oldDocument: Document, newDocment: Document): void {
@@ -40,30 +38,29 @@ class TestComponent extends Component {
         console.log(oldDocument, newDocment);
     }
 
-    render(): void {
+    protected render(): void {
         console.log('render');
         super.render();
     }
 
-    template(): string {
+    protected template(): string {
         console.log('template');
         return `
             <span>${this.attrs.datetime}</span>
-            <button data-update>Update</button>
+            <button onclick="this.handleClick(event)">Update</button>
         `;
     }
 
-    updatedCallback(): void {
+    protected updatedCallback(): void {
         console.log('updatedCallback');
         console.log(this.updatedCount);
     }
 
-    private _handleClick(event: Event): void {
-        const target = event.target as Element;
-        if (target.hasAttribute('data-update')) {
-            this.attrs.datetime = `${new Date}`;
-            this.attrs.plus += '+';
-        }
+    protected handleClick(event: Event): void {
+        console.log(event);
+        event.preventDefault();
+        this.attrs.datetime = `${new Date}`;
+        this.attrs.plus += '+';
     }
 
 }
