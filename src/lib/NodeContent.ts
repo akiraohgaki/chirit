@@ -6,9 +6,9 @@ export default class NodeContent<T extends Node> {
 
     private _container: T;
 
-    private _context: object | undefined;
+    private _context: any;
 
-    constructor(container: T, context?: object) {
+    constructor(container: T, context?: any) {
         containerCollection.add(container);
 
         //this._containerRef = new WeakRef(container);
@@ -22,10 +22,6 @@ export default class NodeContent<T extends Node> {
         return this._container;
     }
 
-    clone(): DocumentFragment {
-        return this._createDocumentFragment(this._container.childNodes);
-    }
-
     update(content: NodeContentData): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
             this._patchNodesWithin(this._container, content);
@@ -35,6 +31,10 @@ export default class NodeContent<T extends Node> {
         }
 
         this._fixOneventHandlersWithin(this._container);
+    }
+
+    clone(): DocumentFragment {
+        return this._createDocumentFragment(this._container.childNodes);
     }
 
     private _createDocumentFragment(content: NodeContentData): DocumentFragment {
