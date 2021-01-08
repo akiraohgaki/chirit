@@ -28,13 +28,13 @@ export default class NodeContent<T extends Node> {
 
     update(content: NodeContentData): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._patchChildNodes(this._container, content);
+            this._patchNodesWithin(this._container, content);
         }
         else {
-            this._patchChildNodes(this._container, this._createDocumentFragment(content));
+            this._patchNodesWithin(this._container, this._createDocumentFragment(content));
         }
 
-        this._fixChildNodesOneventHandlers(this._container);
+        this._fixOneventHandlersWithin(this._container);
     }
 
     private _createDocumentFragment(content: NodeContentData): DocumentFragment {
@@ -59,7 +59,7 @@ export default class NodeContent<T extends Node> {
         return documentFragment;
     }
 
-    private _patchChildNodes(original: Node, diff: Node): void {
+    private _patchNodesWithin(original: Node, diff: Node): void {
         if (original.hasChildNodes() || diff.hasChildNodes()) {
             // Convert NodeList to array because NodeList of Node.childNodes is live
             // and it's index will change when that node's children has changed
@@ -68,7 +68,7 @@ export default class NodeContent<T extends Node> {
             const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
 
             for (let i = 0; i < maxLength; i++) {
-                this._patchNode(
+                this._patchNodes(
                     original,
                     originalChildNodes[i] ?? null,
                     diffChildNodes[i] ?? null
@@ -77,7 +77,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    private _patchNode(parent: Node, original: Node | null, diff: Node | null): void {
+    private _patchNodes(parent: Node, original: Node | null, diff: Node | null): void {
         if (original && !diff) {
             parent.removeChild(original);
         }
@@ -89,9 +89,8 @@ export default class NodeContent<T extends Node> {
                 if (original instanceof Element && diff instanceof Element) {
                     // The Element will be like HTMLElement, SVGElement
                     this._patchAttributes(original, diff);
-                    // Continue patching recursively if the Element is normal node that not managed by this class
                     if (!containerCollection.has(original)) {
-                        this._patchChildNodes(original, diff);
+                        this._patchNodesWithin(original, diff);
                     }
                 }
                 else if (original instanceof CharacterData && diff instanceof CharacterData) {
@@ -135,7 +134,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    private _fixChildNodesOneventHandlers(target: Node): void {
+    private _fixOneventHandlersWithin(target: Node): void {
         if (target.hasChildNodes()) {
             const childNodes = target.childNodes;
             for (let i = 0; i < childNodes.length; i++) {
@@ -163,7 +162,7 @@ export default class NodeContent<T extends Node> {
         }
 
         if (!containerCollection.has(target)) {
-            this._fixChildNodesOneventHandlers(target);
+            this._fixOneventHandlersWithin(target);
         }
     }
 
