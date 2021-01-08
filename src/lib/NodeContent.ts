@@ -52,8 +52,8 @@ export default class NodeContent<T extends Node> {
             documentFragment.appendChild(content.cloneNode(true));
         }
         else if (content instanceof NodeList && content.length) {
-            for (let i = 0; i < content.length; i++) {
-                documentFragment.appendChild(content[i].cloneNode(true));
+            for (const node of Array.from(content)) {
+                documentFragment.appendChild(node.cloneNode(true));
             }
         }
         return documentFragment;
@@ -61,8 +61,7 @@ export default class NodeContent<T extends Node> {
 
     private _patchNodesWithin(original: Node, diff: Node): void {
         if (original.hasChildNodes() || diff.hasChildNodes()) {
-            // Convert NodeList to array because NodeList of Node.childNodes is live
-            // and it's index will change when that node's children has changed
+            // NodeList of Node.childNodes is live so must be convert to array
             const originalChildNodes = Array.from(original.childNodes);
             const diffChildNodes = Array.from(diff.childNodes);
             const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
@@ -111,24 +110,21 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchAttributes(original: Element, diff: Element): void {
-        // Convert NamedNodeMap to array because NamedNodeMap of Element.attributes is live
-        // and it's index will change when that element's attributes has changed
+        // NamedNodeMap of Element.attributes is live so must be convert to array
         if (original.hasAttributes()) {
-            const originalAttributes = Array.from(original.attributes);
-            for (let i = 0; i < originalAttributes.length; i++) {
-                if (!diff.hasAttribute(originalAttributes[i].name)) {
-                    original.removeAttribute(originalAttributes[i].name);
+            for (const attribute of Array.from(original.attributes)) {
+                if (!diff.hasAttribute(attribute.name)) {
+                    original.removeAttribute(attribute.name);
                 }
             }
         }
 
         if (diff.hasAttributes()) {
-            const diffAttributes = Array.from(diff.attributes);
-            for (let i = 0; i < diffAttributes.length; i++) {
-                if (!original.hasAttribute(diffAttributes[i].name)
-                    || original.getAttribute(diffAttributes[i].name) !== diffAttributes[i].value
+            for (const attribute of Array.from(diff.attributes)) {
+                if (!original.hasAttribute(attribute.name)
+                    || original.getAttribute(attribute.name) !== attribute.value
                 ) {
-                    original.setAttribute(diffAttributes[i].name, diffAttributes[i].value);
+                    original.setAttribute(attribute.name, attribute.value);
                 }
             }
         }
@@ -136,10 +132,9 @@ export default class NodeContent<T extends Node> {
 
     private _fixOneventHandlersWithin(target: Node): void {
         if (target.hasChildNodes()) {
-            const childNodes = target.childNodes;
-            for (let i = 0; i < childNodes.length; i++) {
-                if (childNodes[i] instanceof Element) {
-                    this._fixOneventHandlers(childNodes[i] as Element);
+            for (const node of Array.from(target.childNodes)) {
+                if (node instanceof Element) {
+                    this._fixOneventHandlers(node);
                 }
             }
         }
@@ -147,8 +142,8 @@ export default class NodeContent<T extends Node> {
 
     private _fixOneventHandlers(target: Element): void {
         if (target.hasAttributes()) {
-            const attributes = Array.from(target.attributes);
-            for (const attribute of attributes) {
+            // NamedNodeMap of Element.attributes is live so must be convert to array
+            for (const attribute of Array.from(target.attributes)) {
                 if (attribute.name.search(/^on\w+/i) !== -1) {
                     const onevent = attribute.name.toLowerCase();
                     const oneventTarget = (target as any) as {[key: string]: {(event: Event): unknown}};

@@ -36,9 +36,8 @@ export default class ElementAttributesProxy {
             ownKeys: () => {
                 const keys = [];
                 if (target.hasAttributes()) {
-                    const attributes = target.attributes;
-                    for (let i = 0; i < attributes.length; i++) {
-                        keys.push(attributes[i].name);
+                    for (const attribute of Array.from(target.attributes)) {
+                        keys.push(attribute.name);
                     }
                 }
                 return keys;
