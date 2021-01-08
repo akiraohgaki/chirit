@@ -4,25 +4,11 @@ import {escapeHtml} from './utils.js';
 
 export default class ArtistAlbum extends Component {
 
-    constructor() {
-        super();
-        this._handleClick = this._handleClick.bind(this);
-    }
-
     static get observedAttributes(): Array<string> {
         return ['artwork', 'album', 'artist'];
     }
 
-    connectedCallback(): void {
-        super.connectedCallback();
-        this.content.container.addEventListener('click', this._handleClick);
-    }
-
-    disconnectedCallback(): void {
-        this.content.container.removeEventListener('click', this._handleClick);
-    }
-
-    template(): string {
+    protected template(): string {
         return `
             <style>
             :host {
@@ -61,7 +47,7 @@ export default class ArtistAlbum extends Component {
             }
             </style>
 
-            <div>
+            <div onclick="this.handleClick(event)">
             <img src="${this.attrs.artwork}">
             <h4><a href="#" data-url="search/${encodeURIComponent(this.attrs.album)}">${escapeHtml(this.attrs.album)}</a></h4>
             <p><a href="#" data-url="search/${encodeURIComponent(this.attrs.artist)}">${escapeHtml(this.attrs.artist)}</a></p>
@@ -69,7 +55,7 @@ export default class ArtistAlbum extends Component {
         `;
     }
 
-    private _handleClick(event: Event): void {
+    protected handleClick(event: Event): void {
         event.preventDefault();
         const target = event.target as Element;
         const url = target.getAttribute('data-url');

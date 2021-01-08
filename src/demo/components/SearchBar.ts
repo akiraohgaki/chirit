@@ -3,21 +3,7 @@ import router from '../router/index.js';
 
 export default class SearchBar extends Component {
 
-    constructor() {
-        super();
-        this._handleSubmit = this._handleSubmit.bind(this);
-    }
-
-    connectedCallback(): void {
-        super.connectedCallback();
-        this.content.container.addEventListener('submit', this._handleSubmit);
-    }
-
-    disconnectedCallback(): void {
-        this.content.container.removeEventListener('submit', this._handleSubmit);
-    }
-
-    template(): string {
+    protected template(): string {
         return `
             <style>
             :host {
@@ -61,14 +47,14 @@ export default class SearchBar extends Component {
             }
             </style>
 
-            <form>
+            <form onsubmit="this.handleSubmit(event)">
             <input type="text" name="term" value="" placeholder="Search for Artist Album">
             <input type="submit" value="Search">
             </form>
         `;
     }
 
-    private _handleSubmit(event: Event): void {
+    protected handleSubmit(event: Event): void {
         event.preventDefault();
         const target = event.target as Element;
         const inputElement = target.querySelector('input[name="term"]') as HTMLInputElement;
