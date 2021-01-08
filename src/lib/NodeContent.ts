@@ -148,7 +148,7 @@ export default class NodeContent<T extends Node> {
                     const onevent = attribute.name.toLowerCase();
                     const oneventTarget = (target as any) as {[key: string]: {(event: Event): unknown}};
                     if (onevent in target && typeof oneventTarget[onevent] === 'function') {
-                        const handler = new Function(attribute.value);
+                        const handler = new Function('event', attribute.value);
                         target.removeAttribute(attribute.name);
                         oneventTarget[onevent] = handler.bind(this._context ?? target);
                     }
