@@ -6,11 +6,16 @@ export default class NodeContent<T extends Node> {
 
     private _container: T;
 
-    constructor(container: T) {
+    private _context: object | undefined;
+
+    constructor(container: T, context?: object) {
         containerCollection.add(container);
 
         //this._containerRef = new WeakRef(container);
         this._container = container;
+
+        //this._contextRef = new WeakRef(context);
+        this._context = context;
     }
 
     get container(): T {
@@ -28,10 +33,8 @@ export default class NodeContent<T extends Node> {
         else {
             this._patchChildNodes(this._container, this._createDocumentFragment(content));
         }
-    }
 
-    fixOnevent(context?: object): void {
-        this._fixChildNodesOneventHandlers(this._container, context);
+        this._fixChildNodesOneventHandlers(this._container);
     }
 
     private _createDocumentFragment(content: NodeContentData): DocumentFragment {
@@ -82,9 +85,7 @@ export default class NodeContent<T extends Node> {
             parent.appendChild(diff.cloneNode(true));
         }
         else if (original && diff) {
-            if (original.nodeType === diff.nodeType
-                && original.nodeName === diff.nodeName
-            ) {
+            if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
                 if (original instanceof Element && diff instanceof Element) {
                     // The Element will be like HTMLElement, SVGElement
                     this._patchAttributes(original, diff);
@@ -100,8 +101,7 @@ export default class NodeContent<T extends Node> {
                     }
                 }
                 else {
-                    // The Node is any other node types like DocumentType
-                    // Just replace it for now
+                    // The Node is any other node types
                     parent.replaceChild(diff.cloneNode(true), original);
                 }
             }
@@ -135,34 +135,35 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    private _fixChildNodesOneventHandlers(target: Node, context?: object): void {
+    private _fixChildNodesOneventHandlers(target: Node): void {
         if (target.hasChildNodes()) {
             const childNodes = target.childNodes;
             for (let i = 0; i < childNodes.length; i++) {
                 if (childNodes[i] instanceof Element) {
-                    this._fixOneventHandlers(childNodes[i] as Element, context);
+                    this._fixOneventHandlers(childNodes[i] as Element);
                 }
             }
         }
     }
 
-    private _fixOneventHandlers(target: Element, context?: object): void {
+    private _fixOneventHandlers(target: Element): void {
         if (target.hasAttributes()) {
             const attributes = Array.from(target.attributes);
             for (const attribute of attributes) {
                 if (attribute.name.search(/^on\w+/i) !== -1) {
                     const onevent = attribute.name.toLowerCase();
-                    const elementWithOnevent = (target as any) as {[key: string]: {(event: Event): unknown}};
-                    if (onevent in target && typeof elementWithOnevent[onevent] === 'function') {
+                    const oneventTarget = (target as any) as {[key: string]: {(event: Event): unknown}};
+                    if (onevent in target && typeof oneventTarget[onevent] === 'function') {
                         const handler = new Function(attribute.value);
                         target.removeAttribute(attribute.name);
-                        elementWithOnevent[onevent] = handler.bind(context ?? target);
+                        oneventTarget[onevent] = handler.bind(this._context ?? target);
                     }
                 }
             }
         }
+
         if (!containerCollection.has(target)) {
-            this._fixChildNodesOneventHandlers(target, context);
+            this._fixChildNodesOneventHandlers(target);
         }
     }
 
