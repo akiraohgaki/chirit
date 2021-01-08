@@ -231,6 +231,9 @@ export default class Router {
                 this._router = new HistoryRouter(base);
                 break;
             }
+            default: {
+                throw new Error('The mode must be set "hash" or "history".');
+            }
         }
     }
 

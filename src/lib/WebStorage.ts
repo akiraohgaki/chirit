@@ -20,6 +20,9 @@ export default class WebStorage {
                 this._storage = window.sessionStorage;
                 break;
             }
+            default: {
+                throw new Error('The mode must be set "local" or "session".');
+            }
         }
     }
 
