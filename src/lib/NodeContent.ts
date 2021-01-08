@@ -24,13 +24,13 @@ export default class NodeContent<T extends Node> {
 
     update(content: NodeContentData): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._patchNodesWithin(this._container, content);
+            this._patchNodesInsideOf(this._container, content);
         }
         else {
-            this._patchNodesWithin(this._container, this._createDocumentFragment(content));
+            this._patchNodesInsideOf(this._container, this._createDocumentFragment(content));
         }
 
-        this._fixOneventHandlersWithin(this._container);
+        this._fixOneventHandlersInsideOf(this._container);
     }
 
     clone(): DocumentFragment {
@@ -59,7 +59,7 @@ export default class NodeContent<T extends Node> {
         return documentFragment;
     }
 
-    private _patchNodesWithin(original: Node, diff: Node): void {
+    private _patchNodesInsideOf(original: Node, diff: Node): void {
         if (original.hasChildNodes() || diff.hasChildNodes()) {
             // NodeList of Node.childNodes is live so must be convert to array
             const originalChildNodes = Array.from(original.childNodes);
@@ -89,7 +89,7 @@ export default class NodeContent<T extends Node> {
                     // The Element will be like HTMLElement, SVGElement
                     this._patchAttributes(original, diff);
                     if (!containerCollection.has(original)) {
-                        this._patchNodesWithin(original, diff);
+                        this._patchNodesInsideOf(original, diff);
                     }
                 }
                 else if (original instanceof CharacterData && diff instanceof CharacterData) {
@@ -130,7 +130,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    private _fixOneventHandlersWithin(target: Node): void {
+    private _fixOneventHandlersInsideOf(target: Node): void {
         if (target.hasChildNodes()) {
             for (const node of Array.from(target.childNodes)) {
                 if (node instanceof Element) {
@@ -157,7 +157,7 @@ export default class NodeContent<T extends Node> {
         }
 
         if (!containerCollection.has(target)) {
-            this._fixOneventHandlersWithin(target);
+            this._fixOneventHandlersInsideOf(target);
         }
     }
 
