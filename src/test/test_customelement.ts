@@ -6,7 +6,7 @@ class TestElement extends CustomElement {
         console.log('constructor');
         super();
         console.log(this.updatedCount);
-        this._handleClick = this._handleClick.bind(this);
+        this.handleClick = this.handleClick.bind(this);
     }
 
     static get observedAttributes(): Array<string> {
@@ -23,12 +23,12 @@ class TestElement extends CustomElement {
     connectedCallback(): void {
         console.log('connectedCallback');
         super.connectedCallback();
-        this.addEventListener('click', this._handleClick);
+        this.addEventListener('click', this.handleClick);
     }
 
     disconnectedCallback(): void {
         console.log('disconnectedCallback');
-        this.removeEventListener('click', this._handleClick);
+        this.removeEventListener('click', this.handleClick);
     }
 
     adoptedCallback(oldDocument: Document, newDocment: Document): void {
@@ -36,7 +36,7 @@ class TestElement extends CustomElement {
         console.log(oldDocument, newDocment);
     }
 
-    render(): void {
+    protected render(): void {
         console.log('render');
         this.innerHTML = `
             <span>${this.getAttribute('datetime')}</span>
@@ -44,12 +44,14 @@ class TestElement extends CustomElement {
         `;
     }
 
-    updatedCallback(): void {
+    protected updatedCallback(): void {
         console.log('updatedCallback');
         console.log(this.updatedCount);
     }
 
-    private _handleClick(event: Event): void {
+    protected handleClick(event: Event): void {
+        console.log(event);
+        event.preventDefault();
         const target = event.target as Element;
         if (target.hasAttribute('data-update')) {
             this.setAttribute('datetime', `${new Date}`);

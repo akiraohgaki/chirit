@@ -6,11 +6,16 @@ export default class NodeContent<T extends Node> {
 
     private _container: T;
 
-    constructor(container: T) {
+    private _context: any;
+
+    constructor(container: T, context?: any) {
         containerCollection.add(container);
 
         //this._containerRef = new WeakRef(container);
         this._container = container;
+
+        //this._contextRef = new WeakRef(context);
+        this._context = context;
     }
 
     get container(): T {
@@ -19,11 +24,13 @@ export default class NodeContent<T extends Node> {
 
     update(content: NodeContentData): void {
         if (content instanceof Document || content instanceof DocumentFragment) {
-            this._patchChildNodes(this._container, content);
+            this._patchNodesWithin(this._container, content);
         }
         else {
-            this._patchChildNodes(this._container, this._createDocumentFragment(content));
+            this._patchNodesWithin(this._container, this._createDocumentFragment(content));
         }
+
+        this._fixOneventHandlersWithin(this._container);
     }
 
     clone(): DocumentFragment {
@@ -45,23 +52,22 @@ export default class NodeContent<T extends Node> {
             documentFragment.appendChild(content.cloneNode(true));
         }
         else if (content instanceof NodeList && content.length) {
-            for (let i = 0; i < content.length; i++) {
-                documentFragment.appendChild(content[i].cloneNode(true));
+            for (const node of Array.from(content)) {
+                documentFragment.appendChild(node.cloneNode(true));
             }
         }
         return documentFragment;
     }
 
-    private _patchChildNodes(original: Node, diff: Node): void {
+    private _patchNodesWithin(original: Node, diff: Node): void {
         if (original.hasChildNodes() || diff.hasChildNodes()) {
-            // Convert NodeList to array because NodeList of Node.childNodes is live
-            // and it's index will change when that node's children has changed
+            // NodeList of Node.childNodes is live so must be convert to array
             const originalChildNodes = Array.from(original.childNodes);
             const diffChildNodes = Array.from(diff.childNodes);
             const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
 
             for (let i = 0; i < maxLength; i++) {
-                this._patchNode(
+                this._patchNodes(
                     original,
                     originalChildNodes[i] ?? null,
                     diffChildNodes[i] ?? null
@@ -70,7 +76,7 @@ export default class NodeContent<T extends Node> {
         }
     }
 
-    private _patchNode(parent: Node, original: Node | null, diff: Node | null): void {
+    private _patchNodes(parent: Node, original: Node | null, diff: Node | null): void {
         if (original && !diff) {
             parent.removeChild(original);
         }
@@ -78,15 +84,12 @@ export default class NodeContent<T extends Node> {
             parent.appendChild(diff.cloneNode(true));
         }
         else if (original && diff) {
-            if (original.nodeType === diff.nodeType
-                && original.nodeName === diff.nodeName
-            ) {
+            if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
                 if (original instanceof Element && diff instanceof Element) {
                     // The Element will be like HTMLElement, SVGElement
                     this._patchAttributes(original, diff);
-                    // Continue patching recursively if the Element is normal node that not managed by this class
                     if (!containerCollection.has(original)) {
-                        this._patchChildNodes(original, diff);
+                        this._patchNodesWithin(original, diff);
                     }
                 }
                 else if (original instanceof CharacterData && diff instanceof CharacterData) {
@@ -96,8 +99,7 @@ export default class NodeContent<T extends Node> {
                     }
                 }
                 else {
-                    // The Node is any other node types like DocumentType
-                    // Just replace it for now
+                    // The Node is any other node types
                     parent.replaceChild(diff.cloneNode(true), original);
                 }
             }
@@ -108,26 +110,54 @@ export default class NodeContent<T extends Node> {
     }
 
     private _patchAttributes(original: Element, diff: Element): void {
-        // Convert NamedNodeMap to array because NamedNodeMap of Element.attributes is live
-        // and it's index will change when that element's attributes has changed
+        // NamedNodeMap of Element.attributes is live so must be convert to array
         if (original.hasAttributes()) {
-            const originalAttributes = Array.from(original.attributes);
-            for (let i = 0; i < originalAttributes.length; i++) {
-                if (!diff.hasAttribute(originalAttributes[i].name)) {
-                    original.removeAttribute(originalAttributes[i].name);
+            for (const attribute of Array.from(original.attributes)) {
+                if (!diff.hasAttribute(attribute.name)) {
+                    original.removeAttribute(attribute.name);
                 }
             }
         }
 
         if (diff.hasAttributes()) {
-            const diffAttributes = Array.from(diff.attributes);
-            for (let i = 0; i < diffAttributes.length; i++) {
-                if (!original.hasAttribute(diffAttributes[i].name)
-                    || original.getAttribute(diffAttributes[i].name) !== diffAttributes[i].value
+            for (const attribute of Array.from(diff.attributes)) {
+                if (!original.hasAttribute(attribute.name)
+                    || original.getAttribute(attribute.name) !== attribute.value
                 ) {
-                    original.setAttribute(diffAttributes[i].name, diffAttributes[i].value);
+                    original.setAttribute(attribute.name, attribute.value);
                 }
             }
+        }
+    }
+
+    private _fixOneventHandlersWithin(target: Node): void {
+        if (target.hasChildNodes()) {
+            for (const node of Array.from(target.childNodes)) {
+                if (node instanceof Element) {
+                    this._fixOneventHandlers(node);
+                }
+            }
+        }
+    }
+
+    private _fixOneventHandlers(target: Element): void {
+        if (target.hasAttributes()) {
+            // NamedNodeMap of Element.attributes is live so must be convert to array
+            for (const attribute of Array.from(target.attributes)) {
+                if (attribute.name.search(/^on\w+/i) !== -1) {
+                    const onevent = attribute.name.toLowerCase();
+                    const oneventTarget = (target as any) as {[key: string]: {(event: Event): unknown}};
+                    if (onevent in target && typeof oneventTarget[onevent] === 'function') {
+                        const handler = new Function('event', attribute.value);
+                        target.removeAttribute(attribute.name);
+                        oneventTarget[onevent] = handler.bind(this._context ?? target);
+                    }
+                }
+            }
+        }
+
+        if (!containerCollection.has(target)) {
+            this._fixOneventHandlersWithin(target);
         }
     }
 

@@ -9,7 +9,7 @@ export default class MainContent extends Component {
         store.state.searchResult.subscribe(this.update.bind(this));
     }
 
-    template(): string {
+    protected template(): string {
         const searchTerm = store.state.searchTerm.get();
         const searchResult = store.state.searchResult.get();
 
