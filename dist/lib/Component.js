@@ -5,7 +5,7 @@ export default class Component extends CustomElement {
     constructor() {
         super();
         this._attrs = new ElementAttributesProxy(this);
-        this._content = new NodeContent(this.createContentContainer());
+        this._content = new NodeContent(this.createContentContainer(), this);
     }
     get attrs() {
         return this._attrs;

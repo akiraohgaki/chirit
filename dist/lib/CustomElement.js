@@ -40,13 +40,21 @@ export default class CustomElement extends HTMLElement {
         }, this._updateDelay);
     }
     updateSync() {
-        this.render();
-        this._updatedCount++;
-        this.updatedCallback();
+        try {
+            this.render();
+            this._updatedCount++;
+            this.updatedCallback();
+        }
+        catch (error) {
+            this.errorCallback(error);
+        }
     }
     render() {
     }
     updatedCallback() {
+    }
+    errorCallback(error) {
+        console.error(error);
     }
 }
 //# sourceMappingURL=CustomElement.js.map

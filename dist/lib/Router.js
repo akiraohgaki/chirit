@@ -15,6 +15,12 @@ class RouterBase {
     get base() {
         return this._base;
     }
+    set onerror(handler) {
+        this._onerror = handler;
+    }
+    get onerror() {
+        return this._onerror;
+    }
     setRoute(pattern, handler) {
         if (!this._routeCollection.size) {
             this.addEventListener();
@@ -34,14 +40,19 @@ class RouterBase {
     removeEventListener() {
     }
     invokeRouteHandler(path) {
-        if (this._routeCollection.size) {
-            for (const [pattern, handler] of this._routeCollection) {
-                const params = this._match(path, pattern);
-                if (params) {
-                    handler(params);
-                    break;
+        try {
+            if (this._routeCollection.size) {
+                for (const [pattern, handler] of this._routeCollection) {
+                    const params = this._match(path, pattern);
+                    if (params) {
+                        handler(params);
+                        break;
+                    }
                 }
             }
+        }
+        catch (error) {
+            this._onerror(error);
         }
     }
     resolveBaseUrl(url) {
@@ -90,11 +101,14 @@ class RouterBase {
         }
         return null;
     }
+    _onerror(error) {
+        console.error(error);
+    }
 }
 class HashRouter extends RouterBase {
     constructor(base = '') {
         super(base);
-        this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
+        this._handleHashchange = this._handleHashchange.bind(this);
     }
     navigate(url) {
         var _a;
@@ -122,19 +136,19 @@ class HashRouter extends RouterBase {
         this.invokeRouteHandler(newVirtualUrl.pathname);
     }
     addEventListener() {
-        window.addEventListener('hashchange', this._handleHashchangeEvent);
+        window.addEventListener('hashchange', this._handleHashchange);
     }
     removeEventListener() {
-        window.removeEventListener('hashchange', this._handleHashchangeEvent);
+        window.removeEventListener('hashchange', this._handleHashchange);
     }
-    _handleHashchangeEvent() {
+    _handleHashchange() {
         this.invokeRouteHandler(window.location.hash.substring(1));
     }
 }
 class HistoryRouter extends RouterBase {
     constructor(base = '') {
         super(base);
-        this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
+        this._handlePopstate = this._handlePopstate.bind(this);
     }
     navigate(url) {
         const newUrl = new URL(this.resolveBaseUrl(url), window.location.href);
@@ -148,12 +162,12 @@ class HistoryRouter extends RouterBase {
         this.invokeRouteHandler(newUrl.pathname);
     }
     addEventListener() {
-        window.addEventListener('popstate', this._handlePopstateEvent);
+        window.addEventListener('popstate', this._handlePopstate);
     }
     removeEventListener() {
-        window.removeEventListener('popstate', this._handlePopstateEvent);
+        window.removeEventListener('popstate', this._handlePopstate);
     }
-    _handlePopstateEvent() {
+    _handlePopstate() {
         this.invokeRouteHandler(window.location.pathname);
     }
 }
@@ -169,6 +183,9 @@ export default class Router {
                 this._router = new HistoryRouter(base);
                 break;
             }
+            default: {
+                throw new Error('The mode must be set "hash" or "history".');
+            }
         }
     }
     get mode() {
@@ -176,6 +193,12 @@ export default class Router {
     }
     get base() {
         return this._router.base;
+    }
+    set onerror(handler) {
+        this._router.onerror = handler;
+    }
+    get onerror() {
+        return this._router.onerror;
     }
     setRoute(pattern, handler) {
         this._router.setRoute(pattern, handler);

@@ -14,4 +14,5 @@ export default class CustomElement extends HTMLElement {
     updateSync(): void;
     protected render(): void;
     protected updatedCallback(): void;
+    protected errorCallback(error: Error): void;
 }
