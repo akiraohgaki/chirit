@@ -5,6 +5,7 @@ interface ApiResult {
 }
 
 interface State {
+    page: ObservableValue<string>;
     searchTerm: ObservableValue<string>;
     searchResult: ObservableValue<ApiResult>;
 }
@@ -12,13 +13,16 @@ interface State {
 export default class Store {
 
     private _state: State;
+
     private _webStorage: WebStorage;
 
     constructor() {
         this._state = {
+            page: new ObservableValue(''),
             searchTerm: new ObservableValue(''),
             searchResult: new ObservableValue({})
         };
+
         this._webStorage = new WebStorage('session', 'demo_');
 
         this._state.searchResult.subscribe(() => {
@@ -32,7 +36,13 @@ export default class Store {
         return this._state;
     }
 
-    reset(): void {
+    setPage(page: string): void {
+        if (this._state.page.get() !== page) {
+            this._state.page.set(page);
+        }
+    }
+
+    resetSearch(): void {
         this._state.searchTerm.set('');
         this._state.searchResult.set({});
     }

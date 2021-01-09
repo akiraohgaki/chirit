@@ -2,7 +2,7 @@ import {Component} from '../../chirit.js';
 import store from '../store/index.js';
 import {escapeHtml} from './utils.js';
 
-export default class MainContent extends Component {
+export default class SearchResult extends Component {
 
     constructor() {
         super();
