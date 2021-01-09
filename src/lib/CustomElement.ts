@@ -58,15 +58,24 @@ export default class CustomElement extends HTMLElement {
     }
 
     updateSync(): void {
-        this.render();
-        this._updatedCount++;
-        this.updatedCallback();
+        try {
+            this.render();
+            this._updatedCount++;
+            this.updatedCallback();
+        }
+        catch (error) {
+            this.errorCallback(error);
+        }
     }
 
     protected render(): void {
     }
 
     protected updatedCallback(): void {
+    }
+
+    protected errorCallback(error: Error): void {
+        console.error(error);
     }
 
 }

@@ -1,4 +1,4 @@
-import {Dictionary, RouteHandler, RouterMode} from './types.js';
+import {Dictionary, ErrorHandler, RouteHandler, RouterMode} from './types.js';
 
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {
@@ -24,6 +24,14 @@ class RouterBase {
 
     get base(): string {
         return this._base;
+    }
+
+    set onerror(handler: ErrorHandler) {
+        this._onerror = handler;
+    }
+
+    get onerror(): ErrorHandler {
+        return this._onerror;
     }
 
     setRoute(pattern: string, handler: RouteHandler): void {
@@ -52,14 +60,19 @@ class RouterBase {
     }
 
     protected invokeRouteHandler(path: string): void {
-        if (this._routeCollection.size) {
-            for (const [pattern, handler] of this._routeCollection) {
-                const params = this._match(path, pattern);
-                if (params) {
-                    handler(params);
-                    break;
+        try {
+            if (this._routeCollection.size) {
+                for (const [pattern, handler] of this._routeCollection) {
+                    const params = this._match(path, pattern);
+                    if (params) {
+                        handler(params);
+                        break;
+                    }
                 }
             }
+        }
+        catch (error) {
+            this._onerror(error);
         }
     }
 
@@ -120,6 +133,10 @@ class RouterBase {
         return null;
     }
 
+    private _onerror(error: Error): void {
+        console.error(error);
+    }
+
 }
 
 class HashRouter extends RouterBase {
@@ -128,7 +145,7 @@ class HashRouter extends RouterBase {
         // The base should be base path part of path represented with URL fragment
         super(base);
 
-        this._handleHashchangeEvent = this._handleHashchangeEvent.bind(this);
+        this._handleHashchange = this._handleHashchange.bind(this);
     }
 
     navigate(url: string): void {
@@ -163,14 +180,14 @@ class HashRouter extends RouterBase {
     }
 
     protected addEventListener(): void {
-        window.addEventListener('hashchange', this._handleHashchangeEvent);
+        window.addEventListener('hashchange', this._handleHashchange);
     }
 
     protected removeEventListener(): void {
-        window.removeEventListener('hashchange', this._handleHashchangeEvent);
+        window.removeEventListener('hashchange', this._handleHashchange);
     }
 
-    private _handleHashchangeEvent(): void {
+    private _handleHashchange(): void {
         this.invokeRouteHandler(window.location.hash.substring(1));
     }
 
@@ -181,7 +198,7 @@ class HistoryRouter extends RouterBase {
     constructor(base: string = '') {
         super(base);
 
-        this._handlePopstateEvent = this._handlePopstateEvent.bind(this);
+        this._handlePopstate = this._handlePopstate.bind(this);
     }
 
     navigate(url: string): void {
@@ -200,14 +217,14 @@ class HistoryRouter extends RouterBase {
     }
 
     protected addEventListener(): void {
-        window.addEventListener('popstate', this._handlePopstateEvent);
+        window.addEventListener('popstate', this._handlePopstate);
     }
 
     protected removeEventListener(): void {
-        window.removeEventListener('popstate', this._handlePopstateEvent);
+        window.removeEventListener('popstate', this._handlePopstate);
     }
 
-    private _handlePopstateEvent(): void {
+    private _handlePopstate(): void {
         this.invokeRouteHandler(window.location.pathname);
     }
 
@@ -243,6 +260,14 @@ export default class Router {
 
     get base(): string {
         return this._router.base;
+    }
+
+    set onerror(handler: ErrorHandler) {
+        this._router.onerror = handler;
+    }
+
+    get onerror(): ErrorHandler {
+        return this._router.onerror;
     }
 
     setRoute(pattern: string, handler: RouteHandler): void {
