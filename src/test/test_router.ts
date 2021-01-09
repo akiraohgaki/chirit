@@ -12,6 +12,7 @@ export default function(): void {
         <li><a href="/test/router/dummy">/test/router/dummy</a></li>
         <li><a href="/test/router/0-1">/test/router/0-1</a></li>
         <li><a href="router/2-3">router/2-3</a></li>
+        <li><a href="router/error">router/error</a></li>
         <li><a href="./">./</a></li>
         <li><a href="../">../</a></li>
         </ul>
@@ -23,7 +24,15 @@ export default function(): void {
 
     console.log(router.mode);
     console.log(router.base);
+    console.log(router.onerror);
 
+    router.onerror = (error) => {
+        console.error('onerror', error);
+    };
+
+    router.setRoute(`^${router.base}router/error`, () => {
+        throw new Error(window.location.href);
+    });
     router.setRoute(`^${router.base}router/dummy`, () => {
         console.log('dummy');
     });

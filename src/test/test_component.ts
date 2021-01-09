@@ -54,6 +54,14 @@ class TestComponent extends Component {
     protected updatedCallback(): void {
         console.log('updatedCallback');
         console.log(this.updatedCount);
+        if (this.updatedCount === 4) {
+            throw new Error('dummy');
+        }
+    }
+
+    protected errorCallback(error: Error): void {
+        console.log('errorCallback');
+        super.errorCallback(error);
     }
 
     protected handleClick(event: Event): void {
