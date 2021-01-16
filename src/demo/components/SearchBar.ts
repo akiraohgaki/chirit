@@ -48,7 +48,7 @@ export default class SearchBar extends Component {
             </style>
 
             <form onsubmit="this.handleSubmit(event)">
-            <input type="text" name="term" value="" placeholder="Search for Artist Album">
+            <input type="text" name="term" value="" placeholder="Search for Artist Album" required>
             <input type="submit" value="Search">
             </form>
         `;

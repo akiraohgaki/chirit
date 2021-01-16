@@ -5,27 +5,42 @@ export default class Root extends Component {
 
     constructor() {
         super();
-        store.state.page.subscribe(this.update.bind(this));
+        this.update = this.update.bind(this);
+    }
+
+    connectedCallback(): void {
+        super.connectedCallback();
+        store.state.page.subscribe(this.update);
+    }
+
+    disconnectedCallback(): void {
+        store.state.page.unsubscribe(this.update);
     }
 
     protected template(): string {
-        const page = store.state.page.get();
-
         let pageView = '';
-        if (page === 'search') {
-            pageView = `
-                <demo-page>
-                <demo-search-bar slot="nav"></demo-search-bar>
-                <demo-search-result slot="main"></demo-search-result>
-                </demo-page>
-            `;
-        }
-        else if (page === 'notfound') {
-            pageView = `
-                <demo-page>
-                <demo-not-found slot="main"></demo-not-found>
-                </demo-page>
-            `;
+        switch (store.state.page.get()) {
+            case 'search': {
+                pageView = `
+                    <demo-page>
+                    <demo-search-bar slot="nav"></demo-search-bar>
+                    <demo-search-result slot="main"></demo-search-result>
+                    </demo-page>
+                `;
+                break;
+            }
+            case '404': {
+                pageView = `
+                    <demo-page>
+                    <demo-not-found slot="main"></demo-not-found>
+                    </demo-page>
+                `;
+                break;
+            }
+            default: {
+                pageView = '';
+                break;
+            }
         }
 
         return `

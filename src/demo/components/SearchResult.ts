@@ -6,7 +6,16 @@ export default class SearchResult extends Component {
 
     constructor() {
         super();
-        store.state.searchResult.subscribe(this.update.bind(this));
+        this.update = this.update.bind(this);
+    }
+
+    connectedCallback(): void {
+        super.connectedCallback();
+        store.state.searchResult.subscribe(this.update);
+    }
+
+    disconnectedCallback(): void {
+        store.state.searchResult.unsubscribe(this.update);
     }
 
     protected template(): string {

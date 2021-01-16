@@ -11,8 +11,8 @@ router.setRoute(`^${router.base}$`, () => {
     store.setPage('search');
     store.resetSearch();
 });
-router.setRoute(`^${router.base}.*`, () => {
-    store.setPage('notfound');
+router.setRoute('.*', () => {
+    store.setPage('404');
 });
 
 export default router;
