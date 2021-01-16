@@ -71,8 +71,8 @@ class RouterBase {
                 }
             }
         }
-        catch (error) {
-            this._onerror(error);
+        catch (exception) {
+            this._onerror(exception);
         }
     }
 
@@ -133,8 +133,8 @@ class RouterBase {
         return null;
     }
 
-    private _onerror(error: Error): void {
-        console.error(error);
+    private _onerror(exception: any): void {
+        console.error(exception);
     }
 
 }
