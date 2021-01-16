@@ -65,8 +65,8 @@ class Store {
             this._state.searchTerm.set(term);
             this._state.searchResult.set(searchResultsCache[url]);
         }
-        catch (error) {
-            console.error(error);
+        catch (exception) {
+            console.error(exception);
         }
     }
 
