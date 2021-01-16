@@ -26,8 +26,8 @@ export default function(): void {
     console.log(router.base);
     console.log(router.onerror);
 
-    router.onerror = (error) => {
-        console.error('onerror', error);
+    router.onerror = (exception) => {
+        console.error('onerror', exception);
     };
 
     router.setRoute(`^${router.base}router/error`, () => {

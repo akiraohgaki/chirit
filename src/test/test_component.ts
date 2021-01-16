@@ -59,9 +59,9 @@ class TestComponent extends Component {
         }
     }
 
-    protected errorCallback(error: Error): void {
+    protected errorCallback(exception: any): void {
         console.log('errorCallback');
-        super.errorCallback(error);
+        super.errorCallback(exception);
     }
 
     protected handleClick(event: Event): void {
