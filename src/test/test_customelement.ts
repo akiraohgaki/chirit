@@ -88,7 +88,17 @@ export default function(): void {
     wrapper.appendChild(testElement);
 
     testElement.setAttribute('plus', '+');
-    testElement.update();
+
+    testElement.update().then(() => {
+        console.log('update promise 1');
+    });
+    testElement.update().then(() => {
+        console.log('update promise 2');
+    });
+    testElement.update().then(() => {
+        console.log('update promise 3');
+    });
+
     testElement.updateSync();
 
     console.log(testElement.updatedCount);

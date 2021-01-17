@@ -92,7 +92,17 @@ export default function(): void {
     wrapper.appendChild(testComponent);
 
     testComponent.attrs.plus = '+';
-    testComponent.update();
+
+    testComponent.update().then(() => {
+        console.log('update promise 1');
+    });
+    testComponent.update().then(() => {
+        console.log('update promise 2');
+    });
+    testComponent.update().then(() => {
+        console.log('update promise 3');
+    });
+
     testComponent.updateSync();
 
     console.log(testComponent.updatedCount);
