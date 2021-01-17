@@ -4,6 +4,7 @@ export default class CustomElement extends HTMLElement {
 
     private _updateTimerId: number | undefined;
     private _updateDelay: number;
+    private _updatePromiseResolvers: Array<{(): void}>;
 
     constructor() {
         super();
@@ -12,6 +13,7 @@ export default class CustomElement extends HTMLElement {
 
         this._updateTimerId = undefined;
         this._updateDelay = 100;
+        this._updatePromiseResolvers = [];
     }
 
     static get observedAttributes(): Array<string> {
@@ -44,7 +46,7 @@ export default class CustomElement extends HTMLElement {
         return this._updatedCount;
     }
 
-    update(): void {
+    update(): Promise<void> {
         if (this._updateTimerId !== undefined) {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
@@ -53,8 +55,21 @@ export default class CustomElement extends HTMLElement {
         this._updateTimerId = window.setTimeout(() => {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
+
+            const promiseResolvers = this._updatePromiseResolvers.splice(0);
+
             this.updateSync();
+
+            if (promiseResolvers.length) {
+                for (const resolve of promiseResolvers) {
+                    resolve();
+                }
+            }
         }, this._updateDelay);
+
+        return new Promise((resolve) => {
+            this._updatePromiseResolvers.push(resolve);
+        });
     }
 
     updateSync(): void {
