@@ -1,8 +1,48 @@
 import {Component} from '../../chirit.js';
+import store from '../store/index.js';
 
 export default class Root extends Component {
 
+    constructor() {
+        super();
+        this.update = this.update.bind(this);
+    }
+
+    connectedCallback(): void {
+        super.connectedCallback();
+        store.state.page.subscribe(this.update);
+    }
+
+    disconnectedCallback(): void {
+        store.state.page.unsubscribe(this.update);
+    }
+
     protected template(): string {
+        let pageView = '';
+        switch (store.state.page.get()) {
+            case 'search': {
+                pageView = `
+                    <demo-page>
+                    <demo-search-bar slot="nav"></demo-search-bar>
+                    <demo-search-result slot="main"></demo-search-result>
+                    </demo-page>
+                `;
+                break;
+            }
+            case '404': {
+                pageView = `
+                    <demo-page>
+                    <demo-not-found slot="main"></demo-not-found>
+                    </demo-page>
+                `;
+                break;
+            }
+            default: {
+                pageView = '';
+                break;
+            }
+        }
+
         return `
             <style>
             :host {
@@ -11,23 +51,9 @@ export default class Root extends Component {
             :host * {
                 box-sizing: border-box;
             }
-            nav,
-            article {
-                display: flex;
-                flex-flow: column nowrap;
-                align-items: center;
-                padding: 1em;
-            }
-            nav {
-                background: var(--bg-color-2nd);
-            }
-            article {
-                background: var(--bg-color);
-            }
             </style>
 
-            <nav><slot name="nav"></slot></nav>
-            <article><slot name="main"></slot></article>
+            ${pageView}
         `;
     }
 

@@ -63,8 +63,8 @@ export default class CustomElement extends HTMLElement {
             this._updatedCount++;
             this.updatedCallback();
         }
-        catch (error) {
-            this.errorCallback(error);
+        catch (exception) {
+            this.errorCallback(exception);
         }
     }
 
@@ -74,8 +74,8 @@ export default class CustomElement extends HTMLElement {
     protected updatedCallback(): void {
     }
 
-    protected errorCallback(error: Error): void {
-        console.error(error);
+    protected errorCallback(exception: any): void {
+        console.error(exception);
     }
 
 }

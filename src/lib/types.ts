@@ -3,7 +3,7 @@ export interface Dictionary<T> {
 }
 
 export interface ErrorHandler {
-    (error: Error): void;
+    (exception: any): void;
 }
 
 export interface Observer<T> {

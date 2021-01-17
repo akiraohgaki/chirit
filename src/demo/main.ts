@@ -25,10 +25,7 @@ template.innerHTML = `
     }
     </style>
 
-    <demo-root>
-    <demo-search-bar slot="nav"></demo-search-bar>
-    <demo-main-content slot="main"></demo-main-content>
-    </demo-root>
+    <demo-root></demo-root>
 `;
 document.body.appendChild(template.content);
 
