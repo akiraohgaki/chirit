@@ -28,7 +28,13 @@ export default class CustomElement extends HTMLElement {
     }
 
     connectedCallback(): void {
-        if (!this._updatedCount) {
+        // Runs update task when this Element has connected to parent Node
+        if (this._updatedCount) {
+            // Re-update, this Element may have moved into another parent Node
+            this.update();
+        }
+        else {
+            // Initial update
             this.updateSync();
         }
     }
@@ -48,6 +54,7 @@ export default class CustomElement extends HTMLElement {
     }
 
     update(): Promise<void> {
+        // This is an asynchronous update method that scheduled updates
         if (this._updateTimerId !== undefined) {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
@@ -57,6 +64,7 @@ export default class CustomElement extends HTMLElement {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
 
+            // Take out Promise resolvers of this update point before the updating starts
             const promiseResolvers = this._updatePromiseResolvers.splice(0);
 
             this.updateSync();
