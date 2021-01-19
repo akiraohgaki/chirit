@@ -43,6 +43,7 @@ export default class WebStorage {
     }
 
     setItem(key: string, value: any): void {
+        // Makes any type value into special object and serialise to JSON
         this._storage.setItem(
             this._prefix + key,
             JSON.stringify({_k: key, _v: value})
@@ -53,19 +54,22 @@ export default class WebStorage {
         const value = this._storage.getItem(this._prefix + key);
         if (value) {
             try {
-                // JSON.parse() will throw parse error if the value is invalid JSON data
+                // JSON.parse() will throw a parse error if the value is not valid JSON
                 const deserializedValue = JSON.parse(value);
                 if (deserializedValue
                     && deserializedValue._k === key
                     && deserializedValue._v !== undefined
                 ) {
+                    // Will return original value
                     return deserializedValue._v;
                 }
             }
             catch {
+                // Will return string
                 return value;
             }
         }
+        // Will return string or null
         return value;
     }
 

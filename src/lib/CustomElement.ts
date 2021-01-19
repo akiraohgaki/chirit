@@ -21,6 +21,7 @@ export default class CustomElement extends HTMLElement {
     }
 
     attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
+        // Runs update task when observed attribute has changed but don't run before initial update
         if (this._updatedCount && oldValue !== newValue) {
             this.update();
         }

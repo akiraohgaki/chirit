@@ -1,8 +1,9 @@
 import {Dictionary, ErrorHandler, RouteHandler, RouterMode} from './types.js';
 
+// Checks if ES2018 RegExp named capture groups is available
 let isRegExpNamedCaptureGroupsAvailable = false;
 try {
-    // RegExp will throw regexp syntax error if RegExp named capture groups is not available
+    // RegExp will throw a regexp syntax error if RegExp named capture groups is not available
     const matches = 'Named capture groups'.match(/(?<name>.+)/);
     isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
 }
@@ -81,8 +82,8 @@ class RouterBase {
     }
 
     private _fixRoutePattern(pattern: string): string {
-        // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups like (?:pattern)
-        // Just in case, the pattern may start with ":" so prepend "/" to the pattern then remove it when replacement finished
+        // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups (?:pattern)
+        // Pattern may start with ":" so prefix the pattern with "/" and remove it when the replacement complete
         return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 
@@ -99,8 +100,8 @@ class RouterBase {
             }
         }
         else {
-            // This is workaround for RegExp named capture groups unsupported environment
-            // but does not work expected in case of named capture groups within named capture groups like (?<name>(?<name>pattern))
+            // Here is a workaround for environments that not supported RegExp named capture groups
+            // And does not work expected in case of named capture groups inside of named capture groups (?<name>(?<name>pattern))
             const groupNames: Array<string> = [];
 
             const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
@@ -142,7 +143,7 @@ class RouterBase {
 class HashRouter extends RouterBase {
 
     constructor(base: string = '') {
-        // The base should be base path part of path represented with URL fragment
+        // The base should be the base path part of the path represented with URL fragment
         super(base);
 
         this._handleHashchange = this._handleHashchange.bind(this);
