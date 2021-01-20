@@ -86,20 +86,19 @@ export default class NodeContent<T extends Node> {
         else if (original && diff) {
             if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
                 if (original instanceof Element && diff instanceof Element) {
-                    // The Element will be like HTMLElement, SVGElement
+                    // Element it's HTMLElement, SVGElement
                     this._patchAttributes(original, diff);
                     if (!containerCollection.has(original)) {
                         this._patchNodesInsideOf(original, diff);
                     }
                 }
                 else if (original instanceof CharacterData && diff instanceof CharacterData) {
-                    // The CharacterData will be like Text, Comment, ProcessingInstruction
+                    // CharacterData it's Text, Comment, ProcessingInstruction
                     if (original.nodeValue !== diff.nodeValue) {
                         original.nodeValue = diff.nodeValue;
                     }
                 }
                 else {
-                    // The Node is any other node types
                     parent.replaceChild(diff.cloneNode(true), original);
                 }
             }

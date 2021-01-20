@@ -4,6 +4,7 @@ export default class CustomElement extends HTMLElement {
 
     private _updateTimerId: number | undefined;
     private _updateDelay: number;
+    private _updatePromiseResolvers: Array<{(): void}>;
 
     constructor() {
         super();
@@ -12,6 +13,7 @@ export default class CustomElement extends HTMLElement {
 
         this._updateTimerId = undefined;
         this._updateDelay = 100;
+        this._updatePromiseResolvers = [];
     }
 
     static get observedAttributes(): Array<string> {
@@ -19,13 +21,20 @@ export default class CustomElement extends HTMLElement {
     }
 
     attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
+        // Runs update task when observed attribute has changed but don't run before initial update
         if (this._updatedCount && oldValue !== newValue) {
             this.update();
         }
     }
 
     connectedCallback(): void {
-        if (!this._updatedCount) {
+        // Runs update task when this Element has connected to parent Node
+        if (this._updatedCount) {
+            // Re-update, this Element may have moved into another parent Node
+            this.update();
+        }
+        else {
+            // Initial update
             this.updateSync();
         }
     }
@@ -44,7 +53,8 @@ export default class CustomElement extends HTMLElement {
         return this._updatedCount;
     }
 
-    update(): void {
+    update(): Promise<void> {
+        // This is an asynchronous updating method that scheduled updates
         if (this._updateTimerId !== undefined) {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
@@ -53,11 +63,26 @@ export default class CustomElement extends HTMLElement {
         this._updateTimerId = window.setTimeout(() => {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
+
+            // Take out Promise resolvers of this update point before the updating starts
+            const promiseResolvers = this._updatePromiseResolvers.splice(0);
+
             this.updateSync();
+
+            if (promiseResolvers.length) {
+                for (const resolve of promiseResolvers) {
+                    resolve();
+                }
+            }
         }, this._updateDelay);
+
+        return new Promise((resolve) => {
+            this._updatePromiseResolvers.push(resolve);
+        });
     }
 
     updateSync(): void {
+        // This is a synchronous updating method that calls an additional lifecycle callbacks
         try {
             this.render();
             this._updatedCount++;
