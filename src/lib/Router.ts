@@ -83,7 +83,7 @@ class RouterBase {
 
     private _fixRoutePattern(pattern: string): string {
         // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups (?:pattern)
-        // Pattern may start with ":" so prefix the pattern with "/" and remove it when the replacement complete
+        // The pattern may start with ":" so prefix the pattern with "/" and remove it when the replacement complete
         return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 

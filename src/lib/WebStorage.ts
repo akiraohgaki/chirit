@@ -43,7 +43,8 @@ export default class WebStorage {
     }
 
     setItem(key: string, value: any): void {
-        // Makes any type value into special object and serialise to JSON
+        // Adds prefix to the key
+        // and makes the value into special object and serialise to JSON
         this._storage.setItem(
             this._prefix + key,
             JSON.stringify({_k: key, _v: value})
@@ -51,6 +52,8 @@ export default class WebStorage {
     }
 
     getItem(key: string): any {
+        // Checks if the value is JSON created from special object and returns original value
+        // otherwise just returns the value
         const value = this._storage.getItem(this._prefix + key);
         if (value) {
             try {

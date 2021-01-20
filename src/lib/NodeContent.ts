@@ -99,7 +99,6 @@ export default class NodeContent<T extends Node> {
                     }
                 }
                 else {
-                    // This Node is any other node types
                     parent.replaceChild(diff.cloneNode(true), original);
                 }
             }

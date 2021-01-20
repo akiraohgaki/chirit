@@ -54,7 +54,7 @@ export default class CustomElement extends HTMLElement {
     }
 
     update(): Promise<void> {
-        // This is an asynchronous update method that scheduled updates
+        // This is an asynchronous updating method that scheduled updates
         if (this._updateTimerId !== undefined) {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
@@ -82,6 +82,7 @@ export default class CustomElement extends HTMLElement {
     }
 
     updateSync(): void {
+        // This is a synchronous updating method that calls an additional lifecycle callbacks
         try {
             this.render();
             this._updatedCount++;
