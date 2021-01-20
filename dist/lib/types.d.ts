@@ -2,7 +2,7 @@ export interface Dictionary<T> {
     [key: string]: T;
 }
 export interface ErrorHandler {
-    (error: Error): void;
+    (exception: any): void;
 }
 export interface Observer<T> {
     (value: T): void;

@@ -4,6 +4,7 @@ export default class CustomElement extends HTMLElement {
         this._updatedCount = 0;
         this._updateTimerId = undefined;
         this._updateDelay = 100;
+        this._updatePromiseResolvers = [];
     }
     static get observedAttributes() {
         return [];
@@ -14,7 +15,10 @@ export default class CustomElement extends HTMLElement {
         }
     }
     connectedCallback() {
-        if (!this._updatedCount) {
+        if (this._updatedCount) {
+            this.update();
+        }
+        else {
             this.updateSync();
         }
     }
@@ -36,8 +40,17 @@ export default class CustomElement extends HTMLElement {
         this._updateTimerId = window.setTimeout(() => {
             window.clearTimeout(this._updateTimerId);
             this._updateTimerId = undefined;
+            const promiseResolvers = this._updatePromiseResolvers.splice(0);
             this.updateSync();
+            if (promiseResolvers.length) {
+                for (const resolve of promiseResolvers) {
+                    resolve();
+                }
+            }
         }, this._updateDelay);
+        return new Promise((resolve) => {
+            this._updatePromiseResolvers.push(resolve);
+        });
     }
     updateSync() {
         try {
@@ -45,16 +58,16 @@ export default class CustomElement extends HTMLElement {
             this._updatedCount++;
             this.updatedCallback();
         }
-        catch (error) {
-            this.errorCallback(error);
+        catch (exception) {
+            this.errorCallback(exception);
         }
     }
     render() {
     }
     updatedCallback() {
     }
-    errorCallback(error) {
-        console.error(error);
+    errorCallback(exception) {
+        console.error(exception);
     }
 }
 //# sourceMappingURL=CustomElement.js.map

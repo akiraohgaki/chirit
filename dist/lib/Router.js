@@ -51,8 +51,8 @@ class RouterBase {
                 }
             }
         }
-        catch (error) {
-            this._onerror(error);
+        catch (exception) {
+            this._onerror(exception);
         }
     }
     resolveBaseUrl(url) {
@@ -101,8 +101,8 @@ class RouterBase {
         }
         return null;
     }
-    _onerror(error) {
-        console.error(error);
+    _onerror(exception) {
+        console.error(exception);
     }
 }
 class HashRouter extends RouterBase {
