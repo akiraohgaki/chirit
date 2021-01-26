@@ -1,6 +1,7 @@
 import {Component} from '../../chirit.js';
 import store from '../store/index.js';
 import {escapeHtml} from './utils.js';
+import {styleReset} from './styles.js';
 
 export default class SearchResult extends Component {
 
@@ -40,16 +41,11 @@ export default class SearchResult extends Component {
         }
 
         return `
+            <style>${styleReset}</style>
+
             <style>
-            :host {
-                display: block;
-            }
-            :host * {
-                box-sizing: border-box;
-            }
             h2 {
                 text-align: center;
-                font: 16px/1 system-ui;
                 color: var(--fg-color);
             }
             ul {

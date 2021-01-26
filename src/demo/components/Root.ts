@@ -1,5 +1,6 @@
 import {Component} from '../../chirit.js';
 import store from '../store/index.js';
+import {styleReset} from './styles.js';
 
 export default class Root extends Component {
 
@@ -44,14 +45,7 @@ export default class Root extends Component {
         }
 
         return `
-            <style>
-            :host {
-                display: block;
-            }
-            :host * {
-                box-sizing: border-box;
-            }
-            </style>
+            <style>${styleReset}</style>
 
             ${pageView}
         `;
