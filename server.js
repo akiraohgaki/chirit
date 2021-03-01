@@ -21,7 +21,9 @@ const config = {
         'js': 'text/javascript',
         'css': 'text/css',
         'json': 'application/json',
-        'svg': 'image/svg+xml'
+        'svg': 'image/svg+xml',
+        'jpg': 'image/jpeg',
+        'png': 'image/png'
     },
     rewriteRules: [],
     ...configOverride
