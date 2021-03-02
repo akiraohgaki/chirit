@@ -1,16 +1,13 @@
 import {Component} from '../../chirit.js';
+import {styleReset} from './styles.js';
 
 export default class Page extends Component {
 
     protected template(): string {
         return `
+            <style>${styleReset}</style>
+
             <style>
-            :host {
-                display: block;
-            }
-            :host * {
-                box-sizing: border-box;
-            }
             nav,
             article {
                 display: flex;

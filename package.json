@@ -9,6 +9,7 @@
         "type": "git",
         "url": "git+https://github.com/akiraohgaki/chirit.git"
     },
+    "type": "module",
     "main": "dist/chirit.js",
     "types": "dist/chirit.d.ts",
     "scripts": {
@@ -23,6 +24,8 @@
         "typescript": "*",
         "eslint": "*",
         "@typescript-eslint/parser": "*",
-        "@typescript-eslint/eslint-plugin": "*"
+        "@typescript-eslint/eslint-plugin": "*",
+        "@types/node": "*",
+        "simple-dev-server": "https://github.com/akiraohgaki/simple-dev-server.git#v1.0.0"
     }
 }
