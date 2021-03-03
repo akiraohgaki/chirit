@@ -26,6 +26,6 @@
         "@typescript-eslint/parser": "*",
         "@typescript-eslint/eslint-plugin": "*",
         "@types/node": "*",
-        "simple-dev-server": "git+https://github.com/akiraohgaki/simple-dev-server.git#v1.0.0"
+        "simple-dev-server": "git+https://github.com/akiraohgaki/simple-dev-server.git"
     }
 }
