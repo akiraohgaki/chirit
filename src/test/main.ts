@@ -18,41 +18,28 @@ const handlerCollection = new Map([
     ['test_webstorage', test_webstorage]
 ]);
 
-let listItems = '';
+let navItems = '';
 for (const key of handlerCollection.keys()) {
-    listItems += `<li><a href="#" data-handler="${key}">${key}</a></li>`;
+    navItems += `<a href="#" data-handler="${key}">${key}</a>`;
 }
 
 const template = document.createElement('template');
 template.innerHTML = `
     <style>
-    #nav ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
+    body {
+        font: 1rem/1.5 system-ui;
     }
-    #nav ul li {
-        display: inline-block;
-        margin: 0;
-        padding: 0.4em;
-    }
+
     #nav a {
         display: inline-block;
-        padding: 0.6em;
-        border-radius: 1.2em;
+        margin: 0.2rem 1rem;
         text-decoration: none;
-        font: 12px/1 system-ui;
-        color: ghostwhite;
-        background: deepskyblue;
-        transition: background 0.3s;
-    }
-    #nav a:hover {
-        background: dodgerblue;
+        color: dodgerblue;
     }
     </style>
 
-    <nav id="nav"><ul>${listItems}</ul></nav>
-    <main id="main"></main>
+    <nav id="nav">${navItems}</nav>
+    <main id="main">See console log</main>
 `;
 document.body.appendChild(template.content);
 
