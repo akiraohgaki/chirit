@@ -1,15 +1,34 @@
 import './components/index.js';
-import {styleColors} from './components/styles.js';
 import router from './router/index.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
-    <style>${styleColors}</style>
+    <style>
+    :root {
+        --fg-color: #eeeeee;
+        --fg-color-2nd: #aaaaaa;
+        --bg-color: #222831;
+        --bg-color-2nd: #222831;
+        --widget-fg-color: #eeeeee;
+        --widget-fg-color-2nd: #aaaaaa;
+        --widget-bg-color: #222831;
+        --widget-border-color: #393e46;
+    }
+    </style>
 
     <style>
+    *,
+    ::before,
+    ::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        font: 14px/1.5 system-ui;
+    }
+
     body {
         margin: 0;
-        padding: 0;
         background: var(--bg-color);
     }
     </style>

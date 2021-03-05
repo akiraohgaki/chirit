@@ -1,29 +1,32 @@
 import {Component} from '../../chirit.js';
 import router from '../router/index.js';
-import {styleReset} from './styles.js';
+import * as styles from './styles.js';
 
 export default class SearchBar extends Component {
 
     protected template(): string {
         return `
-            <style>${styleReset}</style>
+            <style>${styles.reset}</style>
 
             <style>
             :host {
                 display: inline-block;
-                box-shadow: 0 0 0.4em rgba(0, 0, 0, 0.3);
-                width: 500px;
-                height: 40px;
+                box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.3);
+                width: 30rem;
+                height: 2.5rem;
             }
+
             form {
                 display: flex;
                 flex-flow: row nowrap;
                 width: 100%;
                 height: 100%;
             }
+
             input {
                 border: 2px solid var(--widget-border-color);
             }
+
             input[type="text"] {
                 flex: auto;
                 border-right-width: 0;
@@ -31,6 +34,7 @@ export default class SearchBar extends Component {
                 color: var(--widget-fg-color);
                 background: var(--widget-bg-color);
             }
+
             input[type="submit"] {
                 border-left-width: 0;
                 border-radius: 0 5px 5px 0;

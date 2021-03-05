@@ -1,7 +1,7 @@
 import {Component} from '../../chirit.js';
 import router from '../router/index.js';
 import {escapeHtml} from './utils.js';
-import {styleReset} from './styles.js';
+import * as styles from './styles.js';
 
 export default class ArtistAlbum extends Component {
 
@@ -11,26 +11,30 @@ export default class ArtistAlbum extends Component {
 
     protected template(): string {
         return `
-            <style>${styleReset}</style>
+            <style>${styles.reset}</style>
 
             <style>
             :host {
                 display: inline-block;
             }
+
             div {
                 display: flex;
                 flex-flow: column nowrap;
                 width: 200px;
             }
+
             img {
-                box-shadow: 0 0 0.4em rgba(0, 0, 0, 0.3);
+                box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.3);
                 width: 200px;
                 height: 200px;
             }
+
             h4 {
-                margin: 0.6em 0;
+                margin: 0.6rem 0;
                 color: var(--fg-color);
             }
+
             p {
                 margin: 0;
                 color: var(--fg-color-2nd);
