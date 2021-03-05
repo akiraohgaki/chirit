@@ -17,14 +17,14 @@ template.innerHTML = `
     </style>
 
     <style>
+    :root {
+        font: 14px/1.5 system-ui;
+    }
+
     *,
     ::before,
     ::after {
         box-sizing: border-box;
-    }
-
-    html {
-        font: 14px/1.5 system-ui;
     }
 
     body {
