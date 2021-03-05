@@ -26,8 +26,8 @@ for (const key of handlerCollection.keys()) {
 const template = document.createElement('template');
 template.innerHTML = `
     <style>
-    body {
-        font: 1rem/1.5 system-ui;
+    :root {
+        font: 14px/1.5 system-ui;
     }
 
     #nav a {
