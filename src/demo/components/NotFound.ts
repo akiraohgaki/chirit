@@ -1,18 +1,19 @@
 import {Component} from '../../chirit.js';
 import router from '../router/index.js';
-import {styleReset} from './styles.js';
+import * as styles from './styles.js';
 
 export default class NotFound extends Component {
 
     protected template(): string {
         return `
-            <style>${styleReset}</style>
+            <style>${styles.reset}</style>
 
             <style>
             h2 {
                 text-align: center;
                 color: var(--fg-color);
             }
+
             p {
                 margin: 0;
                 color: var(--fg-color-2nd);

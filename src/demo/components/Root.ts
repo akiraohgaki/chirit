@@ -1,6 +1,6 @@
 import {Component} from '../../chirit.js';
 import store from '../store/index.js';
-import {styleReset} from './styles.js';
+import * as styles from './styles.js';
 
 export default class Root extends Component {
 
@@ -45,7 +45,7 @@ export default class Root extends Component {
         }
 
         return `
-            <style>${styleReset}</style>
+            <style>${styles.reset}</style>
 
             ${pageView}
         `;
