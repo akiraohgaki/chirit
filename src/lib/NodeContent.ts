@@ -1,4 +1,4 @@
-import {NodeContentData} from './types.js';
+import type {NodeContentData} from './types.js';
 
 const containerCollection = new WeakSet();
 

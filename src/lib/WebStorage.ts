@@ -1,4 +1,4 @@
-import {WebStorageMode} from './types.js';
+import type {WebStorageMode} from './types.js';
 
 export default class WebStorage {
 

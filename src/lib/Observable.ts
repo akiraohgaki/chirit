@@ -1,4 +1,4 @@
-import {Observer} from './types.js';
+import type {Observer} from './types.js';
 
 export default class Observable<T = any> {
 
