@@ -26,7 +26,7 @@ export default class SearchResult extends Component {
         const title = searchTerm ? `Search for <q>${escapeHtml(searchTerm)}</q>` : '';
 
         let listItems = '';
-        if (searchResult.resultCount) {
+        if (searchResult.results?.length) {
             for (const result of searchResult.results) {
                 listItems += `
                     <li>

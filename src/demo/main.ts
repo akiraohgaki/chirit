@@ -30,6 +30,7 @@ template.innerHTML = `
     body {
         margin: 0;
         background: var(--bg-color);
+        color: var(--fg-color);
     }
     </style>
 

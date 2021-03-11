@@ -12,13 +12,19 @@ export const reset = `
 h1,
 h2,
 h3 {
+    margin: 1rem 0;
     font-size: 1.4rem;
 }
 
 h4,
 h5,
 h6 {
+    margin: 1rem 0;
     font-size: 1rem;
+}
+
+p {
+    margin: 1rem 0;
 }
 
 a {

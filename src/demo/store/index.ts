@@ -1,29 +1,19 @@
-import {ObservableValue, WebStorage} from '../../chirit.js';
+import type {State} from '../types.js';
 
-interface ApiResult {
-    [key: string]: any;
-}
-
-interface State {
-    page: ObservableValue<string>;
-    searchTerm: ObservableValue<string>;
-    searchResult: ObservableValue<ApiResult>;
-}
+import {ObservableValue} from '../../chirit.js';
+import api from '../api/index.js';
 
 class Store {
 
     private _state: State;
 
-    private _webStorage: WebStorage;
-
     constructor() {
         this._state = {
             page: new ObservableValue(''),
             searchTerm: new ObservableValue(''),
-            searchResult: new ObservableValue({})
+            searchResult: new ObservableValue({}),
+            error: new ObservableValue(new Error())
         };
-
-        this._webStorage = new WebStorage('session', 'demo_');
 
         this._state.page.subscribe(() => {
             if (document.scrollingElement) {
@@ -47,27 +37,13 @@ class Store {
     }
 
     async search(term: string): Promise<void> {
-        try {
-            const url = `https://itunes.apple.com/search?media=music&entity=album&term=${encodeURIComponent(term)}`;
+        const responseData = await api.searchITunesMusic(term);
+        this._state.searchTerm.set(term);
+        this._state.searchResult.set(responseData);
+    }
 
-            const searchResultsCache = this._webStorage.getItem('searchResultsCache') ?? {};
-
-            if (!(url in searchResultsCache)) {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('Network error');
-                }
-                const result = await response.json();
-                searchResultsCache[url] = result;
-                this._webStorage.setItem('searchResultsCache', searchResultsCache);
-            }
-
-            this._state.searchTerm.set(term);
-            this._state.searchResult.set(searchResultsCache[url]);
-        }
-        catch (exception) {
-            console.error(exception);
-        }
+    setError(error: Error): void {
+        this._state.error.set(error);
     }
 
 }

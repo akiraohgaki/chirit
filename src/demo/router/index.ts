@@ -3,16 +3,23 @@ import store from '../store/index.js';
 
 const router = new Router('history', '/demo/');
 
-router.setRoute(`^${router.base}search/:term`, (params) => {
-    store.setPage('search');
-    store.search(decodeURIComponent(params.term));
+router.setRoute(`^${router.base}search/:term`, async (params) => {
+    try {
+        await store.search(decodeURIComponent(params.term));
+        store.setPage('search');
+    }
+    catch (exeption) {
+        store.setError(exeption);
+        store.setPage('error');
+    }
 });
 router.setRoute(`^${router.base}$`, () => {
-    store.setPage('search');
     store.resetSearch();
+    store.setPage('search');
 });
 router.setRoute('.*', () => {
-    store.setPage('404');
+    store.setError(new Error('Page not found'));
+    store.setPage('error');
 });
 
 export default router;
