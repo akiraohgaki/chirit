@@ -1,4 +1,5 @@
-import {ComponentContentContainer, NodeContentData} from './types.js';
+import type {ComponentContentContainer, NodeContentData} from './types.js';
+
 import CustomElement from './CustomElement.js';
 import ElementAttributesProxy from './ElementAttributesProxy.js';
 import NodeContent from './NodeContent.js';

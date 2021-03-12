@@ -1,4 +1,4 @@
-import {Dictionary, ErrorHandler, RouteHandler, RouterMode} from './types.js';
+import type {Dictionary, ErrorHandler, RouteHandler, RouterMode} from './types.js';
 
 // Checks if ES2018 RegExp named capture groups is available
 let isRegExpNamedCaptureGroupsAvailable = false;

@@ -30,10 +30,10 @@ export default class Root extends Component {
                 `;
                 break;
             }
-            case '404': {
+            case 'error': {
                 pageView = `
                     <demo-page>
-                    <demo-not-found slot="main"></demo-not-found>
+                    <demo-error-content slot="main"></demo-error-content>
                     </demo-page>
                 `;
                 break;

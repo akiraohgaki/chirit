@@ -1,9 +1,10 @@
 import {SimpleDevServer} from 'simple-dev-server';
 
 const server = new SimpleDevServer({
+    documentRoot: process.cwd() + '/dist',
     rewriteRules: [
-        ['^/demo/', '/src/demo/index.html'],
-        ['^/test/', '/src/test/index.html']
+        ['(.+\\.\\w+)$', '$1'],
+        ['^/(demo|test)/.*', '/../src/$1/index.html']
     ]
 });
 server.start();
