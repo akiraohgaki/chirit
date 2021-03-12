@@ -1,4 +1,4 @@
-import { NodeContentData } from './types.js';
+import type { NodeContentData } from './types.js';
 export default class NodeContent<T extends Node> {
     private _container;
     private _context;
