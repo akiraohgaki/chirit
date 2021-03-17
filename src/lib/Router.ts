@@ -1,4 +1,4 @@
-import type {Dictionary, OnErrorHandler, RouteHandler, RouterMode} from './types.js';
+import type {Dictionary, OnEventHandler, OnErrorHandler, RouteHandler, RouterMode} from './types.js';
 
 // Checks if ES2018 RegExp named capture groups is available
 let isRegExpNamedCaptureGroupsAvailable = false;
@@ -15,6 +15,7 @@ export default class Router {
 
     private _mode: RouterMode;
     private _base: string;
+    private _onchange: OnEventHandler;
     private _onerror: OnErrorHandler;
 
     private _routeCollection: Map<string, RouteHandler>;
@@ -28,6 +29,7 @@ export default class Router {
         // the base should be the base path part of the path represented with URL fragment
         this._mode = mode;
         this._base = (base && !base.endsWith('/')) ? base + '/' : base;
+        this._onchange = () => {};
         this._onerror = () => {};
 
         this._routeCollection = new Map();
@@ -42,6 +44,14 @@ export default class Router {
 
     get base(): string {
         return this._base;
+    }
+
+    set onchange(handler: OnEventHandler) {
+        this._onchange = handler;
+    }
+
+    get onchange(): OnEventHandler {
+        return this._onchange;
     }
 
     set onerror(handler: OnErrorHandler) {
@@ -128,16 +138,19 @@ export default class Router {
 
         if (newUrl.href !== window.location.href) {
             window.history.pushState({}, '', newUrl.href);
+            this._onchange(new CustomEvent('pushstate'));
         }
 
         this._invokeRouteHandler(newUrl.pathname);
     }
 
-    private _handleHashchange(): void {
+    private _handleHashchange(event: HashChangeEvent): void {
+        this._onchange(event);
         this._invokeRouteHandler(window.location.hash.substring(1));
     }
 
-    private _handlePopstate(): void {
+    private _handlePopstate(event: PopStateEvent): void {
+        this._onchange(event);
         this._invokeRouteHandler(window.location.pathname);
     }
 
