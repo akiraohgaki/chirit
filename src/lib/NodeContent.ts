@@ -1,4 +1,4 @@
-import type {NodeContentData} from './types.js';
+import type {Dictionary, OnEventHandler, NodeContentData} from './types.js';
 
 const containerCollection = new WeakSet();
 
@@ -145,7 +145,7 @@ export default class NodeContent<T extends Node> {
             for (const attribute of Array.from(target.attributes)) {
                 if (attribute.name.search(/^on\w+/i) !== -1) {
                     const onevent = attribute.name.toLowerCase();
-                    const oneventTarget = (target as any) as {[key: string]: {(event: Event): unknown}};
+                    const oneventTarget = (target as any) as Dictionary<OnEventHandler>;
                     if (onevent in target && typeof oneventTarget[onevent] === 'function') {
                         const handler = new Function('event', attribute.value);
                         target.removeAttribute(attribute.name);

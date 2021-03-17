@@ -2,8 +2,12 @@ export interface Dictionary<T> {
     [key: string]: T;
 }
 
-export interface ErrorHandler {
-    (exception: any): void;
+export interface OnEventHandler {
+    (event: Event): any;
+}
+
+export interface OnErrorHandler {
+    (exception: any): any;
 }
 
 export interface Observer<T> {

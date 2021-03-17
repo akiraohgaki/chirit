@@ -1,4 +1,4 @@
-import type {Dictionary, ErrorHandler, RouteHandler, RouterMode} from './types.js';
+import type {Dictionary, OnErrorHandler, RouteHandler, RouterMode} from './types.js';
 
 // Checks if ES2018 RegExp named capture groups is available
 let isRegExpNamedCaptureGroupsAvailable = false;
@@ -27,11 +27,11 @@ class RouterBase {
         return this._base;
     }
 
-    set onerror(handler: ErrorHandler) {
+    set onerror(handler: OnErrorHandler) {
         this._onerror = handler;
     }
 
-    get onerror(): ErrorHandler {
+    get onerror(): OnErrorHandler {
         return this._onerror;
     }
 
@@ -263,11 +263,11 @@ export default class Router {
         return this._router.base;
     }
 
-    set onerror(handler: ErrorHandler) {
+    set onerror(handler: OnErrorHandler) {
         this._router.onerror = handler;
     }
 
-    get onerror(): ErrorHandler {
+    get onerror(): OnErrorHandler {
         return this._router.onerror;
     }
 
