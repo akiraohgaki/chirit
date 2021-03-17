@@ -30,7 +30,7 @@ export default class Router {
         this._mode = mode;
         this._base = (base && !base.endsWith('/')) ? base + '/' : base;
         this._onchange = () => {};
-        this._onerror = () => {};
+        this._onerror = (exception) => {console.error(exception);};
 
         this._routeCollection = new Map();
 
