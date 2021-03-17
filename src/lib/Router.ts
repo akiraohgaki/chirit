@@ -11,16 +11,33 @@ catch {
     isRegExpNamedCaptureGroupsAvailable = false;
 }
 
-class RouterBase {
+export default class Router {
 
+    private _mode: RouterMode;
     private _base: string;
+    private _onerror: OnErrorHandler;
 
     private _routeCollection: Map<string, RouteHandler>;
 
-    constructor(base: string = '') {
+    constructor(mode: RouterMode, base: string = '') {
+        if (mode !== 'hash' && mode !== 'history') {
+            throw new Error('The mode must be set "hash" or "history".');
+        }
+
+        // If the mode is 'hash',
+        // the base should be the base path part of the path represented with URL fragment
+        this._mode = mode;
         this._base = (base && !base.endsWith('/')) ? base + '/' : base;
+        this._onerror = () => {};
 
         this._routeCollection = new Map();
+
+        this._handleHashchange = this._handleHashchange.bind(this);
+        this._handlePopstate = this._handlePopstate.bind(this);
+    }
+
+    get mode(): RouterMode {
+        return this._mode;
     }
 
     get base(): string {
@@ -37,7 +54,12 @@ class RouterBase {
 
     setRoute(pattern: string, handler: RouteHandler): void {
         if (!this._routeCollection.size) {
-            this.addEventListener();
+            if (this._mode === 'hash') {
+                window.addEventListener('hashchange', this._handleHashchange);
+            }
+            else if (this._mode === 'history') {
+                window.addEventListener('popstate', this._handlePopstate);
+            }
         }
 
         this._routeCollection.set(this._fixRoutePattern(pattern), handler);
@@ -47,20 +69,79 @@ class RouterBase {
         this._routeCollection.delete(this._fixRoutePattern(pattern));
 
         if (!this._routeCollection.size) {
-            this.removeEventListener();
+            if (this._mode === 'hash') {
+                window.removeEventListener('hashchange', this._handleHashchange);
+            }
+            else if (this._mode === 'history') {
+                window.removeEventListener('popstate', this._handlePopstate);
+            }
         }
     }
 
-    navigate(_url: string): void {
+    navigate(url: string): void {
+        if (this._mode === 'hash') {
+            this._navigateWithHashMode(url);
+        }
+        else if (this._mode === 'history') {
+            this._navigateWithHistoryMode(url);
+        }
     }
 
-    protected addEventListener(): void {
+    private _navigateWithHashMode(url: string): void {
+        let newVirtualPath = '';
+
+        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
+            const newUrl = new URL(url, window.location.href);
+            const newUrlParts = newUrl.href.split('#');
+            const oldUrlParts = window.location.href.split('#');
+
+            if (newUrlParts[0] !== oldUrlParts[0]) {
+                window.location.href = newUrl.href;
+                return;
+            }
+
+            newVirtualPath = newUrlParts[1] ?? '';
+        }
+        else {
+            newVirtualPath = url;
+        }
+
+        const oldVirtualPath = window.location.hash.substring(1);
+        const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
+        const newVirtualUrl = new URL(this._resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
+
+        if (newVirtualUrl.pathname !== oldVirtualPath) {
+            window.location.hash = newVirtualUrl.pathname;
+            return;
+        }
+
+        this._invokeRouteHandler(newVirtualUrl.pathname);
     }
 
-    protected removeEventListener(): void {
+    private _navigateWithHistoryMode(url: string): void {
+        const newUrl = new URL(this._resolveBaseUrl(url), window.location.href);
+
+        if (newUrl.origin !== window.location.origin) {
+            window.location.href = newUrl.href;
+            return;
+        }
+
+        if (newUrl.href !== window.location.href) {
+            window.history.pushState({}, '', newUrl.href);
+        }
+
+        this._invokeRouteHandler(newUrl.pathname);
     }
 
-    protected invokeRouteHandler(path: string): void {
+    private _handleHashchange(): void {
+        this._invokeRouteHandler(window.location.hash.substring(1));
+    }
+
+    private _handlePopstate(): void {
+        this._invokeRouteHandler(window.location.pathname);
+    }
+
+    private _invokeRouteHandler(path: string): void {
         try {
             if (this._routeCollection.size) {
                 for (const [pattern, handler] of this._routeCollection) {
@@ -77,7 +158,7 @@ class RouterBase {
         }
     }
 
-    protected resolveBaseUrl(url: string): string {
+    private _resolveBaseUrl(url: string): string {
         return (this._base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this._base + url : url;
     }
 
@@ -132,155 +213,6 @@ class RouterBase {
             }
         }
         return null;
-    }
-
-    private _onerror(exception: any): void {
-        console.error(exception);
-    }
-
-}
-
-class HashRouter extends RouterBase {
-
-    constructor(base: string = '') {
-        // The base should be the base path part of the path represented with URL fragment
-        super(base);
-
-        this._handleHashchange = this._handleHashchange.bind(this);
-    }
-
-    navigate(url: string): void {
-        let newVirtualPath = '';
-
-        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
-            const newUrl = new URL(url, window.location.href);
-            const newUrlParts = newUrl.href.split('#');
-            const oldUrlParts = window.location.href.split('#');
-
-            if (newUrlParts[0] !== oldUrlParts[0]) {
-                window.location.href = newUrl.href;
-                return;
-            }
-
-            newVirtualPath = newUrlParts[1] ?? '';
-        }
-        else {
-            newVirtualPath = url;
-        }
-
-        const oldVirtualPath = window.location.hash.substring(1);
-        const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
-        const newVirtualUrl = new URL(this.resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
-
-        if (newVirtualUrl.pathname !== oldVirtualPath) {
-            window.location.hash = newVirtualUrl.pathname;
-            return;
-        }
-
-        this.invokeRouteHandler(newVirtualUrl.pathname);
-    }
-
-    protected addEventListener(): void {
-        window.addEventListener('hashchange', this._handleHashchange);
-    }
-
-    protected removeEventListener(): void {
-        window.removeEventListener('hashchange', this._handleHashchange);
-    }
-
-    private _handleHashchange(): void {
-        this.invokeRouteHandler(window.location.hash.substring(1));
-    }
-
-}
-
-class HistoryRouter extends RouterBase {
-
-    constructor(base: string = '') {
-        super(base);
-
-        this._handlePopstate = this._handlePopstate.bind(this);
-    }
-
-    navigate(url: string): void {
-        const newUrl = new URL(this.resolveBaseUrl(url), window.location.href);
-
-        if (newUrl.origin !== window.location.origin) {
-            window.location.href = newUrl.href;
-            return;
-        }
-
-        if (newUrl.href !== window.location.href) {
-            window.history.pushState({}, '', newUrl.href);
-        }
-
-        this.invokeRouteHandler(newUrl.pathname);
-    }
-
-    protected addEventListener(): void {
-        window.addEventListener('popstate', this._handlePopstate);
-    }
-
-    protected removeEventListener(): void {
-        window.removeEventListener('popstate', this._handlePopstate);
-    }
-
-    private _handlePopstate(): void {
-        this.invokeRouteHandler(window.location.pathname);
-    }
-
-}
-
-export default class Router {
-
-    private _mode: RouterMode;
-
-    private _router: HashRouter | HistoryRouter;
-
-    constructor(mode: RouterMode, base: string = '') {
-        this._mode = mode;
-
-        switch (this._mode) {
-            case 'hash': {
-                this._router = new HashRouter(base);
-                break;
-            }
-            case 'history': {
-                this._router = new HistoryRouter(base);
-                break;
-            }
-            default: {
-                throw new Error('The mode must be set "hash" or "history".');
-            }
-        }
-    }
-
-    get mode(): RouterMode {
-        return this._mode;
-    }
-
-    get base(): string {
-        return this._router.base;
-    }
-
-    set onerror(handler: OnErrorHandler) {
-        this._router.onerror = handler;
-    }
-
-    get onerror(): OnErrorHandler {
-        return this._router.onerror;
-    }
-
-    setRoute(pattern: string, handler: RouteHandler): void {
-        this._router.setRoute(pattern, handler);
-    }
-
-    removeRoute(pattern: string): void {
-        this._router.removeRoute(pattern);
-    }
-
-    navigate(url: string): void {
-        this._router.navigate(url);
     }
 
 }
