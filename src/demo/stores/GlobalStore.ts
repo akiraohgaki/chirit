@@ -1,18 +1,18 @@
-import type {State} from '../types.js';
+import type {State, Status} from '../types.js';
 
 import {ObservableValue} from '../../chirit.js';
-import api from '../api/index.js';
+import {iTunesSearchApi} from '../apis/index.js';
 
-class Store {
+export default class GlobalStore {
 
     private _state: State;
 
     constructor() {
         this._state = {
+            status: new ObservableValue({message: ''}),
             page: new ObservableValue(''),
             searchTerm: new ObservableValue(''),
-            searchResult: new ObservableValue({}),
-            error: new ObservableValue(new Error())
+            searchResult: new ObservableValue({})
         };
 
         this._state.page.subscribe(() => {
@@ -27,25 +27,27 @@ class Store {
         return this._state;
     }
 
+    setStatus(status: Status): void {
+        this._state.status.set(status);
+    }
+
+    resetStatus(): void {
+        this._state.status.set({message: ''});
+    }
+
     setPage(page: string): void {
         this._state.page.set(page);
     }
 
-    resetSearch(): void {
-        this._state.searchTerm.set('');
-        this._state.searchResult.set({});
-    }
-
     async search(term: string): Promise<void> {
-        const responseData = await api.searchITunesMusic(term);
+        const responseData = await iTunesSearchApi.searchMusic(term);
         this._state.searchTerm.set(term);
         this._state.searchResult.set(responseData);
     }
 
-    setError(error: Error): void {
-        this._state.error.set(error);
+    clearSearch(): void {
+        this._state.searchTerm.set('');
+        this._state.searchResult.set({});
     }
 
 }
-
-export default new Store();

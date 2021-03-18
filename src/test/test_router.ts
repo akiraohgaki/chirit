@@ -24,7 +24,12 @@ export default function(): void {
 
     console.log(router.mode);
     console.log(router.base);
+    console.log(router.onchange);
     console.log(router.onerror);
+
+    router.onchange = (event) => {
+        console.log('onchange', event);
+    };
 
     router.onerror = (exception) => {
         console.error('onerror', exception);
