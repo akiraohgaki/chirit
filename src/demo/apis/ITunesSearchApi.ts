@@ -1,19 +1,18 @@
+import type {WebStorage} from '../../chirit.js';
 import type {ITunesSearchApiResponseData} from '../types.js';
 
-import {WebStorage} from '../../chirit.js';
+export default class ITunesSearchApi {
 
-class Api {
-
-    private _iTunesSearchApiBaseUrl: string;
+    private _baseUrl: string;
     private _webStorage: WebStorage;
 
-    constructor() {
-        this._iTunesSearchApiBaseUrl = 'https://itunes.apple.com/search';
-        this._webStorage = new WebStorage('session', 'demo_');
+    constructor(webStorage: WebStorage) {
+        this._baseUrl = 'https://itunes.apple.com/search';
+        this._webStorage = webStorage;
     }
 
-    async searchITunesMusic(term: string): Promise<ITunesSearchApiResponseData> {
-        const url = `${this._iTunesSearchApiBaseUrl}?media=music&entity=album&term=${encodeURIComponent(term)}`;
+    async searchMusic(term: string): Promise<ITunesSearchApiResponseData> {
+        const url = `${this._baseUrl}?media=music&entity=album&term=${encodeURIComponent(term)}`;
 
         const iTunesSearchApiCache = this._webStorage.getItem('iTunesSearchApiCache') ?? {};
 
@@ -33,5 +32,3 @@ class Api {
     }
 
 }
-
-export default new Api();

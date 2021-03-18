@@ -1,5 +1,5 @@
 import {Component} from '../../chirit.js';
-import router from '../router/index.js';
+import {router} from '../routers/index.js';
 import * as styles from './styles.js';
 
 export default class SearchBar extends Component {
@@ -31,15 +31,15 @@ export default class SearchBar extends Component {
                 flex: auto;
                 border-right-width: 0;
                 border-radius: 5px 0 0 5px;
-                color: var(--widget-fg-color);
                 background: var(--widget-bg-color);
+                color: var(--widget-fg-color);
             }
 
             input[type="submit"] {
                 border-left-width: 0;
                 border-radius: 0 5px 5px 0;
-                color: var(--widget-fg-color-2nd);
                 background: var(--widget-border-color);
+                color: var(--widget-fg-color-2nd);
             }
             input[type="submit"]:hover {
                 color: var(--widget-fg-color);

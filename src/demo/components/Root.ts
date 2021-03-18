@@ -1,16 +1,18 @@
 import {Component} from '../../chirit.js';
-import store from '../store/index.js';
+import {store} from '../stores/index.js';
 import * as styles from './styles.js';
 
 export default class Root extends Component {
 
     constructor() {
         super();
+
         this.update = this.update.bind(this);
     }
 
     connectedCallback(): void {
         super.connectedCallback();
+
         store.state.page.subscribe(this.update);
     }
 
@@ -19,27 +21,29 @@ export default class Root extends Component {
     }
 
     protected template(): string {
-        let pageView = '';
+        let content = '';
+
         switch (store.state.page.get()) {
+            case 'home': // Continue to search page
             case 'search': {
-                pageView = `
+                content = `
                     <demo-page>
-                    <demo-search-bar slot="nav"></demo-search-bar>
-                    <demo-search-result slot="main"></demo-search-result>
+                    <demo-search-bar slot="header"></demo-search-bar>
+                    <demo-search-result slot="content"></demo-search-result>
                     </demo-page>
                 `;
                 break;
             }
             case 'error': {
-                pageView = `
+                content = `
                     <demo-page>
-                    <demo-error-content slot="main"></demo-error-content>
+                    <demo-error-content slot="content"></demo-error-content>
                     </demo-page>
                 `;
                 break;
             }
             default: {
-                pageView = '';
+                content = '';
                 break;
             }
         }
@@ -47,7 +51,7 @@ export default class Root extends Component {
         return `
             <style>${styles.reset}</style>
 
-            ${pageView}
+            ${content}
         `;
     }
 

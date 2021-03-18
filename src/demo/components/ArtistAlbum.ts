@@ -1,5 +1,5 @@
 import {Component} from '../../chirit.js';
-import router from '../router/index.js';
+import {router} from '../routers/index.js';
 import {escapeHtml} from './utils.js';
 import * as styles from './styles.js';
 
@@ -19,8 +19,6 @@ export default class ArtistAlbum extends Component {
             }
 
             div {
-                display: flex;
-                flex-flow: column nowrap;
                 width: 200px;
             }
 

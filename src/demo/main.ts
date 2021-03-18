@@ -1,5 +1,5 @@
 import './components/index.js';
-import router from './router/index.js';
+import {router} from './routers/index.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -18,7 +18,7 @@ template.innerHTML = `
 
     <style>
     :root {
-        font: 14px/1.5 system-ui;
+        font: 16px/1.5 system-ui;
     }
 
     *,

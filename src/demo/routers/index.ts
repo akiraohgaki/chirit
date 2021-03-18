@@ -1,7 +1,7 @@
 import {Router} from '../../chirit.js';
-import store from '../store/index.js';
+import {store} from '../stores/index.js';
 
-const router = new Router('history', '/demo/');
+export const router = new Router('history', '/demo/');
 
 router.setRoute(`^${router.base}search/:term`, async (params) => {
     try {
@@ -9,17 +9,19 @@ router.setRoute(`^${router.base}search/:term`, async (params) => {
         store.setPage('search');
     }
     catch (exeption) {
-        store.setError(exeption);
+        store.setStatus(exeption);
         store.setPage('error');
     }
 });
 router.setRoute(`^${router.base}$`, () => {
-    store.resetSearch();
-    store.setPage('search');
+    store.clearSearch();
+    store.setPage('home');
 });
 router.setRoute('.*', () => {
-    store.setError(new Error('Page not found'));
+    store.setStatus(new Error('Page not found'));
     store.setPage('error');
 });
 
-export default router;
+router.onchange = () => {
+    store.resetStatus();
+};

@@ -1,6 +1,6 @@
 import {Component} from '../../chirit.js';
-import store from '../store/index.js';
-import router from '../router/index.js';
+import {store} from '../stores/index.js';
+import {router} from '../routers/index.js';
 import * as styles from './styles.js';
 
 export default class NotFound extends Component {
@@ -10,18 +10,20 @@ export default class NotFound extends Component {
             <style>${styles.reset}</style>
 
             <style>
-            h2 {
+            :host {
                 text-align: center;
+            }
+
+            h2 {
                 color: var(--fg-color);
             }
 
             p {
-                text-align: center;
                 color: var(--fg-color-2nd);
             }
             </style>
 
-            <h2>${store.state.error.get().message}</h2>
+            <h2>${store.state.status.get().message}</h2>
             <p><a href="${router.base}">Continue to home page</a></p>
         `;
     }

@@ -8,25 +8,33 @@ export default class Page extends Component {
             <style>${styles.reset}</style>
 
             <style>
-            nav,
-            article {
-                display: flex;
-                flex-flow: column nowrap;
-                align-items: center;
+            :host {
+                display: grid;
+                grid-template:
+                    'header' 6rem
+                    'content' 1fr;
+                place-items: center;
+                background: var(--bg-color);
+                color: var(--fg-color);
+            }
+
+            header,
+            main {
                 padding: 1rem;
             }
 
-            nav {
-                background: var(--bg-color-2nd);
+            header {
+                grid-area: header;
             }
 
-            article {
-                background: var(--bg-color);
+            main {
+                grid-area: content;
+                align-self: start;
             }
             </style>
 
-            <nav><slot name="nav"></slot></nav>
-            <article><slot name="main"></slot></article>
+            <header><slot name="header"></slot></header>
+            <main><slot name="content"></slot></main>
         `;
     }
 
