@@ -17,7 +17,7 @@
         "noFallthroughCasesInSwitch": true,
         "moduleResolution": "Node",
         "esModuleInterop": true,
-        "outDir": "./dist"
+        "outDir": "dist"
     },
     "include": [
         "src/**/*"
