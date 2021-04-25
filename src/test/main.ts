@@ -27,7 +27,7 @@ const template = document.createElement('template');
 template.innerHTML = `
     <style>
     :root {
-        font: 16px/1.5 system-ui;
+        font: 16px/1.5 Helvetica, Arial, sans-serif;
     }
 
     #nav a {

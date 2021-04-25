@@ -13,14 +13,13 @@
     "main": "dist/chirit.js",
     "types": "dist/chirit.d.ts",
     "scripts": {
-        "test": "simple-dev-server dist/test",
+        "test": "simple-dev-server",
         "clean": "rm -rf dist",
         "lint": "npm run lint:tsc && npm run lint:eslint",
         "lint:tsc": "tsc --noEmit",
         "lint:eslint": "eslint --ext '.ts' src",
         "prebuild": "npm run clean && npm run lint",
         "build": "tsc",
-        "postbuild": "cp src/test/index.html dist/test/index.html",
         "watch": "tsc -w"
     },
     "devDependencies": {
