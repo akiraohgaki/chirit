@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14.x'
+    - name: Build
+      run: |
+        npm ci
+        npm run build
+    - name: Commit
+      run: |
+        git add -N .
+        if ! git diff --exit-code --quiet; then
+          git config --local user.name 'GitHub Actions'
+          git config --local user.email 'actions@github.com'
+          git add .
+          git commit -m 'Apply automatic changes'
+          git push
+        fi
