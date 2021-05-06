@@ -1,7 +1,7 @@
 {
     "name": "chirit",
     "version": "1.0.2",
-    "description": "A front-end library.",
+    "description": "A library for Web components based front-end development.",
     "author": "Akira Ohgaki",
     "license": "BSD-2-Clause",
     "homepage": "https://github.com/akiraohgaki/chirit",
@@ -23,7 +23,7 @@
         "watch": "tsc -w"
     },
     "devDependencies": {
-        "simple-dev-server": "https://github.com/akiraohgaki/simple-dev-server/archive/refs/heads/main.tar.gz",
+        "simple-dev-server": "https://github.com/akiraohgaki/simple-dev-server/archive/refs/tags/v1.1.1.tar.gz",
         "typescript": "*",
         "eslint": "*",
         "@typescript-eslint/parser": "*",
