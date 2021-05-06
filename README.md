@@ -1,6 +1,6 @@
 # Chirit
 
-A front-end library.
+A library for Web components based front-end development.
 
 Copyright: 2018, Akira Ohgaki
 
