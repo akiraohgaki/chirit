@@ -1,33 +1,33 @@
 {
-    "name": "chirit",
-    "version": "1.0.2",
-    "description": "A library for Web components based front-end development.",
-    "author": "Akira Ohgaki",
-    "license": "BSD-2-Clause",
-    "homepage": "https://github.com/akiraohgaki/chirit",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/akiraohgaki/chirit.git"
-    },
-    "type": "module",
-    "main": "dist/chirit.js",
-    "types": "dist/chirit.d.ts",
-    "scripts": {
-        "test": "simple-dev-server",
-        "clean": "rm -rf dist",
-        "lint": "npm run lint:tsc && npm run lint:eslint",
-        "lint:tsc": "tsc --noEmit",
-        "lint:eslint": "eslint --ext '.ts' src",
-        "prebuild": "npm run clean && npm run lint",
-        "build": "tsc",
-        "watch": "tsc -w"
-    },
-    "devDependencies": {
-        "simple-dev-server": "https://github.com/akiraohgaki/simple-dev-server/archive/refs/tags/v1.1.1.tar.gz",
-        "typescript": "*",
-        "eslint": "*",
-        "@typescript-eslint/parser": "*",
-        "@typescript-eslint/eslint-plugin": "*",
-        "@types/node": "*"
-    }
+  "name": "chirit",
+  "version": "1.0.2",
+  "description": "A library for Web components based front-end development.",
+  "author": "Akira Ohgaki",
+  "license": "BSD-2-Clause",
+  "homepage": "https://github.com/akiraohgaki/chirit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akiraohgaki/chirit.git"
+  },
+  "type": "module",
+  "main": "dist/chirit.js",
+  "types": "dist/chirit.d.ts",
+  "scripts": {
+    "test": "simple-dev-server",
+    "clean": "rm -rf dist",
+    "lint": "npm run lint:tsc && npm run lint:eslint",
+    "lint:tsc": "tsc --noEmit",
+    "lint:eslint": "eslint --ext '.ts' src",
+    "prebuild": "npm run clean && npm run lint",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "devDependencies": {
+    "simple-dev-server": "https://github.com/akiraohgaki/simple-dev-server/archive/refs/tags/v1.1.1.tar.gz",
+    "typescript": "*",
+    "eslint": "*",
+    "@typescript-eslint/parser": "*",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@types/node": "*"
+  }
 }

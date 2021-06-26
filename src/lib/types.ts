@@ -1,21 +1,21 @@
 export interface Dictionary<T> {
-    [key: string]: T;
+  [key: string]: T;
 }
 
 export interface OnEventHandler {
-    (event: Event): any;
+  (event: Event): any;
 }
 
 export interface OnErrorHandler {
-    (exception: any): any;
+  (exception: any): any;
 }
 
 export interface Observer<T> {
-    (value: T): void;
+  (value: T): void;
 }
 
 export interface RouteHandler {
-    (params: Dictionary<string>): void;
+  (params: Dictionary<string>): void;
 }
 
 export type ComponentContentContainer = Element | DocumentFragment;

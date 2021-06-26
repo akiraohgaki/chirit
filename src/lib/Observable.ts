@@ -1,27 +1,27 @@
-import type {Observer} from './types.js';
+import type { Observer } from './types.js';
 
 export default class Observable<T = any> {
 
-    private _observerCollection: Set<Observer<T>>;
+  private _observerCollection: Set<Observer<T>>;
 
-    constructor() {
-        this._observerCollection = new Set();
-    }
+  constructor() {
+    this._observerCollection = new Set();
+  }
 
-    subscribe(observer: Observer<T>): void {
-        this._observerCollection.add(observer);
-    }
+  subscribe(observer: Observer<T>): void {
+    this._observerCollection.add(observer);
+  }
 
-    unsubscribe(observer: Observer<T>): void {
-        this._observerCollection.delete(observer);
-    }
+  unsubscribe(observer: Observer<T>): void {
+    this._observerCollection.delete(observer);
+  }
 
-    notify(value: T): void {
-        if (this._observerCollection.size) {
-            for (const observer of this._observerCollection) {
-                observer(value);
-            }
-        }
+  notify(value: T): void {
+    if (this._observerCollection.size) {
+      for (const observer of this._observerCollection) {
+        observer(value);
+      }
     }
+  }
 
 }

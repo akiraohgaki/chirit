@@ -8,38 +8,38 @@ import test_router from './test_router.js';
 import test_webstorage from './test_webstorage.js';
 
 const handlerCollection = new Map([
-    ['test_component', test_component],
-    ['test_customelement', test_customelement],
-    ['test_elementattributesproxy', test_elementattributesproxy],
-    ['test_nodecontent', test_nodecontent],
-    ['test_observable', test_observable],
-    ['test_observablevalue', test_observablevalue],
-    ['test_router', test_router],
-    ['test_webstorage', test_webstorage]
+  ['test_component', test_component],
+  ['test_customelement', test_customelement],
+  ['test_elementattributesproxy', test_elementattributesproxy],
+  ['test_nodecontent', test_nodecontent],
+  ['test_observable', test_observable],
+  ['test_observablevalue', test_observablevalue],
+  ['test_router', test_router],
+  ['test_webstorage', test_webstorage]
 ]);
 
 let navItems = '';
 for (const key of handlerCollection.keys()) {
-    navItems += `<a href="#" data-handler="${key}">${key}</a>`;
+  navItems += `<a href="#" data-handler="${key}">${key}</a>`;
 }
 
 const template = document.createElement('template');
 template.innerHTML = `
-    <style>
-    :root {
-        font: 16px/1.5 Helvetica, Arial, sans-serif;
-    }
+  <style>
+  :root {
+    font: 16px/1.5 Helvetica, Arial, sans-serif;
+  }
 
-    #nav a {
-        display: inline-block;
-        margin: 0.2rem 1rem;
-        text-decoration: none;
-        color: dodgerblue;
-    }
-    </style>
+  #nav a {
+    display: inline-block;
+    margin: 0.2rem 1rem;
+    text-decoration: none;
+    color: dodgerblue;
+  }
+  </style>
 
-    <nav id="nav">${navItems}</nav>
-    <main id="main">See console log</main>
+  <nav id="nav">${navItems}</nav>
+  <main id="main">See console log</main>
 `;
 document.body.appendChild(template.content);
 
@@ -47,15 +47,15 @@ const nav = document.getElementById('nav') as Element;
 const main = document.getElementById('main') as Element;
 
 nav.addEventListener('click', (event) => {
-    event.preventDefault();
-    const target = event.target as Element;
-    const handlerKey = target.getAttribute('data-handler');
-    if (handlerKey) {
-        const handler = handlerCollection.get(handlerKey);
-        if (handler) {
-            main.textContent = null;
-            console.log(`---- ${handlerKey} ----`);
-            handler();
-        }
+  event.preventDefault();
+  const target = event.target as Element;
+  const handlerKey = target.getAttribute('data-handler');
+  if (handlerKey) {
+    const handler = handlerCollection.get(handlerKey);
+    if (handler) {
+      main.textContent = null;
+      console.log(`---- ${handlerKey} ----`);
+      handler();
     }
+  }
 });

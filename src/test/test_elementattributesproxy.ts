@@ -1,27 +1,27 @@
-import {ElementAttributesProxy} from '../chirit.js';
+import { ElementAttributesProxy } from '../chirit.js';
 
-export default function(): void {
-    const element = document.createElement('a');
+export default function (): void {
+  const element = document.createElement('a');
 
-    const attrs = new ElementAttributesProxy(element);
+  const attrs = new ElementAttributesProxy(element);
 
-    attrs.href = 'dummy';
-    attrs.title = 'dummy';
-    attrs['data-dummy'] = 'dummy';
+  attrs.href = 'dummy';
+  attrs.title = 'dummy';
+  attrs['data-dummy'] = 'dummy';
 
-    delete attrs.href;
+  delete attrs.href;
 
-    console.log(attrs.href);
-    console.log(attrs.title);
-    
-    console.log('href' in attrs);
-    console.log('title' in attrs);
+  console.log(attrs.href);
+  console.log(attrs.title);
 
-    console.log(Reflect.ownKeys(attrs));
-    console.log(Object.keys(attrs));
+  console.log('href' in attrs);
+  console.log('title' in attrs);
 
-    console.log(JSON.stringify(attrs));
+  console.log(Reflect.ownKeys(attrs));
+  console.log(Object.keys(attrs));
 
-    console.log(attrs);
-    console.log(element);
+  console.log(JSON.stringify(attrs));
+
+  console.log(attrs);
+  console.log(element);
 }
