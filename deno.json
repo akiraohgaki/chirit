@@ -29,10 +29,7 @@
         "explicit-module-boundary-types"
       ],
       "exclude": [
-        "no-unused-vars",
-        "no-empty-function",
-        "no-inferrable-types",
-        "no-explicit-any"
+        "no-inferrable-types"
       ]
     }
   },
