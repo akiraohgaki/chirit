@@ -49,7 +49,7 @@ export default class CustomElement extends HTMLElement {
   }
 
   static define(name: string, options?: ElementDefinitionOptions): void {
-    window.customElements.define(name, this, options);
+    globalThis.customElements.define(name, this, options);
   }
 
   get updatedCount(): number {
@@ -59,12 +59,12 @@ export default class CustomElement extends HTMLElement {
   update(): Promise<void> {
     // This is an asynchronous updating method that scheduled updates
     if (this._updateTimerId !== undefined) {
-      window.clearTimeout(this._updateTimerId);
+      globalThis.clearTimeout(this._updateTimerId);
       this._updateTimerId = undefined;
     }
 
-    this._updateTimerId = window.setTimeout(() => {
-      window.clearTimeout(this._updateTimerId);
+    this._updateTimerId = globalThis.setTimeout(() => {
+      globalThis.clearTimeout(this._updateTimerId);
       this._updateTimerId = undefined;
 
       // Take out Promise resolvers of this update point before the updating starts
@@ -101,7 +101,7 @@ export default class CustomElement extends HTMLElement {
   protected updatedCallback(): void {
   }
 
-  protected errorCallback(exception: any): void {
+  protected errorCallback(exception: unknown): void {
     console.error(exception);
   }
 }

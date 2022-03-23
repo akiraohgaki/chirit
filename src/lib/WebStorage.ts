@@ -12,11 +12,11 @@ export default class WebStorage {
 
     switch (this._mode) {
       case 'local': {
-        this._storage = window.localStorage;
+        this._storage = globalThis.localStorage;
         break;
       }
       case 'session': {
-        this._storage = window.sessionStorage;
+        this._storage = globalThis.sessionStorage;
         break;
       }
       default: {
@@ -41,7 +41,7 @@ export default class WebStorage {
     return this._storage.key(index);
   }
 
-  setItem(key: string, value: any): void {
+  setItem(key: string, value: unknown): void {
     // Adds prefix to the key
     // and makes the value into special object and serialise to JSON
     this._storage.setItem(
@@ -50,7 +50,7 @@ export default class WebStorage {
     );
   }
 
-  getItem(key: string): any {
+  getItem(key: string): unknown {
     // Checks if the value is JSON created from special object and returns original value
     // otherwise just returns the value
     const value = this._storage.getItem(this._prefix + key);

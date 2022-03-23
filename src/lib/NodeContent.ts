@@ -1,13 +1,13 @@
-import type { Dictionary, NodeContentData, OnEventHandler } from './types.ts';
+import type { NodeContentData, OnEventHandler } from './types.ts';
 
 const containerCollection = new WeakSet();
 
 export default class NodeContent<T extends Node> {
   private _container: T;
 
-  private _context: any;
+  private _context: unknown;
 
-  constructor(container: T, context?: any) {
+  constructor(container: T, context?: unknown) {
     containerCollection.add(container);
 
     //this._containerRef = new WeakRef(container);
@@ -138,7 +138,7 @@ export default class NodeContent<T extends Node> {
       for (const attribute of Array.from(target.attributes)) {
         if (attribute.name.search(/^on\w+/i) !== -1) {
           const onevent = attribute.name.toLowerCase();
-          const oneventTarget = (target as any) as Dictionary<OnEventHandler>;
+          const oneventTarget = target as unknown as Record<string, OnEventHandler>;
           if (onevent in target && typeof oneventTarget[onevent] === 'function') {
             const handler = new Function('event', attribute.value);
             target.removeAttribute(attribute.name);

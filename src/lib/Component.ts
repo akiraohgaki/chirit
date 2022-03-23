@@ -23,7 +23,7 @@ export default class Component extends CustomElement {
     return this._content;
   }
 
-  dispatch(type: string, detail?: any): boolean {
+  dispatch(type: string, detail?: unknown): boolean {
     return this._content.container.dispatchEvent(
       new CustomEvent(type, {
         detail: detail,

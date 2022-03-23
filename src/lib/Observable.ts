@@ -1,6 +1,6 @@
 import type { Observer } from './types.ts';
 
-export default class Observable<T = any> {
+export default class Observable<T = unknown> {
   private _observerCollection: Set<Observer<T>>;
 
   constructor() {
