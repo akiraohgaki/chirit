@@ -1,9 +1,8 @@
-import type { Dictionary, OnEventHandler, NodeContentData } from './types.js';
+import type { Dictionary, NodeContentData, OnEventHandler } from './types.ts';
 
 const containerCollection = new WeakSet();
 
 export default class NodeContent<T extends Node> {
-
   private _container: T;
 
   private _context: any;
@@ -25,8 +24,7 @@ export default class NodeContent<T extends Node> {
   update(content: NodeContentData): void {
     if (content instanceof Document || content instanceof DocumentFragment) {
       this._patchNodesInsideOf(this._container, content);
-    }
-    else {
+    } else {
       this._patchNodesInsideOf(this._container, this._createDocumentFragment(content));
     }
 
@@ -50,8 +48,7 @@ export default class NodeContent<T extends Node> {
     const documentFragment = document.createDocumentFragment();
     if (content instanceof Node) {
       documentFragment.appendChild(content.cloneNode(true));
-    }
-    else if (content instanceof NodeList && content.length) {
+    } else if (content instanceof NodeList && content.length) {
       for (const node of Array.from(content)) {
         documentFragment.appendChild(node.cloneNode(true));
       }
@@ -70,7 +67,7 @@ export default class NodeContent<T extends Node> {
         this._patchNodes(
           original,
           originalChildNodes[i] ?? null,
-          diffChildNodes[i] ?? null
+          diffChildNodes[i] ?? null,
         );
       }
     }
@@ -79,11 +76,9 @@ export default class NodeContent<T extends Node> {
   private _patchNodes(parent: Node, original: Node | null, diff: Node | null): void {
     if (original && !diff) {
       parent.removeChild(original);
-    }
-    else if (!original && diff) {
+    } else if (!original && diff) {
       parent.appendChild(diff.cloneNode(true));
-    }
-    else if (original && diff) {
+    } else if (original && diff) {
       if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
         if (original instanceof Element && diff instanceof Element) {
           // Element it's HTMLElement, SVGElement
@@ -91,18 +86,15 @@ export default class NodeContent<T extends Node> {
           if (!containerCollection.has(original)) {
             this._patchNodesInsideOf(original, diff);
           }
-        }
-        else if (original instanceof CharacterData && diff instanceof CharacterData) {
+        } else if (original instanceof CharacterData && diff instanceof CharacterData) {
           // CharacterData it's Text, Comment, ProcessingInstruction
           if (original.nodeValue !== diff.nodeValue) {
             original.nodeValue = diff.nodeValue;
           }
-        }
-        else {
+        } else {
           parent.replaceChild(diff.cloneNode(true), original);
         }
-      }
-      else {
+      } else {
         parent.replaceChild(diff.cloneNode(true), original);
       }
     }
@@ -120,8 +112,9 @@ export default class NodeContent<T extends Node> {
 
     if (diff.hasAttributes()) {
       for (const attribute of Array.from(diff.attributes)) {
-        if (!original.hasAttribute(attribute.name)
-          || original.getAttribute(attribute.name) !== attribute.value
+        if (
+          !original.hasAttribute(attribute.name) ||
+          original.getAttribute(attribute.name) !== attribute.value
         ) {
           original.setAttribute(attribute.name, attribute.value);
         }
@@ -159,5 +152,4 @@ export default class NodeContent<T extends Node> {
       this._fixOneventHandlersInsideOf(target);
     }
   }
-
 }

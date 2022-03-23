@@ -1,6 +1,5 @@
 export default class ElementAttributesProxy {
-
-  [key: string]: string;
+  [key: string]: string
 
   constructor(target: Element) {
     //const targetRef = new WeakRef(target);
@@ -48,12 +47,11 @@ export default class ElementAttributesProxy {
           return {
             configurable: true,
             enumerable: true,
-            value: target.getAttribute(name)
+            value: target.getAttribute(name),
           };
         }
         return undefined;
-      }
+      },
     });
   }
-
 }

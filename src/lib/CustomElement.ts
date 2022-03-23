@@ -1,5 +1,4 @@
 export default class CustomElement extends HTMLElement {
-
   private _updatedCount: number;
 
   private _updateTimerId: number | undefined;
@@ -20,7 +19,12 @@ export default class CustomElement extends HTMLElement {
     return [];
   }
 
-  attributeChangedCallback(_name: string, oldValue: string | null, newValue: string | null, _namespace?: string | null): void {
+  attributeChangedCallback(
+    _name: string,
+    oldValue: string | null,
+    newValue: string | null,
+    _namespace?: string | null,
+  ): void {
     // Runs update task when observed attribute has changed but don't run before initial update
     if (this._updatedCount && oldValue !== newValue) {
       this.update();
@@ -32,8 +36,7 @@ export default class CustomElement extends HTMLElement {
     if (this._updatedCount) {
       // Re-update, this Element may have moved into another parent Node
       this.update();
-    }
-    else {
+    } else {
       // Initial update
       this.updateSync();
     }
@@ -87,8 +90,7 @@ export default class CustomElement extends HTMLElement {
       this.render();
       this._updatedCount++;
       this.updatedCallback();
-    }
-    catch (exception) {
+    } catch (exception) {
       this.errorCallback(exception);
     }
   }
@@ -102,5 +104,4 @@ export default class CustomElement extends HTMLElement {
   protected errorCallback(exception: any): void {
     console.error(exception);
   }
-
 }

@@ -1,7 +1,6 @@
-import type { Observer } from './types.js';
+import type { Observer } from './types.ts';
 
 export default class Observable<T = any> {
-
   private _observerCollection: Set<Observer<T>>;
 
   constructor() {
@@ -23,5 +22,4 @@ export default class Observable<T = any> {
       }
     }
   }
-
 }

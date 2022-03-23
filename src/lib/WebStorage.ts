@@ -1,7 +1,6 @@
-import type { WebStorageMode } from './types.js';
+import type { WebStorageMode } from './types.ts';
 
 export default class WebStorage {
-
   private _mode: WebStorageMode;
   private _prefix: string;
 
@@ -47,7 +46,7 @@ export default class WebStorage {
     // and makes the value into special object and serialise to JSON
     this._storage.setItem(
       this._prefix + key,
-      JSON.stringify({ _k: key, _v: value })
+      JSON.stringify({ _k: key, _v: value }),
     );
   }
 
@@ -59,15 +58,15 @@ export default class WebStorage {
       try {
         // JSON.parse() will throw a parse error if the value is not valid JSON
         const deserializedValue = JSON.parse(value);
-        if (deserializedValue
-          && deserializedValue._k === key
-          && deserializedValue._v !== undefined
+        if (
+          deserializedValue &&
+          deserializedValue._k === key &&
+          deserializedValue._v !== undefined
         ) {
           // Will return original value
           return deserializedValue._v;
         }
-      }
-      catch {
+      } catch {
         // Will return string
         return value;
       }
@@ -83,5 +82,4 @@ export default class WebStorage {
   clear(): void {
     this._storage.clear();
   }
-
 }

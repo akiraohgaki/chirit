@@ -1,11 +1,10 @@
-import type { ComponentContentContainer, NodeContentData } from './types.js';
+import type { ComponentContentContainer, NodeContentData } from './types.ts';
 
-import CustomElement from './CustomElement.js';
-import ElementAttributesProxy from './ElementAttributesProxy.js';
-import NodeContent from './NodeContent.js';
+import CustomElement from './CustomElement.ts';
+import ElementAttributesProxy from './ElementAttributesProxy.ts';
+import NodeContent from './NodeContent.ts';
 
 export default class Component extends CustomElement {
-
   private _attrs: ElementAttributesProxy;
   private _content: NodeContent<ComponentContentContainer>;
 
@@ -25,11 +24,13 @@ export default class Component extends CustomElement {
   }
 
   dispatch(type: string, detail?: any): boolean {
-    return this._content.container.dispatchEvent(new CustomEvent(type, {
-      detail: detail,
-      bubbles: true,
-      composed: true
-    }));
+    return this._content.container.dispatchEvent(
+      new CustomEvent(type, {
+        detail: detail,
+        bubbles: true,
+        composed: true,
+      }),
+    );
   }
 
   protected createContentContainer(): ComponentContentContainer {
@@ -43,5 +44,4 @@ export default class Component extends CustomElement {
   protected template(): NodeContentData {
     return '';
   }
-
 }

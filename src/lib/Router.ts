@@ -1,4 +1,4 @@
-import type { Dictionary, OnEventHandler, OnErrorHandler, RouteHandler, RouterMode } from './types.js';
+import type { Dictionary, OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from './types.ts';
 
 // Checks if ES2018 RegExp named capture groups is available
 let isRegExpNamedCaptureGroupsAvailable = false;
@@ -6,13 +6,11 @@ try {
   // RegExp will throw a regexp syntax error if RegExp named capture groups is not available
   const matches = 'Named capture groups'.match(/(?<name>.+)/);
   isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
-}
-catch {
+} catch {
   isRegExpNamedCaptureGroupsAvailable = false;
 }
 
 export default class Router {
-
   private _mode: RouterMode;
   private _base: string;
   private _onchange: OnEventHandler;
@@ -29,8 +27,10 @@ export default class Router {
     // the base should be the base path part of the path represented with URL fragment
     this._mode = mode;
     this._base = (base && !base.endsWith('/')) ? base + '/' : base;
-    this._onchange = () => { };
-    this._onerror = (exception) => { console.error(exception); };
+    this._onchange = () => {};
+    this._onerror = (exception) => {
+      console.error(exception);
+    };
 
     this._routeCollection = new Map();
 
@@ -66,8 +66,7 @@ export default class Router {
     if (!this._routeCollection.size) {
       if (this._mode === 'hash') {
         window.addEventListener('hashchange', this._handleHashchange);
-      }
-      else if (this._mode === 'history') {
+      } else if (this._mode === 'history') {
         window.addEventListener('popstate', this._handlePopstate);
       }
     }
@@ -81,8 +80,7 @@ export default class Router {
     if (!this._routeCollection.size) {
       if (this._mode === 'hash') {
         window.removeEventListener('hashchange', this._handleHashchange);
-      }
-      else if (this._mode === 'history') {
+      } else if (this._mode === 'history') {
         window.removeEventListener('popstate', this._handlePopstate);
       }
     }
@@ -91,8 +89,7 @@ export default class Router {
   navigate(url: string): void {
     if (this._mode === 'hash') {
       this._navigateWithHashMode(url);
-    }
-    else if (this._mode === 'history') {
+    } else if (this._mode === 'history') {
       this._navigateWithHistoryMode(url);
     }
   }
@@ -111,8 +108,7 @@ export default class Router {
       }
 
       newVirtualPath = newUrlParts[1] ?? '';
-    }
-    else {
+    } else {
       newVirtualPath = url;
     }
 
@@ -165,8 +161,7 @@ export default class Router {
           }
         }
       }
-    }
-    catch (exception) {
+    } catch (exception) {
       this._onerror(exception);
     }
   }
@@ -192,8 +187,7 @@ export default class Router {
         }
         return params;
       }
-    }
-    else {
+    } else {
       // Here is a workaround for environments that not supported RegExp named capture groups
       // And does not work expected in case of named capture groups inside of named capture groups (?<name>(?<name>pattern))
       const groupNames: Array<string> = [];
@@ -215,8 +209,7 @@ export default class Router {
           for (let iA = 1; iA < matchesA.length; iA++) {
             if (matchesA[iA] === matchesB[iB]) {
               iB++;
-            }
-            else {
+            } else {
               params[groupNames[iN]] = matchesA[iA];
               iN++;
             }
@@ -227,5 +220,4 @@ export default class Router {
     }
     return null;
   }
-
 }
