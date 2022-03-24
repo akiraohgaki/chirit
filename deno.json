@@ -5,11 +5,11 @@
       "dom",
       "dom.iterable"
     ],
-    "jsx": "react",
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
+    "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true
   },
   "lint": {
@@ -18,7 +18,7 @@
         "src/"
       ],
       "exclude": [
-        "src/tests/"
+        "src/data/"
       ]
     },
     "rules": {
@@ -39,7 +39,7 @@
         "src/"
       ],
       "exclude": [
-        "src/tests/"
+        "src/data/"
       ]
     },
     "options": {
@@ -49,5 +49,11 @@
       "singleQuote": true,
       "proseWrap": "preserve"
     }
+  },
+  "tasks": {
+    "clear": "rm -rf dist",
+    "bundle": "deno bundle src/mod.ts dist/mod.bundle.js",
+    "test": "echo 'Skip test'",
+    "build": "deno fmt && deno lint && deno task clear && deno task bundle && deno task test"
   }
 }
