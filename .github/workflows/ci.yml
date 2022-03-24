@@ -2,23 +2,24 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
+
+    - uses: denoland/setup-deno@v1
       with:
-        node-version: '14.x'
+        deno-version: vx.x.x
+
     - name: Build
       run: |
-        npm ci
-        npm run build
-    - name: Commit
+        deno task build
+
+    - name: Apply automatic changes
       run: |
         git add -N .
         if ! git diff --exit-code --quiet; then

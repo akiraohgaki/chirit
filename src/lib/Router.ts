@@ -1,4 +1,4 @@
-import type { Dictionary, OnEventHandler, OnErrorHandler, RouteHandler, RouterMode } from './types.js';
+import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from './types.ts';
 
 // Checks if ES2018 RegExp named capture groups is available
 let isRegExpNamedCaptureGroupsAvailable = false;
@@ -6,13 +6,11 @@ try {
   // RegExp will throw a regexp syntax error if RegExp named capture groups is not available
   const matches = 'Named capture groups'.match(/(?<name>.+)/);
   isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
-}
-catch {
+} catch {
   isRegExpNamedCaptureGroupsAvailable = false;
 }
 
 export default class Router {
-
   private _mode: RouterMode;
   private _base: string;
   private _onchange: OnEventHandler;
@@ -29,8 +27,10 @@ export default class Router {
     // the base should be the base path part of the path represented with URL fragment
     this._mode = mode;
     this._base = (base && !base.endsWith('/')) ? base + '/' : base;
-    this._onchange = () => { };
-    this._onerror = (exception) => { console.error(exception); };
+    this._onchange = () => {};
+    this._onerror = (exception) => {
+      console.error(exception);
+    };
 
     this._routeCollection = new Map();
 
@@ -46,6 +46,7 @@ export default class Router {
     return this._base;
   }
 
+  // deno-lint-ignore explicit-module-boundary-types
   set onchange(handler: OnEventHandler) {
     this._onchange = handler;
   }
@@ -54,6 +55,7 @@ export default class Router {
     return this._onchange;
   }
 
+  // deno-lint-ignore explicit-module-boundary-types
   set onerror(handler: OnErrorHandler) {
     this._onerror = handler;
   }
@@ -65,10 +67,9 @@ export default class Router {
   setRoute(pattern: string, handler: RouteHandler): void {
     if (!this._routeCollection.size) {
       if (this._mode === 'hash') {
-        window.addEventListener('hashchange', this._handleHashchange);
-      }
-      else if (this._mode === 'history') {
-        window.addEventListener('popstate', this._handlePopstate);
+        globalThis.addEventListener('hashchange', this._handleHashchange);
+      } else if (this._mode === 'history') {
+        globalThis.addEventListener('popstate', this._handlePopstate);
       }
     }
 
@@ -80,10 +81,9 @@ export default class Router {
 
     if (!this._routeCollection.size) {
       if (this._mode === 'hash') {
-        window.removeEventListener('hashchange', this._handleHashchange);
-      }
-      else if (this._mode === 'history') {
-        window.removeEventListener('popstate', this._handlePopstate);
+        globalThis.removeEventListener('hashchange', this._handleHashchange);
+      } else if (this._mode === 'history') {
+        globalThis.removeEventListener('popstate', this._handlePopstate);
       }
     }
   }
@@ -91,8 +91,7 @@ export default class Router {
   navigate(url: string): void {
     if (this._mode === 'hash') {
       this._navigateWithHashMode(url);
-    }
-    else if (this._mode === 'history') {
+    } else if (this._mode === 'history') {
       this._navigateWithHistoryMode(url);
     }
   }
@@ -101,27 +100,26 @@ export default class Router {
     let newVirtualPath = '';
 
     if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
-      const newUrl = new URL(url, window.location.href);
+      const newUrl = new URL(url, globalThis.location.href);
       const newUrlParts = newUrl.href.split('#');
-      const oldUrlParts = window.location.href.split('#');
+      const oldUrlParts = globalThis.location.href.split('#');
 
       if (newUrlParts[0] !== oldUrlParts[0]) {
-        window.location.href = newUrl.href;
+        globalThis.location.href = newUrl.href;
         return;
       }
 
       newVirtualPath = newUrlParts[1] ?? '';
-    }
-    else {
+    } else {
       newVirtualPath = url;
     }
 
-    const oldVirtualPath = window.location.hash.substring(1);
-    const oldVirtualUrl = new URL(oldVirtualPath, window.location.origin);
+    const oldVirtualPath = globalThis.location.hash.substring(1);
+    const oldVirtualUrl = new URL(oldVirtualPath, globalThis.location.origin);
     const newVirtualUrl = new URL(this._resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
 
     if (newVirtualUrl.pathname !== oldVirtualPath) {
-      window.location.hash = newVirtualUrl.pathname;
+      globalThis.location.hash = newVirtualUrl.pathname;
       return;
     }
 
@@ -129,15 +127,15 @@ export default class Router {
   }
 
   private _navigateWithHistoryMode(url: string): void {
-    const newUrl = new URL(this._resolveBaseUrl(url), window.location.href);
+    const newUrl = new URL(this._resolveBaseUrl(url), globalThis.location.href);
 
-    if (newUrl.origin !== window.location.origin) {
-      window.location.href = newUrl.href;
+    if (newUrl.origin !== globalThis.location.origin) {
+      globalThis.location.href = newUrl.href;
       return;
     }
 
-    if (newUrl.href !== window.location.href) {
-      window.history.pushState({}, '', newUrl.href);
+    if (newUrl.href !== globalThis.location.href) {
+      globalThis.history.pushState({}, '', newUrl.href);
       this._onchange(new CustomEvent('pushstate'));
     }
 
@@ -146,12 +144,12 @@ export default class Router {
 
   private _handleHashchange(event: HashChangeEvent): void {
     this._onchange(event);
-    this._invokeRouteHandler(window.location.hash.substring(1));
+    this._invokeRouteHandler(globalThis.location.hash.substring(1));
   }
 
   private _handlePopstate(event: PopStateEvent): void {
     this._onchange(event);
-    this._invokeRouteHandler(window.location.pathname);
+    this._invokeRouteHandler(globalThis.location.pathname);
   }
 
   private _invokeRouteHandler(path: string): void {
@@ -165,8 +163,7 @@ export default class Router {
           }
         }
       }
-    }
-    catch (exception) {
+    } catch (exception) {
       this._onerror(exception);
     }
   }
@@ -181,8 +178,8 @@ export default class Router {
     return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
   }
 
-  private _match(path: string, pattern: string): Dictionary<string> | null {
-    const params: Dictionary<string> = {};
+  private _match(path: string, pattern: string): Record<string, string> | null {
+    const params: Record<string, string> = {};
 
     if (isRegExpNamedCaptureGroupsAvailable) {
       const matches = path.match(new RegExp(pattern));
@@ -192,8 +189,7 @@ export default class Router {
         }
         return params;
       }
-    }
-    else {
+    } else {
       // Here is a workaround for environments that not supported RegExp named capture groups
       // And does not work expected in case of named capture groups inside of named capture groups (?<name>(?<name>pattern))
       const groupNames: Array<string> = [];
@@ -215,8 +211,7 @@ export default class Router {
           for (let iA = 1; iA < matchesA.length; iA++) {
             if (matchesA[iA] === matchesB[iB]) {
               iB++;
-            }
-            else {
+            } else {
               params[groupNames[iN]] = matchesA[iA];
               iN++;
             }
@@ -227,5 +222,4 @@ export default class Router {
     }
     return null;
   }
-
 }

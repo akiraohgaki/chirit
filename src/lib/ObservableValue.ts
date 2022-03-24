@@ -1,7 +1,6 @@
-import Observable from './Observable.js';
+import Observable from './Observable.ts';
 
 export default class ObservableValue<T> extends Observable<T> {
-
   private _value: T;
 
   constructor(value: T) {
@@ -19,8 +18,7 @@ export default class ObservableValue<T> extends Observable<T> {
     return this._value;
   }
 
-  notify(): void {
+  override notify(): void {
     super.notify(this._value);
   }
-
 }

@@ -1,13 +1,9 @@
-export interface Dictionary<T> {
-  [key: string]: T;
-}
-
 export interface OnEventHandler {
-  (event: Event): any;
+  (event: Event): unknown;
 }
 
 export interface OnErrorHandler {
-  (exception: any): any;
+  (exception: unknown): unknown;
 }
 
 export interface Observer<T> {
@@ -15,7 +11,7 @@ export interface Observer<T> {
 }
 
 export interface RouteHandler {
-  (params: Dictionary<string>): void;
+  (params: Record<string, string>): void;
 }
 
 export type ComponentContentContainer = Element | DocumentFragment;

@@ -1,7 +1,6 @@
-import type { WebStorageMode } from './types.js';
+import type { WebStorageMode } from './types.ts';
 
 export default class WebStorage {
-
   private _mode: WebStorageMode;
   private _prefix: string;
 
@@ -13,11 +12,11 @@ export default class WebStorage {
 
     switch (this._mode) {
       case 'local': {
-        this._storage = window.localStorage;
+        this._storage = globalThis.localStorage;
         break;
       }
       case 'session': {
-        this._storage = window.sessionStorage;
+        this._storage = globalThis.sessionStorage;
         break;
       }
       default: {
@@ -42,16 +41,16 @@ export default class WebStorage {
     return this._storage.key(index);
   }
 
-  setItem(key: string, value: any): void {
+  setItem(key: string, value: unknown): void {
     // Adds prefix to the key
     // and makes the value into special object and serialise to JSON
     this._storage.setItem(
       this._prefix + key,
-      JSON.stringify({ _k: key, _v: value })
+      JSON.stringify({ _k: key, _v: value }),
     );
   }
 
-  getItem(key: string): any {
+  getItem(key: string): unknown {
     // Checks if the value is JSON created from special object and returns original value
     // otherwise just returns the value
     const value = this._storage.getItem(this._prefix + key);
@@ -59,15 +58,15 @@ export default class WebStorage {
       try {
         // JSON.parse() will throw a parse error if the value is not valid JSON
         const deserializedValue = JSON.parse(value);
-        if (deserializedValue
-          && deserializedValue._k === key
-          && deserializedValue._v !== undefined
+        if (
+          deserializedValue &&
+          deserializedValue._k === key &&
+          deserializedValue._v !== undefined
         ) {
           // Will return original value
           return deserializedValue._v;
         }
-      }
-      catch {
+      } catch {
         // Will return string
         return value;
       }
@@ -83,5 +82,4 @@ export default class WebStorage {
   clear(): void {
     this._storage.clear();
   }
-
 }
