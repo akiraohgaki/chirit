@@ -51,7 +51,7 @@
     }
   },
   "tasks": {
-    "clear": "rm -rf dist",
+    "clear": "rm -rf dist && mkdir dist",
     "bundle": "deno bundle src/mod.ts dist/mod.bundle.js",
     "test": "echo 'Skip test'",
     "build": "deno fmt && deno lint && deno task clear && deno task bundle && deno task test"
