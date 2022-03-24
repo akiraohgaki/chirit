@@ -18,7 +18,7 @@ export default class ObservableValue<T> extends Observable<T> {
     return this._value;
   }
 
-  notify(): void {
+  override notify(): void {
     super.notify(this._value);
   }
 }

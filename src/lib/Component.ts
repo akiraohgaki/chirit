@@ -37,7 +37,7 @@ export default class Component extends CustomElement {
     return this.attachShadow({ mode: 'open' });
   }
 
-  protected render(): void {
+  protected override render(): void {
     this._content.update(this.template());
   }
 
