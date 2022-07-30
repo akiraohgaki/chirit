@@ -1,15 +1,5 @@
 import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from './types.ts';
 
-// Checks if ES2018 RegExp named capture groups is available
-let isRegExpNamedCaptureGroupsAvailable = false;
-try {
-  // RegExp will throw a regexp syntax error if RegExp named capture groups is not available
-  const matches = 'Named capture groups'.match(/(?<name>.+)/);
-  isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
-} catch {
-  isRegExpNamedCaptureGroupsAvailable = false;
-}
-
 export default class Router {
   private _mode: RouterMode;
   private _base: string;
@@ -156,9 +146,9 @@ export default class Router {
     try {
       if (this._routeCollection.size) {
         for (const [pattern, handler] of this._routeCollection) {
-          const params = this._match(path, pattern);
-          if (params) {
-            handler(params);
+          const matches = path.match(new RegExp(pattern));
+          if (matches && matches.groups) {
+            handler(matches.groups);
             break;
           }
         }
@@ -176,50 +166,5 @@ export default class Router {
     // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups (?:pattern)
     // The pattern may start with ":" so prefix the pattern with "/" and remove it when the replacement complete
     return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
-  }
-
-  private _match(path: string, pattern: string): Record<string, string> | null {
-    const params: Record<string, string> = {};
-
-    if (isRegExpNamedCaptureGroupsAvailable) {
-      const matches = path.match(new RegExp(pattern));
-      if (matches) {
-        if (matches.groups) {
-          Object.assign(params, matches.groups);
-        }
-        return params;
-      }
-    } else {
-      // Here is a workaround for environments that not supported RegExp named capture groups
-      // And does not work expected in case of named capture groups inside of named capture groups (?<name>(?<name>pattern))
-      const groupNames: Array<string> = [];
-
-      const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
-      const patternA = pattern.replace(namedGroupRegExp, (_substring, groupName, groupPattern) => {
-        groupNames.push(groupName);
-        return `(${groupPattern})`;
-      });
-      const patternB = pattern.replace(namedGroupRegExp, '(?:$2)');
-
-      const matchesA = path.match(new RegExp(patternA));
-      const matchesB = path.match(new RegExp(patternB));
-
-      if (matchesA && matchesB) {
-        if (groupNames.length) {
-          let iN = 0;
-          let iB = 1;
-          for (let iA = 1; iA < matchesA.length; iA++) {
-            if (matchesA[iA] === matchesB[iB]) {
-              iB++;
-            } else {
-              params[groupNames[iN]] = matchesA[iA];
-              iN++;
-            }
-          }
-        }
-        return params;
-      }
-    }
-    return null;
   }
 }
