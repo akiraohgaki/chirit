@@ -1,22 +1,22 @@
 import type { WebStorageMode } from './types.ts';
 
 export default class WebStorage {
-  private _mode: WebStorageMode;
-  private _prefix: string;
+  #mode: WebStorageMode;
+  #prefix: string;
 
-  private _storage: Storage;
+  #storage: Storage;
 
   constructor(mode: WebStorageMode, prefix: string = '') {
-    this._mode = mode;
-    this._prefix = prefix;
+    this.#mode = mode;
+    this.#prefix = prefix;
 
-    switch (this._mode) {
+    switch (this.#mode) {
       case 'local': {
-        this._storage = globalThis.localStorage;
+        this.#storage = globalThis.localStorage;
         break;
       }
       case 'session': {
-        this._storage = globalThis.sessionStorage;
+        this.#storage = globalThis.sessionStorage;
         break;
       }
       default: {
@@ -26,26 +26,26 @@ export default class WebStorage {
   }
 
   get mode(): WebStorageMode {
-    return this._mode;
+    return this.#mode;
   }
 
   get prefix(): string {
-    return this._prefix;
+    return this.#prefix;
   }
 
   get length(): number {
-    return this._storage.length;
+    return this.#storage.length;
   }
 
   key(index: number): string | null {
-    return this._storage.key(index);
+    return this.#storage.key(index);
   }
 
   setItem(key: string, value: unknown): void {
     // Adds prefix to the key
     // and makes the value into special object and serialise to JSON
-    this._storage.setItem(
-      this._prefix + key,
+    this.#storage.setItem(
+      this.#prefix + key,
       JSON.stringify({ _k: key, _v: value }),
     );
   }
@@ -53,7 +53,7 @@ export default class WebStorage {
   getItem(key: string): unknown {
     // Checks if the value is JSON created from special object and returns original value
     // otherwise just returns the value
-    const value = this._storage.getItem(this._prefix + key);
+    const value = this.#storage.getItem(this.#prefix + key);
     if (value) {
       try {
         // JSON.parse() will throw a parse error if the value is not valid JSON
@@ -76,10 +76,10 @@ export default class WebStorage {
   }
 
   removeItem(key: string): void {
-    this._storage.removeItem(this._prefix + key);
+    this.#storage.removeItem(this.#prefix + key);
   }
 
   clear(): void {
-    this._storage.clear();
+    this.#storage.clear();
   }
 }

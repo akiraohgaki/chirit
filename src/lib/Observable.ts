@@ -1,23 +1,23 @@
 import type { Observer } from './types.ts';
 
 export default class Observable<T = unknown> {
-  private _observerCollection: Set<Observer<T>>;
+  #observerCollection: Set<Observer<T>>;
 
   constructor() {
-    this._observerCollection = new Set();
+    this.#observerCollection = new Set();
   }
 
   subscribe(observer: Observer<T>): void {
-    this._observerCollection.add(observer);
+    this.#observerCollection.add(observer);
   }
 
   unsubscribe(observer: Observer<T>): void {
-    this._observerCollection.delete(observer);
+    this.#observerCollection.delete(observer);
   }
 
   notify(value: T): void {
-    if (this._observerCollection.size) {
-      for (const observer of this._observerCollection) {
+    if (this.#observerCollection.size) {
+      for (const observer of this.#observerCollection) {
         observer(value);
       }
     }

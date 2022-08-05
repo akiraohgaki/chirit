@@ -1,12 +1,14 @@
 import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from './types.ts';
 
 export default class Router {
-  private _mode: RouterMode;
-  private _base: string;
-  private _onchange: OnEventHandler;
-  private _onerror: OnErrorHandler;
+  #mode: RouterMode;
+  #base: string;
+  #onchange: OnEventHandler;
+  #onerror: OnErrorHandler;
 
-  private _routeCollection: Map<string, RouteHandler>;
+  #routeCollection: Map<string, RouteHandler>;
+  #hashchangeCallback: { (event: HashChangeEvent): void };
+  #popstateCallback: { (event: PopStateEvent): void };
 
   constructor(mode: RouterMode, base: string = '') {
     if (mode !== 'hash' && mode !== 'history') {
@@ -15,78 +17,77 @@ export default class Router {
 
     // If the mode is 'hash',
     // the base should be the base path part of the path represented with URL fragment
-    this._mode = mode;
-    this._base = (base && !base.endsWith('/')) ? base + '/' : base;
-    this._onchange = () => {};
-    this._onerror = (exception) => {
+    this.#mode = mode;
+    this.#base = (base && !base.endsWith('/')) ? base + '/' : base;
+    this.#onchange = () => {};
+    this.#onerror = (exception) => {
       console.error(exception);
     };
 
-    this._routeCollection = new Map();
-
-    this._handleHashchange = this._handleHashchange.bind(this);
-    this._handlePopstate = this._handlePopstate.bind(this);
+    this.#routeCollection = new Map();
+    this.#hashchangeCallback = this.#handleHashchange.bind(this);
+    this.#popstateCallback = this.#handlePopstate.bind(this);
   }
 
   get mode(): RouterMode {
-    return this._mode;
+    return this.#mode;
   }
 
   get base(): string {
-    return this._base;
+    return this.#base;
   }
 
   // deno-lint-ignore explicit-module-boundary-types
   set onchange(handler: OnEventHandler) {
-    this._onchange = handler;
+    this.#onchange = handler;
   }
 
   get onchange(): OnEventHandler {
-    return this._onchange;
+    return this.#onchange;
   }
 
   // deno-lint-ignore explicit-module-boundary-types
   set onerror(handler: OnErrorHandler) {
-    this._onerror = handler;
+    this.#onerror = handler;
   }
 
   get onerror(): OnErrorHandler {
-    return this._onerror;
+    return this.#onerror;
   }
 
   setRoute(pattern: string, handler: RouteHandler): void {
-    if (!this._routeCollection.size) {
-      if (this._mode === 'hash') {
-        globalThis.addEventListener('hashchange', this._handleHashchange);
-      } else if (this._mode === 'history') {
-        globalThis.addEventListener('popstate', this._handlePopstate);
+    if (!this.#routeCollection.size) {
+      if (this.#mode === 'hash') {
+        globalThis.addEventListener('hashchange', this.#hashchangeCallback);
+      } else if (this.#mode === 'history') {
+        globalThis.addEventListener('popstate', this.#popstateCallback);
       }
     }
 
-    this._routeCollection.set(this._fixRoutePattern(pattern), handler);
+    this.#routeCollection.set(this.#fixRoutePattern(pattern), handler);
   }
 
   removeRoute(pattern: string): void {
-    this._routeCollection.delete(this._fixRoutePattern(pattern));
+    this.#routeCollection.delete(this.#fixRoutePattern(pattern));
 
-    if (!this._routeCollection.size) {
-      if (this._mode === 'hash') {
-        globalThis.removeEventListener('hashchange', this._handleHashchange);
-      } else if (this._mode === 'history') {
-        globalThis.removeEventListener('popstate', this._handlePopstate);
+    if (!this.#routeCollection.size) {
+      if (this.#mode === 'hash') {
+        globalThis.removeEventListener('hashchange', this.#hashchangeCallback);
+      } else if (this.#mode === 'history') {
+        globalThis.removeEventListener('popstate', this.#popstateCallback);
       }
     }
   }
 
   navigate(url: string): void {
-    if (this._mode === 'hash') {
-      this._navigateWithHashMode(url);
-    } else if (this._mode === 'history') {
-      this._navigateWithHistoryMode(url);
+    if (this.#mode === 'hash') {
+      this.#navigateWithHashMode(url);
+    } else if (this.#mode === 'history') {
+      this.#navigateWithHistoryMode(url);
     }
   }
 
-  private _navigateWithHashMode(url: string): void {
+  #navigateWithHashMode(url: string): void {
     let newVirtualPath = '';
 
     if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
@@ -106,18 +107,18 @@ export default class Router {
 
     const oldVirtualPath = globalThis.location.hash.substring(1);
     const oldVirtualUrl = new URL(oldVirtualPath, globalThis.location.origin);
-    const newVirtualUrl = new URL(this._resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
+    const newVirtualUrl = new URL(this.#resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
 
     if (newVirtualUrl.pathname !== oldVirtualPath) {
       globalThis.location.hash = newVirtualUrl.pathname;
       return;
     }
 
-    this._invokeRouteHandler(newVirtualUrl.pathname);
+    this.#invokeRouteHandler(newVirtualUrl.pathname);
   }
 
-  private _navigateWithHistoryMode(url: string): void {
-    const newUrl = new URL(this._resolveBaseUrl(url), globalThis.location.href);
+  #navigateWithHistoryMode(url: string): void {
+    const newUrl = new URL(this.#resolveBaseUrl(url), globalThis.location.href);
 
     if (newUrl.origin !== globalThis.location.origin) {
       globalThis.location.href = newUrl.href;
@@ -126,26 +127,26 @@ export default class Router {
 
     if (newUrl.href !== globalThis.location.href) {
       globalThis.history.pushState({}, '', newUrl.href);
-      this._onchange(new CustomEvent('pushstate'));
+      this.#onchange(new CustomEvent('pushstate'));
     }
 
-    this._invokeRouteHandler(newUrl.pathname);
+    this.#invokeRouteHandler(newUrl.pathname);
   }
 
-  private _handleHashchange(event: HashChangeEvent): void {
-    this._onchange(event);
-    this._invokeRouteHandler(globalThis.location.hash.substring(1));
+  #handleHashchange(event: HashChangeEvent): void {
+    this.#onchange(event);
+    this.#invokeRouteHandler(globalThis.location.hash.substring(1));
   }
 
-  private _handlePopstate(event: PopStateEvent): void {
-    this._onchange(event);
-    this._invokeRouteHandler(globalThis.location.pathname);
+  #handlePopstate(event: PopStateEvent): void {
+    this.#onchange(event);
+    this.#invokeRouteHandler(globalThis.location.pathname);
   }
 
-  private _invokeRouteHandler(path: string): void {
+  #invokeRouteHandler(path: string): void {
     try {
-      if (this._routeCollection.size) {
-        for (const [pattern, handler] of this._routeCollection) {
+      if (this.#routeCollection.size) {
+        for (const [pattern, handler] of this.#routeCollection) {
           const matches = path.match(new RegExp(pattern));
           if (matches && matches.groups) {
             handler(matches.groups);
@@ -154,15 +155,15 @@ export default class Router {
         }
       }
     } catch (exception) {
-      this._onerror(exception);
+      this.#onerror(exception);
     }
   }
 
-  private _resolveBaseUrl(url: string): string {
-    return (this._base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this._base + url : url;
+  #resolveBaseUrl(url: string): string {
+    return (this.#base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this.#base + url : url;
   }
 
-  private _fixRoutePattern(pattern: string): string {
+  #fixRoutePattern(pattern: string): string {
     // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups (?:pattern)
     // The pattern may start with ":" so prefix the pattern with "/" and remove it when the replacement complete
     return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);

@@ -1,24 +1,24 @@
 import Observable from './Observable.ts';
 
 export default class ObservableValue<T> extends Observable<T> {
-  private _value: T;
+  #value: T;
 
   constructor(value: T) {
     super();
 
-    this._value = value;
+    this.#value = value;
   }
 
   set(value: T): void {
-    this._value = value;
+    this.#value = value;
     this.notify();
   }
 
   get(): T {
-    return this._value;
+    return this.#value;
   }
 
   override notify(): void {
-    super.notify(this._value);
+    super.notify(this.#value);
   }
 }

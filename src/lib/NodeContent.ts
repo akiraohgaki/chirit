@@ -3,39 +3,39 @@ import type { NodeContentData, OnEventHandler } from './types.ts';
 const containerCollection = new WeakSet();
 
 export default class NodeContent<T extends Node> {
-  private _container: T;
+  #container: T;
 
-  private _context: unknown;
+  #context: unknown;
 
   constructor(container: T, context?: unknown) {
     containerCollection.add(container);
 
-    //this._containerRef = new WeakRef(container);
-    this._container = container;
+    //this.#containerRef = new WeakRef(container);
+    this.#container = container;
 
-    //this._contextRef = new WeakRef(context);
-    this._context = context;
+    //this.#contextRef = new WeakRef(context);
+    this.#context = context;
   }
 
   get container(): T {
-    return this._container;
+    return this.#container;
   }
 
   update(content: NodeContentData): void {
     if (content instanceof Document || content instanceof DocumentFragment) {
-      this._patchNodesInsideOf(this._container, content);
+      this.#patchNodesInsideOf(this.#container, content);
     } else {
-      this._patchNodesInsideOf(this._container, this._createDocumentFragment(content));
+      this.#patchNodesInsideOf(this.#container, this.#createDocumentFragment(content));
     }
 
-    this._fixOneventHandlersInsideOf(this._container);
+    this.#fixOneventHandlersInsideOf(this.#container);
   }
 
   clone(): DocumentFragment {
-    return this._createDocumentFragment(this._container.childNodes);
+    return this.#createDocumentFragment(this.#container.childNodes);
   }
 
-  private _createDocumentFragment(content: NodeContentData): DocumentFragment {
+  #createDocumentFragment(content: NodeContentData): DocumentFragment {
     if (typeof content === 'string') {
       // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement
       const template = document.createElement('template');
@@ -56,7 +56,7 @@ export default class NodeContent<T extends Node> {
     return documentFragment;
   }
 
-  private _patchNodesInsideOf(original: Node, diff: Node): void {
+  #patchNodesInsideOf(original: Node, diff: Node): void {
     if (original.hasChildNodes() || diff.hasChildNodes()) {
       // NodeList of Node.childNodes is live so must be convert to array
       const originalChildNodes = Array.from(original.childNodes);
@@ -64,7 +64,7 @@ export default class NodeContent<T extends Node> {
       const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
 
       for (let i = 0; i < maxLength; i++) {
-        this._patchNodes(
+        this.#patchNodes(
           original,
           originalChildNodes[i] ?? null,
           diffChildNodes[i] ?? null,
@@ -73,7 +73,7 @@ export default class NodeContent<T extends Node> {
     }
   }
 
-  private _patchNodes(parent: Node, original: Node | null, diff: Node | null): void {
+  #patchNodes(parent: Node, original: Node | null, diff: Node | null): void {
     if (original && !diff) {
       parent.removeChild(original);
     } else if (!original && diff) {
@@ -82,9 +82,9 @@ export default class NodeContent<T extends Node> {
       if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
         if (original instanceof Element && diff instanceof Element) {
           // Element it's HTMLElement, SVGElement
-          this._patchAttributes(original, diff);
+          this.#patchAttributes(original, diff);
           if (!containerCollection.has(original)) {
-            this._patchNodesInsideOf(original, diff);
+            this.#patchNodesInsideOf(original, diff);
           }
         } else if (original instanceof CharacterData && diff instanceof CharacterData) {
           // CharacterData it's Text, Comment, ProcessingInstruction
@@ -100,7 +100,7 @@ export default class NodeContent<T extends Node> {
     }
   }
 
-  private _patchAttributes(original: Element, diff: Element): void {
+  #patchAttributes(original: Element, diff: Element): void {
     // NamedNodeMap of Element.attributes is live so must be convert to array
     if (original.hasAttributes()) {
       for (const attribute of Array.from(original.attributes)) {
@@ -122,17 +122,17 @@ export default class NodeContent<T extends Node> {
     }
   }
 
-  private _fixOneventHandlersInsideOf(target: Node): void {
+  #fixOneventHandlersInsideOf(target: Node): void {
     if (target.hasChildNodes()) {
       for (const node of Array.from(target.childNodes)) {
         if (node instanceof Element) {
-          this._fixOneventHandlers(node);
+          this.#fixOneventHandlers(node);
         }
       }
     }
   }
 
-  private _fixOneventHandlers(target: Element): void {
+  #fixOneventHandlers(target: Element): void {
     if (target.hasAttributes()) {
       // NamedNodeMap of Element.attributes is live so must be convert to array
       for (const attribute of Array.from(target.attributes)) {
@@ -142,14 +142,14 @@ export default class NodeContent<T extends Node> {
           if (onevent in target && typeof oneventTarget[onevent] === 'function') {
             const handler = new Function('event', attribute.value);
             target.removeAttribute(attribute.name);
-            oneventTarget[onevent] = handler.bind(this._context ?? target);
+            oneventTarget[onevent] = handler.bind(this.#context ?? target);
           }
         }
       }
     }
 
     if (!containerCollection.has(target)) {
-      this._fixOneventHandlersInsideOf(target);
+      this.#fixOneventHandlersInsideOf(target);
     }
   }
 }

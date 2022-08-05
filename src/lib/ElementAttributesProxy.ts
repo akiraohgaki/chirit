@@ -4,7 +4,7 @@ export default class ElementAttributesProxy {
   constructor(target: Element) {
     //const targetRef = new WeakRef(target);
 
-    // Class instance will created as Proxy of Object so not this class instance
+    // Creates class instance as Proxy of Object so not this class instance
     return new Proxy({}, {
       set: (_target, name, value) => {
         if (typeof name === 'string' && typeof value === 'string') {
