@@ -33,15 +33,21 @@ export default class WebStorage {
     return this.#prefix;
   }
 
-  get length(): number {
+  get size(): number {
     return this.#storage.length;
   }
 
-  key(index: number): string | null {
-    return this.#storage.key(index);
+  keys(): Array<string> {
+    const keys: Array<string> = [];
+    if (this.#storage.length) {
+      for (let i = 0; i < this.#storage.length; i++) {
+        keys.push(this.#storage.key(i));
+      }
+    }
+    return keys;
   }
 
-  setItem(key: string, value: unknown): void {
+  set(key: string, value: any): void {
     // Adds prefix to the key
     // and makes the value into special object and serialise to JSON
     this.#storage.setItem(
@@ -50,7 +56,7 @@ export default class WebStorage {
     );
   }
 
-  getItem(key: string): unknown {
+  get(key: string): any {
     // Checks if the value is JSON created from special object and returns original value
     // otherwise just returns the value
     const value = this.#storage.getItem(this.#prefix + key);
@@ -75,7 +81,7 @@ export default class WebStorage {
     return value;
   }
 
-  removeItem(key: string): void {
+  delete(key: string): void {
     this.#storage.removeItem(this.#prefix + key);
   }
 
