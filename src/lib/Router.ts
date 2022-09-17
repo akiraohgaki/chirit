@@ -55,7 +55,7 @@ export default class Router {
     return this.#onerror;
   }
 
-  setRoute(pattern: string, handler: RouteHandler): void {
+  set(pattern: string, handler: RouteHandler): void {
     if (!this.#routeCollection.size) {
       if (this.#mode === 'hash') {
         globalThis.addEventListener('hashchange', this.#hashchangeCallback);
@@ -67,7 +67,11 @@ export default class Router {
     this.#routeCollection.set(this.#fixRoutePattern(pattern), handler);
   }
 
-  removeRoute(pattern: string): void {
+  get(pattern: string): RouteHandler | undefined {
+    return this.#routeCollection.get(this.#fixRoutePattern(pattern));
+  }
+
+  delete(pattern: string): void {
     this.#routeCollection.delete(this.#fixRoutePattern(pattern));
 
     if (!this.#routeCollection.size) {
