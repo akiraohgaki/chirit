@@ -1,5 +1,5 @@
 export default class CustomElement extends HTMLElement {
-  #updatedCount: number;
+  #updateCounter: number;
 
   #updateTimerId: number | undefined;
   #updateDelay: number;
@@ -8,7 +8,7 @@ export default class CustomElement extends HTMLElement {
   constructor() {
     super();
 
-    this.#updatedCount = 0;
+    this.#updateCounter = 0;
 
     this.#updateTimerId = undefined;
     this.#updateDelay = 100;
@@ -26,14 +26,14 @@ export default class CustomElement extends HTMLElement {
     _namespace?: string | null,
   ): void {
     // Runs update task when observed attribute has changed but don't run before initial update
-    if (this.#updatedCount && oldValue !== newValue) {
+    if (this.#updateCounter && oldValue !== newValue) {
       this.update();
     }
   }
 
   connectedCallback(): void {
     // Runs update task when this Element has connected to parent Node
-    if (this.#updatedCount) {
+    if (this.#updateCounter) {
       // Re-update, this Element may have moved into another parent Node
       this.update();
     } else {
@@ -52,8 +52,8 @@ export default class CustomElement extends HTMLElement {
     globalThis.customElements.define(name, this, options);
   }
 
-  get updatedCount(): number {
-    return this.#updatedCount;
+  get updateCounter(): number {
+    return this.#updateCounter;
   }
 
   update(): Promise<void> {
@@ -88,7 +88,7 @@ export default class CustomElement extends HTMLElement {
     // This is a synchronous updating method that calls an additional lifecycle callbacks
     try {
       this.render();
-      this.#updatedCount++;
+      this.#updateCounter++;
       this.updatedCallback();
     } catch (exception) {
       this.errorCallback(exception);
