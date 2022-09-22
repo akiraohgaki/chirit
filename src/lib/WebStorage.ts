@@ -41,13 +41,13 @@ export default class WebStorage {
     const keys: Array<string> = [];
     if (this.#storage.length) {
       for (let i = 0; i < this.#storage.length; i++) {
-        keys.push(this.#storage.key(i));
+        keys.push(this.#storage.key(i) as string);
       }
     }
     return keys;
   }
 
-  set(key: string, value: any): void {
+  set(key: string, value: unknown): void {
     // Adds prefix to the key
     // and makes the value into special object and serialise to JSON
     this.#storage.setItem(
@@ -56,7 +56,7 @@ export default class WebStorage {
     );
   }
 
-  get(key: string): any {
+  get(key: string): unknown {
     // Checks if the value is JSON created from special object and returns original value
     // otherwise just returns the value
     const value = this.#storage.getItem(this.#prefix + key);
