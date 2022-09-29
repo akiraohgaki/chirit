@@ -40,6 +40,7 @@ Deno.test('WebStorage', async (t) => {
   });
 
   await t.step('set()', () => {
+    webStorage.set('boolean', true);
     webStorage.set('number', 0);
     webStorage.set('string', 'test');
     webStorage.set('array', [0, 1, 2]);
@@ -47,11 +48,29 @@ Deno.test('WebStorage', async (t) => {
     webStorage.set('null', null);
     webStorage.set('undefined', undefined);
 
-    assertStrictEquals(webStorage.size, 6);
-
+    assertStrictEquals(
+      globalThis.sessionStorage.getItem('test_boolean'),
+      '{"_k":"boolean","_v":true}',
+    );
     assertStrictEquals(
       globalThis.sessionStorage.getItem('test_number'),
       '{"_k":"number","_v":0}',
+    );
+    assertStrictEquals(
+      globalThis.sessionStorage.getItem('test_string'),
+      '{"_k":"string","_v":"test"}',
+    );
+    assertStrictEquals(
+      globalThis.sessionStorage.getItem('test_array'),
+      '{"_k":"array","_v":[0,1,2]}',
+    );
+    assertStrictEquals(
+      globalThis.sessionStorage.getItem('test_object'),
+      '{"_k":"object","_v":{"key0":0,"key1":1,"key2":2}}',
+    );
+    assertStrictEquals(
+      globalThis.sessionStorage.getItem('test_null'),
+      '{"_k":"null","_v":null}',
     );
     assertStrictEquals(
       globalThis.sessionStorage.getItem('test_undefined'),
@@ -60,6 +79,7 @@ Deno.test('WebStorage', async (t) => {
   });
 
   await t.step('get()', () => {
+    assertStrictEquals(webStorage.get('boolean'), true);
     assertStrictEquals(webStorage.get('number'), 0);
     assertStrictEquals(webStorage.get('string'), 'test');
     assertEquals(webStorage.get('array'), [0, 1, 2]);
@@ -67,7 +87,7 @@ Deno.test('WebStorage', async (t) => {
     assertStrictEquals(webStorage.get('null'), null);
     assertStrictEquals(webStorage.get('undefined'), undefined);
 
-    assertStrictEquals(webStorage.get('noexist'), null);
+    assertStrictEquals(webStorage.get('keynotexist'), null);
 
     globalThis.sessionStorage.setItem('test_invalidjson', 'dummy');
     assertStrictEquals(webStorage.get('invalidjson'), 'dummy');
@@ -80,6 +100,7 @@ Deno.test('WebStorage', async (t) => {
 
   await t.step('keys()', () => {
     assertArrayIncludes(webStorage.keys(), [
+      'test_boolean',
       'test_number',
       'test_string',
       'test_array',
@@ -90,11 +111,11 @@ Deno.test('WebStorage', async (t) => {
   });
 
   await t.step('delete()', () => {
+    webStorage.delete('boolean');
     webStorage.delete('number');
     webStorage.delete('string');
-    webStorage.delete('array');
 
-    assertStrictEquals(webStorage.size, 3);
+    assertStrictEquals(webStorage.size, 4);
   });
 
   await t.step('clear()', () => {
