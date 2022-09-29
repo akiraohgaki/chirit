@@ -64,12 +64,8 @@ export default class WebStorage {
       try {
         // JSON.parse() will throw a parse error if the value is not valid JSON
         const deserializedValue = JSON.parse(value);
-        if (
-          deserializedValue &&
-          deserializedValue._k === key &&
-          deserializedValue._v !== undefined
-        ) {
-          // Will return original value
+        if (deserializedValue?._k === key) {
+          // Will return original value or undefined
           return deserializedValue._v;
         }
       } catch {
