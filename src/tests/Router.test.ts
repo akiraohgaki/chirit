@@ -1,10 +1,4 @@
-import {
-  //assertArrayIncludes,
-  //assertEquals,
-  assertInstanceOf,
-  assertStrictEquals,
-  assertThrows,
-} from 'https://deno.land/std/testing/asserts.ts';
+import { assertInstanceOf, assertStrictEquals, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
 
 import Router from '../Router.ts';
 
