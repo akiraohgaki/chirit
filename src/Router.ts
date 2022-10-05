@@ -67,10 +67,6 @@ export default class Router {
     this.#routeCollection.set(this.#fixRoutePattern(pattern), handler);
   }
 
-  get(pattern: string): RouteHandler | undefined {
-    return this.#routeCollection.get(this.#fixRoutePattern(pattern));
-  }
-
   delete(pattern: string): void {
     this.#routeCollection.delete(this.#fixRoutePattern(pattern));
 
