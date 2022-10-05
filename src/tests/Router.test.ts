@@ -7,7 +7,6 @@ function scenario(mode: 'hash' | 'history'): void {
     let router: Router;
 
     const onchange = () => {};
-
     const onerror = () => {};
 
     const pattern1 = '/test/:id0/:id1';
@@ -64,7 +63,7 @@ Deno.test(`Router (invalid mode)`, async (t) => {
     assertThrows(() => {
       // deno-lint-ignore ban-ts-comment
       // @ts-ignore
-      new Router('test');
+      new Router('invalid');
     }, Error);
   });
 });

@@ -124,7 +124,7 @@ Deno.test(`WebStorage (invalid mode)`, async (t) => {
     assertThrows(() => {
       // deno-lint-ignore ban-ts-comment
       // @ts-ignore
-      new WebStorage('test');
+      new WebStorage('invalid');
     }, Error);
   });
 });
