@@ -24,13 +24,13 @@ function scenario(mode: 'hash' | 'history'): void {
       assertStrictEquals(router.base, '/test/');
     });
 
-    await t.step('onchange', () => {
+    await t.step('onchange()', () => {
       router.onchange = onchange;
 
       assertStrictEquals(router.onchange, onchange);
     });
 
-    await t.step('onerror', () => {
+    await t.step('onerror()', () => {
       router.onerror = onerror;
 
       assertStrictEquals(router.onerror, onerror);
@@ -41,22 +41,17 @@ function scenario(mode: 'hash' | 'history'): void {
       router.set(pattern2, handler2);
     });
 
-    await t.step('get()', () => {
-      assertStrictEquals(router.get(pattern1), handler1);
-      assertStrictEquals(router.get(pattern2), handler2);
-
-      assertStrictEquals(router.get('/notset'), undefined);
-    });
-
     await t.step('delete()', () => {
       router.delete(pattern1);
       router.delete(pattern2);
     });
 
+    /*
     await t.step('navigate()', () => {
-      //router.navigate('https://example.com/test/0/1');
-      //router.navigate('https://example.com/test/2');
+      router.navigate('https://example.com/test/0/1');
+      router.navigate('https://example.com/test/2');
     });
+    */
   });
 }
 
