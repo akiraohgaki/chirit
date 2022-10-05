@@ -1,6 +1,6 @@
 import { JSDOM } from 'https://jspm.dev/jsdom';
 
-const generateDom = () => {
+const jsdom = () => {
   return new JSDOM(
     `<!DOCTYPE html><html><head></head><body></body></html>`,
     {
@@ -11,4 +11,4 @@ const generateDom = () => {
   );
 };
 
-export { generateDom };
+export { jsdom };
