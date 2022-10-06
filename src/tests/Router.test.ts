@@ -1,9 +1,11 @@
 import { assertInstanceOf, assertStrictEquals, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
-
+import util from './util.ts';
 import Router from '../Router.ts';
 
+const $globalThis = util.globalThis();
+
 function scenario(mode: 'hash' | 'history'): void {
-  Deno.test(`Router (${mode} mode)`, async (t) => {
+  Deno.test(`Router (${mode} mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
     let router: Router;
 
     const onchange = () => {};
@@ -45,12 +47,11 @@ function scenario(mode: 'hash' | 'history'): void {
       router.delete(pattern2);
     });
 
-    /*
     await t.step('navigate()', () => {
-      router.navigate('https://example.com/test/0/1');
-      router.navigate('https://example.com/test/2');
+      //router.navigate('https://example.com/test/0/1');
+      //router.navigate('https://example.com/test/2');
+      console.log($globalThis.location.href);
     });
-    */
   });
 }
 
@@ -58,7 +59,7 @@ scenario('hash');
 
 scenario('history');
 
-Deno.test(`Router (invalid mode)`, async (t) => {
+Deno.test(`Router (invalid mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   await t.step('constructor()', () => {
     assertThrows(() => {
       // deno-lint-ignore ban-ts-comment

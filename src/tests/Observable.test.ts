@@ -1,8 +1,7 @@
 import { assertInstanceOf, assertStrictEquals } from 'https://deno.land/std/testing/asserts.ts';
-
 import Observable from '../Observable.ts';
 
-Deno.test('Observable', async (t) => {
+Deno.test('Observable', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let observable: Observable<number>;
 
   let counter = 0;

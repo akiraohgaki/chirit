@@ -5,17 +5,18 @@ import {
   assertStrictEquals,
   assertThrows,
 } from 'https://deno.land/std/testing/asserts.ts';
-import { jsdom } from './util.ts';
-
+import util from './util.ts';
 import ElementAttributesProxy from '../ElementAttributesProxy.ts';
 
-Deno.test('ElementAttributesProxy', async (t) => {
+const $globalThis = util.globalThis();
+
+Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let elementAttributesProxy: ElementAttributesProxy;
 
   let element: Element;
 
   await t.step('constructor()', () => {
-    element = jsdom().window.document.createElement('div');
+    element = $globalThis.document.createElement('div');
     elementAttributesProxy = new ElementAttributesProxy(element);
 
     assertInstanceOf(elementAttributesProxy, Object);

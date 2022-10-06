@@ -5,18 +5,20 @@ import {
   assertStrictEquals,
   assertThrows,
 } from 'https://deno.land/std/testing/asserts.ts';
-
+import util from './util.ts';
 import WebStorage from '../WebStorage.ts';
 
+const $globalThis = util.globalThis();
+
 function scenario(mode: 'local' | 'session'): void {
-  Deno.test(`WebStorage (${mode} mode)`, async (t) => {
+  Deno.test(`WebStorage (${mode} mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
     let webStorage: WebStorage;
 
     let storage: Storage;
     if (mode === 'local') {
-      storage = globalThis.localStorage;
+      storage = $globalThis.localStorage;
     } else if (mode === 'session') {
-      storage = globalThis.sessionStorage;
+      storage = $globalThis.sessionStorage;
     }
 
     await t.step('constructor()', () => {
@@ -119,7 +121,7 @@ scenario('local');
 
 scenario('session');
 
-Deno.test(`WebStorage (invalid mode)`, async (t) => {
+Deno.test(`WebStorage (invalid mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   await t.step('constructor()', () => {
     assertThrows(() => {
       // deno-lint-ignore ban-ts-comment

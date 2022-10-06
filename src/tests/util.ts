@@ -1,14 +1,17 @@
 import { JSDOM } from 'https://jspm.dev/jsdom';
+import util from '../util.ts';
 
-const jsdom = () => {
-  return new JSDOM(
-    `<!DOCTYPE html><html><head></head><body></body></html>`,
-    {
-      url: 'https://example.com/',
-      referrer: 'https://example.org/',
-      contentType: 'text/html',
-    },
-  );
+const jsdom = new JSDOM(
+  `<!DOCTYPE html><html><head></head><body></body></html>`,
+  {
+    url: 'https://example.com/',
+    referrer: 'https://example.org/',
+    contentType: 'text/html',
+  },
+);
+
+util.globalThis = () => {
+  return jsdom.window;
 };
 
-export { jsdom };
+export default util;
