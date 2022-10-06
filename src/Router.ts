@@ -1,5 +1,9 @@
 import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from './types.ts';
 
+import util from './util.ts';
+
+const $globalThis = util.globalThis();
+
 export default class Router {
   #mode: RouterMode;
   #base: string;
@@ -58,9 +62,9 @@ export default class Router {
   set(pattern: string, handler: RouteHandler): void {
     if (!this.#routeCollection.size) {
       if (this.#mode === 'hash') {
-        globalThis.addEventListener('hashchange', this.#hashchangeCallback);
+        $globalThis.addEventListener('hashchange', this.#hashchangeCallback);
       } else if (this.#mode === 'history') {
-        globalThis.addEventListener('popstate', this.#popstateCallback);
+        $globalThis.addEventListener('popstate', this.#popstateCallback);
       }
     }
 
@@ -72,9 +76,9 @@ export default class Router {
 
     if (!this.#routeCollection.size) {
       if (this.#mode === 'hash') {
-        globalThis.removeEventListener('hashchange', this.#hashchangeCallback);
+        $globalThis.removeEventListener('hashchange', this.#hashchangeCallback);
       } else if (this.#mode === 'history') {
-        globalThis.removeEventListener('popstate', this.#popstateCallback);
+        $globalThis.removeEventListener('popstate', this.#popstateCallback);
       }
     }
   }
@@ -91,12 +95,12 @@ export default class Router {
     let newVirtualPath = '';
 
     if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
-      const newUrl = new URL(url, globalThis.location.href);
+      const newUrl = new $globalThis.URL(url, $globalThis.location.href);
       const newUrlParts = newUrl.href.split('#');
-      const oldUrlParts = globalThis.location.href.split('#');
+      const oldUrlParts = $globalThis.location.href.split('#');
 
       if (newUrlParts[0] !== oldUrlParts[0]) {
-        globalThis.location.href = newUrl.href;
+        $globalThis.location.href = newUrl.href;
         return;
       }
 
@@ -105,12 +109,12 @@ export default class Router {
       newVirtualPath = url;
     }
 
-    const oldVirtualPath = globalThis.location.hash.substring(1);
-    const oldVirtualUrl = new URL(oldVirtualPath, globalThis.location.origin);
-    const newVirtualUrl = new URL(this.#resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
+    const oldVirtualPath = $globalThis.location.hash.substring(1);
+    const oldVirtualUrl = new $globalThis.URL(oldVirtualPath, $globalThis.location.origin);
+    const newVirtualUrl = new $globalThis.URL(this.#resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
 
     if (newVirtualUrl.pathname !== oldVirtualPath) {
-      globalThis.location.hash = newVirtualUrl.pathname;
+      $globalThis.location.hash = newVirtualUrl.pathname;
       return;
     }
 
@@ -118,16 +122,16 @@ export default class Router {
   }
 
   #navigateWithHistoryMode(url: string): void {
-    const newUrl = new URL(this.#resolveBaseUrl(url), globalThis.location.href);
+    const newUrl = new $globalThis.URL(this.#resolveBaseUrl(url), $globalThis.location.href);
 
-    if (newUrl.origin !== globalThis.location.origin) {
-      globalThis.location.href = newUrl.href;
+    if (newUrl.origin !== $globalThis.location.origin) {
+      $globalThis.location.href = newUrl.href;
       return;
     }
 
-    if (newUrl.href !== globalThis.location.href) {
-      globalThis.history.pushState({}, '', newUrl.href);
-      this.#onchange(new CustomEvent('pushstate'));
+    if (newUrl.href !== $globalThis.location.href) {
+      $globalThis.history.pushState({}, '', newUrl.href);
+      this.#onchange(new $globalThis.CustomEvent('pushstate'));
     }
 
     this.#invokeRouteHandler(newUrl.pathname);
@@ -135,12 +139,12 @@ export default class Router {
 
   #handleHashchange(event: HashChangeEvent): void {
     this.#onchange(event);
-    this.#invokeRouteHandler(globalThis.location.hash.substring(1));
+    this.#invokeRouteHandler($globalThis.location.hash.substring(1));
   }
 
   #handlePopstate(event: PopStateEvent): void {
     this.#onchange(event);
-    this.#invokeRouteHandler(globalThis.location.pathname);
+    this.#invokeRouteHandler($globalThis.location.pathname);
   }
 
   #invokeRouteHandler(path: string): void {

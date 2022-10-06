@@ -1,5 +1,9 @@
 import type { WebStorageMode } from './types.ts';
 
+import util from './util.ts';
+
+const $globalThis = util.globalThis();
+
 export default class WebStorage {
   #mode: WebStorageMode;
   #prefix: string;
@@ -12,11 +16,11 @@ export default class WebStorage {
 
     switch (this.#mode) {
       case 'local': {
-        this.#storage = globalThis.localStorage;
+        this.#storage = $globalThis.localStorage;
         break;
       }
       case 'session': {
-        this.#storage = globalThis.sessionStorage;
+        this.#storage = $globalThis.sessionStorage;
         break;
       }
       default: {
