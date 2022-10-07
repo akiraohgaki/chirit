@@ -1,6 +1,8 @@
 import util from './util.ts';
 
-export default class CustomElement extends HTMLElement {
+const BaseElement = util.globalThis.HTMLElement;
+
+export default class CustomElement extends BaseElement {
   #updateCounter: number;
 
   #updateTimerId: number | undefined;
