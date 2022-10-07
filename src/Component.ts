@@ -5,8 +5,6 @@ import ElementAttributesProxy from './ElementAttributesProxy.ts';
 import NodeContent from './NodeContent.ts';
 import util from './util.ts';
 
-const $globalThis = util.globalThis();
-
 export default class Component extends CustomElement {
   #attrs: ElementAttributesProxy;
   #content: NodeContent<ComponentContentContainer>;
@@ -28,7 +26,7 @@ export default class Component extends CustomElement {
 
   dispatch(type: string, detail?: unknown): boolean {
     return this.#content.container.dispatchEvent(
-      new $globalThis.CustomEvent(type, {
+      new util.globalThis.CustomEvent(type, {
         detail: detail,
         bubbles: true,
         composed: true,

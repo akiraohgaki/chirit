@@ -1,5 +1,3 @@
 export default {
-  globalThis: () => {
-    return globalThis;
-  },
+  globalThis: globalThis,
 };

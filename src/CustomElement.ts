@@ -1,7 +1,5 @@
 import util from './util.ts';
 
-const $globalThis = util.globalThis();
-
 export default class CustomElement extends HTMLElement {
   #updateCounter: number;
 
@@ -53,7 +51,7 @@ export default class CustomElement extends HTMLElement {
   }
 
   static define(name: string, options?: ElementDefinitionOptions): void {
-    $globalThis.customElements.define(name, this, options);
+    util.globalThis.customElements.define(name, this, options);
   }
 
   get updateCounter(): number {
@@ -63,12 +61,12 @@ export default class CustomElement extends HTMLElement {
   update(): Promise<void> {
     // This is an asynchronous updating method that scheduled updates
     if (this.#updateTimerId !== undefined) {
-      $globalThis.clearTimeout(this.#updateTimerId);
+      util.globalThis.clearTimeout(this.#updateTimerId);
       this.#updateTimerId = undefined;
     }
 
-    this.#updateTimerId = $globalThis.setTimeout(() => {
-      $globalThis.clearTimeout(this.#updateTimerId);
+    this.#updateTimerId = util.globalThis.setTimeout(() => {
+      util.globalThis.clearTimeout(this.#updateTimerId);
       this.#updateTimerId = undefined;
 
       // Take out Promise resolvers of this update point before the updating starts

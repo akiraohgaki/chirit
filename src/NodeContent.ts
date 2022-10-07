@@ -2,8 +2,6 @@ import type { NodeContentData, OnEventHandler } from './types.ts';
 
 import util from './util.ts';
 
-const $globalThis = util.globalThis();
-
 const containerCollection = new WeakSet();
 
 export default class NodeContent<T extends Node> {
@@ -26,7 +24,7 @@ export default class NodeContent<T extends Node> {
   }
 
   update(content: NodeContentData): void {
-    if (content instanceof $globalThis.Document || content instanceof $globalThis.DocumentFragment) {
+    if (content instanceof util.globalThis.Document || content instanceof util.globalThis.DocumentFragment) {
       this.#patchNodesInsideOf(this.#container, content);
     } else {
       this.#patchNodesInsideOf(this.#container, this.#createDocumentFragment(content));
@@ -42,17 +40,17 @@ export default class NodeContent<T extends Node> {
   #createDocumentFragment(content: NodeContentData): DocumentFragment {
     if (typeof content === 'string') {
       // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement
-      const template = $globalThis.document.createElement('template');
+      const template = util.globalThis.document.createElement('template');
       template.innerHTML = content;
       return template.content;
     }
 
     // Some node types like DocumentType will not insert into DocumentFragment
     // ShadowRoot will not cloneable also not included in NodeList
-    const documentFragment = $globalThis.document.createDocumentFragment();
-    if (content instanceof $globalThis.Node) {
+    const documentFragment = util.globalThis.document.createDocumentFragment();
+    if (content instanceof util.globalThis.Node) {
       documentFragment.appendChild(content.cloneNode(true));
-    } else if (content instanceof $globalThis.NodeList && content.length) {
+    } else if (content instanceof util.globalThis.NodeList && content.length) {
       for (const node of Array.from(content)) {
         documentFragment.appendChild(node.cloneNode(true));
       }
@@ -84,13 +82,13 @@ export default class NodeContent<T extends Node> {
       parent.appendChild(diff.cloneNode(true));
     } else if (original && diff) {
       if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
-        if (original instanceof $globalThis.Element && diff instanceof $globalThis.Element) {
+        if (original instanceof util.globalThis.Element && diff instanceof util.globalThis.Element) {
           // Element it's HTMLElement, SVGElement
           this.#patchAttributes(original, diff);
           if (!containerCollection.has(original)) {
             this.#patchNodesInsideOf(original, diff);
           }
-        } else if (original instanceof $globalThis.CharacterData && diff instanceof $globalThis.CharacterData) {
+        } else if (original instanceof util.globalThis.CharacterData && diff instanceof util.globalThis.CharacterData) {
           // CharacterData it's Text, Comment, ProcessingInstruction
           if (original.nodeValue !== diff.nodeValue) {
             original.nodeValue = diff.nodeValue;
@@ -129,7 +127,7 @@ export default class NodeContent<T extends Node> {
   #fixOneventHandlersInsideOf(target: Node): void {
     if (target.hasChildNodes()) {
       for (const node of Array.from(target.childNodes)) {
-        if (node instanceof $globalThis.Element) {
+        if (node instanceof util.globalThis.Element) {
           this.#fixOneventHandlers(node);
         }
       }
