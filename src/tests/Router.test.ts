@@ -2,8 +2,6 @@ import { assertInstanceOf, assertStrictEquals, assertThrows } from 'https://deno
 import util from './util.ts';
 import Router from '../Router.ts';
 
-const $globalThis = util.globalThis();
-
 function scenario(mode: 'hash' | 'history'): void {
   Deno.test(`Router (${mode} mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
     let router: Router;
@@ -48,9 +46,10 @@ function scenario(mode: 'hash' | 'history'): void {
     });
 
     await t.step('navigate()', () => {
-      //router.navigate('https://example.com/test/0/1');
-      //router.navigate('https://example.com/test/2');
-      console.log($globalThis.location.href);
+      router.navigate('https://example.com/test/0/1');
+      console.log(util.globalThis.location.href);
+      router.navigate('https://example.com/test/2');
+      console.log(util.globalThis.location.href);
     });
   });
 }

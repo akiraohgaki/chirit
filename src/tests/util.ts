@@ -7,11 +7,10 @@ const jsdom = new JSDOM(
     url: 'https://example.com/',
     referrer: 'https://example.org/',
     contentType: 'text/html',
+    storageQuota: 1024 * 10,
   },
 );
 
-util.globalThis = () => {
-  return jsdom.window;
-};
+util.globalThis = jsdom.window;
 
 export default util;

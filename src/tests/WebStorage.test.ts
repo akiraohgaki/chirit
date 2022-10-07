@@ -8,17 +8,15 @@ import {
 import util from './util.ts';
 import WebStorage from '../WebStorage.ts';
 
-const $globalThis = util.globalThis();
-
 function scenario(mode: 'local' | 'session'): void {
   Deno.test(`WebStorage (${mode} mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
     let webStorage: WebStorage;
 
     let storage: Storage;
     if (mode === 'local') {
-      storage = $globalThis.localStorage;
+      storage = util.globalThis.localStorage;
     } else if (mode === 'session') {
-      storage = $globalThis.sessionStorage;
+      storage = util.globalThis.sessionStorage;
     }
 
     await t.step('constructor()', () => {

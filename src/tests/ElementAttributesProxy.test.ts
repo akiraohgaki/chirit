@@ -8,15 +8,13 @@ import {
 import util from './util.ts';
 import ElementAttributesProxy from '../ElementAttributesProxy.ts';
 
-const $globalThis = util.globalThis();
-
 Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let elementAttributesProxy: ElementAttributesProxy;
 
   let element: Element;
 
   await t.step('constructor()', () => {
-    element = $globalThis.document.createElement('div');
+    element = util.globalThis.document.createElement('div');
     elementAttributesProxy = new ElementAttributesProxy(element);
 
     assertInstanceOf(elementAttributesProxy, Object);
