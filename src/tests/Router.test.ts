@@ -40,16 +40,25 @@ function scenario(mode: 'hash' | 'history'): void {
       router.set(pattern2, handler2);
     });
 
+    await t.step('navigate()', () => {
+      router.navigate('/test/0/1');
+
+      assertStrictEquals(
+        util.globalThis.location.href,
+        mode === 'hash' ? 'https://example.com/#/test/0/1' : 'https://example.com/test/0/1',
+      );
+
+      router.navigate('/test/2');
+
+      assertStrictEquals(
+        util.globalThis.location.href,
+        mode === 'hash' ? 'https://example.com/#/test/2' : 'https://example.com/test/2',
+      );
+    });
+
     await t.step('delete()', () => {
       router.delete(pattern1);
       router.delete(pattern2);
-    });
-
-    await t.step('navigate()', () => {
-      router.navigate('https://example.com/test/0/1');
-      console.log(util.globalThis.location.href);
-      router.navigate('https://example.com/test/2');
-      console.log(util.globalThis.location.href);
     });
   });
 }
