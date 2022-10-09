@@ -6,14 +6,36 @@ function scenario(mode: 'hash' | 'history'): void {
   Deno.test(`Router (${mode} mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
     let router: Router;
 
-    const onchange = () => {};
-    const onerror = () => {};
+    let counter = 0;
 
-    const pattern1 = '/test/:id0/:id1';
-    const handler1 = () => {};
+    const onchange = (event: Event) => {
+      counter++;
+      console.log(counter, util.globalThis.location.href, event);
+    };
 
-    const pattern2 = '/test/(?<id2>[^/?#]+)';
-    const handler2 = () => {};
+    const onerror = (exception: unknown) => {
+      counter++;
+      console.log(counter, util.globalThis.location.href, exception);
+    };
+
+    const pattern1 = '/test/test/:id0/:id1';
+    const handler1 = (params: unknown) => {
+      counter++;
+      console.log(counter, util.globalThis.location.href, params);
+    };
+
+    const pattern2 = '/test/test/(?<id2>[^/?#]+)';
+    const handler2 = (params: unknown) => {
+      counter++;
+      console.log(counter, util.globalThis.location.href, params);
+    };
+
+    const pattern3 = '/test/test';
+    const handler3 = (params: unknown) => {
+      counter++;
+      console.log(counter, util.globalThis.location.href, params);
+      throw new Error('error');
+    };
 
     await t.step('constructor()', () => {
       router = new Router(mode, '/test');
@@ -38,27 +60,40 @@ function scenario(mode: 'hash' | 'history'): void {
     await t.step('set()', () => {
       router.set(pattern1, handler1);
       router.set(pattern2, handler2);
+      router.set(pattern3, handler3);
     });
 
     await t.step('navigate()', () => {
-      router.navigate('/test/0/1');
+      router.navigate('/test/test/0/1');
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/test/0/1' : 'https://example.com/test/0/1',
+        mode === 'hash' ? 'https://example.com/#/test/test/0/1' : 'https://example.com/test/test/0/1',
       );
 
-      router.navigate('/test/2');
+      router.navigate('/test/test/2');
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/test/2' : 'https://example.com/test/2',
+        mode === 'hash' ? 'https://example.com/#/test/test/2' : 'https://example.com/test/test/2',
       );
+
+      router.navigate('/test/test');
+
+      assertStrictEquals(
+        util.globalThis.location.href,
+        mode === 'hash' ? 'https://example.com/#/test/test' : 'https://example.com/test/test',
+      );
+
+      router.navigate('/test/invalid');
+
+      assertStrictEquals(counter, mode === 'hash' ? 0 : 8);
     });
 
     await t.step('delete()', () => {
       router.delete(pattern1);
       router.delete(pattern2);
+      router.delete(pattern3);
     });
   });
 }
