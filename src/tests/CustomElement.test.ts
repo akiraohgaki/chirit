@@ -46,6 +46,9 @@ class TestElement extends CustomElement {
   protected override updatedCallback(): void {
     counter++;
     console.log(counter, 'updatedCallback()');
+    if (this.getAttribute('test') === 'error'){
+      throw new Error('error');
+    }
   }
   protected override errorCallback(exception: unknown): void {
     counter++;
@@ -119,13 +122,20 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     assertStrictEquals(customElement.getAttribute('unobserved'), '0');
     assertStrictEquals(customElement.updateCounter, 3);
     assertStrictEquals(counter, 14);
+
+    customElement.setAttribute('test', 'error');
+    await wait();
+
+    assertStrictEquals(customElement.getAttribute('test'), 'error');
+    assertStrictEquals(customElement.updateCounter, 4);
+    assertStrictEquals(counter, 18);
   });
 
   await t.step('disconnectedCallback()', () => {
     util.globalThis.document.body.removeChild(customElement);
 
-    assertStrictEquals(customElement.updateCounter, 3);
-    assertStrictEquals(counter, 15);
+    assertStrictEquals(customElement.updateCounter, 4);
+    assertStrictEquals(counter, 19);
   });
 
   await t.step('adoptedCallback()', async () => {
@@ -136,8 +146,8 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     // adoptedCallback() and connectedCallback() will fire
     await wait();
 
-    assertStrictEquals(customElement.updateCounter, 4);
-    assertStrictEquals(counter, 19);
+    assertStrictEquals(customElement.updateCounter, 5);
+    assertStrictEquals(counter, 24);
   });
 });
 
