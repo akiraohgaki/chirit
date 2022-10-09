@@ -113,9 +113,11 @@ export default class Router {
 
     if (newVirtualUrl.pathname !== oldVirtualPath) {
       util.globalThis.location.hash = newVirtualUrl.pathname;
+      // Then hashchange event will fire
       return;
     }
 
+    // Just invoke route handler if no URL changed
     this.#invokeRouteHandler(newVirtualUrl.pathname);
   }
 
@@ -127,6 +129,7 @@ export default class Router {
       return;
     }
 
+    // Changes URL state and invoke route handler
     if (newUrl.href !== util.globalThis.location.href) {
       util.globalThis.history.pushState({}, '', newUrl.href);
       this.#onchange(new util.globalThis.CustomEvent('pushstate'));
