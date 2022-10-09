@@ -150,8 +150,8 @@ export default class Router {
       if (this.#routeCollection.size) {
         for (const [pattern, handler] of this.#routeCollection) {
           const matches = path.match(new RegExp(pattern));
-          if (matches && matches.groups) {
-            handler(matches.groups);
+          if (matches) {
+            handler(matches.groups ?? {});
             break;
           }
         }
