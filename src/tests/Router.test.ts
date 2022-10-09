@@ -10,27 +10,27 @@ function scenario(mode: 'hash' | 'history'): void {
 
     const onchange = (event: Event) => {
       counter++;
-      console.log(counter, util.globalThis.location.href, event);
+      console.log(counter, util.globalThis.location.href, event.type);
     };
 
     const onerror = (exception: unknown) => {
       counter++;
-      console.log(counter, util.globalThis.location.href, exception);
+      console.log(counter, util.globalThis.location.href, (exception as Error).message);
     };
 
-    const pattern1 = '/test/test/:id0/:id1';
+    const pattern1 = '/base/test/:id0/:id1';
     const handler1 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
     };
 
-    const pattern2 = '/test/test/(?<id2>[^/?#]+)';
+    const pattern2 = '/base/test/(?<id2>[^/?#]+)';
     const handler2 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
     };
 
-    const pattern3 = '/test/test';
+    const pattern3 = '/base/test';
     const handler3 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
@@ -38,11 +38,11 @@ function scenario(mode: 'hash' | 'history'): void {
     };
 
     await t.step('constructor()', () => {
-      router = new Router(mode, '/test');
+      router = new Router(mode, '/base');
 
       assertInstanceOf(router, Router);
       assertStrictEquals(router.mode, mode);
-      assertStrictEquals(router.base, '/test/');
+      assertStrictEquals(router.base, '/base/');
     });
 
     await t.step('onchange()', () => {
@@ -64,28 +64,30 @@ function scenario(mode: 'hash' | 'history'): void {
     });
 
     await t.step('navigate()', () => {
-      router.navigate('/test/test/0/1');
+      // hashchange event not fired on test environment
+
+      router.navigate(mode === 'hash' ? '#test/0/1' : 'test/0/1');
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/test/test/0/1' : 'https://example.com/test/test/0/1',
+        mode === 'hash' ? 'https://example.com/#/base/test/0/1' : 'https://example.com/base/test/0/1',
       );
 
-      router.navigate('/test/test/2');
+      router.navigate(mode === 'hash' ? '#test/2' : 'test/2');
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/test/test/2' : 'https://example.com/test/test/2',
+        mode === 'hash' ? 'https://example.com/#/base/test/2' : 'https://example.com/base/test/2',
       );
 
-      router.navigate('/test/test');
+      router.navigate(mode === 'hash' ? '#test' : 'test');
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/test/test' : 'https://example.com/test/test',
+        mode === 'hash' ? 'https://example.com/#/base/test' : 'https://example.com/base/test',
       );
 
-      router.navigate('/test/invalid');
+      router.navigate(mode === 'hash' ? '#invalid' : 'invalid');
 
       assertStrictEquals(counter, mode === 'hash' ? 0 : 8);
     });
