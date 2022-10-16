@@ -2,22 +2,25 @@ import { assertInstanceOf, assertStrictEquals } from 'https://deno.land/std/test
 import ObservableValue from '../ObservableValue.ts';
 
 Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
-  let observableValue: ObservableValue<number>;
+  let observableValue: ObservableValue<string>;
 
   let counter = 0;
 
-  const observer1 = (value: number) => {
-    counter += value;
+  const observer1 = (value: string) => {
+    counter++;
+    console.log(counter, value);
   };
-  const observer2 = (value: number) => {
-    counter += value;
+  const observer2 = (value: string) => {
+    counter++;
+    console.log(counter, value);
   };
-  const observer3 = (value: number) => {
-    counter += value;
+  const observer3 = (value: string) => {
+    counter++;
+    console.log(counter, value);
   };
 
   await t.step('constructor()', () => {
-    observableValue = new ObservableValue(0);
+    observableValue = new ObservableValue('test0');
 
     assertInstanceOf(observableValue, ObservableValue);
   });
@@ -25,8 +28,6 @@ Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, a
   await t.step('subscribe()', () => {
     observableValue.subscribe(observer1);
     observableValue.subscribe(observer2);
-
-    observableValue.subscribe(observer3);
     observableValue.subscribe(observer3);
   });
 
@@ -37,16 +38,17 @@ Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, a
   await t.step('notify()', () => {
     observableValue.notify();
 
-    assertStrictEquals(counter, 0);
-  });
-
-  await t.step('set()', () => {
-    observableValue.set(1);
-
     assertStrictEquals(counter, 2);
   });
 
   await t.step('get()', () => {
-    assertStrictEquals(observableValue.get(), 1);
+    assertStrictEquals(observableValue.get(), 'test0');
+  });
+
+  await t.step('set()', () => {
+    observableValue.set('test1');
+
+    assertStrictEquals(counter, 4);
+    assertStrictEquals(observableValue.get(), 'test1');
   });
 });

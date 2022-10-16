@@ -9,15 +9,10 @@ import util from './util.ts';
 import WebStorage from '../WebStorage.ts';
 
 function scenario(mode: 'local' | 'session'): void {
-  Deno.test(`WebStorage (${mode} mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
+  Deno.test(`WebStorage (mode=${mode})`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
     let webStorage: WebStorage;
 
-    let storage: Storage;
-    if (mode === 'local') {
-      storage = util.globalThis.localStorage;
-    } else if (mode === 'session') {
-      storage = util.globalThis.sessionStorage;
-    }
+    const storage = mode === 'local' ? util.globalThis.localStorage : util.globalThis.sessionStorage;
 
     await t.step('constructor()', () => {
       webStorage = new WebStorage(mode, 'test_');
@@ -76,7 +71,7 @@ function scenario(mode: 'local' | 'session'): void {
       assertStrictEquals(webStorage.get('null'), null);
       assertStrictEquals(webStorage.get('undefined'), undefined);
 
-      assertStrictEquals(webStorage.get('notset'), null);
+      assertStrictEquals(webStorage.get('invalidkey'), null);
 
       storage.setItem('test_invalidjson', 'dummy');
       assertStrictEquals(webStorage.get('invalidjson'), 'dummy');
@@ -119,7 +114,7 @@ scenario('local');
 
 scenario('session');
 
-Deno.test(`WebStorage (invalid mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
+Deno.test(`WebStorage (mode=invalid)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   await t.step('constructor()', () => {
     assertThrows(() => {
       // deno-lint-ignore ban-ts-comment

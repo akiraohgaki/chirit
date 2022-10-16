@@ -3,7 +3,7 @@ import util from './util.ts';
 import Router from '../Router.ts';
 
 function scenario(mode: 'hash' | 'history'): void {
-  Deno.test(`Router (${mode} mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
+  Deno.test(`Router (mode=${mode})`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
     let router: Router;
 
     let counter = 0;
@@ -18,13 +18,13 @@ function scenario(mode: 'hash' | 'history'): void {
       console.log(counter, util.globalThis.location.href, (exception as Error).message);
     };
 
-    const pattern1 = '/base/test/:id0/:id1';
+    const pattern1 = '/base/test/:name0/:name1';
     const handler1 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
     };
 
-    const pattern2 = '/base/test/(?<id2>[^/?#]+)';
+    const pattern2 = '/base/test/(?<name2>[^/?#]+)';
     const handler2 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
@@ -72,6 +72,7 @@ function scenario(mode: 'hash' | 'history'): void {
         util.globalThis.location.href,
         mode === 'hash' ? 'https://example.com/#/base/test/0/1' : 'https://example.com/base/test/0/1',
       );
+      assertStrictEquals(counter, mode === 'hash' ? 0 : 2);
 
       router.navigate(mode === 'hash' ? '#test/2' : 'test/2');
 
@@ -79,6 +80,7 @@ function scenario(mode: 'hash' | 'history'): void {
         util.globalThis.location.href,
         mode === 'hash' ? 'https://example.com/#/base/test/2' : 'https://example.com/base/test/2',
       );
+      assertStrictEquals(counter, mode === 'hash' ? 0 : 4);
 
       router.navigate(mode === 'hash' ? '#test' : 'test');
 
@@ -86,8 +88,9 @@ function scenario(mode: 'hash' | 'history'): void {
         util.globalThis.location.href,
         mode === 'hash' ? 'https://example.com/#/base/test' : 'https://example.com/base/test',
       );
+      assertStrictEquals(counter, mode === 'hash' ? 0 : 7);
 
-      router.navigate(mode === 'hash' ? '#invalid' : 'invalid');
+      router.navigate(mode === 'hash' ? '#invalidpath' : 'invalidpath');
 
       assertStrictEquals(counter, mode === 'hash' ? 0 : 8);
     });
@@ -104,7 +107,7 @@ scenario('hash');
 
 scenario('history');
 
-Deno.test(`Router (invalid mode)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
+Deno.test(`Router (mode=invalid)`, { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   await t.step('constructor()', () => {
     assertThrows(() => {
       // deno-lint-ignore ban-ts-comment

@@ -2,18 +2,21 @@ import { assertInstanceOf, assertStrictEquals } from 'https://deno.land/std/test
 import Observable from '../Observable.ts';
 
 Deno.test('Observable', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
-  let observable: Observable<number>;
+  let observable: Observable<string>;
 
   let counter = 0;
 
-  const observer1 = (value: number) => {
-    counter += value;
+  const observer1 = (value: string) => {
+    counter++;
+    console.log(counter, value);
   };
-  const observer2 = (value: number) => {
-    counter += value;
+  const observer2 = (value: string) => {
+    counter++;
+    console.log(counter, value);
   };
-  const observer3 = (value: number) => {
-    counter += value;
+  const observer3 = (value: string) => {
+    counter++;
+    console.log(counter, value);
   };
 
   await t.step('constructor()', () => {
@@ -23,10 +26,13 @@ Deno.test('Observable', { sanitizeResources: false, sanitizeOps: false }, async 
   });
 
   await t.step('subscribe()', () => {
+    // Observer should not be double
     observable.subscribe(observer1);
     observable.subscribe(observer2);
-
     observable.subscribe(observer3);
+
+    observable.subscribe(observer1);
+    observable.subscribe(observer2);
     observable.subscribe(observer3);
   });
 
@@ -35,7 +41,7 @@ Deno.test('Observable', { sanitizeResources: false, sanitizeOps: false }, async 
   });
 
   await t.step('notify()', () => {
-    observable.notify(1);
+    observable.notify('test');
 
     assertStrictEquals(counter, 2);
   });

@@ -16,8 +16,8 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
   await t.step('constructor()', () => {
     elementAttributesProxy = new ElementAttributesProxy(element);
 
-    assertInstanceOf(elementAttributesProxy, Object);
     assertNotInstanceOf(elementAttributesProxy, ElementAttributesProxy);
+    assertInstanceOf(elementAttributesProxy, Object);
   });
 
   await t.step('set()', () => {
@@ -30,7 +30,7 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
     assertThrows(() => {
       // deno-lint-ignore ban-ts-comment
       // @ts-ignore
-      elementAttributesProxy.invalid = 0;
+      elementAttributesProxy.invalidvalue = 0;
     }, TypeError);
   });
 
@@ -38,14 +38,14 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
     assertStrictEquals(elementAttributesProxy.test, 'test');
     assertStrictEquals(elementAttributesProxy['data-test'], 'data-test');
 
-    assertStrictEquals(elementAttributesProxy.invalid, undefined);
+    assertStrictEquals(elementAttributesProxy.invalidname, undefined);
   });
 
   await t.step('has()', () => {
     assertStrictEquals('test' in elementAttributesProxy, true);
     assertStrictEquals('data-test' in elementAttributesProxy, true);
 
-    assertStrictEquals('invalid' in elementAttributesProxy, false);
+    assertStrictEquals('invalidname' in elementAttributesProxy, false);
   });
 
   await t.step('ownKeys()', () => {
@@ -56,7 +56,7 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
     assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'test')?.value, 'test');
     assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'data-test')?.value, 'data-test');
 
-    assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'invalid'), undefined);
+    assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'invalidname'), undefined);
   });
 
   await t.step('deleteProperty()', () => {
@@ -67,7 +67,7 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
     assertStrictEquals(element.hasAttribute('data-test'), false);
 
     assertThrows(() => {
-      delete elementAttributesProxy.invalid;
+      delete elementAttributesProxy.invalidname;
     }, TypeError);
   });
 });
