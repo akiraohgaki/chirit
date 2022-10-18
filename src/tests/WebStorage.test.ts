@@ -71,7 +71,7 @@ function scenario(mode: 'local' | 'session'): void {
       assertStrictEquals(webStorage.get('null'), null);
       assertStrictEquals(webStorage.get('undefined'), undefined);
 
-      assertStrictEquals(webStorage.get('invalidkey'), null);
+      assertStrictEquals(webStorage.get('undefinedname'), null);
 
       storage.setItem('test_invalidjson', 'dummy');
       assertStrictEquals(webStorage.get('invalidjson'), 'dummy');

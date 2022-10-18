@@ -20,7 +20,7 @@ Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, a
   };
 
   await t.step('constructor()', () => {
-    observableValue = new ObservableValue('test0');
+    observableValue = new ObservableValue('initial value');
 
     assertInstanceOf(observableValue, ObservableValue);
   });
@@ -42,13 +42,13 @@ Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, a
   });
 
   await t.step('get()', () => {
-    assertStrictEquals(observableValue.get(), 'test0');
+    assertStrictEquals(observableValue.get(), 'initial value');
   });
 
   await t.step('set()', () => {
-    observableValue.set('test1');
+    observableValue.set('new value');
 
     assertStrictEquals(counter, 4);
-    assertStrictEquals(observableValue.get(), 'test1');
+    assertStrictEquals(observableValue.get(), 'new value');
   });
 });

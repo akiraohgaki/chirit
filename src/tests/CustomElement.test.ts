@@ -11,7 +11,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     static override get observedAttributes(): Array<string> {
       counter++;
       console.log(counter, 'observedAttributes');
-      return ['test'];
+      return ['test', ...super.observedAttributes];
     }
     override attributeChangedCallback(
       name: string,
@@ -31,18 +31,23 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     override disconnectedCallback(): void {
       counter++;
       console.log(counter, 'disconnectedCallback()');
+      super.disconnectedCallback();
     }
-    override adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
+    override adoptedCallback(oldDocument: Document, newDocument: Document): void {
       counter++;
       console.log(counter, 'adoptedCallback()');
+      super.adoptedCallback(oldDocument, newDocument);
     }
     protected override render(): void {
       counter++;
       console.log(counter, 'render()');
+      super.render();
     }
     protected override updatedCallback(): void {
       counter++;
       console.log(counter, 'updatedCallback()');
+      super.updatedCallback();
+
       if (this.getAttribute('test') === 'error') {
         throw new Error('error');
       }
@@ -50,12 +55,13 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     protected override errorCallback(exception: unknown): void {
       counter++;
       console.log(counter, 'errorCallback()', (exception as Error).message);
+      super.errorCallback(exception);
     }
   }
 
-  const sleep = () => {
+  const sleep = (time: number) => {
     return new Promise((resolve) => {
-      util.globalThis.setTimeout(resolve, 200);
+      util.globalThis.setTimeout(resolve, time);
     });
   };
 
@@ -68,7 +74,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
   });
 
   await t.step('constructor()', () => {
-    // From constructor()
+    // By constructor()
     testElement = new TestElement();
 
     assertInstanceOf(testElement, TestElement);
@@ -77,7 +83,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     assertStrictEquals(counter, 1);
     assertStrictEquals(testElement.getAttribute('test'), null);
 
-    // From document.createElement()
+    // By document.createElement()
     testElement = util.globalThis.document.createElement('test-element') as CustomElement;
 
     assertInstanceOf(testElement, TestElement);
@@ -86,9 +92,10 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     assertStrictEquals(counter, 1);
     assertStrictEquals(testElement.getAttribute('test'), null);
 
-    // From HTML tag
+    // By HTML
     util.globalThis.document.body.innerHTML = '<test-element test="0"></test-element>';
     // attributeChangedCallback() and connectedCallback() will fire
+    // also render() and updatedCallback() should fire
     testElement = util.globalThis.document.querySelector('test-element') as CustomElement;
 
     assertInstanceOf(testElement, TestElement);
@@ -99,9 +106,9 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
   });
 
   await t.step('attributeChangedCallback()', async () => {
-    // Should work with debounce way
+    // Update method should run with debounce way
     testElement.setAttribute('test', '1');
-    await sleep();
+    await sleep(200);
 
     assertStrictEquals(testElement.getAttribute('test'), '1');
     assertStrictEquals(testElement.updateCounter, 2);
@@ -110,31 +117,31 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     testElement.setAttribute('test', '2');
     testElement.setAttribute('test', '3');
     testElement.setAttribute('test', '4');
-    await sleep();
+    await sleep(200);
 
     assertStrictEquals(testElement.getAttribute('test'), '4');
     assertStrictEquals(testElement.updateCounter, 3);
     assertStrictEquals(counter, 13);
 
-    // If the value is the same it will not update
+    // If new value is the same of old value update method should not run
     testElement.setAttribute('test', '4');
-    await sleep();
+    await sleep(200);
 
     assertStrictEquals(testElement.getAttribute('test'), '4');
     assertStrictEquals(testElement.updateCounter, 3);
     assertStrictEquals(counter, 14);
 
-    // update() should not fire for unobserved attribute
+    // If unobserved attribute has changed attributeChangedCallback() should not fire
     testElement.setAttribute('unobserved', '0');
-    await sleep();
+    await sleep(200);
 
     assertStrictEquals(testElement.getAttribute('unobserved'), '0');
     assertStrictEquals(testElement.updateCounter, 3);
     assertStrictEquals(counter, 14);
 
-    // Check if errorCallback() is fire
+    // Check if errorCallback() fire when throw error
     testElement.setAttribute('test', 'error');
-    await sleep();
+    await sleep(200);
 
     assertStrictEquals(testElement.getAttribute('test'), 'error');
     assertStrictEquals(testElement.updateCounter, 4);
@@ -154,7 +161,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     util.globalThis.document.body.appendChild(iframe);
     iframe.contentWindow?.document.body.appendChild(testElement);
     // adoptedCallback() and connectedCallback() will fire
-    await sleep();
+    await sleep(200);
 
     assertStrictEquals(testElement.updateCounter, 5);
     assertStrictEquals(counter, 24);

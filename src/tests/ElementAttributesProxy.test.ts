@@ -16,8 +16,9 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
   await t.step('constructor()', () => {
     elementAttributesProxy = new ElementAttributesProxy(element);
 
-    assertNotInstanceOf(elementAttributesProxy, ElementAttributesProxy);
+    // This class creates Object instance instead of self instance
     assertInstanceOf(elementAttributesProxy, Object);
+    assertNotInstanceOf(elementAttributesProxy, ElementAttributesProxy);
   });
 
   await t.step('set()', () => {
@@ -38,14 +39,14 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
     assertStrictEquals(elementAttributesProxy.test, 'test');
     assertStrictEquals(elementAttributesProxy['data-test'], 'data-test');
 
-    assertStrictEquals(elementAttributesProxy.invalidname, undefined);
+    assertStrictEquals(elementAttributesProxy.undefinedname, undefined);
   });
 
   await t.step('has()', () => {
     assertStrictEquals('test' in elementAttributesProxy, true);
     assertStrictEquals('data-test' in elementAttributesProxy, true);
 
-    assertStrictEquals('invalidname' in elementAttributesProxy, false);
+    assertStrictEquals('undefinedname' in elementAttributesProxy, false);
   });
 
   await t.step('ownKeys()', () => {
@@ -56,7 +57,7 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
     assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'test')?.value, 'test');
     assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'data-test')?.value, 'data-test');
 
-    assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'invalidname'), undefined);
+    assertStrictEquals(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'undefinedname'), undefined);
   });
 
   await t.step('deleteProperty()', () => {
@@ -67,7 +68,7 @@ Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: fal
     assertStrictEquals(element.hasAttribute('data-test'), false);
 
     assertThrows(() => {
-      delete elementAttributesProxy.invalidname;
+      delete elementAttributesProxy.undefinedname;
     }, TypeError);
   });
 });

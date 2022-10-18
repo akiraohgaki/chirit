@@ -18,19 +18,19 @@ function scenario(mode: 'hash' | 'history'): void {
       console.log(counter, util.globalThis.location.href, (exception as Error).message);
     };
 
-    const pattern1 = '/base/test/:name0/:name1';
+    const pattern1 = '/base/test/:name1/:name2';
     const handler1 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
     };
 
-    const pattern2 = '/base/test/(?<name2>[^/?#]+)';
+    const pattern2 = '/base/test/(?<name3>[^/?#]+)';
     const handler2 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
     };
 
-    const pattern3 = '/base/test';
+    const pattern3 = '/base/error';
     const handler3 = (params: unknown) => {
       counter++;
       console.log(counter, util.globalThis.location.href, params);
@@ -66,31 +66,36 @@ function scenario(mode: 'hash' | 'history'): void {
     await t.step('navigate()', () => {
       // hashchange event not fired on test environment
 
-      router.navigate(mode === 'hash' ? '#test/0/1' : 'test/0/1');
+      // Route to handler1
+      router.navigate(mode === 'hash' ? '#test/1/2' : 'test/1/2');
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/base/test/0/1' : 'https://example.com/base/test/0/1',
+        mode === 'hash' ? 'https://example.com/#/base/test/1/2' : 'https://example.com/base/test/1/2',
       );
       assertStrictEquals(counter, mode === 'hash' ? 0 : 2);
 
-      router.navigate(mode === 'hash' ? '#test/2' : 'test/2');
+      // Route to handler2
+      router.navigate(mode === 'hash' ? '#test/3' : 'test/3');
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/base/test/2' : 'https://example.com/base/test/2',
+        mode === 'hash' ? 'https://example.com/#/base/test/3' : 'https://example.com/base/test/3',
       );
       assertStrictEquals(counter, mode === 'hash' ? 0 : 4);
 
-      router.navigate(mode === 'hash' ? '#test' : 'test');
+      // Route to handler3
+      router.navigate(mode === 'hash' ? '#error' : 'error');
+      // onerror() should fire
 
       assertStrictEquals(
         util.globalThis.location.href,
-        mode === 'hash' ? 'https://example.com/#/base/test' : 'https://example.com/base/test',
+        mode === 'hash' ? 'https://example.com/#/base/error' : 'https://example.com/base/error',
       );
       assertStrictEquals(counter, mode === 'hash' ? 0 : 7);
 
-      router.navigate(mode === 'hash' ? '#invalidpath' : 'invalidpath');
+      // The path does not match with any patterns
+      router.navigate(mode === 'hash' ? '#patternnotmatch' : 'patternnotmatch');
 
       assertStrictEquals(counter, mode === 'hash' ? 0 : 8);
     });

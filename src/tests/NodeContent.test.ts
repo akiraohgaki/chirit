@@ -12,7 +12,7 @@ Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async
   const context = {
     handleClick: (event: MouseEvent) => {
       counter++;
-      console.log(counter, event);
+      console.log(counter, event.type);
     },
   };
 
@@ -74,7 +74,7 @@ Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async
     const button = nodeContent.container.querySelector('button') as HTMLButtonElement;
     button.onclick = () => {};
 
-    // Event handler in context should work
+    // on* attribute should not appear in HTML but the function in context should run
     template.innerHTML = '<button onclick="this.handleClick(event)">test</button>';
     nodeContent.update(template.innerHTML);
     button.click();
@@ -89,6 +89,7 @@ Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async
   await t.step('clone()', () => {
     const documentFragment = nodeContent.clone();
 
+    assertInstanceOf(documentFragment, util.globalThis.DocumentFragment);
     assertStrictEquals(documentFragment.querySelector('button')?.textContent, 'test');
   });
 });
