@@ -1,18 +1,22 @@
-export default class CustomElement extends HTMLElement {
-  private _updatedCount: number;
+import util from './util.ts';
 
-  private _updateTimerId: number | undefined;
-  private _updateDelay: number;
-  private _updatePromiseResolvers: Array<{ (): void }>;
+const BaseElement = util.globalThis.HTMLElement;
+
+export default class CustomElement extends BaseElement {
+  #updateCounter: number;
+
+  #updateTimerId: number | undefined;
+  #updateDelay: number;
+  #updatePromiseResolvers: Array<{ (): void }>;
 
   constructor() {
     super();
 
-    this._updatedCount = 0;
+    this.#updateCounter = 0;
 
-    this._updateTimerId = undefined;
-    this._updateDelay = 100;
-    this._updatePromiseResolvers = [];
+    this.#updateTimerId = undefined;
+    this.#updateDelay = 100;
+    this.#updatePromiseResolvers = [];
   }
 
   static get observedAttributes(): Array<string> {
@@ -26,14 +30,14 @@ export default class CustomElement extends HTMLElement {
     _namespace?: string | null,
   ): void {
     // Runs update task when observed attribute has changed but don't run before initial update
-    if (this._updatedCount && oldValue !== newValue) {
+    if (this.#updateCounter && oldValue !== newValue) {
       this.update();
     }
   }
 
   connectedCallback(): void {
     // Runs update task when this Element has connected to parent Node
-    if (this._updatedCount) {
+    if (this.#updateCounter) {
       // Re-update, this Element may have moved into another parent Node
       this.update();
     } else {
@@ -49,26 +53,26 @@ export default class CustomElement extends HTMLElement {
   }
 
   static define(name: string, options?: ElementDefinitionOptions): void {
-    globalThis.customElements.define(name, this, options);
+    util.globalThis.customElements.define(name, this, options);
   }
 
-  get updatedCount(): number {
-    return this._updatedCount;
+  get updateCounter(): number {
+    return this.#updateCounter;
   }
 
   update(): Promise<void> {
     // This is an asynchronous updating method that scheduled updates
-    if (this._updateTimerId !== undefined) {
-      globalThis.clearTimeout(this._updateTimerId);
-      this._updateTimerId = undefined;
+    if (this.#updateTimerId !== undefined) {
+      util.globalThis.clearTimeout(this.#updateTimerId);
+      this.#updateTimerId = undefined;
     }
 
-    this._updateTimerId = globalThis.setTimeout(() => {
-      globalThis.clearTimeout(this._updateTimerId);
-      this._updateTimerId = undefined;
+    this.#updateTimerId = util.globalThis.setTimeout(() => {
+      util.globalThis.clearTimeout(this.#updateTimerId);
+      this.#updateTimerId = undefined;
 
       // Take out Promise resolvers of this update point before the updating starts
-      const promiseResolvers = this._updatePromiseResolvers.splice(0);
+      const promiseResolvers = this.#updatePromiseResolvers.splice(0);
 
       this.updateSync();
 
@@ -77,10 +81,10 @@ export default class CustomElement extends HTMLElement {
           resolve();
         }
       }
-    }, this._updateDelay);
+    }, this.#updateDelay);
 
     return new Promise((resolve) => {
-      this._updatePromiseResolvers.push(resolve);
+      this.#updatePromiseResolvers.push(resolve);
     });
   }
 
@@ -88,7 +92,7 @@ export default class CustomElement extends HTMLElement {
     // This is a synchronous updating method that calls an additional lifecycle callbacks
     try {
       this.render();
-      this._updatedCount++;
+      this.#updateCounter++;
       this.updatedCallback();
     } catch (exception) {
       this.errorCallback(exception);

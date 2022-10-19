@@ -1,22 +1,24 @@
 import type { WebStorageMode } from './types.ts';
 
-export default class WebStorage {
-  private _mode: WebStorageMode;
-  private _prefix: string;
+import util from './util.ts';
 
-  private _storage: Storage;
+export default class WebStorage {
+  #mode: WebStorageMode;
+  #prefix: string;
+
+  #storage: Storage;
 
   constructor(mode: WebStorageMode, prefix: string = '') {
-    this._mode = mode;
-    this._prefix = prefix;
+    this.#mode = mode;
+    this.#prefix = prefix;
 
-    switch (this._mode) {
+    switch (this.#mode) {
       case 'local': {
-        this._storage = globalThis.localStorage;
+        this.#storage = util.globalThis.localStorage;
         break;
       }
       case 'session': {
-        this._storage = globalThis.sessionStorage;
+        this.#storage = util.globalThis.sessionStorage;
         break;
       }
       default: {
@@ -26,44 +28,46 @@ export default class WebStorage {
   }
 
   get mode(): WebStorageMode {
-    return this._mode;
+    return this.#mode;
   }
 
   get prefix(): string {
-    return this._prefix;
+    return this.#prefix;
   }
 
-  get length(): number {
-    return this._storage.length;
+  get size(): number {
+    return this.#storage.length;
   }
 
-  key(index: number): string | null {
-    return this._storage.key(index);
+  keys(): Array<string> {
+    const keys: Array<string> = [];
+    if (this.#storage.length) {
+      for (let i = 0; i < this.#storage.length; i++) {
+        keys.push(this.#storage.key(i) as string);
+      }
+    }
+    return keys;
   }
 
-  setItem(key: string, value: unknown): void {
+  set(key: string, value: unknown): void {
     // Adds prefix to the key
     // and makes the value into special object and serialise to JSON
-    this._storage.setItem(
-      this._prefix + key,
+    this.#storage.setItem(
+      this.#prefix + key,
       JSON.stringify({ _k: key, _v: value }),
     );
   }
 
-  getItem(key: string): unknown {
+  get(key: string): unknown {
     // Checks if the value is JSON created from special object and returns original value
     // otherwise just returns the value
-    const value = this._storage.getItem(this._prefix + key);
+    const value = this.#storage.getItem(this.#prefix + key);
     if (value) {
       try {
         // JSON.parse() will throw a parse error if the value is not valid JSON
         const deserializedValue = JSON.parse(value);
-        if (
-          deserializedValue &&
-          deserializedValue._k === key &&
-          deserializedValue._v !== undefined
-        ) {
-          // Will return original value
+        if (deserializedValue?._k === key) {
+          // Will return original value or undefined
           return deserializedValue._v;
         }
       } catch {
@@ -75,11 +79,11 @@ export default class WebStorage {
     return value;
   }
 
-  removeItem(key: string): void {
-    this._storage.removeItem(this._prefix + key);
+  delete(key: string): void {
+    this.#storage.removeItem(this.#prefix + key);
   }
 
   clear(): void {
-    this._storage.clear();
+    this.#storage.clear();
   }
 }

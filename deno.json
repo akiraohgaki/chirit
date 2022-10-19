@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": [
+      "deno.ns",
       "esnext",
       "dom",
       "dom.iterable"
@@ -16,9 +17,6 @@
     "files": {
       "include": [
         "src/"
-      ],
-      "exclude": [
-        "src/data/"
       ]
     },
     "rules": {
@@ -37,9 +35,6 @@
     "files": {
       "include": [
         "src/"
-      ],
-      "exclude": [
-        "src/data/"
       ]
     },
     "options": {
@@ -51,9 +46,9 @@
     }
   },
   "tasks": {
+    "test": "deno test src/",
     "clean": "rm -rf dist && mkdir dist",
     "bundle": "deno bundle src/mod.ts dist/mod.bundle.js",
-    "test": "echo 'Skip test'",
-    "build": "deno fmt && deno lint && deno task clean && deno task bundle && deno task test"
+    "build": "deno fmt && deno lint && deno task test && deno task clean && deno task bundle"
   }
 }
