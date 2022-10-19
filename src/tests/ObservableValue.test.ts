@@ -10,10 +10,12 @@ Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, a
     counter++;
     console.log(counter, value);
   };
+
   const observer2 = (value: string) => {
     counter++;
     console.log(counter, value);
   };
+
   const observer3 = (value: string) => {
     counter++;
     console.log(counter, value);
@@ -36,6 +38,7 @@ Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, a
   });
 
   await t.step('notify()', () => {
+    counter = 0;
     observableValue.notify();
 
     assertStrictEquals(counter, 2);
@@ -46,9 +49,10 @@ Deno.test('ObservableValue', { sanitizeResources: false, sanitizeOps: false }, a
   });
 
   await t.step('set()', () => {
+    counter = 0;
     observableValue.set('new value');
 
-    assertStrictEquals(counter, 4);
+    assertStrictEquals(counter, 2);
     assertStrictEquals(observableValue.get(), 'new value');
   });
 });

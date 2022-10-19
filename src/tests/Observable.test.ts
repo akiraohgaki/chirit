@@ -10,10 +10,12 @@ Deno.test('Observable', { sanitizeResources: false, sanitizeOps: false }, async 
     counter++;
     console.log(counter, value);
   };
+
   const observer2 = (value: string) => {
     counter++;
     console.log(counter, value);
   };
+
   const observer3 = (value: string) => {
     counter++;
     console.log(counter, value);
@@ -41,6 +43,7 @@ Deno.test('Observable', { sanitizeResources: false, sanitizeOps: false }, async 
   });
 
   await t.step('notify()', () => {
+    counter = 0;
     observable.notify('test');
 
     assertStrictEquals(counter, 2);

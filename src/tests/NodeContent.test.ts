@@ -75,6 +75,7 @@ Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async
     button.onclick = () => {};
 
     // on* attribute should not appear in HTML but the function in context should run
+    counter = 0;
     template.innerHTML = '<button onclick="this.handleClick(event)">test</button>';
     nodeContent.update(template.innerHTML);
     button.click();
