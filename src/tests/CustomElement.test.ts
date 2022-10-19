@@ -43,20 +43,22 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     protected override render(): void {
       counter++;
       console.log(counter, 'render()');
-      super.render();
 
       if (useRenderError) {
         throw new Error('error in render()');
       }
+
+      super.render();
     }
     protected override updatedCallback(): void {
       counter++;
       console.log(counter, 'updatedCallback()');
-      super.updatedCallback();
 
       if (useUpdatedCallbackError) {
         throw new Error('error in updatedCallback()');
       }
+
+      super.updatedCallback();
     }
     protected override errorCallback(exception: unknown): void {
       counter++;
@@ -87,9 +89,9 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
     assertInstanceOf(testElement, TestElement);
     assertInstanceOf(testElement, CustomElement);
+    assertStrictEquals(testElement.getAttribute('test'), null);
     assertStrictEquals(testElement.updateCounter, 0);
     assertStrictEquals(counter, 0);
-    assertStrictEquals(testElement.getAttribute('test'), null);
 
     // By document.createElement()
     counter = 0;
@@ -97,9 +99,9 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
     assertInstanceOf(testElement, TestElement);
     assertInstanceOf(testElement, CustomElement);
+    assertStrictEquals(testElement.getAttribute('test'), null);
     assertStrictEquals(testElement.updateCounter, 0);
     assertStrictEquals(counter, 0);
-    assertStrictEquals(testElement.getAttribute('test'), null);
 
     // By HTML
     // attributeChangedCallback() and connectedCallback() will fire
@@ -110,9 +112,9 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
     assertInstanceOf(testElement, TestElement);
     assertInstanceOf(testElement, CustomElement);
+    assertStrictEquals(testElement.getAttribute('test'), '0');
     assertStrictEquals(testElement.updateCounter, 1);
     assertStrictEquals(counter, 4);
-    assertStrictEquals(testElement.getAttribute('test'), '0');
   });
 
   await t.step('attributeChangedCallback()', async () => {
