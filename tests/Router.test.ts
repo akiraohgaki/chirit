@@ -1,6 +1,6 @@
 import { assertInstanceOf, assertStrictEquals, assertThrows } from 'https://deno.land/std/testing/asserts.ts';
-import util from './util.ts';
-import Router from '../Router.ts';
+import dom from './dom.ts';
+import Router from '../src/Router.ts';
 
 const runTestSteps = async (t: Deno.TestContext, mode: 'hash' | 'history') => {
   let router: Router;
@@ -9,30 +9,30 @@ const runTestSteps = async (t: Deno.TestContext, mode: 'hash' | 'history') => {
 
   const onchange = (event: Event) => {
     counter++;
-    console.log(counter, util.globalThis.location.href, event.type);
+    console.log(counter, dom.globalThis.location.href, event.type);
   };
 
   const onerror = (exception: unknown) => {
     counter++;
-    console.log(counter, util.globalThis.location.href, (exception as Error).message);
+    console.log(counter, dom.globalThis.location.href, (exception as Error).message);
   };
 
   const pattern1 = '/base/test/:name1/:name2';
   const handler1 = (params: unknown) => {
     counter++;
-    console.log(counter, util.globalThis.location.href, params);
+    console.log(counter, dom.globalThis.location.href, params);
   };
 
   const pattern2 = '/base/test/(?<name3>[^/?#]+)';
   const handler2 = (params: unknown) => {
     counter++;
-    console.log(counter, util.globalThis.location.href, params);
+    console.log(counter, dom.globalThis.location.href, params);
   };
 
   const pattern3 = '/base/error';
   const handler3 = (params: unknown) => {
     counter++;
-    console.log(counter, util.globalThis.location.href, params);
+    console.log(counter, dom.globalThis.location.href, params);
     throw new Error('error');
   };
 
@@ -70,7 +70,7 @@ const runTestSteps = async (t: Deno.TestContext, mode: 'hash' | 'history') => {
     router.navigate(mode === 'hash' ? '#test/1/2' : 'test/1/2');
 
     assertStrictEquals(
-      util.globalThis.location.href,
+      dom.globalThis.location.href,
       mode === 'hash' ? 'https://example.com/#/base/test/1/2' : 'https://example.com/base/test/1/2',
     );
     assertStrictEquals(counter, mode === 'hash' ? 0 : 2);
@@ -80,7 +80,7 @@ const runTestSteps = async (t: Deno.TestContext, mode: 'hash' | 'history') => {
     router.navigate(mode === 'hash' ? '#test/3' : 'test/3');
 
     assertStrictEquals(
-      util.globalThis.location.href,
+      dom.globalThis.location.href,
       mode === 'hash' ? 'https://example.com/#/base/test/3' : 'https://example.com/base/test/3',
     );
     assertStrictEquals(counter, mode === 'hash' ? 0 : 2);
@@ -91,7 +91,7 @@ const runTestSteps = async (t: Deno.TestContext, mode: 'hash' | 'history') => {
     router.navigate(mode === 'hash' ? '#error' : 'error');
 
     assertStrictEquals(
-      util.globalThis.location.href,
+      dom.globalThis.location.href,
       mode === 'hash' ? 'https://example.com/#/base/error' : 'https://example.com/base/error',
     );
     assertStrictEquals(counter, mode === 'hash' ? 0 : 3);
