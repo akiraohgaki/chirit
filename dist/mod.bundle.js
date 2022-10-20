@@ -2,28 +2,32 @@
 // deno-lint-ignore-file
 // This code was bundled using `deno bundle` and it's not recommended to edit it manually
 
-class CustomElement extends HTMLElement {
-    _updatedCount;
-    _updateTimerId;
-    _updateDelay;
-    _updatePromiseResolvers;
+const __default = {
+    globalThis: globalThis
+};
+const BaseElement = __default.globalThis.HTMLElement;
+class CustomElement extends BaseElement {
+    #updateCounter;
+    #updateTimerId;
+    #updateDelay;
+    #updatePromiseResolvers;
     constructor(){
         super();
-        this._updatedCount = 0;
-        this._updateTimerId = undefined;
-        this._updateDelay = 100;
-        this._updatePromiseResolvers = [];
+        this.#updateCounter = 0;
+        this.#updateTimerId = undefined;
+        this.#updateDelay = 100;
+        this.#updatePromiseResolvers = [];
     }
     static get observedAttributes() {
         return [];
     }
     attributeChangedCallback(_name, oldValue, newValue, _namespace) {
-        if (this._updatedCount && oldValue !== newValue) {
+        if (this.#updateCounter && oldValue !== newValue) {
             this.update();
         }
     }
     connectedCallback() {
-        if (this._updatedCount) {
+        if (this.#updateCounter) {
             this.update();
         } else {
             this.updateSync();
@@ -32,35 +36,35 @@ class CustomElement extends HTMLElement {
     disconnectedCallback() {}
     adoptedCallback(_oldDocument, _newDocument) {}
     static define(name, options) {
-        globalThis.customElements.define(name, this, options);
+        __default.globalThis.customElements.define(name, this, options);
     }
-    get updatedCount() {
-        return this._updatedCount;
+    get updateCounter() {
+        return this.#updateCounter;
     }
     update() {
-        if (this._updateTimerId !== undefined) {
-            globalThis.clearTimeout(this._updateTimerId);
-            this._updateTimerId = undefined;
+        if (this.#updateTimerId !== undefined) {
+            __default.globalThis.clearTimeout(this.#updateTimerId);
+            this.#updateTimerId = undefined;
         }
-        this._updateTimerId = globalThis.setTimeout(()=>{
-            globalThis.clearTimeout(this._updateTimerId);
-            this._updateTimerId = undefined;
-            const promiseResolvers = this._updatePromiseResolvers.splice(0);
+        this.#updateTimerId = __default.globalThis.setTimeout(()=>{
+            __default.globalThis.clearTimeout(this.#updateTimerId);
+            this.#updateTimerId = undefined;
+            const promiseResolvers = this.#updatePromiseResolvers.splice(0);
             this.updateSync();
             if (promiseResolvers.length) {
                 for (const resolve of promiseResolvers){
                     resolve();
                 }
             }
-        }, this._updateDelay);
+        }, this.#updateDelay);
         return new Promise((resolve)=>{
-            this._updatePromiseResolvers.push(resolve);
+            this.#updatePromiseResolvers.push(resolve);
         });
     }
     updateSync() {
         try {
             this.render();
-            this._updatedCount++;
+            this.#updateCounter++;
             this.updatedCallback();
         } catch (exception) {
             this.errorCallback(exception);
@@ -125,137 +129,137 @@ class ElementAttributesProxy {
 }
 const containerCollection = new WeakSet();
 class NodeContent {
-    _container;
-    _context;
+    #container;
+    #context;
     constructor(container, context){
         containerCollection.add(container);
-        this._container = container;
-        this._context = context;
+        this.#container = container;
+        this.#context = context;
     }
     get container() {
-        return this._container;
+        return this.#container;
     }
     update(content) {
-        if (content instanceof Document || content instanceof DocumentFragment) {
-            this._patchNodesInsideOf(this._container, content);
+        if (content instanceof __default.globalThis.Document || content instanceof __default.globalThis.DocumentFragment) {
+            this.#patchNodesInsideOf(this.#container, content);
         } else {
-            this._patchNodesInsideOf(this._container, this._createDocumentFragment(content));
+            this.#patchNodesInsideOf(this.#container, this.#createDocumentFragment(content));
         }
-        this._fixOneventHandlersInsideOf(this._container);
+        this.#fixOneventHandlersInsideOf(this.#container);
     }
     clone() {
-        return this._createDocumentFragment(this._container.childNodes);
+        return this.#createDocumentFragment(this.#container.childNodes);
     }
-    _createDocumentFragment(content) {
+    #createDocumentFragment(content) {
         if (typeof content === 'string') {
-            const template = document.createElement('template');
+            const template = __default.globalThis.document.createElement('template');
             template.innerHTML = content;
             return template.content;
         }
-        const documentFragment = document.createDocumentFragment();
-        if (content instanceof Node) {
+        const documentFragment = __default.globalThis.document.createDocumentFragment();
+        if (content instanceof __default.globalThis.Node) {
             documentFragment.appendChild(content.cloneNode(true));
-        } else if (content instanceof NodeList && content.length) {
+        } else if (content instanceof __default.globalThis.NodeList && content.length) {
             for (const node of Array.from(content)){
                 documentFragment.appendChild(node.cloneNode(true));
             }
         }
         return documentFragment;
     }
-    _patchNodesInsideOf(original, diff) {
+    #patchNodesInsideOf(original, diff) {
         if (original.hasChildNodes() || diff.hasChildNodes()) {
             const originalChildNodes = Array.from(original.childNodes);
             const diffChildNodes = Array.from(diff.childNodes);
             const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
             for(let i = 0; i < maxLength; i++){
-                this._patchNodes(original, originalChildNodes[i] ?? null, diffChildNodes[i] ?? null);
+                this.#patchNodes(original, originalChildNodes[i] ?? null, diffChildNodes[i] ?? null);
             }
         }
     }
-    _patchNodes(parent, original, diff) {
-        if (original && !diff) {
-            parent.removeChild(original);
-        } else if (!original && diff) {
-            parent.appendChild(diff.cloneNode(true));
-        } else if (original && diff) {
-            if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
-                if (original instanceof Element && diff instanceof Element) {
-                    this._patchAttributes(original, diff);
-                    if (!containerCollection.has(original)) {
-                        this._patchNodesInsideOf(original, diff);
+    #patchNodes(parent, original1, diff1) {
+        if (original1 && !diff1) {
+            parent.removeChild(original1);
+        } else if (!original1 && diff1) {
+            parent.appendChild(diff1.cloneNode(true));
+        } else if (original1 && diff1) {
+            if (original1.nodeType === diff1.nodeType && original1.nodeName === diff1.nodeName) {
+                if (original1 instanceof __default.globalThis.Element && diff1 instanceof __default.globalThis.Element) {
+                    this.#patchAttributes(original1, diff1);
+                    if (!containerCollection.has(original1)) {
+                        this.#patchNodesInsideOf(original1, diff1);
                     }
-                } else if (original instanceof CharacterData && diff instanceof CharacterData) {
-                    if (original.nodeValue !== diff.nodeValue) {
-                        original.nodeValue = diff.nodeValue;
+                } else if (original1 instanceof __default.globalThis.CharacterData && diff1 instanceof __default.globalThis.CharacterData) {
+                    if (original1.nodeValue !== diff1.nodeValue) {
+                        original1.nodeValue = diff1.nodeValue;
                     }
                 } else {
-                    parent.replaceChild(diff.cloneNode(true), original);
+                    parent.replaceChild(diff1.cloneNode(true), original1);
                 }
             } else {
-                parent.replaceChild(diff.cloneNode(true), original);
+                parent.replaceChild(diff1.cloneNode(true), original1);
             }
         }
     }
-    _patchAttributes(original, diff) {
-        if (original.hasAttributes()) {
-            for (const attribute of Array.from(original.attributes)){
-                if (!diff.hasAttribute(attribute.name)) {
-                    original.removeAttribute(attribute.name);
+    #patchAttributes(original2, diff2) {
+        if (original2.hasAttributes()) {
+            for (const attribute of Array.from(original2.attributes)){
+                if (!diff2.hasAttribute(attribute.name)) {
+                    original2.removeAttribute(attribute.name);
                 }
             }
         }
-        if (diff.hasAttributes()) {
-            for (const attribute of Array.from(diff.attributes)){
-                if (!original.hasAttribute(attribute.name) || original.getAttribute(attribute.name) !== attribute.value) {
-                    original.setAttribute(attribute.name, attribute.value);
+        if (diff2.hasAttributes()) {
+            for (const attribute1 of Array.from(diff2.attributes)){
+                if (!original2.hasAttribute(attribute1.name) || original2.getAttribute(attribute1.name) !== attribute1.value) {
+                    original2.setAttribute(attribute1.name, attribute1.value);
                 }
             }
         }
     }
-    _fixOneventHandlersInsideOf(target) {
+    #fixOneventHandlersInsideOf(target) {
         if (target.hasChildNodes()) {
-            for (const node of Array.from(target.childNodes)){
-                if (node instanceof Element) {
-                    this._fixOneventHandlers(node);
+            for (const node1 of Array.from(target.childNodes)){
+                if (node1 instanceof __default.globalThis.Element) {
+                    this.#fixOneventHandlers(node1);
                 }
             }
         }
     }
-    _fixOneventHandlers(target) {
-        if (target.hasAttributes()) {
-            for (const attribute of Array.from(target.attributes)){
-                if (attribute.name.search(/^on\w+/i) !== -1) {
-                    const onevent = attribute.name.toLowerCase();
-                    const oneventTarget = target;
-                    if (onevent in target && typeof oneventTarget[onevent] === 'function') {
-                        const handler = new Function('event', attribute.value);
-                        target.removeAttribute(attribute.name);
-                        oneventTarget[onevent] = handler.bind(this._context ?? target);
+    #fixOneventHandlers(target1) {
+        if (target1.hasAttributes()) {
+            for (const attribute2 of Array.from(target1.attributes)){
+                if (attribute2.name.search(/^on\w+/i) !== -1) {
+                    const onevent = attribute2.name.toLowerCase();
+                    const oneventTarget = target1;
+                    if (onevent in target1 && typeof oneventTarget[onevent] === 'function') {
+                        const handler = new Function('event', attribute2.value);
+                        target1.removeAttribute(attribute2.name);
+                        oneventTarget[onevent] = handler.bind(this.#context ?? target1);
                     }
                 }
             }
         }
-        if (!containerCollection.has(target)) {
-            this._fixOneventHandlersInsideOf(target);
+        if (!containerCollection.has(target1)) {
+            this.#fixOneventHandlersInsideOf(target1);
         }
     }
 }
 class Component extends CustomElement {
-    _attrs;
-    _content;
+    #attrs;
+    #content;
     constructor(){
         super();
-        this._attrs = new ElementAttributesProxy(this);
-        this._content = new NodeContent(this.createContentContainer(), this);
+        this.#attrs = new ElementAttributesProxy(this);
+        this.#content = new NodeContent(this.createContentContainer(), this);
     }
     get attrs() {
-        return this._attrs;
+        return this.#attrs;
     }
     get content() {
-        return this._content;
+        return this.#content;
     }
     dispatch(type, detail) {
-        return this._content.container.dispatchEvent(new CustomEvent(type, {
+        return this.#content.container.dispatchEvent(new __default.globalThis.CustomEvent(type, {
             detail: detail,
             bubbles: true,
             composed: true
@@ -267,239 +271,196 @@ class Component extends CustomElement {
         });
     }
     render() {
-        this._content.update(this.template());
+        this.#content.update(this.template());
     }
     template() {
         return '';
     }
 }
 class Observable {
-    _observerCollection;
+    #observerCollection;
     constructor(){
-        this._observerCollection = new Set();
+        this.#observerCollection = new Set();
     }
     subscribe(observer) {
-        this._observerCollection.add(observer);
+        this.#observerCollection.add(observer);
     }
     unsubscribe(observer) {
-        this._observerCollection.delete(observer);
+        this.#observerCollection.delete(observer);
     }
     notify(value) {
-        if (this._observerCollection.size) {
-            for (const observer of this._observerCollection){
+        if (this.#observerCollection.size) {
+            for (const observer of this.#observerCollection){
                 observer(value);
             }
         }
     }
 }
 class ObservableValue extends Observable {
-    _value;
+    #value;
     constructor(value){
         super();
-        this._value = value;
+        this.#value = value;
     }
     set(value) {
-        this._value = value;
+        this.#value = value;
         this.notify();
     }
     get() {
-        return this._value;
+        return this.#value;
     }
     notify() {
-        super.notify(this._value);
+        super.notify(this.#value);
     }
 }
-let isRegExpNamedCaptureGroupsAvailable = false;
-try {
-    const matches = 'Named capture groups'.match(/(?<name>.+)/);
-    isRegExpNamedCaptureGroupsAvailable = matches?.groups?.name ? true : false;
-} catch  {
-    isRegExpNamedCaptureGroupsAvailable = false;
-}
 class Router {
-    _mode;
-    _base;
-    _onchange;
-    _onerror;
-    _routeCollection;
+    #mode;
+    #base;
+    #onchange;
+    #onerror;
+    #routeCollection;
+    #hashchangeCallback;
+    #popstateCallback;
     constructor(mode, base = ''){
         if (mode !== 'hash' && mode !== 'history') {
             throw new Error('The mode must be set "hash" or "history".');
         }
-        this._mode = mode;
-        this._base = base && !base.endsWith('/') ? base + '/' : base;
-        this._onchange = ()=>{};
-        this._onerror = (exception)=>{
+        this.#mode = mode;
+        this.#base = base && !base.endsWith('/') ? base + '/' : base;
+        this.#onchange = ()=>{};
+        this.#onerror = (exception)=>{
             console.error(exception);
         };
-        this._routeCollection = new Map();
-        this._handleHashchange = this._handleHashchange.bind(this);
-        this._handlePopstate = this._handlePopstate.bind(this);
+        this.#routeCollection = new Map();
+        this.#hashchangeCallback = this.#handleHashchange.bind(this);
+        this.#popstateCallback = this.#handlePopstate.bind(this);
     }
     get mode() {
-        return this._mode;
+        return this.#mode;
     }
     get base() {
-        return this._base;
+        return this.#base;
     }
     set onchange(handler) {
-        this._onchange = handler;
+        this.#onchange = handler;
     }
     get onchange() {
-        return this._onchange;
+        return this.#onchange;
     }
     set onerror(handler) {
-        this._onerror = handler;
+        this.#onerror = handler;
     }
     get onerror() {
-        return this._onerror;
+        return this.#onerror;
     }
-    setRoute(pattern, handler) {
-        if (!this._routeCollection.size) {
-            if (this._mode === 'hash') {
-                globalThis.addEventListener('hashchange', this._handleHashchange);
-            } else if (this._mode === 'history') {
-                globalThis.addEventListener('popstate', this._handlePopstate);
+    set(pattern, handler) {
+        if (!this.#routeCollection.size) {
+            if (this.#mode === 'hash') {
+                __default.globalThis.addEventListener('hashchange', this.#hashchangeCallback);
+            } else if (this.#mode === 'history') {
+                __default.globalThis.addEventListener('popstate', this.#popstateCallback);
             }
         }
-        this._routeCollection.set(this._fixRoutePattern(pattern), handler);
+        this.#routeCollection.set(this.#fixRoutePattern(pattern), handler);
     }
-    removeRoute(pattern) {
-        this._routeCollection.delete(this._fixRoutePattern(pattern));
-        if (!this._routeCollection.size) {
-            if (this._mode === 'hash') {
-                globalThis.removeEventListener('hashchange', this._handleHashchange);
-            } else if (this._mode === 'history') {
-                globalThis.removeEventListener('popstate', this._handlePopstate);
+    delete(pattern) {
+        this.#routeCollection.delete(this.#fixRoutePattern(pattern));
+        if (!this.#routeCollection.size) {
+            if (this.#mode === 'hash') {
+                __default.globalThis.removeEventListener('hashchange', this.#hashchangeCallback);
+            } else if (this.#mode === 'history') {
+                __default.globalThis.removeEventListener('popstate', this.#popstateCallback);
             }
         }
     }
     navigate(url) {
-        if (this._mode === 'hash') {
-            this._navigateWithHashMode(url);
-        } else if (this._mode === 'history') {
-            this._navigateWithHistoryMode(url);
+        if (this.#mode === 'hash') {
+            this.#navigateWithHashMode(url);
+        } else if (this.#mode === 'history') {
+            this.#navigateWithHistoryMode(url);
         }
     }
-    _navigateWithHashMode(url) {
+    #navigateWithHashMode(url) {
         let newVirtualPath = '';
         if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
-            const newUrl = new URL(url, globalThis.location.href);
+            const newUrl = new __default.globalThis.URL(url, __default.globalThis.location.href);
             const newUrlParts = newUrl.href.split('#');
-            const oldUrlParts = globalThis.location.href.split('#');
+            const oldUrlParts = __default.globalThis.location.href.split('#');
             if (newUrlParts[0] !== oldUrlParts[0]) {
-                globalThis.location.href = newUrl.href;
+                __default.globalThis.location.href = newUrl.href;
                 return;
             }
             newVirtualPath = newUrlParts[1] ?? '';
         } else {
             newVirtualPath = url;
         }
-        const oldVirtualPath = globalThis.location.hash.substring(1);
-        const oldVirtualUrl = new URL(oldVirtualPath, globalThis.location.origin);
-        const newVirtualUrl = new URL(this._resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
+        const oldVirtualPath = __default.globalThis.location.hash.substring(1);
+        const oldVirtualUrl = new __default.globalThis.URL(oldVirtualPath, __default.globalThis.location.origin);
+        const newVirtualUrl = new __default.globalThis.URL(this.#resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
         if (newVirtualUrl.pathname !== oldVirtualPath) {
-            globalThis.location.hash = newVirtualUrl.pathname;
+            __default.globalThis.location.hash = newVirtualUrl.pathname;
             return;
         }
-        this._invokeRouteHandler(newVirtualUrl.pathname);
+        this.#invokeRouteHandler(newVirtualUrl.pathname);
     }
-    _navigateWithHistoryMode(url) {
-        const newUrl = new URL(this._resolveBaseUrl(url), globalThis.location.href);
-        if (newUrl.origin !== globalThis.location.origin) {
-            globalThis.location.href = newUrl.href;
+    #navigateWithHistoryMode(url1) {
+        const newUrl1 = new __default.globalThis.URL(this.#resolveBaseUrl(url1), __default.globalThis.location.href);
+        if (newUrl1.origin !== __default.globalThis.location.origin) {
+            __default.globalThis.location.href = newUrl1.href;
             return;
         }
-        if (newUrl.href !== globalThis.location.href) {
-            globalThis.history.pushState({}, '', newUrl.href);
-            this._onchange(new CustomEvent('pushstate'));
+        if (newUrl1.href !== __default.globalThis.location.href) {
+            __default.globalThis.history.pushState({}, '', newUrl1.href);
+            this.#onchange(new __default.globalThis.CustomEvent('pushstate'));
         }
-        this._invokeRouteHandler(newUrl.pathname);
+        this.#invokeRouteHandler(newUrl1.pathname);
     }
-    _handleHashchange(event) {
-        this._onchange(event);
-        this._invokeRouteHandler(globalThis.location.hash.substring(1));
+    #handleHashchange(event) {
+        this.#onchange(event);
+        this.#invokeRouteHandler(__default.globalThis.location.hash.substring(1));
     }
-    _handlePopstate(event) {
-        this._onchange(event);
-        this._invokeRouteHandler(globalThis.location.pathname);
+    #handlePopstate(event1) {
+        this.#onchange(event1);
+        this.#invokeRouteHandler(__default.globalThis.location.pathname);
     }
-    _invokeRouteHandler(path) {
+    #invokeRouteHandler(path) {
         try {
-            if (this._routeCollection.size) {
-                for (const [pattern, handler] of this._routeCollection){
-                    const params = this._match(path, pattern);
-                    if (params) {
-                        handler(params);
+            if (this.#routeCollection.size) {
+                for (const [pattern, handler1] of this.#routeCollection){
+                    const matches = path.match(new RegExp(pattern));
+                    if (matches) {
+                        handler1(matches.groups ?? {});
                         break;
                     }
                 }
             }
         } catch (exception) {
-            this._onerror(exception);
+            this.#onerror(exception);
         }
     }
-    _resolveBaseUrl(url) {
-        return this._base && url.search(/^(https?:\/\/|\/)/i) === -1 ? this._base + url : url;
+    #resolveBaseUrl(url2) {
+        return this.#base && url2.search(/^(https?:\/\/|\/)/i) === -1 ? this.#base + url2 : url2;
     }
-    _fixRoutePattern(pattern) {
-        return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
-    }
-    _match(path, pattern) {
-        const params = {};
-        if (isRegExpNamedCaptureGroupsAvailable) {
-            const matches = path.match(new RegExp(pattern));
-            if (matches) {
-                if (matches.groups) {
-                    Object.assign(params, matches.groups);
-                }
-                return params;
-            }
-        } else {
-            const groupNames = [];
-            const namedGroupRegExp = /\(\?<(\w+)>([^()]+)\)/g;
-            const patternA = pattern.replace(namedGroupRegExp, (_substring, groupName, groupPattern)=>{
-                groupNames.push(groupName);
-                return `(${groupPattern})`;
-            });
-            const patternB = pattern.replace(namedGroupRegExp, '(?:$2)');
-            const matchesA = path.match(new RegExp(patternA));
-            const matchesB = path.match(new RegExp(patternB));
-            if (matchesA && matchesB) {
-                if (groupNames.length) {
-                    let iN = 0;
-                    let iB = 1;
-                    for(let iA = 1; iA < matchesA.length; iA++){
-                        if (matchesA[iA] === matchesB[iB]) {
-                            iB++;
-                        } else {
-                            params[groupNames[iN]] = matchesA[iA];
-                            iN++;
-                        }
-                    }
-                }
-                return params;
-            }
-        }
-        return null;
+    #fixRoutePattern(pattern1) {
+        return `/${pattern1}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 }
 class WebStorage {
-    _mode;
-    _prefix;
-    _storage;
+    #mode;
+    #prefix;
+    #storage;
     constructor(mode, prefix = ''){
-        this._mode = mode;
-        this._prefix = prefix;
-        switch(this._mode){
+        this.#mode = mode;
+        this.#prefix = prefix;
+        switch(this.#mode){
             case 'local':
                 {
-                    this._storage = globalThis.localStorage;
+                    this.#storage = __default.globalThis.localStorage;
                     break;
                 }
             case 'session':
                 {
-                    this._storage = globalThis.sessionStorage;
+                    this.#storage = __default.globalThis.sessionStorage;
                     break;
                 }
             default:
@@ -509,29 +470,35 @@ class WebStorage {
         }
     }
     get mode() {
-        return this._mode;
+        return this.#mode;
     }
     get prefix() {
-        return this._prefix;
+        return this.#prefix;
     }
-    get length() {
-        return this._storage.length;
+    get size() {
+        return this.#storage.length;
     }
-    key(index) {
-        return this._storage.key(index);
+    keys() {
+        const keys = [];
+        if (this.#storage.length) {
+            for(let i = 0; i < this.#storage.length; i++){
+                keys.push(this.#storage.key(i));
+            }
+        }
+        return keys;
     }
-    setItem(key, value) {
-        this._storage.setItem(this._prefix + key, JSON.stringify({
+    set(key, value) {
+        this.#storage.setItem(this.#prefix + key, JSON.stringify({
             _k: key,
             _v: value
         }));
     }
-    getItem(key) {
-        const value = this._storage.getItem(this._prefix + key);
+    get(key) {
+        const value = this.#storage.getItem(this.#prefix + key);
         if (value) {
             try {
                 const deserializedValue = JSON.parse(value);
-                if (deserializedValue && deserializedValue._k === key && deserializedValue._v !== undefined) {
+                if (deserializedValue?._k === key) {
                     return deserializedValue._v;
                 }
             } catch  {
@@ -540,11 +507,11 @@ class WebStorage {
         }
         return value;
     }
-    removeItem(key) {
-        this._storage.removeItem(this._prefix + key);
+    delete(key) {
+        this.#storage.removeItem(this.#prefix + key);
     }
     clear() {
-        this._storage.clear();
+        this.#storage.clear();
     }
 }
 export { Component as Component };

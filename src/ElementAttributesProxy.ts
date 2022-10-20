@@ -1,5 +1,5 @@
 export default class ElementAttributesProxy {
-  [key: string]: string
+  [key: string]: string;
 
   constructor(target: Element) {
     //const targetRef = new WeakRef(target);
