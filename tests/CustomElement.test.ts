@@ -1,6 +1,6 @@
 import { assertInstanceOf, assertStrictEquals } from 'https://deno.land/std/testing/asserts.ts';
-import util from './util.ts';
-import CustomElement from '../CustomElement.ts';
+import dom from './dom.ts';
+import CustomElement from '../src/CustomElement.ts';
 
 Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let testElement: CustomElement;
@@ -69,7 +69,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
   const sleep = (time: number) => {
     return new Promise((resolve) => {
-      util.globalThis.setTimeout(resolve, time);
+      dom.globalThis.setTimeout(resolve, time);
     });
   };
 
@@ -78,7 +78,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     counter = 0;
     TestElement.define('test-element');
 
-    assertStrictEquals(util.globalThis.customElements.get('test-element') !== undefined, true);
+    assertStrictEquals(dom.globalThis.customElements.get('test-element') !== undefined, true);
     assertStrictEquals(counter, 1);
   });
 
@@ -95,7 +95,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
     // By document.createElement()
     counter = 0;
-    testElement = util.globalThis.document.createElement('test-element') as CustomElement;
+    testElement = dom.globalThis.document.createElement('test-element') as CustomElement;
 
     assertInstanceOf(testElement, TestElement);
     assertInstanceOf(testElement, CustomElement);
@@ -107,8 +107,8 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     // attributeChangedCallback() and connectedCallback() will fire
     // and Synchronous updating method will run
     counter = 0;
-    util.globalThis.document.body.innerHTML = '<test-element test="0"></test-element>';
-    testElement = util.globalThis.document.querySelector('test-element') as CustomElement;
+    dom.globalThis.document.body.innerHTML = '<test-element test="0"></test-element>';
+    testElement = dom.globalThis.document.querySelector('test-element') as CustomElement;
 
     assertInstanceOf(testElement, TestElement);
     assertInstanceOf(testElement, CustomElement);
@@ -181,7 +181,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
   await t.step('disconnectedCallback()', () => {
     counter = 0;
-    util.globalThis.document.body.removeChild(testElement);
+    dom.globalThis.document.body.removeChild(testElement);
 
     assertStrictEquals(testElement.updateCounter, 4);
     assertStrictEquals(counter, 1);
@@ -190,9 +190,9 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
   await t.step('adoptedCallback()', async () => {
     // connectedCallback() will fire again when the element has adopted in another document
     counter = 0;
-    const iframe = util.globalThis.document.createElement('iframe');
+    const iframe = dom.globalThis.document.createElement('iframe');
     iframe.srcdoc = '<!DOCTYPE html><html><head></head><body></body></html>';
-    util.globalThis.document.body.appendChild(iframe);
+    dom.globalThis.document.body.appendChild(iframe);
     iframe.contentWindow?.document.body.appendChild(testElement);
     await sleep(200);
 
@@ -200,5 +200,5 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
     assertStrictEquals(counter, 4);
   });
 
-  util.globalThis.document.body.innerHTML = ''; // disconnectedCallback() will fire
+  dom.globalThis.document.body.innerHTML = ''; // disconnectedCallback() will fire
 });

@@ -1,5 +1,5 @@
 import { JSDOM } from 'https://jspm.dev/jsdom';
-import util from '../util.ts';
+import dom from '../src/dom.ts';
 
 const jsdom = new JSDOM(
   '<!DOCTYPE html><html><head></head><body></body></html>',
@@ -7,10 +7,10 @@ const jsdom = new JSDOM(
     url: 'https://example.com/',
     referrer: 'https://example.org/',
     contentType: 'text/html',
-    storageQuota: 1024 * 10,
+    storageQuota: 10240,
   },
 );
 
-util.globalThis = jsdom.window;
+dom.globalThis = jsdom.window;
 
-export default util;
+export default dom;

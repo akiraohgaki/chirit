@@ -1,8 +1,8 @@
-import type { ComponentContentContainer, NodeContentData } from '../types.ts';
+import type { ComponentContentContainer, NodeContentData } from '../src/types.ts';
 
 import { assertInstanceOf, assertStrictEquals } from 'https://deno.land/std/testing/asserts.ts';
-import util from './util.ts';
-import Component from '../Component.ts';
+import dom from './dom.ts';
+import Component from '../src/Component.ts';
 
 Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let testComponent: Component;
@@ -88,7 +88,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
   const sleep = (time: number) => {
     return new Promise((resolve) => {
-      util.globalThis.setTimeout(resolve, time);
+      dom.globalThis.setTimeout(resolve, time);
     });
   };
 
@@ -97,7 +97,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
     counter = 0;
     TestComponent.define('test-component');
 
-    assertStrictEquals(util.globalThis.customElements.get('test-component') !== undefined, true);
+    assertStrictEquals(dom.globalThis.customElements.get('test-component') !== undefined, true);
     assertStrictEquals(counter, 1);
   });
 
@@ -111,7 +111,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
     assertInstanceOf(testComponent, TestComponent);
     assertInstanceOf(testComponent, Component);
     assertInstanceOf(testComponent.attrs, Object);
-    assertInstanceOf(container, util.globalThis.ShadowRoot);
+    assertInstanceOf(container, dom.globalThis.ShadowRoot);
     assertStrictEquals(testComponent.attrs.test, undefined);
     assertStrictEquals(container.innerHTML, '');
     assertStrictEquals(testComponent.updateCounter, 0);
@@ -120,13 +120,13 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
     // By document.createElement()
     // createContentContainer() will run
     counter = 0;
-    testComponent = util.globalThis.document.createElement('test-component') as Component;
+    testComponent = dom.globalThis.document.createElement('test-component') as Component;
     container = testComponent.content.container as ShadowRoot;
 
     assertInstanceOf(testComponent, TestComponent);
     assertInstanceOf(testComponent, Component);
     assertInstanceOf(testComponent.attrs, Object);
-    assertInstanceOf(container, util.globalThis.ShadowRoot);
+    assertInstanceOf(container, dom.globalThis.ShadowRoot);
     assertStrictEquals(testComponent.attrs.test, undefined);
     assertStrictEquals(container.innerHTML, '');
     assertStrictEquals(testComponent.updateCounter, 0);
@@ -137,14 +137,14 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
     // and attributeChangedCallback() and connectedCallback() will fire
     // and Synchronous updating method will run
     counter = 0;
-    util.globalThis.document.body.innerHTML = '<test-component test="0"></test-component>';
-    testComponent = util.globalThis.document.querySelector('test-component') as Component;
+    dom.globalThis.document.body.innerHTML = '<test-component test="0"></test-component>';
+    testComponent = dom.globalThis.document.querySelector('test-component') as Component;
     container = testComponent.content.container as ShadowRoot;
 
     assertInstanceOf(testComponent, TestComponent);
     assertInstanceOf(testComponent, Component);
     assertInstanceOf(testComponent.attrs, Object);
-    assertInstanceOf(container, util.globalThis.ShadowRoot);
+    assertInstanceOf(container, dom.globalThis.ShadowRoot);
     assertStrictEquals(testComponent.attrs.test, '0');
     assertStrictEquals(container.innerHTML, '<span>0</span>');
     assertStrictEquals(testComponent.updateCounter, 1);
@@ -233,7 +233,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
   await t.step('disconnectedCallback()', () => {
     counter = 0;
-    util.globalThis.document.body.removeChild(testComponent);
+    dom.globalThis.document.body.removeChild(testComponent);
 
     assertStrictEquals(testComponent.updateCounter, 4);
     assertStrictEquals(counter, 1);
@@ -242,9 +242,9 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
   await t.step('adoptedCallback()', async () => {
     // connectedCallback() will fire again when the element has adopted in another document
     counter = 0;
-    const iframe = util.globalThis.document.createElement('iframe');
+    const iframe = dom.globalThis.document.createElement('iframe');
     iframe.srcdoc = '<!DOCTYPE html><html><head></head><body></body></html>';
-    util.globalThis.document.body.appendChild(iframe);
+    dom.globalThis.document.body.appendChild(iframe);
     iframe.contentWindow?.document.body.appendChild(testComponent);
     await sleep(200);
 
@@ -258,5 +258,5 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
     testComponent.dispatch('test', {});
   });
 
-  util.globalThis.document.body.innerHTML = ''; // disconnectedCallback() will fire
+  dom.globalThis.document.body.innerHTML = ''; // disconnectedCallback() will fire
 });

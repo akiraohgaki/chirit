@@ -5,13 +5,13 @@ import {
   assertStrictEquals,
   assertThrows,
 } from 'https://deno.land/std/testing/asserts.ts';
-import util from './util.ts';
-import WebStorage from '../WebStorage.ts';
+import dom from './dom.ts';
+import WebStorage from '../src/WebStorage.ts';
 
 const runTestSteps = async (t: Deno.TestContext, mode: 'local' | 'session') => {
   let webStorage: WebStorage;
 
-  const storage = mode === 'local' ? util.globalThis.localStorage : util.globalThis.sessionStorage;
+  const storage = mode === 'local' ? dom.globalThis.localStorage : dom.globalThis.sessionStorage;
 
   await t.step('constructor()', () => {
     webStorage = new WebStorage(mode, 'test_');

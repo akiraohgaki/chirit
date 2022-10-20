@@ -5,13 +5,13 @@ import {
   assertStrictEquals,
   assertThrows,
 } from 'https://deno.land/std/testing/asserts.ts';
-import util from './util.ts';
-import ElementAttributesProxy from '../ElementAttributesProxy.ts';
+import dom from './dom.ts';
+import ElementAttributesProxy from '../src/ElementAttributesProxy.ts';
 
 Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let elementAttributesProxy: ElementAttributesProxy;
 
-  const element = util.globalThis.document.createElement('div');
+  const element = dom.globalThis.document.createElement('div');
 
   await t.step('constructor()', () => {
     elementAttributesProxy = new ElementAttributesProxy(element);

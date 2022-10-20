@@ -1,13 +1,13 @@
 import { assertInstanceOf, assertStrictEquals } from 'https://deno.land/std/testing/asserts.ts';
-import util from './util.ts';
-import NodeContent from '../NodeContent.ts';
+import dom from './dom.ts';
+import NodeContent from '../src/NodeContent.ts';
 
 Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let nodeContent: NodeContent<Element>;
 
   let counter = 0;
 
-  const container = util.globalThis.document.createElement('div');
+  const container = dom.globalThis.document.createElement('div');
 
   const context = {
     handleClick: (event: MouseEvent) => {
@@ -24,7 +24,7 @@ Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async
   });
 
   await t.step('update()', () => {
-    const template = util.globalThis.document.createElement('template');
+    const template = dom.globalThis.document.createElement('template');
 
     // From string
     template.innerHTML = '<ul><li>1</li></ul>';
@@ -90,7 +90,7 @@ Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async
   await t.step('clone()', () => {
     const documentFragment = nodeContent.clone();
 
-    assertInstanceOf(documentFragment, util.globalThis.DocumentFragment);
+    assertInstanceOf(documentFragment, dom.globalThis.DocumentFragment);
     assertStrictEquals(documentFragment.querySelector('button')?.textContent, 'test');
   });
 });
