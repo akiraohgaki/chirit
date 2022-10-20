@@ -16,7 +16,10 @@
   "lint": {
     "files": {
       "include": [
-        "src/"
+        "mod.ts",
+        "version.ts",
+        "src/",
+        "tests/"
       ]
     },
     "rules": {
@@ -34,7 +37,10 @@
   "fmt": {
     "files": {
       "include": [
-        "src/"
+        "mod.ts",
+        "version.ts",
+        "src/",
+        "tests/"
       ]
     },
     "options": {
@@ -46,9 +52,8 @@
     }
   },
   "tasks": {
-    "test": "deno test src/",
-    "clean": "rm -rf dist && mkdir dist",
-    "bundle": "deno bundle src/mod.ts dist/mod.bundle.js",
-    "build": "deno fmt && deno lint && deno task test && deno task clean && deno task bundle"
+    "test": "deno test tests/",
+    "bundle": "deno bundle mod.ts mod.bundle.js",
+    "build": "deno fmt && deno lint && deno task test && deno task bundle"
   }
 }
