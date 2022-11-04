@@ -6,9 +6,9 @@ const containerCollection = new WeakSet();
 
 export default class NodeContent<T extends Node> {
   #containerRef: WeakRef<T> | null;
-  #contextRef: WeakRef<unknown> | null;
+  #contextRef: WeakRef<Record<string, unknown>> | null;
 
-  constructor(container: T, context?: unknown) {
+  constructor(container: T, context?: Record<string, unknown>) {
     containerCollection.add(container);
 
     this.#containerRef = new WeakRef(container);
