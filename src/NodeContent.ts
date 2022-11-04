@@ -5,36 +5,60 @@ import dom from './dom.ts';
 const containerCollection = new WeakSet();
 
 export default class NodeContent<T extends Node> {
-  #container: T;
-
-  #context: unknown;
+  #containerRef: WeakRef<T> | null;
+  #contextRef: WeakRef<unknown> | null;
 
   constructor(container: T, context?: unknown) {
     containerCollection.add(container);
 
-    //this.#containerRef = new WeakRef(container);
-    this.#container = container;
-
-    //this.#contextRef = new WeakRef(context);
-    this.#context = context;
+    this.#containerRef = new WeakRef(container);
+    this.#contextRef = context ? new WeakRef(context) : null;
   }
 
   get container(): T {
-    return this.#container;
+    return this.#getContainer();
   }
 
   update(content: NodeContentData): void {
+    const container = this.#getContainer();
+
     if (content instanceof dom.globalThis.Document || content instanceof dom.globalThis.DocumentFragment) {
-      this.#patchNodesInsideOf(this.#container, content);
+      this.#patchNodesInsideOf(container, content);
     } else {
-      this.#patchNodesInsideOf(this.#container, this.#createDocumentFragment(content));
+      this.#patchNodesInsideOf(container, this.#createDocumentFragment(content));
     }
 
-    this.#fixOneventHandlersInsideOf(this.#container);
+    this.#fixOneventHandlersInsideOf(container);
   }
 
   clone(): DocumentFragment {
-    return this.#createDocumentFragment(this.#container.childNodes);
+    const container = this.#getContainer();
+
+    return this.#createDocumentFragment(container.childNodes);
+  }
+
+  #getContainer(): T {
+    if (this.#containerRef) {
+      const container = this.#containerRef.deref();
+      if (container) {
+        return container;
+      } else {
+        this.#containerRef = null;
+      }
+    }
+    throw new Error('The node not available.');
+  }
+
+  #getContext(): unknown {
+    if (this.#contextRef) {
+      const context = this.#contextRef.deref();
+      if (context) {
+        return context;
+      } else {
+        this.#contextRef = null;
+      }
+    }
+    return undefined;
   }
 
   #createDocumentFragment(content: NodeContentData): DocumentFragment {
@@ -143,8 +167,9 @@ export default class NodeContent<T extends Node> {
           const oneventTarget = target as unknown as Record<string, OnEventHandler>;
           if (onevent in target && typeof oneventTarget[onevent] === 'function') {
             const handler = new Function('event', attribute.value);
+            const context = this.#getContext();
             target.removeAttribute(attribute.name);
-            oneventTarget[onevent] = handler.bind(this.#context ?? target);
+            oneventTarget[onevent] = handler.bind(context ?? target);
           }
         }
       }
