@@ -8,11 +8,11 @@ export default class NodeContent<T extends Node> {
   #containerRef: WeakRef<T> | null;
   #contextRef: WeakRef<Record<string, unknown>> | null;
 
-  constructor(container: T, context?: Record<string, unknown>) {
+  constructor(container: T, context?: unknown) {
     containerCollection.add(container);
 
     this.#containerRef = new WeakRef(container);
-    this.#contextRef = context ? new WeakRef(context) : null;
+    this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
   }
 
   get container(): T {
