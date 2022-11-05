@@ -2,6 +2,7 @@ export default class ElementAttributesProxy {
   [key: string]: string;
 
   constructor(target: Element) {
+    // Avoid circular references
     let targetRef: WeakRef<Element> | null = new WeakRef(target);
 
     const getTarget = () => {
