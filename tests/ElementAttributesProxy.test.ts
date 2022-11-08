@@ -4,7 +4,7 @@ import {
   assertNotInstanceOf,
   assertStrictEquals,
   assertThrows,
-} from 'https://deno.land/std/testing/asserts.ts';
+} from 'std/testing/asserts.ts';
 import dom from './dom.ts';
 import ElementAttributesProxy from '../src/ElementAttributesProxy.ts';
 

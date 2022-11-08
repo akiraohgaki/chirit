@@ -4,7 +4,7 @@ import {
   assertInstanceOf,
   assertStrictEquals,
   assertThrows,
-} from 'https://deno.land/std/testing/asserts.ts';
+} from 'std/testing/asserts.ts';
 import dom from './dom.ts';
 import WebStorage from '../src/WebStorage.ts';
 
