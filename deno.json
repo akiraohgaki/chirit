@@ -52,9 +52,15 @@
       "proseWrap": "preserve"
     }
   },
+  "test": {
+    "files": {
+      "include": [
+        "tests/"
+      ]
+    }
+  },
   "tasks": {
-    "test": "deno test tests/",
     "bundle": "deno bundle mod.ts mod.bundle.js",
-    "build": "deno fmt && deno lint && deno task test && deno task bundle"
+    "build": "deno fmt && deno lint && deno test && deno task bundle"
   }
 }
