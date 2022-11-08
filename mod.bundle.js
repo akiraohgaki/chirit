@@ -78,8 +78,21 @@ class CustomElement extends BaseElement {
 }
 class ElementAttributesProxy {
     constructor(target){
+        let targetRef = new WeakRef(target);
+        const getTarget = ()=>{
+            if (targetRef) {
+                const target = targetRef.deref();
+                if (target) {
+                    return target;
+                } else {
+                    targetRef = null;
+                }
+            }
+            throw new Error('The element not available.');
+        };
         return new Proxy({}, {
             set: (_target, name, value)=>{
+                const target = getTarget();
                 if (typeof name === 'string' && typeof value === 'string') {
                     target.setAttribute(name, value);
                     return true;
@@ -87,12 +100,14 @@ class ElementAttributesProxy {
                 return false;
             },
             get: (_target, name)=>{
+                const target = getTarget();
                 if (typeof name === 'string' && target.hasAttribute(name)) {
                     return target.getAttribute(name);
                 }
                 return undefined;
             },
             deleteProperty: (_target, name)=>{
+                const target = getTarget();
                 if (typeof name === 'string' && target.hasAttribute(name)) {
                     target.removeAttribute(name);
                     return true;
@@ -100,12 +115,14 @@ class ElementAttributesProxy {
                 return false;
             },
             has: (_target, name)=>{
+                const target = getTarget();
                 if (typeof name === 'string' && target.hasAttribute(name)) {
                     return true;
                 }
                 return false;
             },
             ownKeys: ()=>{
+                const target = getTarget();
                 const keys = [];
                 if (target.hasAttributes()) {
                     for (const attribute of Array.from(target.attributes)){
@@ -115,6 +132,7 @@ class ElementAttributesProxy {
                 return keys;
             },
             getOwnPropertyDescriptor: (_target, name)=>{
+                const target = getTarget();
                 if (typeof name === 'string' && target.hasAttribute(name)) {
                     return {
                         configurable: true,
@@ -129,26 +147,50 @@ class ElementAttributesProxy {
 }
 const containerCollection = new WeakSet();
 class NodeContent {
-    #container;
-    #context;
+    #containerRef;
+    #contextRef;
     constructor(container, context){
         containerCollection.add(container);
-        this.#container = container;
-        this.#context = context;
+        this.#containerRef = new WeakRef(container);
+        this.#contextRef = context ? new WeakRef(context) : null;
     }
     get container() {
-        return this.#container;
+        return this.#getContainer();
     }
     update(content) {
+        const container = this.#getContainer();
         if (content instanceof __default.globalThis.Document || content instanceof __default.globalThis.DocumentFragment) {
-            this.#patchNodesInsideOf(this.#container, content);
+            this.#patchNodesInsideOf(container, content);
         } else {
-            this.#patchNodesInsideOf(this.#container, this.#createDocumentFragment(content));
+            this.#patchNodesInsideOf(container, this.#createDocumentFragment(content));
         }
-        this.#fixOneventHandlersInsideOf(this.#container);
+        this.#fixOneventHandlersInsideOf(container);
     }
     clone() {
-        return this.#createDocumentFragment(this.#container.childNodes);
+        const container = this.#getContainer();
+        return this.#createDocumentFragment(container.childNodes);
+    }
+    #getContainer() {
+        if (this.#containerRef) {
+            const container = this.#containerRef.deref();
+            if (container) {
+                return container;
+            } else {
+                this.#containerRef = null;
+            }
+        }
+        throw new Error('The node not available.');
+    }
+    #getContext() {
+        if (this.#contextRef) {
+            const context = this.#contextRef.deref();
+            if (context) {
+                return context;
+            } else {
+                this.#contextRef = null;
+            }
+        }
+        return undefined;
     }
     #createDocumentFragment(content) {
         if (typeof content === 'string') {
@@ -233,8 +275,9 @@ class NodeContent {
                     const oneventTarget = target1;
                     if (onevent in target1 && typeof oneventTarget[onevent] === 'function') {
                         const handler = new Function('event', attribute2.value);
+                        const context1 = this.#getContext();
                         target1.removeAttribute(attribute2.name);
-                        oneventTarget[onevent] = handler.bind(this.#context ?? target1);
+                        oneventTarget[onevent] = handler.bind(context1 ?? target1);
                     }
                 }
             }
