@@ -1,6 +1,6 @@
 import type { ComponentContentContainer, NodeContentData } from '../src/types.ts';
 
-import { assertInstanceOf, assertStrictEquals } from 'https://deno.land/std/testing/asserts.ts';
+import { assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
 import Component from '../src/Component.ts';
 

@@ -1,4 +1,4 @@
-import { JSDOM } from 'https://jspm.dev/jsdom';
+import { JSDOM } from 'jsdom';
 import dom from '../src/dom.ts';
 
 const jsdom = new JSDOM(
