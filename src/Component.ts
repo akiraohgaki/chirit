@@ -68,3 +68,49 @@ export default class Component extends CustomElement {
     return '';
   }
 }
+
+const createComponent = (name: string, options?: {
+  observedAttributes?: Array<string>;
+  observables?: Array<unknown>;
+  init?: { (context: Component): void };
+  template?: { (context: Component): NodeContentData };
+}) => {
+  const customComponent = class extends Component {
+    static override get observedAttributes(): Array<string> {
+      return options?.observedAttributes ?? super.observedAttributes;
+    }
+
+    constructor() {
+      super();
+
+      if (options?.init && typeof options.init === 'function') {
+        options.init(this);
+      }
+    }
+
+    override connectedCallback(): void {
+      super.connectedCallback();
+
+      if (options?.observables) {
+        this.observe(...options.observables);
+      }
+    }
+
+    override disconnectedCallback(): void {
+      if (options?.observables) {
+        this.unobserve(...options.observables);
+      }
+
+      super.disconnectedCallback();
+    }
+
+    override template(): NodeContentData {
+      return (options?.template && typeof options.template === 'function') ? options.template(this) : super.template();
+    }
+  };
+
+  customComponent.define(name);
+
+  return customComponent;
+};
+export { createComponent };
