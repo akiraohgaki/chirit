@@ -12,6 +12,8 @@ export default class Component extends CustomElement {
   constructor() {
     super();
 
+    this.update = this.update.bind(this);
+
     this.#attrs = new ElementAttributesProxy(this);
     this.#content = new NodeContent(this.createContentContainer(), this);
   }
@@ -22,6 +24,26 @@ export default class Component extends CustomElement {
 
   get content(): NodeContent<ComponentContentContainer> {
     return this.#content;
+  }
+
+  observe(...args: Array<unknown>): void {
+    if (args.length) {
+      for (const arg of args as Array<Record<string, unknown>>) {
+        if (arg.subscribe && typeof arg.subscribe === 'function') {
+          arg.subscribe(this.update);
+        }
+      }
+    }
+  }
+
+  unobserve(...args: Array<unknown>): void {
+    if (args.length) {
+      for (const arg of args as Array<Record<string, unknown>>) {
+        if (arg.unsubscribe && typeof arg.unsubscribe === 'function') {
+          arg.unsubscribe(this.update);
+        }
+      }
+    }
   }
 
   dispatch(type: string, detail?: unknown): boolean {

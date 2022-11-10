@@ -3,6 +3,8 @@ import type { ComponentContentContainer, NodeContentData } from '../src/types.ts
 import { assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
 import Component from '../src/Component.ts';
+import Observable from '../src/Observable.ts';
+import ObservableValue from '../src/ObservableValue.ts';
 
 Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let testComponent: Component;
@@ -85,6 +87,18 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
       super.errorCallback(exception);
     }
   }
+
+  let update: { (): void } | null = null;
+  const observable1 = {
+    subscribe: (observer: { (): void }) => {
+      update = observer;
+    },
+    unsubscribe: (_observer: { (): void }) => {
+      update = null;
+    },
+  };
+  const observable2 = new Observable();
+  const observable3 = new ObservableValue(0);
 
   const sleep = (time: number) => {
     return new Promise((resolve) => {
@@ -250,6 +264,65 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
     assertStrictEquals(testComponent.updateCounter, 5);
     assertStrictEquals(counter, 5);
+  });
+
+  await t.step('observe()', async () => {
+    testComponent.observe(observable1);
+    testComponent.observe(observable2, observable3);
+
+    // Check if updating method as observer has been subscribed
+    counter = 0;
+    if (update) update();
+
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 6);
+    assertStrictEquals(counter, 3);
+
+    // This mechanism should compatible with Observable
+    counter = 0;
+    observable2.notify(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 7);
+    assertStrictEquals(counter, 3);
+
+    // This mechanism should compatible with ObservableValue
+    counter = 0;
+    observable3.set(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 3);
+  });
+
+  await t.step('unobserve()', async () => {
+    testComponent.unobserve(observable1);
+    testComponent.unobserve(observable2, observable3);
+
+    // Check if updating method as observer has been unsubscribed
+    counter = 0;
+    if (update) update();
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 0);
+
+    // This mechanism should compatible with Observable
+    counter = 0;
+    observable2.notify(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 0);
+
+    // This mechanism should compatible with ObservableValue
+    counter = 0;
+    observable3.set(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 0);
   });
 
   await t.step('dispatch()', () => {
