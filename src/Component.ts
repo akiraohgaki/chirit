@@ -34,15 +34,15 @@ export default class Component extends CustomElement {
     );
   }
 
-  protected createContentContainer(): ComponentContentContainer {
+  createContentContainer(): ComponentContentContainer {
     return this.attachShadow({ mode: 'open' });
   }
 
-  protected override render(): void {
+  override render(): void {
     this.#content.update(this.template());
   }
 
-  protected template(): NodeContentData {
+  template(): NodeContentData {
     return '';
   }
 }

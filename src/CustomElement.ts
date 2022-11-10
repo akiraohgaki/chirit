@@ -9,6 +9,14 @@ export default class CustomElement extends BaseElement {
   #updateDelay: number;
   #updatePromiseResolvers: Array<{ (): void }>;
 
+  static get observedAttributes(): Array<string> {
+    return [];
+  }
+
+  static define(name: string, options?: ElementDefinitionOptions): void {
+    dom.globalThis.customElements.define(name, this, options);
+  }
+
   constructor() {
     super();
 
@@ -19,8 +27,8 @@ export default class CustomElement extends BaseElement {
     this.#updatePromiseResolvers = [];
   }
 
-  static get observedAttributes(): Array<string> {
-    return [];
+  get updateCounter(): number {
+    return this.#updateCounter;
   }
 
   attributeChangedCallback(
@@ -50,14 +58,6 @@ export default class CustomElement extends BaseElement {
   }
 
   adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
-  }
-
-  static define(name: string, options?: ElementDefinitionOptions): void {
-    dom.globalThis.customElements.define(name, this, options);
-  }
-
-  get updateCounter(): number {
-    return this.#updateCounter;
   }
 
   update(): Promise<void> {
@@ -99,13 +99,13 @@ export default class CustomElement extends BaseElement {
     }
   }
 
-  protected render(): void {
+  render(): void {
   }
 
-  protected updatedCallback(): void {
+  updatedCallback(): void {
   }
 
-  protected errorCallback(exception: unknown): void {
+  errorCallback(exception: unknown): void {
     console.error(exception);
   }
 }

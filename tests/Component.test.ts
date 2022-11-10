@@ -44,12 +44,12 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
       console.log(counter, 'adoptedCallback()');
       super.adoptedCallback(oldDocument, newDocument);
     }
-    protected override createContentContainer(): ComponentContentContainer {
+    override createContentContainer(): ComponentContentContainer {
       counter++;
       console.log(counter, 'createContentContainer()');
       return super.createContentContainer();
     }
-    protected override render(): void {
+    override render(): void {
       counter++;
       console.log(counter, 'render()');
 
@@ -59,7 +59,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
       super.render();
     }
-    protected override template(): NodeContentData {
+    override template(): NodeContentData {
       counter++;
       console.log(counter, 'template()');
 
@@ -69,7 +69,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
       return `<span>${this.attrs.test}</span>` + super.template();
     }
-    protected override updatedCallback(): void {
+    override updatedCallback(): void {
       counter++;
       console.log(counter, 'updatedCallback()');
 
@@ -79,7 +79,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
       super.updatedCallback();
     }
-    protected override errorCallback(exception: unknown): void {
+    override errorCallback(exception: unknown): void {
       counter++;
       console.log(counter, 'errorCallback()', (exception as Error).message);
       super.errorCallback(exception);
