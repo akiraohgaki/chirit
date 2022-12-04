@@ -71,11 +71,11 @@ export default class Component extends CustomElement {
 
 const createComponent = (name: string, options?: {
   observedAttributes?: Array<string>;
-  observables?: Array<unknown>;
+  observedObjects?: Array<unknown>;
   init?: { (context: Component): void };
   template?: { (context: Component): NodeContentData };
-}) => {
-  const customComponent = class extends Component {
+}): Component => {
+  const CustomComponent = class extends Component {
     static override get observedAttributes(): Array<string> {
       return options?.observedAttributes ?? super.observedAttributes;
     }
@@ -91,14 +91,14 @@ const createComponent = (name: string, options?: {
     override connectedCallback(): void {
       super.connectedCallback();
 
-      if (options?.observables) {
-        this.observe(...options.observables);
+      if (options?.observedObjects) {
+        this.observe(...options.observedObjects);
       }
     }
 
     override disconnectedCallback(): void {
-      if (options?.observables) {
-        this.unobserve(...options.observables);
+      if (options?.observedObjects) {
+        this.unobserve(...options.observedObjects);
       }
 
       super.disconnectedCallback();
@@ -109,8 +109,8 @@ const createComponent = (name: string, options?: {
     }
   };
 
-  customComponent.define(name);
+  CustomComponent.define(name);
 
-  return customComponent;
+  return CustomComponent;
 };
 export { createComponent };
