@@ -69,12 +69,12 @@ export default class Component extends CustomElement {
   }
 }
 
-const createComponent = (name: string, options?: {
+export const createComponent = (name: string, options?: {
   observedAttributes?: Array<string>;
   observedObjects?: Array<unknown>;
   init?: { (context: Component): void };
   template?: { (context: Component): NodeContentData };
-}): Component => {
+}): typeof CustomComponent => {
   const CustomComponent = class extends Component {
     static override get observedAttributes(): Array<string> {
       return options?.observedAttributes ?? super.observedAttributes;
@@ -113,4 +113,3 @@ const createComponent = (name: string, options?: {
 
   return CustomComponent;
 };
-export { createComponent };
