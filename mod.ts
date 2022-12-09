@@ -1,4 +1,4 @@
-export type * from './src/types.ts';
+export * from './src/types.ts';
 
 export { default as Component } from './src/Component.ts';
 export { default as CustomElement } from './src/CustomElement.ts';
