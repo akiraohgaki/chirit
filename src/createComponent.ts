@@ -1,14 +1,8 @@
-import type { NodeContentData } from './types.ts';
+import type { CreateComponentOptions, NodeContentData } from './types.ts';
 
 import Component from './Component.ts';
 
-export default function createComponent<T = Component>(name: string, options?: {
-  observedAttributes?: Array<string>;
-  init?: { (context: T): void };
-  connected?: { (context: T): void };
-  disconnected?: { (context: T): void };
-  template?: { (context: T): NodeContentData };
-}): T {
+export default function createComponent<T = Component>(name: string, options?: CreateComponentOptions<T>): T {
   const CustomComponent = class extends Component {
     static override get observedAttributes(): Array<string> {
       return (options?.observedAttributes && Array.isArray(options.observedAttributes))
