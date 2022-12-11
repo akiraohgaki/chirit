@@ -1,3 +1,11 @@
+export interface CreateComponentOptions<T> {
+  observedAttributes?: Array<string>;
+  init?: { (context: T): void };
+  connected?: { (context: T): void };
+  disconnected?: { (context: T): void };
+  template?: { (context: T): NodeContentData };
+}
+
 export interface OnEventHandler {
   (event: Event): unknown;
 }

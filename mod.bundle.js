@@ -11,6 +11,12 @@ class CustomElement extends BaseElement {
     #updateTimerId;
     #updateDelay;
     #updatePromiseResolvers;
+    static get observedAttributes() {
+        return [];
+    }
+    static define(name, options) {
+        __default.globalThis.customElements.define(name, this, options);
+    }
     constructor(){
         super();
         this.#updateCounter = 0;
@@ -18,8 +24,8 @@ class CustomElement extends BaseElement {
         this.#updateDelay = 100;
         this.#updatePromiseResolvers = [];
     }
-    static get observedAttributes() {
-        return [];
+    get updateCounter() {
+        return this.#updateCounter;
     }
     attributeChangedCallback(_name, oldValue, newValue, _namespace) {
         if (this.#updateCounter && oldValue !== newValue) {
@@ -35,12 +41,6 @@ class CustomElement extends BaseElement {
     }
     disconnectedCallback() {}
     adoptedCallback(_oldDocument, _newDocument) {}
-    static define(name, options) {
-        __default.globalThis.customElements.define(name, this, options);
-    }
-    get updateCounter() {
-        return this.#updateCounter;
-    }
     update() {
         if (this.#updateTimerId !== undefined) {
             __default.globalThis.clearTimeout(this.#updateTimerId);
@@ -292,6 +292,7 @@ class Component extends CustomElement {
     #content;
     constructor(){
         super();
+        this.update = this.update.bind(this);
         this.#attrs = new ElementAttributesProxy(this);
         this.#content = new NodeContent(this.createContentContainer(), this);
     }
@@ -300,6 +301,24 @@ class Component extends CustomElement {
     }
     get content() {
         return this.#content;
+    }
+    observe(...args) {
+        if (args.length) {
+            for (const arg of args){
+                if (arg.subscribe && typeof arg.subscribe === 'function') {
+                    arg.subscribe(this.update);
+                }
+            }
+        }
+    }
+    unobserve(...args) {
+        if (args.length) {
+            for (const arg of args){
+                if (arg.unsubscribe && typeof arg.unsubscribe === 'function') {
+                    arg.unsubscribe(this.update);
+                }
+            }
+        }
     }
     dispatch(type, detail) {
         return this.#content.container.dispatchEvent(new __default.globalThis.CustomEvent(type, {
@@ -557,6 +576,36 @@ class WebStorage {
         this.#storage.clear();
     }
 }
+function createComponent(name, options) {
+    const CustomComponent = class extends Component {
+        static get observedAttributes() {
+            return options?.observedAttributes && Array.isArray(options.observedAttributes) ? options.observedAttributes : super.observedAttributes;
+        }
+        constructor(){
+            super();
+            if (options?.init && typeof options.init === 'function') {
+                options.init(this);
+            }
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            if (options?.connected && typeof options.connected === 'function') {
+                options.connected(this);
+            }
+        }
+        disconnectedCallback() {
+            if (options?.disconnected && typeof options.disconnected === 'function') {
+                options.disconnected(this);
+            }
+            super.disconnectedCallback();
+        }
+        template() {
+            return options?.template && typeof options.template === 'function' ? options.template(this) : super.template();
+        }
+    };
+    CustomComponent.define(name);
+    return CustomComponent;
+}
 export { Component as Component };
 export { CustomElement as CustomElement };
 export { ElementAttributesProxy as ElementAttributesProxy };
@@ -565,3 +614,4 @@ export { Observable as Observable };
 export { ObservableValue as ObservableValue };
 export { Router as Router };
 export { WebStorage as WebStorage };
+export { createComponent as createComponent };

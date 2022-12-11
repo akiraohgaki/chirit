@@ -3,6 +3,8 @@ import type { ComponentContentContainer, NodeContentData } from '../src/types.ts
 import { assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
 import Component from '../src/Component.ts';
+import Observable from '../src/Observable.ts';
+import ObservableValue from '../src/ObservableValue.ts';
 
 Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let testComponent: Component;
@@ -44,12 +46,12 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
       console.log(counter, 'adoptedCallback()');
       super.adoptedCallback(oldDocument, newDocument);
     }
-    protected override createContentContainer(): ComponentContentContainer {
+    override createContentContainer(): ComponentContentContainer {
       counter++;
       console.log(counter, 'createContentContainer()');
       return super.createContentContainer();
     }
-    protected override render(): void {
+    override render(): void {
       counter++;
       console.log(counter, 'render()');
 
@@ -59,7 +61,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
       super.render();
     }
-    protected override template(): NodeContentData {
+    override template(): NodeContentData {
       counter++;
       console.log(counter, 'template()');
 
@@ -69,7 +71,7 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
       return `<span>${this.attrs.test}</span>` + super.template();
     }
-    protected override updatedCallback(): void {
+    override updatedCallback(): void {
       counter++;
       console.log(counter, 'updatedCallback()');
 
@@ -79,12 +81,24 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
       super.updatedCallback();
     }
-    protected override errorCallback(exception: unknown): void {
+    override errorCallback(exception: unknown): void {
       counter++;
       console.log(counter, 'errorCallback()', (exception as Error).message);
       super.errorCallback(exception);
     }
   }
+
+  let update: { (): void } | null = null;
+  const observable1 = {
+    subscribe: (observer: { (): void }) => {
+      update = observer;
+    },
+    unsubscribe: (_observer: { (): void }) => {
+      update = null;
+    },
+  };
+  const observable2 = new Observable();
+  const observable3 = new ObservableValue(0);
 
   const sleep = (time: number) => {
     return new Promise((resolve) => {
@@ -250,6 +264,65 @@ Deno.test('Component', { sanitizeResources: false, sanitizeOps: false }, async (
 
     assertStrictEquals(testComponent.updateCounter, 5);
     assertStrictEquals(counter, 5);
+  });
+
+  await t.step('observe()', async () => {
+    testComponent.observe(observable1);
+    testComponent.observe(observable2, observable3);
+
+    // Check if updating method as observer has been subscribed
+    counter = 0;
+    if (update) update();
+
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 6);
+    assertStrictEquals(counter, 3);
+
+    // This mechanism should compatible with Observable
+    counter = 0;
+    observable2.notify(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 7);
+    assertStrictEquals(counter, 3);
+
+    // This mechanism should compatible with ObservableValue
+    counter = 0;
+    observable3.set(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 3);
+  });
+
+  await t.step('unobserve()', async () => {
+    testComponent.unobserve(observable1);
+    testComponent.unobserve(observable2, observable3);
+
+    // Check if updating method as observer has been unsubscribed
+    counter = 0;
+    if (update) update();
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 0);
+
+    // This mechanism should compatible with Observable
+    counter = 0;
+    observable2.notify(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 0);
+
+    // This mechanism should compatible with ObservableValue
+    counter = 0;
+    observable3.set(1);
+    await sleep(200);
+
+    assertStrictEquals(testComponent.updateCounter, 8);
+    assertStrictEquals(counter, 0);
   });
 
   await t.step('dispatch()', () => {

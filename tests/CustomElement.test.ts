@@ -40,7 +40,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
       console.log(counter, 'adoptedCallback()');
       super.adoptedCallback(oldDocument, newDocument);
     }
-    protected override render(): void {
+    override render(): void {
       counter++;
       console.log(counter, 'render()');
 
@@ -50,7 +50,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
       super.render();
     }
-    protected override updatedCallback(): void {
+    override updatedCallback(): void {
       counter++;
       console.log(counter, 'updatedCallback()');
 
@@ -60,7 +60,7 @@ Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, asy
 
       super.updatedCallback();
     }
-    protected override errorCallback(exception: unknown): void {
+    override errorCallback(exception: unknown): void {
       counter++;
       console.log(counter, 'errorCallback()', (exception as Error).message);
       super.errorCallback(exception);
