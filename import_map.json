@@ -1,6 +1,6 @@
 {
   "imports": {
-    "std/": "https://deno.land/std@0.162.0/",
-    "jsdom": "https://jspm.dev/npm:jsdom-deno@19.0.1"
+    "std/": "https://deno.land/std@0.175.0/",
+    "jsdom": "https://jspm.dev/npm:jsdom-deno@19.0.2"
   }
 }

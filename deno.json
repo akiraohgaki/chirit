@@ -18,10 +18,10 @@
   "lint": {
     "files": {
       "include": [
-        "mod.ts",
-        "version.ts",
         "src/",
-        "tests/"
+        "test/",
+        "mod.ts",
+        "version.ts"
       ]
     },
     "rules": {
@@ -39,10 +39,10 @@
   "fmt": {
     "files": {
       "include": [
-        "mod.ts",
-        "version.ts",
         "src/",
-        "tests/"
+        "test/",
+        "mod.ts",
+        "version.ts"
       ]
     },
     "options": {
@@ -56,7 +56,7 @@
   "test": {
     "files": {
       "include": [
-        "tests/"
+        "test/"
       ]
     }
   },
