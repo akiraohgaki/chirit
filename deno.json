@@ -20,7 +20,8 @@
       "include": [
         "src/",
         "mod.ts",
-        "version.ts"
+        "version.ts",
+        "bundle.ts"
       ]
     },
     "rules": {
@@ -40,7 +41,8 @@
       "include": [
         "src/",
         "mod.ts",
-        "version.ts"
+        "version.ts",
+        "bundle.ts"
       ]
     },
     "options": {
@@ -59,7 +61,7 @@
     }
   },
   "tasks": {
-    "bundle": "deno bundle mod.ts mod.bundle.js",
+    "bundle": "deno run --allow-env --allow-read --allow-write --allow-net bundle.ts",
     "build": "deno fmt && deno lint && deno test && deno task bundle"
   }
 }
