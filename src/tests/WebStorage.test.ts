@@ -6,7 +6,7 @@ import {
   assertThrows,
 } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
-import WebStorage from '../src/WebStorage.ts';
+import WebStorage from '../WebStorage.ts';
 
 const runTestSteps = async (t: Deno.TestContext, mode: 'local' | 'session') => {
   let webStorage: WebStorage;

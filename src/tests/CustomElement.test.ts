@@ -1,6 +1,6 @@
 import { assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
-import CustomElement from '../src/CustomElement.ts';
+import CustomElement from '../CustomElement.ts';
 
 Deno.test('CustomElement', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let testElement: CustomElement;

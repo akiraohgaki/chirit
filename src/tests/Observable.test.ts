@@ -1,5 +1,5 @@
 import { assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
-import Observable from '../src/Observable.ts';
+import Observable from '../Observable.ts';
 
 Deno.test('Observable', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let observable: Observable<string>;
