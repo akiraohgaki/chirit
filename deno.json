@@ -59,8 +59,8 @@
     }
   },
   "tasks": {
-    "clean": "echo 'Skip clean task'",
-    "bundle": "deno run --allow-env --allow-read --allow-write --allow-net scripts/bundle.ts mod.ts mod.bundle.js",
+    "clean": "echo 'Skip task: clean'",
+    "bundle": "deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts mod.ts mod.bundle.js",
     "build": "deno task clean && deno fmt && deno lint && deno test && deno task bundle"
   }
 }
