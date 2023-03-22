@@ -1,6 +1,6 @@
 import { assertInstanceOf, assertStrictEquals, assertThrows } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
-import Router from '../src/Router.ts';
+import Router from '../Router.ts';
 
 const runTestSteps = async (t: Deno.TestContext, mode: 'hash' | 'history') => {
   let router: Router;

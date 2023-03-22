@@ -1,6 +1,6 @@
 import { assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
-import NodeContent from '../src/NodeContent.ts';
+import NodeContent from '../NodeContent.ts';
 
 Deno.test('NodeContent', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let nodeContent: NodeContent<Element>;

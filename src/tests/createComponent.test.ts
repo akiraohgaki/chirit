@@ -1,8 +1,8 @@
 import { assertInstanceOf, assertNotInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
-import createComponent from '../src/createComponent.ts';
-import Component from '../src/Component.ts';
-import ObservableValue from '../src/ObservableValue.ts';
+import createComponent from '../createComponent.ts';
+import Component from '../Component.ts';
+import ObservableValue from '../ObservableValue.ts';
 
 interface CustomComponentType extends Component {
   eventHandler: { (): void };

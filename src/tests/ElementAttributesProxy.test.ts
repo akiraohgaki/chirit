@@ -6,7 +6,7 @@ import {
   assertThrows,
 } from 'std/testing/asserts.ts';
 import dom from './dom.ts';
-import ElementAttributesProxy from '../src/ElementAttributesProxy.ts';
+import ElementAttributesProxy from '../ElementAttributesProxy.ts';
 
 Deno.test('ElementAttributesProxy', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   let elementAttributesProxy: ElementAttributesProxy;

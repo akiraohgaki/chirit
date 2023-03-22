@@ -19,7 +19,6 @@
     "files": {
       "include": [
         "src/",
-        "test/",
         "mod.ts",
         "version.ts"
       ]
@@ -40,7 +39,6 @@
     "files": {
       "include": [
         "src/",
-        "test/",
         "mod.ts",
         "version.ts"
       ]
@@ -56,12 +54,13 @@
   "test": {
     "files": {
       "include": [
-        "test/"
+        "src/"
       ]
     }
   },
   "tasks": {
-    "bundle": "deno bundle mod.ts mod.bundle.js",
-    "build": "deno fmt && deno lint && deno test && deno task bundle"
+    "clean": "echo 'Skip clean task'",
+    "bundle": "deno run --allow-env --allow-read --allow-write --allow-net scripts/bundle.ts mod.ts mod.bundle.js",
+    "build": "deno task clean && deno fmt && deno lint && deno test && deno task bundle"
   }
 }
