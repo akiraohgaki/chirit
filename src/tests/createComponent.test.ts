@@ -37,7 +37,7 @@ Deno.test('createComponent', { sanitizeResources: false, sanitizeOps: false }, a
         context.content.container.removeEventListener('test', context.eventHandler);
       },
       template: (context) => {
-        return `<span>${context.attrs.test}</span><span>${observableValue.get()}</span>`;
+        return `<span>${context.attr.test}</span><span>${observableValue.get()}</span>`;
       },
     });
 
@@ -58,7 +58,7 @@ Deno.test('createComponent', { sanitizeResources: false, sanitizeOps: false }, a
 
     // Should be update correctly
     counter = 0;
-    customComponent.attrs.test = '1';
+    customComponent.attr.test = '1';
     observableValue.set(2);
     await sleep(200);
 

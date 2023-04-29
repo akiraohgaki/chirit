@@ -6,7 +6,7 @@ import NodeContent from './NodeContent.ts';
 import dom from './dom.ts';
 
 export default class Component extends CustomElement {
-  #attrs: ElementAttributesProxy;
+  #attr: ElementAttributesProxy;
   #content: NodeContent<ComponentContentContainer>;
 
   constructor() {
@@ -14,12 +14,12 @@ export default class Component extends CustomElement {
 
     this.update = this.update.bind(this);
 
-    this.#attrs = new ElementAttributesProxy(this);
+    this.#attr = new ElementAttributesProxy(this);
     this.#content = new NodeContent(this.createContentContainer(), this);
   }
 
-  get attrs(): ElementAttributesProxy {
-    return this.#attrs;
+  get attr(): ElementAttributesProxy {
+    return this.#attr;
   }
 
   get content(): NodeContent<ComponentContentContainer> {
