@@ -14,7 +14,7 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   }
 
   update(state: Partial<T>): void {
-    this.#state = { ...state, ...this.#state };
+    this.#state = { ...this.#state, ...state };
     this.notify();
   }
 
