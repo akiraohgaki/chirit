@@ -9,6 +9,7 @@ export { default as NodeContent } from './src/NodeContent.ts';
 export { default as Observable } from './src/Observable.ts';
 export { default as ObservableValue } from './src/ObservableValue.ts';
 export { default as Router } from './src/Router.ts';
+export { default as Store } from './src/Store.ts';
 export { default as WebStorage } from './src/WebStorage.ts';
 
 export { default as createComponent } from './src/createComponent.ts';
