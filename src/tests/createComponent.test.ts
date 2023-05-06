@@ -39,7 +39,7 @@ Deno.test('createComponent', { sanitizeResources: false, sanitizeOps: false }, a
         context.content.container.removeEventListener('test', context.eventHandler);
       },
       template: (context) => {
-        return `<span>${context.attr.test}</span><span>${observableValue.get()}</span>${store.state.prop}</span>`;
+        return `<span>${context.attr.test}</span><span>${observableValue.get()}</span><span>${store.state.prop}</span>`;
       },
     });
 

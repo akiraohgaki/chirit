@@ -1,4 +1,4 @@
-import { assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
+import { assertEquals, assertInstanceOf, assertStrictEquals } from 'std/testing/asserts.ts';
 import Store from '../Store.ts';
 
 Deno.test('Store', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
@@ -58,6 +58,6 @@ Deno.test('Store', { sanitizeResources: false, sanitizeOps: false }, async (t) =
     testStore.update({ prop1: 0, prop3: 0 });
 
     assertStrictEquals(counter, 2);
-    assertStrictEquals(testStore.state, { prop1: 0, prop2: 2, prop3: 0 });
+    assertEquals(testStore.state, { prop1: 0, prop2: 2, prop3: 0 });
   });
 });
