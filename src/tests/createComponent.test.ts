@@ -3,6 +3,7 @@ import dom from './dom.ts';
 import createComponent from '../createComponent.ts';
 import Component from '../Component.ts';
 import ObservableValue from '../ObservableValue.ts';
+import Store from '../Store.ts';
 
 interface CustomComponentType extends Component {
   eventHandler: { (): void };
@@ -10,6 +11,7 @@ interface CustomComponentType extends Component {
 
 Deno.test('createComponent', { sanitizeResources: false, sanitizeOps: false }, async (t) => {
   const observableValue = new ObservableValue(0);
+  const store = new Store({ prop: 0 });
 
   let counter = 0;
 
@@ -29,15 +31,15 @@ Deno.test('createComponent', { sanitizeResources: false, sanitizeOps: false }, a
         };
       },
       connected: (context) => {
-        context.observe(observableValue);
+        context.observe(observableValue, store);
         context.content.container.addEventListener('test', context.eventHandler);
       },
       disconnected: (context) => {
-        context.unobserve(observableValue);
+        context.unobserve(observableValue, store);
         context.content.container.removeEventListener('test', context.eventHandler);
       },
       template: (context) => {
-        return `<span>${context.attr.test}</span><span>${observableValue.get()}</span>`;
+        return `<span>${context.attr.test}</span><span>${observableValue.get()}</span>${store.state.prop}</span>`;
       },
     });
 
@@ -53,16 +55,17 @@ Deno.test('createComponent', { sanitizeResources: false, sanitizeOps: false }, a
     const customComponent = dom.globalThis.document.querySelector('custom-component') as CustomComponentType;
     const container = customComponent.content.container as ShadowRoot;
 
-    assertStrictEquals(container.innerHTML, '<span>0</span><span>0</span>');
+    assertStrictEquals(container.innerHTML, '<span>0</span><span>0</span><span>0</span>');
     assertStrictEquals(counter, 1);
 
     // Should be update correctly
     counter = 0;
     customComponent.attr.test = '1';
     observableValue.set(2);
+    store.update({ prop: 3 });
     await sleep(200);
 
-    assertStrictEquals(container.innerHTML, '<span>1</span><span>2</span>');
+    assertStrictEquals(container.innerHTML, '<span>1</span><span>2</span><span>3</span>');
     assertStrictEquals(counter, 1);
   });
 
