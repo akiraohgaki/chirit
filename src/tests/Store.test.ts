@@ -33,7 +33,7 @@ Deno.test('Store', { sanitizeResources: false, sanitizeOps: false }, async (t) =
 
     assertInstanceOf(testStore, TestStore);
     assertInstanceOf(testStore, Store);
-    assertStrictEquals(testStore.state, testState);
+    assertEquals(testStore.state, testState);
   });
 
   await t.step('subscribe()', () => {

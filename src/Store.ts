@@ -6,7 +6,7 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   constructor(state: T) {
     super();
 
-    this.#state = state;
+    this.#state = { ...state };
   }
 
   get state(): T {
