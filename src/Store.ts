@@ -1,0 +1,24 @@
+import Observable from './Observable.ts';
+
+export default class Store<T = Record<string, unknown>> extends Observable<T> {
+  #state: T;
+
+  constructor(state: T) {
+    super();
+
+    this.#state = state;
+  }
+
+  get state(): T {
+    return this.#state;
+  }
+
+  update(state: T): void {
+    this.#state = { ...state, ...this.#state };
+    this.notify();
+  }
+
+  override notify(): void {
+    super.notify(this.#state);
+  }
+}
