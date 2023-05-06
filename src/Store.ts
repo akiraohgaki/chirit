@@ -1,6 +1,6 @@
 import Observable from './Observable.ts';
 
-export default class Store<T = Record<string, unknown>> extends Observable<T> {
+export default class Store<T extends Record<string, unknown>> extends Observable<T> {
   #state: T;
 
   constructor(state: T) {
@@ -13,7 +13,7 @@ export default class Store<T = Record<string, unknown>> extends Observable<T> {
     return this.#state;
   }
 
-  update(state: T): void {
+  update(state: Partial<T>): void {
     this.#state = { ...state, ...this.#state };
     this.notify();
   }
