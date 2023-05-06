@@ -16,13 +16,11 @@
     "noFallthroughCasesInSwitch": true
   },
   "lint": {
-    "files": {
-      "include": [
-        "src/",
-        "mod.ts",
-        "version.ts"
-      ]
-    },
+    "include": [
+      "src/",
+      "mod.ts",
+      "version.ts"
+    ],
     "rules": {
       "tags": [
         "recommended"
@@ -36,27 +34,21 @@
     }
   },
   "fmt": {
-    "files": {
-      "include": [
-        "src/",
-        "mod.ts",
-        "version.ts"
-      ]
-    },
-    "options": {
-      "useTabs": false,
-      "lineWidth": 120,
-      "indentWidth": 2,
-      "singleQuote": true,
-      "proseWrap": "preserve"
-    }
+    "include": [
+      "src/",
+      "mod.ts",
+      "version.ts"
+    ],
+    "useTabs": false,
+    "lineWidth": 120,
+    "indentWidth": 2,
+    "singleQuote": true,
+    "proseWrap": "preserve"
   },
   "test": {
-    "files": {
-      "include": [
-        "src/"
-      ]
-    }
+    "include": [
+      "src/"
+    ]
   },
   "tasks": {
     "clean": "echo 'Skip task: clean'",
