@@ -92,7 +92,7 @@ export default class Router {
   #navigateWithHashMode(url: string): void {
     let newVirtualPath = '';
 
-    if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
+    if (url.search(/^[A-Za-z0-9\+\-\.]+:\/\/|\?|#/) !== -1) {
       const newUrl = new dom.globalThis.URL(url, dom.globalThis.location.href);
       const newUrlParts = newUrl.href.split('#');
       const oldUrlParts = dom.globalThis.location.href.split('#');
@@ -165,7 +165,7 @@ export default class Router {
   }
 
   #resolveBaseUrl(url: string): string {
-    return (this.#base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this.#base + url : url;
+    return (this.#base && url.search(/^([A-Za-z0-9\+\-\.]+:\/\/|\/)/) === -1) ? this.#base + url : url;
   }
 
   #fixRoutePattern(pattern: string): string {
