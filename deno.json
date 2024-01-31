@@ -18,6 +18,7 @@
   "lint": {
     "include": [
       "src/",
+      "tests/",
       "mod.ts",
       "version.ts"
     ],
@@ -36,6 +37,7 @@
   "fmt": {
     "include": [
       "src/",
+      "tests/",
       "mod.ts",
       "version.ts"
     ],
