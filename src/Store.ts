@@ -1,12 +1,14 @@
 import Observable from './Observable.ts';
 
+import dom from './dom.ts';
+
 export default class Store<T extends Record<string, unknown>> extends Observable<T> {
   #state: T;
 
   constructor(state: T) {
     super();
 
-    this.#state = { ...state };
+    this.#state = dom.globalThis.structuredClone(state);
   }
 
   get state(): T {
@@ -14,7 +16,7 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   }
 
   update(state: Partial<T>): void {
-    this.#state = { ...this.#state, ...state };
+    this.#state = dom.globalThis.structuredClone({ ...this.#state, ...state });
     this.notify();
   }
 
