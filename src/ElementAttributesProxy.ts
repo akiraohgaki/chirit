@@ -2,7 +2,7 @@ export default class ElementAttributesProxy {
   [key: string]: string;
 
   constructor(target: Element) {
-    // Avoid circular references
+    // Avoid circular references to make GC easier
     let targetRef: WeakRef<Element> | null = new WeakRef(target);
 
     const getTarget = () => {
@@ -17,7 +17,7 @@ export default class ElementAttributesProxy {
       throw new Error('The element not available.');
     };
 
-    // Creates class instance as Proxy of Object so not this class instance
+    // Class instance as Proxy of Object, not this class instance
     return new Proxy({}, {
       set: (_target, name, value) => {
         const target = getTarget();

@@ -9,10 +9,10 @@ export default class NodeContent<T extends Node> {
   #contextRef: WeakRef<Record<string, unknown>> | null;
 
   constructor(container: T, context?: unknown) {
-    // Avoid effects child nodes managed by this feature
+    // Avoid affect child nodes managed by this feature
     containerCollection.add(container);
 
-    // Avoid circular references
+    // Avoid circular references to make GC easier
     this.#containerRef = new WeakRef(container);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
   }

@@ -50,8 +50,7 @@ export default class WebStorage {
   }
 
   set(key: string, value: unknown): void {
-    // Adds prefix to the key
-    // and makes the value into special object and serialise to JSON
+    // Stores value as special JSON object
     this.#storage.setItem(
       this.#prefix + key,
       JSON.stringify({ _k: key, _v: value }),
@@ -59,23 +58,18 @@ export default class WebStorage {
   }
 
   get(key: string): unknown {
-    // Checks if the value is JSON created from special object and returns original value
-    // otherwise just returns the value
+    // Returns original value stored in special JSON object
     const value = this.#storage.getItem(this.#prefix + key);
     if (value) {
       try {
-        // JSON.parse() will throw a parse error if the value is not valid JSON
         const deserializedValue = JSON.parse(value);
         if (deserializedValue?._k === key) {
-          // Will return original value or undefined
           return deserializedValue._v;
         }
       } catch {
-        // Will return string
-        return value;
+        void 0;
       }
     }
-    // Will return string or null
     return value;
   }
 
