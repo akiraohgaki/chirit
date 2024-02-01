@@ -1,5 +1,4 @@
 {
-  "importMap": "import_map.json",
   "compilerOptions": {
     "lib": [
       "deno.ns",
@@ -18,8 +17,7 @@
   "lint": {
     "include": [
       "src/",
-      "mod.ts",
-      "version.ts"
+      "*.ts"
     ],
     "rules": {
       "tags": [
@@ -36,12 +34,12 @@
   "fmt": {
     "include": [
       "src/",
-      "mod.ts",
-      "version.ts"
+      "*.ts"
     ],
     "useTabs": false,
     "lineWidth": 120,
     "indentWidth": 2,
+    "semiColons": true,
     "singleQuote": true,
     "proseWrap": "preserve"
   },
@@ -54,5 +52,9 @@
     "clean": "echo 'Skip task: clean'",
     "bundle": "deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts mod.ts mod.bundle.js",
     "build": "deno task clean && deno fmt && deno lint && deno test && deno task bundle"
+  },
+  "imports": {
+    "std/": "https://deno.land/std/",
+    "jsdom": "https://jspm.dev/jsdom"
   }
 }
