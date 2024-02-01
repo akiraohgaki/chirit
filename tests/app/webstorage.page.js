@@ -98,7 +98,7 @@ export default function () {
             webStorage.get('undefined'),
             webStorage.get('invalidjson'),
             webStorage.get('invalidobject'),
-            webStorage.get('undefinedname'),
+            webStorage.get('undefinedkey'),
           ])
         }`);
 
@@ -113,7 +113,7 @@ export default function () {
             storage.getItem('test_undefined'),
             storage.getItem('test_invalidjson'),
             storage.getItem('test_invalidobject'),
-            storage.getItem('test_undefinedname'),
+            storage.getItem('test_undefinedkey'),
           ])
         }`);
         break;
@@ -128,7 +128,7 @@ export default function () {
         webStorage.delete('undefined');
         webStorage.delete('invalidjson');
         webStorage.delete('invalidobject');
-        webStorage.delete('undefinedname');
+        webStorage.delete('undefinedkey');
         addLog('delete');
         break;
       }

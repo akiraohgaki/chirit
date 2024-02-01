@@ -1,168 +1,208 @@
 import { expect, test } from '@playwright/test';
 
-const origin = 'http://127.0.0.1:3000';
+test.describe('/router (hash mode)', () => {
+  test('Initialization', async ({ page }) => {
+    await page.goto('/router');
+    await page.locator('[data-action="init-hash"]').click();
+    await expect(page.locator('[data-log]')).toHaveText('init (hash mode)');
+  });
 
-const hashModeLogs = [
-  'mode: hash',
-  'base: /router/hash/',
-  'set onchange',
-  'set onerror',
-  'set: 3 routes',
-  'navigate: test/a/0',
-  `${origin}/router/hash#/router/hash/test/a/0`,
-  'onchange: hashchange',
-  'params: ' + JSON.stringify({ name1: 'a', name2: '0' }),
-  'navigate: test/b',
-  `${origin}/router/hash#/router/hash/test/b`,
-  'onchange: hashchange',
-  'params: ' + JSON.stringify({ name1: 'b' }),
-  'navigate: error',
-  `${origin}/router/hash#/router/hash/error`,
-  'onchange: hashchange',
-  'params: ' + JSON.stringify({}),
-  'onerror: error',
-  'navigate: patternnotmatch',
-  `${origin}/router/hash#/router/hash/patternnotmatch`,
-  'onchange: hashchange',
-  'navigate: test/a/0',
-  `${origin}/router/hash#/router/hash/test/a/0`,
-  'onchange: hashchange',
-  'params: ' + JSON.stringify({ name1: 'a', name2: '0' }),
-  'navigate: ./',
-  `${origin}/router/hash#/router/hash/`,
-  'onchange: hashchange',
-  'navigate: ../',
-  `${origin}/router/hash#/router/`,
-  'onchange: hashchange',
-  'navigate: /',
-  `${origin}/router/hash#/`,
-  'onchange: hashchange',
-  'navigate: #test/c/0',
-  `${origin}/router/hash#/router/hash/test/c/0`,
-  'onchange: hashchange',
-  'params: ' + JSON.stringify({ name1: 'c', name2: '0' }),
-  'onchange: hashchange',
-  'delete: 3 routes',
-  'navigate: test/a/0',
-  `${origin}/router/hash#/router/hash/test/a/0`,
-];
+  test('Properties', async ({ page }) => {
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="prop-mode"]').click();
+    await page.locator('[data-action="prop-base"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="prop-onerror"]').click();
+    await expect(page.locator('[data-log]')).toHaveText([
+      'mode: hash',
+      'base: /router/',
+      'onchange',
+      'onerror',
+    ]);
+  });
 
-const historyModeLogs = [
-  'mode: history',
-  'base: /router/history/',
-  'set onchange',
-  'set onerror',
-  'set: 3 routes',
-  'navigate: test/a/0',
-  'onchange: pushstate',
-  'params: ' + JSON.stringify({ name1: 'a', name2: '0' }),
-  `${origin}/router/history/test/a/0`,
-  'navigate: test/b',
-  'onchange: pushstate',
-  'params: ' + JSON.stringify({ name1: 'b' }),
-  `${origin}/router/history/test/b`,
-  'navigate: error',
-  'onchange: pushstate',
-  'params: ' + JSON.stringify({}),
-  'onerror: error',
-  `${origin}/router/history/error`,
-  'navigate: patternnotmatch',
-  'onchange: pushstate',
-  `${origin}/router/history/patternnotmatch`,
-  'navigate: test/a/0',
-  'onchange: pushstate',
-  'params: ' + JSON.stringify({ name1: 'a', name2: '0' }),
-  `${origin}/router/history/test/a/0`,
-  'navigate: ./',
-  'onchange: pushstate',
-  `${origin}/router/history/`,
-  'navigate: ../',
-  'onchange: pushstate',
-  `${origin}/router/`,
-  'navigate: /',
-  'onchange: pushstate',
-  `${origin}/`,
-  'navigate: #test/c/0',
-  'onchange: pushstate',
-  `${origin}/router/history/#test/c/0`,
-  'onchange: popstate',
-  'delete: 3 routes',
-  'navigate: test/a/0',
-  'onchange: pushstate',
-  `${origin}/router/history/test/a/0`,
-];
+  test('Methods', async ({ page, baseURL }) => {
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="method-navigate-root"]').click();
+    await page.locator('[data-action="method-navigate-parent"]').click();
+    await page.locator('[data-action="method-navigate-current"]').click();
+    await page.locator('[data-action="method-navigate-pathto1"]').click();
+    await page.locator('[data-action="method-navigate-pathto"]').click();
+    await page.locator('[data-action="method-navigate-error"]').click();
+    await page.locator('[data-action="method-navigate-noroute"]').click();
+    await page.locator('[data-action="method-delete"]').click();
+    await page.locator('[data-action="method-navigate-root"]').click();
+    await expect(page.locator('[data-log]')).toHaveText([
+      'set',
+      `${baseURL}/router#/`,
+      'onchange: hashchange',
+      `${baseURL}/router#/`,
+      `${baseURL}/router#/router/`,
+      'onchange: hashchange',
+      `${baseURL}/router#/router/path/to/1`,
+      'onchange: hashchange',
+      'params: {"name1":"to","name2":"1"}',
+      `${baseURL}/router#/router/path/to`,
+      'onchange: hashchange',
+      'params: {"name1":"to"}',
+      `${baseURL}/router#/router/error`,
+      'onchange: hashchange',
+      'params: {}',
+      'onerror: error',
+      `${baseURL}/router#/router/noroute`,
+      'onchange: hashchange',
+      'delete',
+      `${baseURL}/router#/`,
+    ]);
 
-test.describe('/router/hash', () => {
-  test('Hash mode should work', async ({ page }) => {
-    await page.goto('/router/hash');
-    await page.locator('#content > button').getByText('set: 3 routes').click();
-    await page.locator('#content > button').getByText('navigate: test/a/0').click();
-    await page.locator('#content > button').getByText('navigate: test/b').click();
-    await page.locator('#content > button').getByText('navigate: error').click();
-    await page.locator('#content > button').getByText('navigate: patternnotmatch').click();
-    await page.locator('#content > button').getByText('navigate: test/a/0').click();
-    await page.locator('#content > button').getByText('navigate: ./').click();
-    await page.locator('#content > button').getByText('navigate: ../').click();
-    await page.locator('#content > button').getByText('navigate: /').click();
-    await page.locator('#content > button').getByText('navigate: #test/c/0').click();
-    await page.goBack();
-    await page.locator('#content > button').getByText('delete: 3 routes').click();
-    await page.locator('#content > button').getByText('navigate: test/a/0').click();
-    await expect(page.locator('#log > p')).toHaveText(hashModeLogs);
+    await page.goto('/router');
+    await page.locator('[data-action="init-hash"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-hashpathto1"]').click();
+    await expect(page).toHaveURL(`${baseURL}/router#/router/path/to/1`);
+    await expect(page.locator('[data-log]')).toHaveText([
+      `${baseURL}/router#/router/path/to/1`,
+      'onchange: hashchange',
+      'params: {"name1":"to","name2":"1"}',
+    ]);
 
-    await page.goto('/router/hash');
-    await page.locator('#content > button').getByText('navigate: ?k=v').click();
-    await expect(page).toHaveURL(`${origin}/router/hash?k=v`);
-    await expect(page.locator('#log > p').last()).toHaveText('set onerror');
+    await page.goto('/router');
+    await page.locator('[data-action="init-hash"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-querykv"]').click();
+    await expect(page).toHaveURL(`${baseURL}/router?k=v`);
+    await expect(page.locator('[data-log]')).toHaveCount(0);
 
-    await page.goto('/router/hash');
-    await page.locator('#content > button').getByText('navigate: location.origin').click();
-    await expect(page).toHaveURL(`${origin}/`);
-    await expect(page.locator('#log > p')).toHaveCount(0);
+    await page.goto('/router');
+    await page.locator('[data-action="init-hash"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-locationorigin"]').click();
+    await expect(page).toHaveURL(`${baseURL}/`);
+    await expect(page.locator('[data-log]')).toHaveCount(0);
 
-    await page.goto('/router/hash');
-    await page.locator('#content > button').getByText('navigate: https://example.com/').click();
+    await page.goto('/router');
+    await page.locator('[data-action="init-hash"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-examplecom"]').click();
     await expect(page).toHaveURL('https://example.com/');
   });
 });
 
-test.describe('/router/history', () => {
-  test('History mode should work', async ({ page }) => {
-    await page.goto('/router/history');
-    await page.locator('#content > button').getByText('set: 3 routes').click();
-    await page.locator('#content > button').getByText('navigate: test/a/0').click();
-    await page.locator('#content > button').getByText('navigate: test/b').click();
-    await page.locator('#content > button').getByText('navigate: error').click();
-    await page.locator('#content > button').getByText('navigate: patternnotmatch').click();
-    await page.locator('#content > button').getByText('navigate: test/a/0').click();
-    await page.locator('#content > button').getByText('navigate: ./').click();
-    await page.locator('#content > button').getByText('navigate: ../').click();
-    await page.locator('#content > button').getByText('navigate: /').click();
-    await page.locator('#content > button').getByText('navigate: #test/c/0').click();
-    await page.goBack();
-    await page.locator('#content > button').getByText('delete: 3 routes').click();
-    await page.locator('#content > button').getByText('navigate: test/a/0').click();
-    await expect(page.locator('#log > p')).toHaveText(historyModeLogs);
+test.describe('/router (history mode)', () => {
+  test('Initialization', async ({ page }) => {
+    await page.goto('/router');
+    await page.locator('[data-action="init-history"]').click();
+    await expect(page.locator('[data-log]')).toHaveText('init (history mode)');
+  });
 
-    await page.goto('/router/history');
-    await page.locator('#content > button').getByText('navigate: ?k=v').click();
-    await expect(page).toHaveURL(`${origin}/router/history/?k=v`);
-    await expect(page.locator('#log > p').last()).toHaveText(`${origin}/router/history/?k=v`);
+  test('Properties', async ({ page }) => {
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="prop-mode"]').click();
+    await page.locator('[data-action="prop-base"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="prop-onerror"]').click();
+    await expect(page.locator('[data-log]')).toHaveText([
+      'mode: history',
+      'base: /router/',
+      'onchange',
+      'onerror',
+    ]);
+  });
 
-    await page.goto('/router/history');
-    await page.locator('#content > button').getByText('navigate: location.origin').click();
-    await expect(page).toHaveURL(`${origin}/`);
-    await expect(page.locator('#log > p').last()).toHaveText(`${origin}/`);
+  test('Methods', async ({ page, baseURL }) => {
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="method-navigate-root"]').click();
+    await page.locator('[data-action="method-navigate-parent"]').click();
+    await page.locator('[data-action="method-navigate-current"]').click();
+    await page.locator('[data-action="method-navigate-pathto1"]').click();
+    await page.locator('[data-action="method-navigate-pathto"]').click();
+    await page.locator('[data-action="method-navigate-error"]').click();
+    await page.locator('[data-action="method-navigate-noroute"]').click();
+    await page.locator('[data-action="method-delete"]').click();
+    await page.locator('[data-action="method-navigate-root"]').click();
+    await expect(page.locator('[data-log]')).toHaveText([
+      'set',
+      'onchange: pushstate',
+      `${baseURL}/`,
+      `${baseURL}/`,
+      'onchange: pushstate',
+      `${baseURL}/router/`,
+      'params: {"name1":"to","name2":"1"}',
+      `${baseURL}/router/path/to/1`,
+      'onchange: pushstate',
+      'params: {"name1":"to"}',
+      `${baseURL}/router/path/to`,
+      'onchange: pushstate',
+      'params: {}',
+      'onerror: error',
+      `${baseURL}/router/error`,
+      'onchange: pushstate',
+      `${baseURL}/router/noroute`,
+      'delete',
+      'onchange: pushstate',
+      `${baseURL}/`,
+    ]);
 
-    await page.goto('/router/history');
-    await page.locator('#content > button').getByText('navigate: https://example.com/').click();
+    await page.goto('/router');
+    await page.locator('[data-action="init-history"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-hashpathto1"]').click();
+    await expect(page).toHaveURL(`${baseURL}/router#/path/to/1`);
+    await expect(page.locator('[data-log]')).toHaveText([
+      'onchange: pushstate',
+      `${baseURL}/router#/path/to/1`,
+    ]);
+
+    await page.goto('/router');
+    await page.locator('[data-action="init-history"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-querykv"]').click();
+    await expect(page).toHaveURL(`${baseURL}/router/?k=v`);
+    await expect(page.locator('[data-log]')).toHaveText([
+      'onchange: pushstate',
+      `${baseURL}/router/?k=v`,
+    ]);
+
+    await page.goto('/router');
+    await page.locator('[data-action="init-history"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-locationorigin"]').click();
+    await expect(page).toHaveURL(`${baseURL}/`);
+    await expect(page.locator('[data-log]')).toHaveText([
+      'onchange: pushstate',
+      `${baseURL}/`,
+    ]);
+
+    await page.goto('/router');
+    await page.locator('[data-action="init-history"]').click();
+    await page.locator('[data-action="prop-onchange"]').click();
+    await page.locator('[data-action="method-set"]').click();
+    await page.locator('[data-action="clear-log"]').click();
+    await page.locator('[data-action="method-navigate-examplecom"]').click();
     await expect(page).toHaveURL('https://example.com/');
   });
 });
 
-test.describe('/router/invalidmode', () => {
-  test('Should throw exception if invalid mode', async ({ page }) => {
-    await page.goto('/router/invalidmode');
-    await expect(page.locator('#log > p')).toHaveText(/exception: .+/);
+test.describe('/router (invalid mode)', () => {
+  test('Initialization', async ({ page }) => {
+    await page.goto('/router');
+    await page.locator('[data-action="init-invalid"]').click();
+    await expect(page.locator('[data-log]')).toHaveText(/exception: .+/);
   });
 });
