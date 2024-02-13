@@ -337,6 +337,36 @@ class Component extends CustomElement {
         return '';
     }
 }
+function createComponent(name, options) {
+    const CustomComponent = class extends Component {
+        static get observedAttributes() {
+            return options?.observedAttributes && Array.isArray(options.observedAttributes) ? options.observedAttributes : super.observedAttributes;
+        }
+        constructor(){
+            super();
+            if (options?.init && typeof options.init === 'function') {
+                options.init(this);
+            }
+        }
+        connectedCallback() {
+            super.connectedCallback();
+            if (options?.connected && typeof options.connected === 'function') {
+                options.connected(this);
+            }
+        }
+        disconnectedCallback() {
+            if (options?.disconnected && typeof options.disconnected === 'function') {
+                options.disconnected(this);
+            }
+            super.disconnectedCallback();
+        }
+        template() {
+            return options?.template && typeof options.template === 'function' ? options.template(this) : super.template();
+        }
+    };
+    CustomComponent.define(name);
+    return CustomComponent;
+}
 class Observable {
     #observerCollection;
     constructor(){
@@ -442,7 +472,7 @@ class Router {
     }
     #navigateWithHashMode(url) {
         let newVirtualPath = '';
-        if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
+        if (url.search(/^[A-Za-z0-9\+\-\.]+:\/\/|\?|#/) !== -1) {
             const newUrl = new __default.globalThis.URL(url, __default.globalThis.location.href);
             const newUrlParts = newUrl.href.split('#');
             const oldUrlParts = __default.globalThis.location.href.split('#');
@@ -499,7 +529,7 @@ class Router {
         }
     }
     #resolveBaseUrl(url) {
-        return this.#base && url.search(/^(https?:\/\/|\/)/i) === -1 ? this.#base + url : url;
+        return this.#base && url.search(/^([A-Za-z0-9\+\-\.]+:\/\/|\/)/) === -1 ? this.#base + url : url;
     }
     #fixRoutePattern(pattern) {
         return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
@@ -509,18 +539,16 @@ class Store extends Observable {
     #state;
     constructor(state){
         super();
-        this.#state = {
-            ...state
-        };
+        this.#state = __default.globalThis.structuredClone(state);
     }
     get state() {
         return this.#state;
     }
     update(state) {
-        this.#state = {
+        this.#state = __default.globalThis.structuredClone({
             ...this.#state,
             ...state
-        };
+        });
         this.notify();
     }
     notify() {
@@ -584,7 +612,7 @@ class WebStorage {
                     return deserializedValue._v;
                 }
             } catch  {
-                return value;
+                void 0;
             }
         }
         return value;
@@ -596,36 +624,7 @@ class WebStorage {
         this.#storage.clear();
     }
 }
-function createComponent(name, options) {
-    const CustomComponent = class extends Component {
-        static get observedAttributes() {
-            return options?.observedAttributes && Array.isArray(options.observedAttributes) ? options.observedAttributes : super.observedAttributes;
-        }
-        constructor(){
-            super();
-            if (options?.init && typeof options.init === 'function') {
-                options.init(this);
-            }
-        }
-        connectedCallback() {
-            super.connectedCallback();
-            if (options?.connected && typeof options.connected === 'function') {
-                options.connected(this);
-            }
-        }
-        disconnectedCallback() {
-            if (options?.disconnected && typeof options.disconnected === 'function') {
-                options.disconnected(this);
-            }
-            super.disconnectedCallback();
-        }
-        template() {
-            return options?.template && typeof options.template === 'function' ? options.template(this) : super.template();
-        }
-    };
-    CustomComponent.define(name);
-    return CustomComponent;
-}
+export { createComponent as createComponent };
 export { Component as Component };
 export { CustomElement as CustomElement };
 export { ElementAttributesProxy as ElementAttributesProxy };
@@ -635,4 +634,3 @@ export { ObservableValue as ObservableValue };
 export { Router as Router };
 export { Store as Store };
 export { WebStorage as WebStorage };
-export { createComponent as createComponent };
