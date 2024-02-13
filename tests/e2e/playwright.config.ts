@@ -1,9 +1,10 @@
+/// <reference types="npm:@types/node" />
+
+import process from 'node:process';
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  globalSetup: require.resolve('./global-setup'),
-  globalTeardown: require.resolve('./global-teardown'),
-  testDir: './e2e',
+  testDir: './',
   timeout: 60000 * 5,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -12,7 +13,7 @@ export default defineConfig({
   reporter: 'html',
   use: {
     headless: true,
-    baseURL: 'http://127.0.0.1:3000',
+    baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
   },
   projects: [
@@ -30,8 +31,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'npm run start',
-    url: 'http://127.0.0.1:3000',
+    command: 'cd .././ && deno task tests:app:serve',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },
 });

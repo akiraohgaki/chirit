@@ -53,10 +53,18 @@
   "tasks": {
     "clean": "echo 'Skip task: clean'",
     "bundle": "deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts mod.ts mod.bundle.js",
-    "build": "deno task clean && deno fmt && deno lint && deno test && deno task bundle"
+    "build": "deno task clean && deno fmt && deno lint && deno test && deno task bundle",
+    "tests:app:bundle": "cd tests/app && deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts mod.ts mod.bundle.js",
+    "tests:app:serve": "cd tests/app && deno run --allow-net --allow-read server.ts",
+    "tests:e2e:test": "cd tests/e2e && npx playwright test",
+    "tests:e2e:test:chromium": "cd tests/e2e && npx playwright test --project chromium",
+    "tests:e2e:test:firefox": "cd tests/e2e && npx playwright test --project firefox",
+    "tests:e2e:test:webkit": "cd tests/e2e && npx playwright test --project webkit",
+    "test": "deno task tests:app:bundle && deno task tests:e2e:test"
   },
   "imports": {
     "std/": "https://deno.land/std/",
-    "jsdom": "https://jspm.dev/jsdom"
+    "jsdom": "https://jspm.dev/jsdom",
+    "@playwright/test": "npm:@playwright/test"
   }
 }
