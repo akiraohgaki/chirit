@@ -17,9 +17,8 @@ export default class Router {
       throw new Error('The mode must be set "hash" or "history".');
     }
 
-    // If the mode is 'hash',
-    // the base should be the base path part of the path represented with URL fragment
     this.#mode = mode;
+    // If hash mode, base is part of the path represented by URL fragment
     this.#base = (base && !base.endsWith('/')) ? base + '/' : base;
     this.#onchange = () => {};
     this.#onerror = (exception) => {
@@ -39,7 +38,6 @@ export default class Router {
     return this.#base;
   }
 
-  // deno-lint-ignore explicit-module-boundary-types
   set onchange(handler: OnEventHandler) {
     this.#onchange = handler;
   }
@@ -48,7 +46,6 @@ export default class Router {
     return this.#onchange;
   }
 
-  // deno-lint-ignore explicit-module-boundary-types
   set onerror(handler: OnErrorHandler) {
     this.#onerror = handler;
   }
@@ -92,7 +89,7 @@ export default class Router {
   #navigateWithHashMode(url: string): void {
     let newVirtualPath = '';
 
-    if (url.search(/^https?:\/\/|\?|#/i) !== -1) {
+    if (url.search(/^[A-Za-z0-9\+\-\.]+:\/\/|\?|#/) !== -1) {
       const newUrl = new dom.globalThis.URL(url, dom.globalThis.location.href);
       const newUrlParts = newUrl.href.split('#');
       const oldUrlParts = dom.globalThis.location.href.split('#');
@@ -113,7 +110,7 @@ export default class Router {
 
     if (newVirtualUrl.pathname !== oldVirtualPath) {
       dom.globalThis.location.hash = newVirtualUrl.pathname;
-      // Then hashchange event will fire
+      // hashchange event is fired
       return;
     }
 
@@ -165,7 +162,7 @@ export default class Router {
   }
 
   #resolveBaseUrl(url: string): string {
-    return (this.#base && url.search(/^(https?:\/\/|\/)/i) === -1) ? this.#base + url : url;
+    return (this.#base && url.search(/^([A-Za-z0-9\+\-\.]+:\/\/|\/)/) === -1) ? this.#base + url : url;
   }
 
   #fixRoutePattern(pattern: string): string {

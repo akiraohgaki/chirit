@@ -1,5 +1,5 @@
 import { JSDOM } from 'jsdom';
-import dom from '../dom.ts';
+import dom from '../../src/dom.ts';
 
 const jsdom = new JSDOM(
   '<!DOCTYPE html><html><head></head><body></body></html>',

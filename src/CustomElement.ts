@@ -37,14 +37,14 @@ export default class CustomElement extends BaseElement {
     newValue: string | null,
     _namespace?: string | null,
   ): void {
-    // Runs update task when observed attribute has changed but don't run before initial update
+    // Update when observed attribute has changed, but not before initial update
     if (this.#updateCounter && oldValue !== newValue) {
       this.update();
     }
   }
 
   connectedCallback(): void {
-    // Runs update task when this Element has connected to parent Node
+    // Update when this Element is connected to parent Node
     if (this.#updateCounter) {
       // Re-update, this Element may have moved into another parent Node
       this.update();
