@@ -47,7 +47,7 @@
   },
   "test": {
     "include": [
-      "src/"
+      "tests/deno"
     ]
   },
   "tasks": {
