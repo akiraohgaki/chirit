@@ -4,11 +4,11 @@ import { Component } from '../../mod.ts';
 
 const document = dom.globalThis.document;
 
-const sleep = (time: number) => {
+function sleep(time: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, time);
   });
-};
+}
 
 class TestComponent extends Component {
   static override get observedAttributes(): Array<string> {

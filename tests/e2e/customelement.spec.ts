@@ -1,5 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+function sleep(time: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
+}
+
 test.describe('/customelement (by constructor)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/customelement');
@@ -35,7 +41,7 @@ test.describe('/customelement (by constructor)', () => {
     await page.locator('[data-action="clear-log"]').click();
 
     await page.locator('[data-action="method-update"]').click();
-    await page.waitForTimeout(200);
+    await sleep(200);
     await page.locator('[data-action="prop-updatecounter"]').click();
     await page.locator('[data-action="method-updatesync"]').click();
     await page.locator('[data-action="prop-updatecounter"]').click();
@@ -105,7 +111,7 @@ test.describe('/customelement (by createElement)', () => {
     await page.locator('[data-action="clear-log"]').click();
 
     await page.locator('[data-action="method-update"]').click();
-    await page.waitForTimeout(200);
+    await sleep(200);
     await page.locator('[data-action="prop-updatecounter"]').click();
     await page.locator('[data-action="method-updatesync"]').click();
     await page.locator('[data-action="prop-updatecounter"]').click();
@@ -180,7 +186,7 @@ test.describe('/customelement (by HTML)', () => {
     await page.locator('[data-action="clear-log"]').click();
 
     await page.locator('[data-action="method-update"]').click();
-    await page.waitForTimeout(200);
+    await sleep(200);
     await page.locator('[data-action="prop-updatecounter"]').click();
     await page.locator('[data-action="method-updatesync"]').click();
     await page.locator('[data-action="prop-updatecounter"]').click();
@@ -218,13 +224,13 @@ test.describe('/customelement (by HTML)', () => {
     await page.locator('[data-action="clear-log"]').click();
 
     await page.locator('[data-action="callback-attributechangedcallback"]').click();
-    await page.waitForTimeout(200);
+    await sleep(200);
     await page.locator('[data-action="callback-connectedcallback"]').click();
-    await page.waitForTimeout(200);
+    await sleep(200);
     await page.locator('[data-action="callback-disconnectedcallback"]').click();
-    await page.waitForTimeout(200);
+    await sleep(200);
     await page.locator('[data-action="callback-adoptedcallback"]').click();
-    await page.waitForTimeout(200);
+    await sleep(200);
     await page.locator('[data-action="callback-updatedcallback"]').click();
     await page.locator('[data-action="callback-errorcallback"]').click();
 
