@@ -30,3 +30,37 @@ jobs:
             git commit -m 'Apply automatic changes'
             git push
           fi
+
+  test:
+    needs: build
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: vx.x.x
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts
+
+      - name: Install dependencies
+        run: |
+          cd tests
+          npm install
+          npx playwright install --with-deps
+
+      - name: Test
+        run: |
+          deno task test
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: tests/e2e/playwright-report/
+          retention-days: 30
