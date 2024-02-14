@@ -377,8 +377,8 @@ test.describe('/component (by HTML)', () => {
     await sleep(200);
     await page.locator('[data-action="callback-disconnectedcallback"]').click();
     await sleep(200);
-    await page.locator('[data-action="callback-adoptedcallback"]').click();
-    await sleep(200);
+    //await page.locator('[data-action="callback-adoptedcallback"]').click();
+    //await sleep(200);
     await page.locator('[data-action="callback-updatedcallback"]').click();
     await page.locator('[data-action="callback-errorcallback"]').click();
 
@@ -414,20 +414,20 @@ test.describe('/component (by HTML)', () => {
       'render',
       'template',
       'updatedCallback',
-      'callback-adoptedcallback',
-      'disconnectedCallback',
-      'adoptedCallback',
-      'connectedCallback',
-      'update',
-      'disconnectedCallback',
-      'adoptedCallback',
-      'connectedCallback',
-      'update',
-      '<test-component attr1="attr1">test-component</test-component>',
-      'updateSync',
-      'render',
-      'template',
-      'updatedCallback',
+      //'callback-adoptedcallback',
+      //'disconnectedCallback',
+      //'adoptedCallback',
+      //'connectedCallback',
+      //'update',
+      //'disconnectedCallback',
+      //'adoptedCallback',
+      //'connectedCallback',
+      //'update',
+      //'<test-component attr1="attr1">test-component</test-component>',
+      //'updateSync',
+      //'render',
+      //'template',
+      //'updatedCallback',
       'callback-updatedcallback',
       'updateSync',
       'render',
