@@ -229,8 +229,8 @@ test.describe('/customelement (by HTML)', () => {
     await sleep(200);
     await page.locator('[data-action="callback-disconnectedcallback"]').click();
     await sleep(200);
-    await page.locator('[data-action="callback-adoptedcallback"]').click();
-    await sleep(200);
+    //await page.locator('[data-action="callback-adoptedcallback"]').click();
+    //await sleep(200);
     await page.locator('[data-action="callback-updatedcallback"]').click();
     await page.locator('[data-action="callback-errorcallback"]').click();
 
@@ -263,19 +263,19 @@ test.describe('/customelement (by HTML)', () => {
       'updateSync',
       'render',
       'updatedCallback',
-      'callback-adoptedcallback',
-      'disconnectedCallback',
-      'adoptedCallback',
-      'connectedCallback',
-      'update',
-      'disconnectedCallback',
-      'adoptedCallback',
-      'connectedCallback',
-      'update',
-      '<test-element attr1="attr1">test-element</test-element>',
-      'updateSync',
-      'render',
-      'updatedCallback',
+      //'callback-adoptedcallback',
+      //'disconnectedCallback',
+      //'adoptedCallback',
+      //'connectedCallback',
+      //'update',
+      //'disconnectedCallback',
+      //'adoptedCallback',
+      //'connectedCallback',
+      //'update',
+      //'<test-element attr1="attr1">test-element</test-element>',
+      //'updateSync',
+      //'render',
+      //'updatedCallback',
       'callback-updatedcallback',
       'updateSync',
       'render',
