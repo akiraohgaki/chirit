@@ -1,10 +1,5 @@
 import { expect, test } from '@playwright/test';
-
-function sleep(time: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-}
+import { sleep } from './util.ts';
 
 test.describe('/createcomponent', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,9 +11,10 @@ test.describe('/createcomponent', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'function-createcomponent',
+      'action: function-createcomponent',
       'defined: true',
-      'init-html',
+
+      'action: init-html',
       'init',
       'template',
       'connected',
@@ -38,19 +34,21 @@ test.describe('/createcomponent', () => {
     await sleep(200);
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'callback-attributechangedcallback',
+      'action: callback-attributechangedcallback',
       '<test-component attr1="attr1">test-component</test-component>',
       '<p>attr1=attr1</p>',
       '<test-component attr1="text">test-component</test-component>',
       '<p>attr1=attr1</p>',
       'template',
-      'callback-connectedcallback',
+
+      'action: callback-connectedcallback',
       'disconnected',
       'connected',
       '<test-component attr1="text">test-component</test-component>',
       '<p>attr1=text</p>',
       'template',
-      'callback-disconnectedcallback',
+
+      'action: callback-disconnectedcallback',
       'disconnected',
       'connected',
       '<test-component attr1="text">test-component</test-component>',
@@ -65,7 +63,7 @@ test.describe('/createcomponent', () => {
     await page.locator('[data-action="dom-elementevent"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'dom-elementevent',
+      'action: dom-elementevent',
       'eventHandler: custom-event {"prop":0}',
       '<test-component attr1="attr1">test-component</test-component>',
       '<p>attr1=attr1</p>',
@@ -78,7 +76,7 @@ test.describe('/createcomponent', () => {
     await page.locator('[data-action="object-instance"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'object-instance',
+      'action: object-instance',
       'class instance of Component: false',
       'class instance of Function: true',
       'object instance of Component: true',

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const value = 'text';
+const notifyValue = 'text';
 
 test.describe('/observable', () => {
   test.beforeEach(async ({ page }) => {
@@ -10,7 +10,9 @@ test.describe('/observable', () => {
   });
 
   test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText('init');
+    await expect(page.locator('[data-log]')).toHaveText([
+      'action: init',
+    ]);
   });
 
   test('Methods', async ({ page }) => {
@@ -23,14 +25,18 @@ test.describe('/observable', () => {
     await page.locator('[data-action="method-notify"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-notify',
-      'method-subscribe',
-      'method-notify',
-      `observer1: ${value}`,
-      `observer2: ${value}`,
-      `observer3: ${value}`,
-      'method-unsubscribe',
-      'method-notify',
+      'action: method-notify',
+
+      'action: method-subscribe',
+
+      'action: method-notify',
+      `observer1: ${notifyValue}`,
+      `observer2: ${notifyValue}`,
+      `observer3: ${notifyValue}`,
+
+      'action: method-unsubscribe',
+
+      'action: method-notify',
     ]);
   });
 });

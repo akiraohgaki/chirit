@@ -9,7 +9,7 @@ test.describe('/nodecontent', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'init',
+      'action: init',
       '<div></div>',
     ]);
   });
@@ -20,7 +20,7 @@ test.describe('/nodecontent', () => {
     await page.locator('[data-action="prop-container"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'prop-container',
+      'action: prop-container',
       '<div></div>',
       '<div></div>',
     ]);
@@ -36,15 +36,19 @@ test.describe('/nodecontent', () => {
     await page.locator('[data-action="method-clone"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-update-string',
+      'action: method-update-string',
       '<div><p>string</p></div>',
-      'method-update-documentfragment',
+
+      'action: method-update-documentfragment',
       '<div><p>DocumentFragment</p></div>',
-      'method-update-node',
+
+      'action: method-update-node',
       '<div><p>Node</p></div>',
-      'method-update-nodelist',
+
+      'action: method-update-nodelist',
       '<div><p>NodeList</p><p>NodeList</p></div>',
-      'method-clone',
+
+      'action: method-clone',
       '<p>NodeList</p><p>NodeList</p>',
       '<div><p>NodeList</p><p>NodeList</p></div>',
     ]);
@@ -56,7 +60,7 @@ test.describe('/nodecontent', () => {
     await page.locator('[data-action="dom-element"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'dom-element',
+      'action: dom-element',
       '<div><ul><li title="1">1</li></ul></div>',
       '<div><ul><li title="1">1</li><li title="2">2</li></ul></div>',
       'li[title="1"] is same object reference: true',
@@ -76,7 +80,7 @@ test.describe('/nodecontent', () => {
     await page.locator('[data-action="dom-elementattribute"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'dom-elementattribute',
+      'action: dom-elementattribute',
       '<div><p>has no attributes</p></div>',
       '<div><p attr1="attr1" data-attr2="attr2">has attributes</p></div>',
       'p is same object reference: true',
@@ -91,7 +95,7 @@ test.describe('/nodecontent', () => {
     await page.locator('[data-action="dom-elementevent"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'dom-elementevent',
+      'action: dom-elementevent',
       'eventHandler: click',
       '<div><p>has click event</p></div>',
     ]);

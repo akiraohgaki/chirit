@@ -9,7 +9,7 @@ test.describe('/version', () => {
     await page.locator('[data-action="var-version"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'var-version',
+      'action: var-version',
       /\d+\.\d+\.\d+(-.+)?/,
     ]);
   });

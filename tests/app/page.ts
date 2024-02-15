@@ -49,7 +49,7 @@ export function createActions(actions: Record<string, { (): void }>, container?:
   container.addEventListener('click', (event) => {
     const action = (event.target as Element).getAttribute('data-action');
     if (action && action in actions) {
-      addLog(action);
+      addLog(`action: ${action}`);
       actions[action]();
     }
   });

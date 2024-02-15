@@ -9,7 +9,7 @@ test.describe('/elementattributesproxy', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'init',
+      'action: init',
       '<div></div>',
     ]);
   });
@@ -31,41 +31,52 @@ test.describe('/elementattributesproxy', () => {
     await page.locator('[data-action="trap-getownpropertydescriptor"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'trap-set',
+      'action: trap-set',
       '<div attr1="attr1" data-attr2="attr2"></div>',
-      'trap-set-invalid',
+
+      'action: trap-set-invalid',
       /exception: .+/,
-      'trap-get',
+
+      'action: trap-get',
       'attr1: attr1',
       'data-attr2: attr2',
       '<div attr1="attr1" data-attr2="attr2"></div>',
-      'trap-has',
+
+      'action: trap-has',
       'attr1: true',
       'data-attr2: true',
       '<div attr1="attr1" data-attr2="attr2"></div>',
-      'trap-ownkeys',
+
+      'action: trap-ownkeys',
       JSON.stringify(['attr1', 'data-attr2']),
       '<div attr1="attr1" data-attr2="attr2"></div>',
-      'trap-getownpropertydescriptor',
+
+      'action: trap-getownpropertydescriptor',
       'attr1: true',
       'data-attr2: true',
       '<div attr1="attr1" data-attr2="attr2"></div>',
-      'trap-deleteproperty',
+
+      'action: trap-deleteproperty',
       '<div></div>',
-      'trap-deleteproperty',
+
+      'action: trap-deleteproperty',
       /exception: .+/,
-      'trap-get',
+
+      'action: trap-get',
       'attr1: undefined',
       'data-attr2: undefined',
       '<div></div>',
-      'trap-has',
+
+      'action: trap-has',
       'attr1: false',
       'data-attr2: false',
       '<div></div>',
-      'trap-ownkeys',
+
+      'action: trap-ownkeys',
       JSON.stringify([]),
       '<div></div>',
-      'trap-getownpropertydescriptor',
+
+      'action: trap-getownpropertydescriptor',
       'attr1: false',
       'data-attr2: false',
       '<div></div>',
@@ -78,7 +89,7 @@ test.describe('/elementattributesproxy', () => {
     await page.locator('[data-action="object-instance"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'object-instance',
+      'action: object-instance',
       'object instance of ElementAttributesProxy: false',
       'object instance of Object: true',
     ]);

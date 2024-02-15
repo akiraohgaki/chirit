@@ -1,12 +1,44 @@
 import { expect, test } from '@playwright/test';
+import { sleep } from './util.ts';
 
-function sleep(time: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-}
+const propLogs = [
+  'action: prop-updatecounter',
+  '0',
+  '<test-element></test-element>',
+];
 
-test.describe('/customelement (by constructor)', () => {
+const methodLogs = [
+  'action: method-update',
+  'update',
+  'updateSync',
+  'render',
+  'updatedCallback',
+  '<test-element></test-element>',
+
+  'action: prop-updatecounter',
+  '1',
+  '<test-element></test-element>',
+
+  'action: method-updatesync',
+  'updateSync',
+  'render',
+  'updatedCallback',
+  '<test-element></test-element>',
+
+  'action: prop-updatecounter',
+  '2',
+  '<test-element></test-element>',
+
+  'action: method-render',
+  'render',
+  '<test-element></test-element>',
+
+  'action: prop-updatecounter',
+  '2',
+  '<test-element></test-element>',
+];
+
+test.describe('/customelement (constructor)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/customelement');
 
@@ -16,10 +48,11 @@ test.describe('/customelement (by constructor)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-define',
+      'action: method-define',
       'observedAttributes',
       'defined: true',
-      'init-constructor',
+
+      'action: init-constructor',
       'constructor',
       '<test-element></test-element>',
     ]);
@@ -30,11 +63,7 @@ test.describe('/customelement (by constructor)', () => {
 
     await page.locator('[data-action="prop-updatecounter"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'prop-updatecounter',
-      '0',
-      '<test-element></test-element>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(propLogs);
   });
 
   test('Methods', async ({ page }) => {
@@ -48,35 +77,11 @@ test.describe('/customelement (by constructor)', () => {
     await page.locator('[data-action="method-render"]').click();
     await page.locator('[data-action="prop-updatecounter"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'method-update',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element></test-element>',
-      'prop-updatecounter',
-      '1',
-      '<test-element></test-element>',
-      'method-updatesync',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element></test-element>',
-      'prop-updatecounter',
-      '2',
-      '<test-element></test-element>',
-      'method-render',
-      'render',
-      '<test-element></test-element>',
-      'prop-updatecounter',
-      '2',
-      '<test-element></test-element>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
   });
 });
 
-test.describe('/customelement (by createElement)', () => {
+test.describe('/customelement (createElement)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/customelement');
 
@@ -86,10 +91,11 @@ test.describe('/customelement (by createElement)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-define',
+      'action: method-define',
       'observedAttributes',
       'defined: true',
-      'init-createelement',
+
+      'action: init-createelement',
       'constructor',
       '<test-element></test-element>',
     ]);
@@ -100,11 +106,7 @@ test.describe('/customelement (by createElement)', () => {
 
     await page.locator('[data-action="prop-updatecounter"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'prop-updatecounter',
-      '0',
-      '<test-element></test-element>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(propLogs);
   });
 
   test('Methods', async ({ page }) => {
@@ -118,35 +120,11 @@ test.describe('/customelement (by createElement)', () => {
     await page.locator('[data-action="method-render"]').click();
     await page.locator('[data-action="prop-updatecounter"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'method-update',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element></test-element>',
-      'prop-updatecounter',
-      '1',
-      '<test-element></test-element>',
-      'method-updatesync',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element></test-element>',
-      'prop-updatecounter',
-      '2',
-      '<test-element></test-element>',
-      'method-render',
-      'render',
-      '<test-element></test-element>',
-      'prop-updatecounter',
-      '2',
-      '<test-element></test-element>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
   });
 });
 
-test.describe('/customelement (by HTML)', () => {
+test.describe('/customelement (HTML)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/customelement');
 
@@ -156,10 +134,11 @@ test.describe('/customelement (by HTML)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-define',
+      'action: method-define',
       'observedAttributes',
       'defined: true',
-      'init-html',
+
+      'action: init-html',
       'constructor',
       'attributeChangedCallback',
       'connectedCallback',
@@ -176,7 +155,7 @@ test.describe('/customelement (by HTML)', () => {
     await page.locator('[data-action="prop-updatecounter"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'prop-updatecounter',
+      'action: prop-updatecounter',
       '1',
       '<test-element attr1="attr1">test-element</test-element>',
     ]);
@@ -194,33 +173,40 @@ test.describe('/customelement (by HTML)', () => {
     await page.locator('[data-action="prop-updatecounter"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-update',
+      'action: method-update',
       'update',
       'updateSync',
       'render',
       'updatedCallback',
       '<test-element attr1="attr1">test-element</test-element>',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '2',
       '<test-element attr1="attr1">test-element</test-element>',
-      'method-updatesync',
+
+      'action: method-updatesync',
       'updateSync',
       'render',
       'updatedCallback',
       '<test-element attr1="attr1">test-element</test-element>',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '3',
       '<test-element attr1="attr1">test-element</test-element>',
-      'method-render',
+
+      'action: method-render',
       'render',
       '<test-element attr1="attr1">test-element</test-element>',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '3',
       '<test-element attr1="attr1">test-element</test-element>',
     ]);
   });
 
-  test('Callbacks', async ({ page }) => {
+  test('Callbacks', async ({ page }, testInfo) => {
+    const isFirefox = testInfo.project.name === 'firefox';
+
     await page.locator('[data-action="clear-log"]').click();
 
     await page.locator('[data-action="callback-attributechangedcallback"]').click();
@@ -229,13 +215,34 @@ test.describe('/customelement (by HTML)', () => {
     await sleep(200);
     await page.locator('[data-action="callback-disconnectedcallback"]').click();
     await sleep(200);
-    //await page.locator('[data-action="callback-adoptedcallback"]').click();
-    //await sleep(200);
+    if (!isFirefox) {
+      // Skip with Firefox,
+      // because when move a custom element to another document,
+      // Firefox resets the element as an unknown tag
+      await page.locator('[data-action="callback-adoptedcallback"]').click();
+      await sleep(200);
+    }
     await page.locator('[data-action="callback-updatedcallback"]').click();
     await page.locator('[data-action="callback-errorcallback"]').click();
 
+    const callbackAdoptedcallbackLogs = isFirefox ? [] : [
+      'action: callback-adoptedcallback',
+      'disconnectedCallback',
+      'adoptedCallback',
+      'connectedCallback',
+      'update',
+      'disconnectedCallback',
+      'adoptedCallback',
+      'connectedCallback',
+      'update',
+      '<test-element attr1="attr1">test-element</test-element>',
+      'updateSync',
+      'render',
+      'updatedCallback',
+    ];
+
     await expect(page.locator('[data-log]')).toHaveText([
-      'callback-attributechangedcallback',
+      'action: callback-attributechangedcallback',
       'attributeChangedCallback',
       '<test-element attr1="attr1">test-element</test-element>',
       'attributeChangedCallback',
@@ -247,7 +254,8 @@ test.describe('/customelement (by HTML)', () => {
       'updateSync',
       'render',
       'updatedCallback',
-      'callback-connectedcallback',
+
+      'action: callback-connectedcallback',
       'disconnectedCallback',
       'connectedCallback',
       'update',
@@ -255,7 +263,8 @@ test.describe('/customelement (by HTML)', () => {
       'updateSync',
       'render',
       'updatedCallback',
-      'callback-disconnectedcallback',
+
+      'action: callback-disconnectedcallback',
       'disconnectedCallback',
       'connectedCallback',
       'update',
@@ -263,25 +272,16 @@ test.describe('/customelement (by HTML)', () => {
       'updateSync',
       'render',
       'updatedCallback',
-      //'callback-adoptedcallback',
-      //'disconnectedCallback',
-      //'adoptedCallback',
-      //'connectedCallback',
-      //'update',
-      //'disconnectedCallback',
-      //'adoptedCallback',
-      //'connectedCallback',
-      //'update',
-      //'<test-element attr1="attr1">test-element</test-element>',
-      //'updateSync',
-      //'render',
-      //'updatedCallback',
-      'callback-updatedcallback',
+
+      ...callbackAdoptedcallbackLogs,
+
+      'action: callback-updatedcallback',
       'updateSync',
       'render',
       'updatedCallback',
       '<test-element attr1="attr1">test-element</test-element>',
-      'callback-errorcallback',
+
+      'action: callback-errorcallback',
       'updateSync',
       'render',
       'errorCallback',

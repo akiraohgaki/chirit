@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('/router (hash mode)', () => {
+test.describe('/router (hash)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/router');
 
@@ -8,7 +8,9 @@ test.describe('/router (hash mode)', () => {
   });
 
   test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText('init-hash');
+    await expect(page.locator('[data-log]')).toHaveText([
+      'action: init-hash',
+    ]);
   });
 
   test('Properties', async ({ page }) => {
@@ -20,12 +22,15 @@ test.describe('/router (hash mode)', () => {
     await page.locator('[data-action="prop-onerror"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'prop-mode',
+      'action: prop-mode',
       'hash',
-      'prop-base',
+
+      'action: prop-base',
       '/router/',
-      'prop-onchange',
-      'prop-onerror',
+
+      'action: prop-onchange',
+
+      'action: prop-onerror',
     ]);
   });
 
@@ -48,39 +53,50 @@ test.describe('/router (hash mode)', () => {
     await page.locator('[data-action="method-navigate-root"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-set',
-      'method-navigate-root',
+      'action: method-set',
+
+      'action: method-navigate-root',
       `${baseURL}/router#/`,
       'onchange: hashchange',
-      'method-navigate-parent',
+
+      'action: method-navigate-parent',
       `${baseURL}/router#/`,
-      'method-navigate-current',
+
+      'action: method-navigate-current',
       `${baseURL}/router#/router/`,
       'onchange: hashchange',
-      'method-navigate-pathto1',
+
+      'action: method-navigate-pathto1',
       `${baseURL}/router#/router/path/to/1`,
       'onchange: hashchange',
       'params: {"name1":"to","name2":"1"}',
-      'method-navigate-pathto',
+
+      'action: method-navigate-pathto',
       `${baseURL}/router#/router/path/to`,
       'onchange: hashchange',
       'params: {"name1":"to"}',
+
       // goBack
       'onchange: hashchange',
       'params: {"name1":"to","name2":"1"}',
+
       // goForward
       'onchange: hashchange',
       'params: {"name1":"to"}',
-      'method-navigate-error',
+
+      'action: method-navigate-error',
       `${baseURL}/router#/router/error`,
       'onchange: hashchange',
       'params: {}',
       'onerror: error',
-      'method-navigate-noroute',
+
+      'action: method-navigate-noroute',
       `${baseURL}/router#/router/noroute`,
       'onchange: hashchange',
-      'method-delete',
-      'method-navigate-root',
+
+      'action: method-delete',
+
+      'action: method-navigate-root',
       `${baseURL}/router#/`,
     ]);
   });
@@ -96,7 +112,7 @@ test.describe('/router (hash mode)', () => {
 
     await expect(page).toHaveURL(`${baseURL}/router#/router/path/to/1`);
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-navigate-hashpathto1',
+      'action: method-navigate-hashpathto1',
       `${baseURL}/router#/router/path/to/1`,
       'onchange: hashchange',
       'params: {"name1":"to","name2":"1"}',
@@ -142,7 +158,7 @@ test.describe('/router (hash mode)', () => {
   });
 });
 
-test.describe('/router (history mode)', () => {
+test.describe('/router (history)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/router');
 
@@ -150,7 +166,9 @@ test.describe('/router (history mode)', () => {
   });
 
   test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText('init-history');
+    await expect(page.locator('[data-log]')).toHaveText([
+      'action: init-history',
+    ]);
   });
 
   test('Properties', async ({ page }) => {
@@ -162,12 +180,15 @@ test.describe('/router (history mode)', () => {
     await page.locator('[data-action="prop-onerror"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'prop-mode',
+      'action: prop-mode',
       'history',
-      'prop-base',
+
+      'action: prop-base',
       '/router/',
-      'prop-onchange',
-      'prop-onerror',
+
+      'action: prop-onchange',
+
+      'action: prop-onerror',
     ]);
   });
 
@@ -190,39 +211,50 @@ test.describe('/router (history mode)', () => {
     await page.locator('[data-action="method-navigate-root"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-set',
-      'method-navigate-root',
+      'action: method-set',
+
+      'action: method-navigate-root',
       'onchange: pushstate',
       `${baseURL}/`,
-      'method-navigate-parent',
+
+      'action: method-navigate-parent',
       `${baseURL}/`,
-      'method-navigate-current',
+
+      'action: method-navigate-current',
       'onchange: pushstate',
       `${baseURL}/router/`,
-      'method-navigate-pathto1',
+
+      'action: method-navigate-pathto1',
       'onchange: pushstate',
       'params: {"name1":"to","name2":"1"}',
       `${baseURL}/router/path/to/1`,
-      'method-navigate-pathto',
+
+      'action: method-navigate-pathto',
       'onchange: pushstate',
       'params: {"name1":"to"}',
       `${baseURL}/router/path/to`,
+
       // goBack
       'onchange: popstate',
       'params: {"name1":"to","name2":"1"}',
+
       // goForward
       'onchange: popstate',
       'params: {"name1":"to"}',
-      'method-navigate-error',
+
+      'action: method-navigate-error',
       'onchange: pushstate',
       'params: {}',
       'onerror: error',
       `${baseURL}/router/error`,
-      'method-navigate-noroute',
+
+      'action: method-navigate-noroute',
       'onchange: pushstate',
       `${baseURL}/router/noroute`,
-      'method-delete',
-      'method-navigate-root',
+
+      'action: method-delete',
+
+      'action: method-navigate-root',
       'onchange: pushstate',
       `${baseURL}/`,
     ]);
@@ -239,7 +271,7 @@ test.describe('/router (history mode)', () => {
 
     await expect(page).toHaveURL(`${baseURL}/router/#path/to/1`);
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-navigate-hashpathto1',
+      'action: method-navigate-hashpathto1',
       'onchange: pushstate',
       `${baseURL}/router/#path/to/1`,
     ]);
@@ -256,7 +288,7 @@ test.describe('/router (history mode)', () => {
 
     await expect(page).toHaveURL(`${baseURL}/router/?k=v`);
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-navigate-querykv',
+      'action: method-navigate-querykv',
       'onchange: pushstate',
       `${baseURL}/router/?k=v`,
     ]);
@@ -273,7 +305,7 @@ test.describe('/router (history mode)', () => {
 
     await expect(page).toHaveURL(`${baseURL}/`);
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-navigate-locationorigin',
+      'action: method-navigate-locationorigin',
       'onchange: pushstate',
       `${baseURL}/`,
     ]);
@@ -292,7 +324,7 @@ test.describe('/router (history mode)', () => {
   });
 });
 
-test.describe('/router (invalid mode)', () => {
+test.describe('/router (invalid)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/router');
 
@@ -301,7 +333,7 @@ test.describe('/router (invalid mode)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'init-invalid',
+      'action: init-invalid',
       /exception: .+/,
     ]);
   });

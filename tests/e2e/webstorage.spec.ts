@@ -1,12 +1,15 @@
 import { expect, test } from '@playwright/test';
 
 const methodLogs = [
-  'prop-size',
+  'action: prop-size',
   '0',
-  'method-set',
-  'prop-size',
+
+  'action: method-set',
+
+  'action: prop-size',
   '9',
-  'method-keys',
+
+  'action: method-keys',
   JSON.stringify([
     'test_array',
     'test_boolean',
@@ -18,7 +21,8 @@ const methodLogs = [
     'test_string',
     'test_undefined',
   ]),
-  'method-get',
+
+  'action: method-get',
   JSON.stringify([
     true,
     1,
@@ -43,18 +47,24 @@ const methodLogs = [
     '{}',
     null,
   ]),
-  'method-delete',
-  'prop-size',
+
+  'action: method-delete',
+
+  'action: prop-size',
   '0',
-  'method-set',
-  'prop-size',
+
+  'action: method-set',
+
+  'action: prop-size',
   '9',
-  'method-clear',
-  'prop-size',
+
+  'action: method-clear',
+
+  'action: prop-size',
   '0',
 ];
 
-test.describe('/webstorage (local mode)', () => {
+test.describe('/webstorage (local)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/webstorage');
 
@@ -62,7 +72,9 @@ test.describe('/webstorage (local mode)', () => {
   });
 
   test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText('init-local');
+    await expect(page.locator('[data-log]')).toHaveText([
+      'action: init-local',
+    ]);
   });
 
   test('Properties', async ({ page }) => {
@@ -73,11 +85,13 @@ test.describe('/webstorage (local mode)', () => {
     await page.locator('[data-action="prop-size"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'prop-mode',
+      'action: prop-mode',
       'local',
-      'prop-prefix',
+
+      'action: prop-prefix',
       'test_',
-      'prop-size',
+
+      'action: prop-size',
       '0',
     ]);
   });
@@ -101,7 +115,7 @@ test.describe('/webstorage (local mode)', () => {
   });
 });
 
-test.describe('/webstorage (session mode)', () => {
+test.describe('/webstorage (session)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/webstorage');
 
@@ -109,7 +123,9 @@ test.describe('/webstorage (session mode)', () => {
   });
 
   test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText('init-session');
+    await expect(page.locator('[data-log]')).toHaveText([
+      'action: init-session',
+    ]);
   });
 
   test('Properties', async ({ page }) => {
@@ -120,11 +136,13 @@ test.describe('/webstorage (session mode)', () => {
     await page.locator('[data-action="prop-size"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'prop-mode',
+      'action: prop-mode',
       'session',
-      'prop-prefix',
+
+      'action: prop-prefix',
       'test_',
-      'prop-size',
+
+      'action: prop-size',
       '0',
     ]);
   });
@@ -148,7 +166,7 @@ test.describe('/webstorage (session mode)', () => {
   });
 });
 
-test.describe('/webstorage (invalid mode)', () => {
+test.describe('/webstorage (invalid)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/webstorage');
 
@@ -157,7 +175,7 @@ test.describe('/webstorage (invalid mode)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'init-invalid',
+      'action: init-invalid',
       /exception: .+/,
     ]);
   });

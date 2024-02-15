@@ -1,12 +1,91 @@
 import { expect, test } from '@playwright/test';
+import { sleep } from './util.ts';
 
-function sleep(time: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-}
+const propLogs = [
+  'action: prop-updatecounter',
+  '0',
+  '<test-component></test-component>',
 
-test.describe('/component (by constructor)', () => {
+  'action: prop-attr',
+  'object instance of ElementAttributesProxy: false',
+  'object instance of Object: true',
+  'attr.attr1: undefined',
+  '<test-component></test-component>',
+
+  'action: prop-content',
+  'object instance of NodeContent: true',
+  '<test-component></test-component>',
+];
+
+const methodLogs = [
+  'action: method-update',
+  'update',
+  'updateSync',
+  'render',
+  'template',
+  'updatedCallback',
+  '<test-component></test-component>',
+
+  'action: prop-updatecounter',
+  '1',
+  '<test-component></test-component>',
+
+  'action: method-updatesync',
+  'updateSync',
+  'render',
+  'template',
+  'updatedCallback',
+  '<test-component></test-component>',
+
+  'action: prop-updatecounter',
+  '2',
+  '<test-component></test-component>',
+
+  'action: method-render',
+  'render',
+  'template',
+  '<test-component></test-component>',
+
+  'action: prop-updatecounter',
+  '2',
+  '<test-component></test-component>',
+
+  'action: method-template',
+  'template',
+  'blank string: true',
+  '<test-component></test-component>',
+
+  'action: prop-updatecounter',
+  '2',
+  '<test-component></test-component>',
+
+  'action: method-observe',
+
+  'action: observable-notify',
+  'update',
+  'update',
+  'updateSync',
+  'render',
+  'template',
+  'updatedCallback',
+
+  'action: prop-updatecounter',
+  '3',
+  '<test-component></test-component>',
+
+  'action: method-unobserve',
+
+  'action: observable-notify',
+
+  'action: method-dispatch',
+  `eventHandler: custom-event ${JSON.stringify({ prop: 0 })}`,
+
+  'action: method-createcontentcontainer',
+  'object instance of ShadowRoot: true',
+  '<test-component></test-component>',
+];
+
+test.describe('/component (constructor)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/component');
 
@@ -16,10 +95,11 @@ test.describe('/component (by constructor)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-define',
+      'action: method-define',
       'observedAttributes',
       'defined: true',
-      'init-constructor',
+
+      'action: init-constructor',
       'constructor',
       'createContentContainer',
       '<test-component></test-component>',
@@ -33,19 +113,7 @@ test.describe('/component (by constructor)', () => {
     await page.locator('[data-action="prop-attr"]').click();
     await page.locator('[data-action="prop-content"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'prop-updatecounter',
-      '0',
-      '<test-component></test-component>',
-      'prop-attr',
-      'object instance of ElementAttributesProxy: false',
-      'object instance of Object: true',
-      'attr.attr1: undefined',
-      '<test-component></test-component>',
-      'prop-content',
-      'object instance of NodeContent: true',
-      '<test-component></test-component>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(propLogs);
   });
 
   test('Methods', async ({ page }) => {
@@ -69,63 +137,11 @@ test.describe('/component (by constructor)', () => {
     await page.locator('[data-action="method-dispatch"]').click();
     await page.locator('[data-action="method-createcontentcontainer"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'method-update',
-      'update',
-      'updateSync',
-      'render',
-      'template',
-      'updatedCallback',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '1',
-      '<test-component></test-component>',
-      'method-updatesync',
-      'updateSync',
-      'render',
-      'template',
-      'updatedCallback',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '2',
-      '<test-component></test-component>',
-      'method-render',
-      'render',
-      'template',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '2',
-      '<test-component></test-component>',
-      'method-template',
-      'template',
-      'blank string: true',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '2',
-      '<test-component></test-component>',
-      'method-observe',
-      'observable-notify',
-      'update',
-      'update',
-      'updateSync',
-      'render',
-      'template',
-      'updatedCallback',
-      'prop-updatecounter',
-      '3',
-      '<test-component></test-component>',
-      'method-unobserve',
-      'observable-notify',
-      'method-dispatch',
-      `eventHandler: custom-event ${JSON.stringify({ prop: 0 })}`,
-      'method-createcontentcontainer',
-      'object instance of ShadowRoot: true',
-      '<test-component></test-component>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
   });
 });
 
-test.describe('/component (by createElement)', () => {
+test.describe('/component (createElement)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/component');
 
@@ -135,10 +151,11 @@ test.describe('/component (by createElement)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-define',
+      'action: method-define',
       'observedAttributes',
       'defined: true',
-      'init-createelement',
+
+      'action: init-createelement',
       'constructor',
       'createContentContainer',
       '<test-component></test-component>',
@@ -152,19 +169,7 @@ test.describe('/component (by createElement)', () => {
     await page.locator('[data-action="prop-attr"]').click();
     await page.locator('[data-action="prop-content"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'prop-updatecounter',
-      '0',
-      '<test-component></test-component>',
-      'prop-attr',
-      'object instance of ElementAttributesProxy: false',
-      'object instance of Object: true',
-      'attr.attr1: undefined',
-      '<test-component></test-component>',
-      'prop-content',
-      'object instance of NodeContent: true',
-      '<test-component></test-component>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(propLogs);
   });
 
   test('Methods', async ({ page }) => {
@@ -188,63 +193,11 @@ test.describe('/component (by createElement)', () => {
     await page.locator('[data-action="method-dispatch"]').click();
     await page.locator('[data-action="method-createcontentcontainer"]').click();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'method-update',
-      'update',
-      'updateSync',
-      'render',
-      'template',
-      'updatedCallback',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '1',
-      '<test-component></test-component>',
-      'method-updatesync',
-      'updateSync',
-      'render',
-      'template',
-      'updatedCallback',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '2',
-      '<test-component></test-component>',
-      'method-render',
-      'render',
-      'template',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '2',
-      '<test-component></test-component>',
-      'method-template',
-      'template',
-      'blank string: true',
-      '<test-component></test-component>',
-      'prop-updatecounter',
-      '2',
-      '<test-component></test-component>',
-      'method-observe',
-      'observable-notify',
-      'update',
-      'update',
-      'updateSync',
-      'render',
-      'template',
-      'updatedCallback',
-      'prop-updatecounter',
-      '3',
-      '<test-component></test-component>',
-      'method-unobserve',
-      'observable-notify',
-      'method-dispatch',
-      `eventHandler: custom-event ${JSON.stringify({ prop: 0 })}`,
-      'method-createcontentcontainer',
-      'object instance of ShadowRoot: true',
-      '<test-component></test-component>',
-    ]);
+    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
   });
 });
 
-test.describe('/component (by HTML)', () => {
+test.describe('/component (HTML)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/component');
 
@@ -254,10 +207,11 @@ test.describe('/component (by HTML)', () => {
 
   test('Initialization', async ({ page }) => {
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-define',
+      'action: method-define',
       'observedAttributes',
       'defined: true',
-      'init-html',
+
+      'action: init-html',
       'constructor',
       'createContentContainer',
       'attributeChangedCallback',
@@ -278,15 +232,17 @@ test.describe('/component (by HTML)', () => {
     await page.locator('[data-action="prop-content"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'prop-updatecounter',
+      'action: prop-updatecounter',
       '1',
       '<test-component attr1="attr1">test-component</test-component>',
-      'prop-attr',
+
+      'action: prop-attr',
       'object instance of ElementAttributesProxy: false',
       'object instance of Object: true',
       'attr.attr1: attr1',
       '<test-component attr1="attr1">test-component</test-component>',
-      'prop-content',
+
+      'action: prop-content',
       'object instance of NodeContent: true',
       '<test-component attr1="attr1">test-component</test-component>',
     ]);
@@ -314,61 +270,77 @@ test.describe('/component (by HTML)', () => {
     await page.locator('[data-action="method-createcontentcontainer"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'method-update',
+      'action: method-update',
       'update',
       'updateSync',
       'render',
       'template',
       'updatedCallback',
       '<test-component attr1="attr1">test-component</test-component>',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '2',
       '<test-component attr1="attr1">test-component</test-component>',
-      'method-updatesync',
+
+      'action: method-updatesync',
       'updateSync',
       'render',
       'template',
       'updatedCallback',
       '<test-component attr1="attr1">test-component</test-component>',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '3',
       '<test-component attr1="attr1">test-component</test-component>',
-      'method-render',
+
+      'action: method-render',
       'render',
       'template',
       '<test-component attr1="attr1">test-component</test-component>',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '3',
       '<test-component attr1="attr1">test-component</test-component>',
-      'method-template',
+
+      'action: method-template',
       'template',
       'blank string: true',
       '<test-component attr1="attr1">test-component</test-component>',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '3',
       '<test-component attr1="attr1">test-component</test-component>',
-      'method-observe',
-      'observable-notify',
+
+      'action: method-observe',
+
+      'action: observable-notify',
       'update',
       'update',
       'updateSync',
       'render',
       'template',
       'updatedCallback',
-      'prop-updatecounter',
+
+      'action: prop-updatecounter',
       '4',
       '<test-component attr1="attr1">test-component</test-component>',
-      'method-unobserve',
-      'observable-notify',
-      'method-dispatch',
+
+      'action: method-unobserve',
+
+      'action: observable-notify',
+
+      'action: method-dispatch',
       `eventHandler: custom-event ${JSON.stringify({ prop: 0 })}`,
-      'method-createcontentcontainer',
+
+      'action: method-createcontentcontainer',
       'object instance of ShadowRoot: true',
       '<test-component attr1="attr1">test-component</test-component>',
     ]);
   });
 
-  test('Callbacks', async ({ page }) => {
+  test('Callbacks', async ({ page }, testInfo) => {
+    const isFirefox = testInfo.project.name === 'firefox';
+
     await page.locator('[data-action="clear-log"]').click();
 
     await page.locator('[data-action="callback-attributechangedcallback"]').click();
@@ -377,13 +349,35 @@ test.describe('/component (by HTML)', () => {
     await sleep(200);
     await page.locator('[data-action="callback-disconnectedcallback"]').click();
     await sleep(200);
-    //await page.locator('[data-action="callback-adoptedcallback"]').click();
-    //await sleep(200);
+    if (!isFirefox) {
+      // Skip with Firefox,
+      // because when move a custom element to another document,
+      // Firefox resets the element as an unknown tag
+      await page.locator('[data-action="callback-adoptedcallback"]').click();
+      await sleep(200);
+    }
     await page.locator('[data-action="callback-updatedcallback"]').click();
     await page.locator('[data-action="callback-errorcallback"]').click();
 
+    const callbackAdoptedcallbackLogs = isFirefox ? [] : [
+      'action: callback-adoptedcallback',
+      'disconnectedCallback',
+      'adoptedCallback',
+      'connectedCallback',
+      'update',
+      'disconnectedCallback',
+      'adoptedCallback',
+      'connectedCallback',
+      'update',
+      '<test-component attr1="attr1">test-component</test-component>',
+      'updateSync',
+      'render',
+      'template',
+      'updatedCallback',
+    ];
+
     await expect(page.locator('[data-log]')).toHaveText([
-      'callback-attributechangedcallback',
+      'action: callback-attributechangedcallback',
       'attributeChangedCallback',
       '<test-component attr1="attr1">test-component</test-component>',
       'attributeChangedCallback',
@@ -396,7 +390,8 @@ test.describe('/component (by HTML)', () => {
       'render',
       'template',
       'updatedCallback',
-      'callback-connectedcallback',
+
+      'action: callback-connectedcallback',
       'disconnectedCallback',
       'connectedCallback',
       'update',
@@ -405,7 +400,8 @@ test.describe('/component (by HTML)', () => {
       'render',
       'template',
       'updatedCallback',
-      'callback-disconnectedcallback',
+
+      'action: callback-disconnectedcallback',
       'disconnectedCallback',
       'connectedCallback',
       'update',
@@ -414,27 +410,17 @@ test.describe('/component (by HTML)', () => {
       'render',
       'template',
       'updatedCallback',
-      //'callback-adoptedcallback',
-      //'disconnectedCallback',
-      //'adoptedCallback',
-      //'connectedCallback',
-      //'update',
-      //'disconnectedCallback',
-      //'adoptedCallback',
-      //'connectedCallback',
-      //'update',
-      //'<test-component attr1="attr1">test-component</test-component>',
-      //'updateSync',
-      //'render',
-      //'template',
-      //'updatedCallback',
-      'callback-updatedcallback',
+
+      ...callbackAdoptedcallbackLogs,
+
+      'action: callback-updatedcallback',
       'updateSync',
       'render',
       'template',
       'updatedCallback',
       '<test-component attr1="attr1">test-component</test-component>',
-      'callback-errorcallback',
+
+      'action: callback-errorcallback',
       'updateSync',
       'render',
       'template',
