@@ -47,21 +47,21 @@
   },
   "test": {
     "include": [
-      "tests/deno"
+      "tests/unit"
     ]
   },
   "tasks": {
-    "clean": "echo 'Skip task: clean'",
-    "bundle": "deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts mod.ts mod.bundle.js",
-    "build": "deno task clean && deno fmt && deno lint && deno task bundle",
+    "build": "deno task build:setup && deno fmt && deno lint && deno task build:bundle",
+    "build:setup": "echo 'Skip task build:setup'",
+    "build:bundle": "deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts mod.ts mod.bundle.js",
     "test": "deno test && deno task test:e2e",
-    "test:app": "deno task test:app:bundle && deno task test:app:serve",
-    "test:app:bundle": "cd tests/app && deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts main.ts main.bundle.js",
-    "test:app:serve": "cd tests/app && deno run --allow-net --allow-read server.ts",
     "test:e2e": "cd tests/e2e && npx playwright test",
     "test:e2e:chromium": "deno task test:e2e --project chromium",
     "test:e2e:firefox": "deno task test:e2e --project firefox",
-    "test:e2e:webkit": "deno task test:e2e --project webkit"
+    "test:e2e:webkit": "deno task test:e2e --project webkit",
+    "test:app": "deno task test:app:bundle && deno task test:app:serve",
+    "test:app:bundle": "cd tests/app && deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts main.ts main.bundle.js",
+    "test:app:serve": "cd tests/app && deno run --allow-net --allow-read server.ts"
   },
   "imports": {
     "std/": "https://deno.land/std/",
