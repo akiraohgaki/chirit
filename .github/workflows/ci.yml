@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,16 +23,7 @@ jobs:
         run: |
           deno task build
 
-      - name: Apply automatic changes
-        run: |
-          git add -N .
-          if ! git diff --exit-code --quiet; then
-            git config --local user.name 'GitHub Actions'
-            git config --local user.email 'actions@github.com'
-            git add .
-            git commit -m 'Apply automatic changes'
-            git push
-          fi
+      - uses: akiraohgaki/actions/git-commit-push@main
 
   test:
     needs: build
