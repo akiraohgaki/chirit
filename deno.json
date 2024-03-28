@@ -51,14 +51,13 @@
     ]
   },
   "tasks": {
-    "build": "deno task build:setup && deno task build:fix && deno task build:bundle && deno task build:teardown",
+    "build": "deno task build:setup && deno task build:bundle && deno task build:teardown",
     "build:setup": "echo 'Skip task build:setup'",
-    "build:fix": "deno fmt && deno lint",
     "build:bundle": "deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts mod.ts mod.bundle.js",
     "build:teardown": "echo 'Skip task build:teardown'",
     "test": "deno task test:setup && deno task test:unit && deno task test:e2e && deno task test:teardown",
     "test:setup": "cd tests/e2e && npm install && npx playwright install --with-deps",
-    "test:unit": "deno test",
+    "test:unit": "deno test tests/unit/",
     "test:e2e": "cd tests/e2e && npx playwright test",
     "test:teardown": "echo 'Skip task test:teardown'",
     "test:app": "deno task test:app:bundle && deno task test:app:serve",
