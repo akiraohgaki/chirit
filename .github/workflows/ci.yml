@@ -10,7 +10,25 @@ permissions:
   contents: write
 
 jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: vx.x.x
+
+      - name: Format
+        run: deno fmt
+
+      - uses: akiraohgaki/actions/git-commit-push@main
+
+      - name: Lint
+        run: deno lint
+
   build:
+    needs: fix
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,8 +38,7 @@ jobs:
           deno-version: vx.x.x
 
       - name: Build
-        run: |
-          deno task build
+        run: deno task build
 
       - uses: akiraohgaki/actions/git-commit-push@main
 
@@ -41,8 +58,7 @@ jobs:
           node-version: lts/*
 
       - name: Test
-        run: |
-          deno task test
+        run: deno task test
 
       - uses: actions/upload-artifact@v4
         if: always()
