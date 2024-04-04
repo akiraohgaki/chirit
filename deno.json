@@ -36,7 +36,8 @@
     "include": [
       "src/",
       "tests/",
-      "*.ts"
+      "*.ts",
+      "*.md"
     ],
     "useTabs": false,
     "lineWidth": 120,
