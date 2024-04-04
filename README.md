@@ -21,5 +21,6 @@ import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.4/mod.
 ```
 
 ### Example
+
 Sorry for no any documents currently.
 See codes in `/src` and `/tests/app` instead.
