@@ -1,4 +1,4 @@
-import { assertStrictEquals } from 'std/assert/mod.ts';
+import { assertStrictEquals } from '@std/assert';
 import dom from './dom.ts';
 import { Component } from '../../mod.ts';
 

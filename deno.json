@@ -67,8 +67,8 @@
     "serve": "echo 'Skip task serve'"
   },
   "imports": {
-    "std/": "https://deno.land/std/",
-    "jsdom": "https://jspm.dev/jsdom",
-    "@playwright/test": "npm:@playwright/test"
+    "@playwright/test": "npm:@playwright/test",
+    "@std/assert": "jsr:@std/assert",
+    "jsdom": "https://jspm.dev/jsdom"
   }
 }
