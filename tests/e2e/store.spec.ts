@@ -35,6 +35,8 @@ test.describe('/store', () => {
     await page.locator('[data-action="method-notify"]').click();
     await page.locator('[data-action="method-update"]').click();
     await page.locator('[data-action="prop-state"]').click();
+    await page.locator('[data-action="method-reset"]').click();
+    await page.locator('[data-action="prop-state"]').click();
     await page.locator('[data-action="method-unsubscribe"]').click();
     await page.locator('[data-action="method-notify"]').click();
     await page.locator('[data-action="method-update"]').click();
@@ -56,6 +58,14 @@ test.describe('/store', () => {
 
       'action: prop-state',
       updatedState,
+
+      'action: method-reset',
+      `observer1: ${initialState}`,
+      `observer2: ${initialState}`,
+      `observer3: ${initialState}`,
+
+      'action: prop-state',
+      initialState,
 
       'action: method-unsubscribe',
 
