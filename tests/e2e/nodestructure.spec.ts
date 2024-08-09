@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('/nodecontent', () => {
+test.describe('/nodestructure', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/nodecontent');
+    await page.goto('/nodestructure');
 
     await page.locator('[data-action="init"]').click();
   });
@@ -17,10 +17,10 @@ test.describe('/nodecontent', () => {
   test('Properties', async ({ page }) => {
     await page.locator('[data-action="clear-log"]').click();
 
-    await page.locator('[data-action="prop-container"]').click();
+    await page.locator('[data-action="prop-host"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
-      'action: prop-container',
+      'action: prop-host',
       '<div></div>',
       '<div></div>',
     ]);
