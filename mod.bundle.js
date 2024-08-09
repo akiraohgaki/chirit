@@ -1,10 +1,10 @@
-const VERSION = '1.4.1';
+const VERSION = '1.5.0';
 export { VERSION as VERSION };
 const __default = {
     globalThis: globalThis
 };
-const BaseElement = __default.globalThis.HTMLElement;
-class CustomElement extends BaseElement {
+const _HTMLElement = __default.globalThis.HTMLElement;
+class CustomElement extends _HTMLElement {
     #updateCounter;
     #updateTimerId;
     #updateDelay;
@@ -143,38 +143,38 @@ class ElementAttributesProxy {
         });
     }
 }
-const containerCollection = new WeakSet();
-class NodeContent {
-    #containerRef;
+const hostCollection = new WeakSet();
+class NodeStructure {
+    #hostRef;
     #contextRef;
-    constructor(container, context){
-        containerCollection.add(container);
-        this.#containerRef = new WeakRef(container);
+    constructor(host, context){
+        hostCollection.add(host);
+        this.#hostRef = new WeakRef(host);
         this.#contextRef = context ? new WeakRef(context) : null;
     }
-    get container() {
-        return this.#getContainer();
+    get host() {
+        return this.#getHost();
     }
     update(content) {
-        const container = this.#getContainer();
+        const host = this.#getHost();
         if (content instanceof __default.globalThis.Document || content instanceof __default.globalThis.DocumentFragment) {
-            this.#patchNodesInsideOf(container, content);
+            this.#patchNodesInsideOf(host, content);
         } else {
-            this.#patchNodesInsideOf(container, this.#createDocumentFragment(content));
+            this.#patchNodesInsideOf(host, this.#createDocumentFragment(content));
         }
-        this.#fixOneventHandlersInsideOf(container);
+        this.#fixOneventHandlersInsideOf(host);
     }
     clone() {
-        const container = this.#getContainer();
-        return this.#createDocumentFragment(container.childNodes);
+        const host = this.#getHost();
+        return this.#createDocumentFragment(host.childNodes);
     }
-    #getContainer() {
-        if (this.#containerRef) {
-            const container = this.#containerRef.deref();
-            if (container) {
-                return container;
+    #getHost() {
+        if (this.#hostRef) {
+            const host = this.#hostRef.deref();
+            if (host) {
+                return host;
             } else {
-                this.#containerRef = null;
+                this.#hostRef = null;
             }
         }
         throw new Error('The node not available.');
@@ -225,7 +225,7 @@ class NodeContent {
             if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
                 if (original instanceof __default.globalThis.Element && diff instanceof __default.globalThis.Element) {
                     this.#patchAttributes(original, diff);
-                    if (!containerCollection.has(original)) {
+                    if (!hostCollection.has(original)) {
                         this.#patchNodesInsideOf(original, diff);
                     }
                 } else if (original instanceof __default.globalThis.CharacterData && diff instanceof __default.globalThis.CharacterData) {
@@ -280,25 +280,28 @@ class NodeContent {
                 }
             }
         }
-        if (!containerCollection.has(target)) {
+        if (!hostCollection.has(target)) {
             this.#fixOneventHandlersInsideOf(target);
         }
     }
 }
 class Component extends CustomElement {
     #attr;
-    #content;
+    #structure;
     constructor(){
         super();
         this.update = this.update.bind(this);
         this.#attr = new ElementAttributesProxy(this);
-        this.#content = new NodeContent(this.createContentContainer(), this);
+        this.#structure = new NodeStructure(this.createContentContainer(), this);
     }
     get attr() {
         return this.#attr;
     }
+    get structure() {
+        return this.#structure;
+    }
     get content() {
-        return this.#content;
+        return this.#structure.host;
     }
     observe(...args) {
         if (args.length) {
@@ -319,7 +322,7 @@ class Component extends CustomElement {
         }
     }
     dispatch(type, detail) {
-        return this.#content.container.dispatchEvent(new __default.globalThis.CustomEvent(type, {
+        return this.#structure.host.dispatchEvent(new __default.globalThis.CustomEvent(type, {
             detail: detail,
             bubbles: true,
             composed: true
@@ -331,7 +334,7 @@ class Component extends CustomElement {
         });
     }
     render() {
-        this.#content.update(this.template());
+        this.#structure.update(this.template());
     }
     template() {
         return '';
@@ -387,10 +390,16 @@ class Observable {
     }
 }
 class ObservableValue extends Observable {
+    #initialValue;
     #value;
     constructor(value){
         super();
+        this.#initialValue = value;
         this.#value = value;
+    }
+    reset() {
+        this.#value = this.#initialValue;
+        this.notify();
     }
     set(value) {
         this.#value = value;
@@ -536,13 +545,19 @@ class Router {
     }
 }
 class Store extends Observable {
+    #initialState;
     #state;
     constructor(state){
         super();
+        this.#initialState = __default.globalThis.structuredClone(state);
         this.#state = __default.globalThis.structuredClone(state);
     }
     get state() {
         return this.#state;
+    }
+    reset() {
+        this.#state = __default.globalThis.structuredClone(this.#initialState);
+        this.notify();
     }
     update(state) {
         this.#state = __default.globalThis.structuredClone({
@@ -628,7 +643,7 @@ export { createComponent as createComponent };
 export { Component as Component };
 export { CustomElement as CustomElement };
 export { ElementAttributesProxy as ElementAttributesProxy };
-export { NodeContent as NodeContent };
+export { NodeStructure as NodeStructure };
 export { Observable as Observable };
 export { ObservableValue as ObservableValue };
 export { Router as Router };
