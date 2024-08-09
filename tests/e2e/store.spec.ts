@@ -84,6 +84,8 @@ test.describe('/store', () => {
       'action: object-state',
       'initial state object is same reference: false',
       'initial state.key2 object is same reference: false',
+      'state has reset and state object is same reference: false',
+      'state has reset and state.key2 object is same reference: false',
       'updated state object is same reference: false',
       'updated state.key2 object is same reference: false',
     ]);
