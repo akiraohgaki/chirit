@@ -66,7 +66,7 @@ export default function (): void {
       addLog(testComponent.shadowRoot?.innerHTML ?? '');
     },
     'dom-elementevent': () => {
-      testComponent.content.container.querySelector('p')?.click();
+      testComponent.content.querySelector('p')?.click();
       addLog(testComponent.outerHTML);
       addLog(testComponent.shadowRoot?.innerHTML ?? '');
     },

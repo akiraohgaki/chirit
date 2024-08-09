@@ -35,6 +35,8 @@ test.describe('/store', () => {
     await page.locator('[data-action="method-notify"]').click();
     await page.locator('[data-action="method-update"]').click();
     await page.locator('[data-action="prop-state"]').click();
+    await page.locator('[data-action="method-reset"]').click();
+    await page.locator('[data-action="prop-state"]').click();
     await page.locator('[data-action="method-unsubscribe"]').click();
     await page.locator('[data-action="method-notify"]').click();
     await page.locator('[data-action="method-update"]').click();
@@ -57,6 +59,14 @@ test.describe('/store', () => {
       'action: prop-state',
       updatedState,
 
+      'action: method-reset',
+      `observer1: ${initialState}`,
+      `observer2: ${initialState}`,
+      `observer3: ${initialState}`,
+
+      'action: prop-state',
+      initialState,
+
       'action: method-unsubscribe',
 
       'action: method-notify',
@@ -74,6 +84,8 @@ test.describe('/store', () => {
       'action: object-state',
       'initial state object is same reference: false',
       'initial state.key2 object is same reference: false',
+      'state has reset and state object is same reference: false',
+      'state has reset and state.key2 object is same reference: false',
       'updated state object is same reference: false',
       'updated state.key2 object is same reference: false',
     ]);

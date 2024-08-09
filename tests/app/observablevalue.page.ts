@@ -31,6 +31,9 @@ export default function (): void {
     'method-notify': () => {
       observableValue.notify();
     },
+    'method-reset': () => {
+      observableValue.reset();
+    },
     'method-set': () => {
       observableValue.set('text');
     },

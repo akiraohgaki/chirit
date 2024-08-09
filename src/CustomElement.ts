@@ -1,8 +1,8 @@
 import dom from './dom.ts';
 
-const BaseElement = dom.globalThis.HTMLElement;
+const _HTMLElement = dom.globalThis.HTMLElement;
 
-export default class CustomElement extends BaseElement {
+export default class CustomElement extends _HTMLElement {
   #updateCounter: number;
 
   #updateTimerId: number | undefined;

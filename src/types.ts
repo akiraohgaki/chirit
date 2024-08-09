@@ -3,7 +3,7 @@ export interface CreateComponentOptions<T> {
   init?: { (context: T): void };
   connected?: { (context: T): void };
   disconnected?: { (context: T): void };
-  template?: { (context: T): NodeContentData };
+  template?: { (context: T): NodeStructureContent };
 }
 
 export interface OnEventHandler {
@@ -24,7 +24,7 @@ export interface RouteHandler {
 
 export type ComponentContentContainer = Element | DocumentFragment;
 
-export type NodeContentData = string | Node | NodeList;
+export type NodeStructureContent = string | Node | NodeList;
 
 export type RouterMode = 'hash' | 'history';
 

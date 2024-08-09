@@ -36,6 +36,9 @@ export default function (): void {
     'method-notify': () => {
       store.notify();
     },
+    'method-reset': () => {
+      store.reset();
+    },
     'method-update': () => {
       store.update({ key0: 10 });
     },
@@ -43,6 +46,10 @@ export default function (): void {
       const store = new Store(state);
       addLog(`initial state object is same reference: ${store.state === state}`);
       addLog(`initial state.key2 object is same reference: ${store.state.key2 === state.key2}`);
+
+      store.reset();
+      addLog(`state has reset and state object is same reference: ${store.state === state}`);
+      addLog(`state has reset and state.key2 object is same reference: ${store.state.key2 === state.key2}`);
 
       const prevState = store.state;
       store.update({ key0: 10 });

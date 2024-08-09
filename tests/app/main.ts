@@ -4,7 +4,7 @@ import createcomponentPage from './createcomponent.page.ts';
 import componentPage from './component.page.ts';
 import customelementPage from './customelement.page.ts';
 import elementattributesproxyPage from './elementattributesproxy.page.ts';
-import nodecontentPage from './nodecontent.page.ts';
+import nodestructurePage from './nodestructure.page.ts';
 import observablePage from './observable.page.ts';
 import observablevaluePage from './observablevalue.page.ts';
 import routerPage from './router.page.ts';
@@ -17,7 +17,7 @@ const pages: Record<string, { (): void }> = {
   componentPage,
   customelementPage,
   elementattributesproxyPage,
-  nodecontentPage,
+  nodestructurePage,
   observablePage,
   observablevaluePage,
   routerPage,

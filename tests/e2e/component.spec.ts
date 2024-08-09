@@ -12,8 +12,12 @@ const propLogs = [
   'attr.attr1: undefined',
   '<test-component></test-component>',
 
+  'action: prop-structure',
+  'object instance of NodeStructure: true',
+  '<test-component></test-component>',
+
   'action: prop-content',
-  'object instance of NodeContent: true',
+  'object instance of ShadowRoot: true',
   '<test-component></test-component>',
 ];
 
@@ -111,6 +115,7 @@ test.describe('/component (constructor)', () => {
 
     await page.locator('[data-action="prop-updatecounter"]').click();
     await page.locator('[data-action="prop-attr"]').click();
+    await page.locator('[data-action="prop-structure"]').click();
     await page.locator('[data-action="prop-content"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText(propLogs);
@@ -167,6 +172,7 @@ test.describe('/component (createElement)', () => {
 
     await page.locator('[data-action="prop-updatecounter"]').click();
     await page.locator('[data-action="prop-attr"]').click();
+    await page.locator('[data-action="prop-structure"]').click();
     await page.locator('[data-action="prop-content"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText(propLogs);
@@ -229,6 +235,7 @@ test.describe('/component (HTML)', () => {
 
     await page.locator('[data-action="prop-updatecounter"]').click();
     await page.locator('[data-action="prop-attr"]').click();
+    await page.locator('[data-action="prop-structure"]').click();
     await page.locator('[data-action="prop-content"]').click();
 
     await expect(page.locator('[data-log]')).toHaveText([
@@ -242,8 +249,12 @@ test.describe('/component (HTML)', () => {
       'attr.attr1: attr1',
       '<test-component attr1="attr1">test-component</test-component>',
 
+      'action: prop-structure',
+      'object instance of NodeStructure: true',
+      '<test-component attr1="attr1">test-component</test-component>',
+
       'action: prop-content',
-      'object instance of NodeContent: true',
+      'object instance of ShadowRoot: true',
       '<test-component attr1="attr1">test-component</test-component>',
     ]);
   });

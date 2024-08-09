@@ -1,6 +1,6 @@
-import type { ComponentContentContainer, NodeContentData } from '../../mod.ts';
+import type { ComponentContentContainer, NodeStructureContent } from '../../mod.ts';
 
-import { Component, ElementAttributesProxy, NodeContent, Observable } from '../../mod.ts';
+import { Component, ElementAttributesProxy, NodeStructure, Observable } from '../../mod.ts';
 import { addContent, addLog, createActions } from './page.ts';
 
 export default function (): void {
@@ -74,7 +74,7 @@ export default function (): void {
       addLog('createContentContainer');
       return super.createContentContainer();
     }
-    override template(): NodeContentData {
+    override template(): NodeStructureContent {
       addLog('template');
       if (isTemplateError) {
         throw new Error('error');
@@ -113,8 +113,12 @@ export default function (): void {
       addLog(`attr.attr1: ${testComponent.attr.attr1}`);
       addLog(testComponent.outerHTML);
     },
+    'prop-structure': () => {
+      addLog(`object instance of NodeStructure: ${testComponent.structure instanceof NodeStructure}`);
+      addLog(testComponent.outerHTML);
+    },
     'prop-content': () => {
-      addLog(`object instance of NodeContent: ${testComponent.content instanceof NodeContent}`);
+      addLog(`object instance of ShadowRoot: ${testComponent.content instanceof ShadowRoot}`);
       addLog(testComponent.outerHTML);
     },
     'method-update': async () => {
@@ -145,8 +149,8 @@ export default function (): void {
     },
     'method-createcontentcontainer': () => {
       // Shadow root cannot be created on a host which already hosts a shadow tree,
-      // so just check if content.container is ShadowRoot
-      addLog(`object instance of ShadowRoot: ${testComponent.content.container instanceof ShadowRoot}`);
+      // so just check if structure.host is ShadowRoot
+      addLog(`object instance of ShadowRoot: ${testComponent.structure.host instanceof ShadowRoot}`);
       addLog(testComponent.outerHTML);
     },
     'method-template': () => {

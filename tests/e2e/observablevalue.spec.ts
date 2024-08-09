@@ -25,6 +25,8 @@ test.describe('/observablevalue', () => {
     await page.locator('[data-action="method-notify"]').click();
     await page.locator('[data-action="method-set"]').click();
     await page.locator('[data-action="method-get"]').click();
+    await page.locator('[data-action="method-reset"]').click();
+    await page.locator('[data-action="method-get"]').click();
     await page.locator('[data-action="method-unsubscribe"]').click();
     await page.locator('[data-action="method-notify"]').click();
     await page.locator('[data-action="method-set"]').click();
@@ -49,6 +51,14 @@ test.describe('/observablevalue', () => {
 
       'action: method-get',
       updatedValue,
+
+      'action: method-reset',
+      `observer1: ${initialValue}`,
+      `observer2: ${initialValue}`,
+      `observer3: ${initialValue}`,
+
+      'action: method-get',
+      initialValue,
 
       'action: method-unsubscribe',
 
