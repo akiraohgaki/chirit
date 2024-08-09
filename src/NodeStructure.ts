@@ -1,51 +1,51 @@
-import type { NodeContentData, OnEventHandler } from './types.ts';
+import type { NodeStructureContent, OnEventHandler } from './types.ts';
 
 import dom from './dom.ts';
 
-const containerCollection = new WeakSet();
+const hostCollection = new WeakSet();
 
-export default class NodeContent<T extends Node> {
-  #containerRef: WeakRef<T> | null;
+export default class NodeStructure<T extends Node> {
+  #hostRef: WeakRef<T> | null;
   #contextRef: WeakRef<Record<string, unknown>> | null;
 
-  constructor(container: T, context?: unknown) {
+  constructor(host: T, context?: unknown) {
     // Avoid affect child nodes managed by this feature
-    containerCollection.add(container);
+    hostCollection.add(host);
 
     // Avoid circular references to make GC easier
-    this.#containerRef = new WeakRef(container);
+    this.#hostRef = new WeakRef(host);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
   }
 
-  get container(): T {
-    return this.#getContainer();
+  get host(): T {
+    return this.#getHost();
   }
 
-  update(content: NodeContentData): void {
-    const container = this.#getContainer();
+  update(content: NodeStructureContent): void {
+    const host = this.#getHost();
 
     if (content instanceof dom.globalThis.Document || content instanceof dom.globalThis.DocumentFragment) {
-      this.#patchNodesInsideOf(container, content);
+      this.#patchNodesInsideOf(host, content);
     } else {
-      this.#patchNodesInsideOf(container, this.#createDocumentFragment(content));
+      this.#patchNodesInsideOf(host, this.#createDocumentFragment(content));
     }
 
-    this.#fixOneventHandlersInsideOf(container);
+    this.#fixOneventHandlersInsideOf(host);
   }
 
   clone(): DocumentFragment {
-    const container = this.#getContainer();
+    const host = this.#getHost();
 
-    return this.#createDocumentFragment(container.childNodes);
+    return this.#createDocumentFragment(host.childNodes);
   }
 
-  #getContainer(): T {
-    if (this.#containerRef) {
-      const container = this.#containerRef.deref();
-      if (container) {
-        return container;
+  #getHost(): T {
+    if (this.#hostRef) {
+      const host = this.#hostRef.deref();
+      if (host) {
+        return host;
       } else {
-        this.#containerRef = null;
+        this.#hostRef = null;
       }
     }
     throw new Error('The node not available.');
@@ -63,7 +63,7 @@ export default class NodeContent<T extends Node> {
     return undefined;
   }
 
-  #createDocumentFragment(content: NodeContentData): DocumentFragment {
+  #createDocumentFragment(content: NodeStructureContent): DocumentFragment {
     if (typeof content === 'string') {
       // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement
       const template = dom.globalThis.document.createElement('template');
@@ -111,7 +111,7 @@ export default class NodeContent<T extends Node> {
         if (original instanceof dom.globalThis.Element && diff instanceof dom.globalThis.Element) {
           // Element it's HTMLElement, SVGElement
           this.#patchAttributes(original, diff);
-          if (!containerCollection.has(original)) {
+          if (!hostCollection.has(original)) {
             this.#patchNodesInsideOf(original, diff);
           }
         } else if (original instanceof dom.globalThis.CharacterData && diff instanceof dom.globalThis.CharacterData) {
@@ -177,7 +177,7 @@ export default class NodeContent<T extends Node> {
       }
     }
 
-    if (!containerCollection.has(target)) {
+    if (!hostCollection.has(target)) {
       this.#fixOneventHandlersInsideOf(target);
     }
   }

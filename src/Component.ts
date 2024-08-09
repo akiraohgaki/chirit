@@ -1,13 +1,13 @@
-import type { ComponentContentContainer, NodeContentData } from './types.ts';
+import type { ComponentContentContainer, NodeStructureContent } from './types.ts';
 
 import CustomElement from './CustomElement.ts';
 import ElementAttributesProxy from './ElementAttributesProxy.ts';
-import NodeContent from './NodeContent.ts';
+import NodeStructure from './NodeStructure.ts';
 import dom from './dom.ts';
 
 export default class Component extends CustomElement {
   #attr: ElementAttributesProxy;
-  #content: NodeContent<ComponentContentContainer>;
+  #structure: NodeStructure<ComponentContentContainer>;
 
   constructor() {
     super();
@@ -15,15 +15,19 @@ export default class Component extends CustomElement {
     this.update = this.update.bind(this);
 
     this.#attr = new ElementAttributesProxy(this);
-    this.#content = new NodeContent(this.createContentContainer(), this);
+    this.#structure = new NodeStructure(this.createContentContainer(), this);
   }
 
   get attr(): ElementAttributesProxy {
     return this.#attr;
   }
 
-  get content(): NodeContent<ComponentContentContainer> {
-    return this.#content;
+  get structure(): NodeStructure<ComponentContentContainer> {
+    return this.#structure;
+  }
+
+  get content(): ComponentContentContainer {
+    return this.#structure.host;
   }
 
   observe(...args: Array<unknown>): void {
@@ -47,7 +51,7 @@ export default class Component extends CustomElement {
   }
 
   dispatch(type: string, detail?: unknown): boolean {
-    return this.#content.container.dispatchEvent(
+    return this.#structure.host.dispatchEvent(
       new dom.globalThis.CustomEvent(type, {
         detail: detail,
         bubbles: true,
@@ -61,10 +65,10 @@ export default class Component extends CustomElement {
   }
 
   override render(): void {
-    this.#content.update(this.template());
+    this.#structure.update(this.template());
   }
 
-  template(): NodeContentData {
+  template(): NodeStructureContent {
     return '';
   }
 }
