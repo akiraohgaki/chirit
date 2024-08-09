@@ -3,7 +3,7 @@ import Observable from './Observable.ts';
 import dom from './dom.ts';
 
 export default class Store<T extends Record<string, unknown>> extends Observable<T> {
-  #initialState T;
+  #initialState: T;
   #state: T;
 
   constructor(state: T) {
