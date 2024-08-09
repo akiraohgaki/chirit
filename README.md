@@ -11,13 +11,13 @@ License: BSD-2-Clause
 TypeScript
 
 ```js
-import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.4/mod.ts';
+import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.5/mod.ts';
 ```
 
 JavaScript
 
 ```js
-import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.4/mod.bundle.js';
+import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.5/mod.bundle.js';
 ```
 
 ### Example
