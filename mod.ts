@@ -1,7 +1,5 @@
 export * from './src/types.ts';
 
-export * from './version.ts';
-
 export { default as createComponent } from './src/createComponent.ts';
 
 export { default as Component } from './src/Component.ts';
