@@ -1,6 +1,42 @@
+/**
+ * A proxy class that access to an element's attributes.
+ *
+ * This class simplifies attribute manipulation to the target element.
+ *
+ * ----
+ *
+ * ### Basic usage
+ *
+ * ```ts
+ * const element = document.createElement('color-preview');
+ *
+ * const attr = new ElementAttributesProxy(element);
+ *
+ * console.log(attr.color); // or attr['color']
+ * // undefined
+ *
+ * attr.color = '#ff0000';
+ *
+ * console.log(attr.color);
+ * // '#ff0000'
+ *
+ * console.log('color' in attr);
+ * // true
+ *
+ * console.log(Object.keys(attr));
+ * // ['color']
+ *
+ * delete attr.color;
+ * ```
+ */
 export default class ElementAttributesProxy {
   [key: string]: string;
 
+  /**
+   * Creates a new Proxy object but the instance is not the NodeStructure class.
+   *
+   * @param target - The target element whose attributes this proxy will manage.
+   */
   constructor(target: Element) {
     // Avoid circular references to make GC easier
     let targetRef: WeakRef<Element> | null = new WeakRef(target);

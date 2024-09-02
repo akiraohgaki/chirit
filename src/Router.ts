@@ -2,6 +2,43 @@ import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from '.
 
 import dom from './dom.ts';
 
+/**
+ * A client-side router.
+ *
+ * This class provides a convenient way to manage routes and handle navigation events within an application.
+ * It supports both hash-based routing and history-based routing modes.
+ *
+ * ----
+ *
+ * ### Basic usage
+ *
+ * ```ts
+ * const router = new Router('hash');
+ *
+ * router.set('^/$', () => {
+ *   console.log('Home Page');
+ *   // ...
+ * });
+ * router.set('/users/:name', (params) => {
+ *   console.log(`User Page for ${params.name}`);
+ *   // ...
+ * });
+ * router.set('.*', () => {
+ *   console.log('Not Found Page');
+ *   // ...
+ * });
+ *
+ * router.onchange = (event) => {
+ *   console.log('Route changed:', event);
+ * };
+ *
+ * router.onerror = (error) => {
+ *   console.error('Error occurred:', error);
+ * };
+ *
+ * router.navigate(location.href);
+ * ```
+ */
 export default class Router {
   #mode: RouterMode;
   #base: string;
@@ -12,6 +49,14 @@ export default class Router {
   #hashchangeCallback: { (event: HashChangeEvent): void };
   #popstateCallback: { (event: PopStateEvent): void };
 
+  /**
+   * Creates a new instance of the Router class.
+   *
+   * @param mode - The routing mode to use (`hash` or `history`).
+   * @param base - The optional base path for all routes.
+   *
+   * @throws {Error} - If the provided mode is not `hash` or `history`.
+   */
   constructor(mode: RouterMode, base: string = '') {
     if (mode !== 'hash' && mode !== 'history') {
       throw new Error('The mode must be set "hash" or "history".');
@@ -30,30 +75,54 @@ export default class Router {
     this.#popstateCallback = this.#handlePopstate.bind(this);
   }
 
+  /**
+   * Returns the current routing mode.
+   */
   get mode(): RouterMode {
     return this.#mode;
   }
 
+  /**
+   * Returns the base path for all routes.
+   */
   get base(): string {
     return this.#base;
   }
 
+  /**
+   * The function to be called when the route changes.
+   */
   set onchange(handler: OnEventHandler) {
     this.#onchange = handler;
   }
 
+  /**
+   * The function to be called when the route changes.
+   */
   get onchange(): OnEventHandler {
     return this.#onchange;
   }
 
+  /**
+   * The function to be called when an error occurs.
+   */
   set onerror(handler: OnErrorHandler) {
     this.#onerror = handler;
   }
 
+  /**
+   * The function to be called when an error occurs.
+   */
   get onerror(): OnErrorHandler {
     return this.#onerror;
   }
 
+  /**
+   * Registers a route pattern and its handler function.
+   *
+   * @param pattern - The route pattern with named parameters.
+   * @param handler - The function to be called when the route is matched.
+   */
   set(pattern: string, handler: RouteHandler): void {
     if (!this.#routeCollection.size) {
       if (this.#mode === 'hash') {
@@ -66,6 +135,11 @@ export default class Router {
     this.#routeCollection.set(this.#fixRoutePattern(pattern), handler);
   }
 
+  /**
+   * Removes a route pattern from the router.
+   *
+   * @param pattern - The route pattern to remove.
+   */
   delete(pattern: string): void {
     this.#routeCollection.delete(this.#fixRoutePattern(pattern));
 
@@ -78,6 +152,11 @@ export default class Router {
     }
   }
 
+  /**
+   * Navigates to a new URL.
+   *
+   * @param url - The URL to navigate to.
+   */
   navigate(url: string): void {
     if (this.#mode === 'hash') {
       this.#navigateWithHashMode(url);

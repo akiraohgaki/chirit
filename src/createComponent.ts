@@ -2,6 +2,78 @@ import type { CreateComponentOptions, NodeStructureContent } from './types.ts';
 
 import Component from './Component.ts';
 
+/**
+ * Creates a new component based on the provided options.
+ *
+ * This function is a convenient way to creates a component use Component class.
+ *
+ * ----
+ *
+ * ### Basic usage
+ *
+ * Create a custom component.
+ *
+ * ```ts
+ * const debugMode = new ObservableValue(true);
+ *
+ * createComponent<Component & { clickHandler: (event: Event) => void }>(
+ *   'color-preview',
+ *   {
+ *     observedAttributes: ['color', 'size'],
+ *     init(context) {
+ *       context.clickHandler = (event) => {
+ *         context.dispatch('color-preview-click');
+ *
+ *         if (debugMode.get()) {
+ *           console.log(event);
+ *         }
+ *       };
+ *     },
+ *     connected(context) {
+ *       context.observe(debugMode);
+ *     },
+ *     disconnected(context) {
+ *       context.unobserve(debugMode);
+ *     },
+ *     template(context) {
+ *       const color = context.attr.color ?? '#000000';
+ *       const size = context.attr.size ?? '100px';
+ *
+ *       return `
+ *         <style>
+ *           :host {
+ *             display: inline-block;
+ *             width: ${size};
+ *             height: ${size};
+ *           }
+ *           div {
+ *             width: 100%;
+ *             height: 100%;
+ *             background-color: ${color};
+ *           }
+ *         </style>
+ *
+ *         <div onclick="this.clickHandler(event)">
+ *         ${debugMode.get() ? '[debug mode]' : ''}
+ *         ${color}
+ *         </div>
+ *       `;
+ *     },
+ *   },
+ * );
+ * ```
+ *
+ * Use the custom element.
+ *
+ * ```html
+ * <color-preview color="#ff0000" size="100px"></color-preview>
+ * ```
+ *
+ * @template T - The type of the created component class.
+ *
+ * @param name - The name of the custom element.
+ * @param options - Options for configuring the component.
+ */
 export default function createComponent<T = Component>(name: string, options?: CreateComponentOptions<T>): T {
   const CustomComponent = class extends Component {
     static override get observedAttributes(): Array<string> {

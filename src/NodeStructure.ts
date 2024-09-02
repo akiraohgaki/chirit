@@ -4,10 +4,52 @@ import dom from './dom.ts';
 
 const hostCollection = new WeakSet();
 
+/**
+ * Represents a structure of DOM nodes.
+ *
+ * This class manages the lifecycle of associated DOM nodes and contexts to simplify DOM manipulation.
+ *
+ * ----
+ *
+ * #### Basic usage
+ *
+ * ```ts
+ * const host = document.createElement('div');
+ * const context = { eventHandler: (event: Event) => console.log(event) };
+ *
+ * const nodeStructure = new NodeStructure(host, context);
+ *
+ * nodeStructure.update(`
+ *   <h1>Hello</h1>
+ * `);
+ * // HTML:
+ * // <div>
+ * // <h1>Hello</h1>
+ * // </div>
+ *
+ * nodeStructure.update(`
+ *   <h1>Hello</h1>
+ *   <button onclick="this.eventHandler(event)">Click me</button>
+ * `);
+ * // HTML:
+ * // <div>
+ * // <h1>Hello</h1>
+ * // <button>Click me</button>
+ * // </div>
+ * ```
+ *
+ * @template T - The type of the host node (e.g., HTMLElement).
+ */
 export default class NodeStructure<T extends Node> {
   #hostRef: WeakRef<T> | null;
   #contextRef: WeakRef<Record<string, unknown>> | null;
 
+  /**
+   * Creates a new instance of the NodeStructure class.
+   *
+   * @param host - The host node to manage.
+   * @param context - An optional context object associated with the structure.
+   */
   constructor(host: T, context?: unknown) {
     // Avoid affect child nodes managed by this feature
     hostCollection.add(host);
@@ -17,10 +59,22 @@ export default class NodeStructure<T extends Node> {
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
   }
 
+  /**
+   * Returns the host node.
+   *
+   * @throws {Error} - If the host node is not available.
+   */
   get host(): T {
     return this.#getHost();
   }
 
+  /**
+   * Updates the content of the host node.
+   *
+   * @param content - The new content to update the host node with.
+   *
+   * @throws {Error} - If the host node is not available.
+   */
   update(content: NodeStructureContent): void {
     const host = this.#getHost();
 
@@ -33,6 +87,11 @@ export default class NodeStructure<T extends Node> {
     this.#fixOneventHandlersInsideOf(host);
   }
 
+  /**
+   * Creates a deep clone of the content of the host node.
+   *
+   * @throws {Error} - If the host node is not available.
+   */
   clone(): DocumentFragment {
     const host = this.#getHost();
 
