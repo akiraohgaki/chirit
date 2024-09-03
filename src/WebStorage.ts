@@ -50,7 +50,7 @@ export default class WebStorage {
    * Creates a new instance of the WebStorage class.
    *
    * @param mode - The storage mode to use (`local` or `session`).
-   * @param prefix - An optional prefix to add to keys.
+   * @param prefix - The prefix to add to keys.
    *
    * @throws {Error} - If the provided mode is not `local` or `session`.
    */
@@ -68,7 +68,7 @@ export default class WebStorage {
         break;
       }
       default: {
-        throw new Error('The mode must be set "local" or "session".');
+        throw new Error('The storage mode must be set to "local" or "session".');
       }
     }
   }
@@ -81,7 +81,7 @@ export default class WebStorage {
   }
 
   /**
-   * Returns the prefix used for keys.
+   * Returns the current prefix.
    */
   get prefix(): string {
     return this.#prefix;
@@ -96,8 +96,6 @@ export default class WebStorage {
 
   /**
    * Gets all keys stored in the storage.
-   *
-   * @returns An array of keys.
    */
   keys(): Array<string> {
     const keys: Array<string> = [];
@@ -127,6 +125,7 @@ export default class WebStorage {
    * Gets a value from the storage.
    *
    * @param key - The key to use.
+   *
    * @returns The stored value, or `null` if not found.
    */
   get(key: string): unknown {
@@ -146,9 +145,9 @@ export default class WebStorage {
   }
 
   /**
-   * Deletes a value from the storage.
+   * Removes a value from the storage.
    *
-   * @param key - The key to delete.
+   * @param key - The key to remove.
    */
   delete(key: string): void {
     this.#storage.removeItem(this.#prefix + key);

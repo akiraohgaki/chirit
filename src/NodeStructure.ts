@@ -5,7 +5,7 @@ import dom from './dom.ts';
 const hostCollection = new WeakSet();
 
 /**
- * Represents a structure of DOM nodes.
+ * Manages the structure of DOM nodes.
  *
  * This class manages the lifecycle of associated DOM nodes and contexts to simplify DOM manipulation.
  *
@@ -48,13 +48,13 @@ export default class NodeStructure<T extends Node> {
    * Creates a new instance of the NodeStructure class.
    *
    * @param host - The host node to manage.
-   * @param context - An optional context object associated with the structure.
+   * @param context - The context object associated with the structure.
    */
   constructor(host: T, context?: unknown) {
-    // Avoid affect child nodes managed by this feature
+    // Avoid affect child nodes managed by this feature.
     hostCollection.add(host);
 
-    // Avoid circular references to make GC easier
+    // Avoid circular references to make GC easier.
     this.#hostRef = new WeakRef(host);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
   }
@@ -107,7 +107,7 @@ export default class NodeStructure<T extends Node> {
         this.#hostRef = null;
       }
     }
-    throw new Error('The node not available.');
+    throw new Error('The host node is not available.');
   }
 
   #getContext(): unknown {
@@ -124,14 +124,14 @@ export default class NodeStructure<T extends Node> {
 
   #createDocumentFragment(content: NodeStructureContent): DocumentFragment {
     if (typeof content === 'string') {
-      // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement
+      // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement.
       const template = dom.globalThis.document.createElement('template');
       template.innerHTML = content;
       return template.content;
     }
 
-    // Some node types like DocumentType will not insert into DocumentFragment
-    // ShadowRoot will not cloneable also not included in NodeList
+    // Some node types like DocumentType will not insert into DocumentFragment.
+    // ShadowRoot will not cloneable also not included in NodeList.
     const documentFragment = dom.globalThis.document.createDocumentFragment();
     if (content instanceof dom.globalThis.Node) {
       documentFragment.appendChild(content.cloneNode(true));
@@ -145,7 +145,7 @@ export default class NodeStructure<T extends Node> {
 
   #patchNodesInsideOf(original: Node, diff: Node): void {
     if (original.hasChildNodes() || diff.hasChildNodes()) {
-      // NodeList of Node.childNodes is live so must be convert to array
+      // NodeList of Node.childNodes is live so must be convert to array.
       const originalChildNodes = Array.from(original.childNodes);
       const diffChildNodes = Array.from(diff.childNodes);
       const maxLength = Math.max(originalChildNodes.length, diffChildNodes.length);
@@ -168,13 +168,13 @@ export default class NodeStructure<T extends Node> {
     } else if (original && diff) {
       if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
         if (original instanceof dom.globalThis.Element && diff instanceof dom.globalThis.Element) {
-          // Element it's HTMLElement, SVGElement
+          // Element it's HTMLElement, SVGElement.
           this.#patchAttributes(original, diff);
           if (!hostCollection.has(original)) {
             this.#patchNodesInsideOf(original, diff);
           }
         } else if (original instanceof dom.globalThis.CharacterData && diff instanceof dom.globalThis.CharacterData) {
-          // CharacterData it's Text, Comment, ProcessingInstruction
+          // CharacterData it's Text, Comment, ProcessingInstruction.
           if (original.nodeValue !== diff.nodeValue) {
             original.nodeValue = diff.nodeValue;
           }
@@ -188,7 +188,7 @@ export default class NodeStructure<T extends Node> {
   }
 
   #patchAttributes(original: Element, diff: Element): void {
-    // NamedNodeMap of Element.attributes is live so must be convert to array
+    // NamedNodeMap of Element.attributes is live so must be convert to array.
     if (original.hasAttributes()) {
       for (const attribute of Array.from(original.attributes)) {
         if (!diff.hasAttribute(attribute.name)) {
@@ -221,7 +221,7 @@ export default class NodeStructure<T extends Node> {
 
   #fixOneventHandlers(target: Element): void {
     if (target.hasAttributes()) {
-      // NamedNodeMap of Element.attributes is live so must be convert to array
+      // NamedNodeMap of Element.attributes is live so must be convert to array.
       for (const attribute of Array.from(target.attributes)) {
         if (attribute.name.search(/^on\w+/i) !== -1) {
           const onevent = attribute.name.toLowerCase();

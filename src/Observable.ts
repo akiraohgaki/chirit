@@ -1,7 +1,7 @@
 import type { Observer } from './types.ts';
 
 /**
- * Represents an observable.
+ * Provides a way to notifies observers.
  *
  * This class provides a way to notifies observers when a new value is available.
  *

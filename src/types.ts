@@ -38,21 +38,21 @@ export interface RouteHandler {
 }
 
 /**
- * Content container for Component.
+ * Content container in Component.
  */
 export type ComponentContentContainer = Element | DocumentFragment;
 
 /**
- * Content for NodeStructure.
+ * Content in NodeStructure.
  */
 export type NodeStructureContent = string | Node | NodeList;
 
 /**
- * Router mode.
+ * Routing mode in Router.
  */
 export type RouterMode = 'hash' | 'history';
 
 /**
- * Web storage mode.
+ * Storage mode in WebStorage.
  */
 export type WebStorageMode = 'local' | 'session';

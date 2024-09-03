@@ -8,13 +8,15 @@ import dom from './dom.ts';
 /**
  * A base class for building custom web components.
  *
- * This class used CustomElement, ElementAttributesProxy, and NodeStructure.
+ * This class is built on `CustomElement`, `ElementAttributesProxy`, and `NodeStructure`, inheriting their features.
+ *
+ * If you want to quickly create a component, consider using the `createComponent` function.
  *
  * ----
  *
  * ### Basic usage
  *
- * Create a custom class that extends the Component class.
+ * Create a custom class that extends the Component class and define the custom element.
  *
  * ```ts
  * class ColorPreviewComponent extends Component {
@@ -22,46 +24,35 @@ import dom from './dom.ts';
  *     return ['color', 'size'];
  *   }
  *
+ *   // When a observed attributes changes, the template content is re-rendered.
  *   override template(): string {
  *     const color = this.attr.color ?? '#000000';
  *     const size = this.attr.size ?? '100px';
  *
  *     return `
  *       <style>
- *         :host {
- *           display: inline-block;
- *           width: ${size};
- *           height: ${size};
- *         }
- *         div {
- *           width: 100%;
- *           height: 100%;
- *           background-color: ${color};
- *         }
+ *       :host {
+ *         display: inline-block;
+ *         width: ${size};
+ *         height: ${size};
+ *       }
+ *       div {
+ *         width: 100%;
+ *         height: 100%;
+ *         background-color: ${color};
+ *       }
  *       </style>
  *
- *       <div onclick="this.clickHandler(event)">
- *       ${color}
- *       </div>
+ *       <div onclick="this.clickHandler(event)"></div>
  *     `;
- *   }
- *
- *   override updatedCallback(): void {
- *     this.dispatch('color-preview-updated', {
- *       color: this.attr.color,
- *       size: this.attr.size,
- *     });
  *   }
  *
  *   clickHandler(_event: Event): void {
  *     this.dispatch('color-preview-click');
  *   }
  * }
- * ```
  *
- * Define the custom element.
- *
- * ```ts
+ * // Define the custom element.
  * ColorPreviewComponent.define('color-preview');
  * ```
  *
@@ -69,11 +60,13 @@ import dom from './dom.ts';
  *
  * ```html
  * <color-preview color="#ff0000" size="100px"></color-preview>
+ * <color-preview color="#00ff00" size="100px"></color-preview>
+ * <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * ### Component with state management
+ * ### State management in component
  *
- * Store or ObservableValue is a good choice for managing a component's state.
+ * You can use `Store` or `ObservableValue` to manage the shared state of a components.
  *
  * ```ts
  * const colorPreviewStore = new Store({
@@ -82,60 +75,60 @@ import dom from './dom.ts';
  * });
  *
  * const debugMode = new ObservableValue(true);
+ * ```
  *
+ * ```ts
  * class ColorPreviewComponent extends Component {
  *   override connectedCallback(): void {
- *     super.connectedCallback();
+ *     super.connectedCallback(); // must always be called first
  *     this.observe(colorPreviewStore, debugMode);
  *   }
  *
  *   override disconnectedCallback(): void {
  *     this.unobserve(colorPreviewStore, debugMode);
- *     super.disconnectedCallback();
+ *     super.disconnectedCallback(); // should always be called last
  *   }
  *
+ *   // When a observed state changes, the template content is re-rendered.
  *   override template(): string {
  *     return `
- *        <style>
- *          :host {
- *            display: inline-block;
- *            width: ${colorPreviewStore.state.size};
- *            height: ${colorPreviewStore.state.size};
- *          }
- *          div {
- *            width: 100%;
- *            height: 100%;
- *            background-color: ${colorPreviewStore.state.color};
- *          }
- *        </style>
+ *       <style>
+ *       :host {
+ *         display: inline-block;
+ *         width: ${colorPreviewStore.state.size};
+ *         height: ${colorPreviewStore.state.size};
+ *       }
+ *       div {
+ *         width: 100%;
+ *         height: 100%;
+ *         background-color: ${colorPreviewStore.state.color};
+ *       }
+ *       </style>
  *
- *        <div onclick="this.clickHandler(event)">
- *        ${debugMode.get() ? '[debug mode]' : ''}
- *        ${colorPreviewStore.state.color}
- *        </div>
- *      `;
- *   }
- *
- *   override updatedCallback(): void {
- *     this.dispatch('color-preview-updated');
- *
- *     if (debugMode.get()) {
- *       console.log({
- *         updated: this.updateCounter,
- *         color: colorPreviewStore.state.color,
- *         size: colorPreviewStore.state.size,
- *       });
- *     }
+ *       <div onclick="this.clickHandler(event)">
+ *       ${debugMode.get() ? colorPreviewStore.state.color : ''}
+ *       </div>
+ *     `;
  *   }
  *
  *   clickHandler(event: Event): void {
  *     this.dispatch('color-preview-click');
- *
  *     if (debugMode.get()) {
  *       console.log(event);
  *     }
  *   }
  * }
+ *
+ * // Define the custom element.
+ * ColorPreviewComponent.define('color-preview');
+ * ```
+ *
+ * State is shared.
+ *
+ * ```html
+ * <color-preview></color-preview>
+ * <color-preview></color-preview>
+ * <color-preview></color-preview>
  * ```
  */
 export default class Component extends CustomElement {
@@ -143,7 +136,7 @@ export default class Component extends CustomElement {
   #structure: NodeStructure<ComponentContentContainer>;
 
   /**
-   * Creates a new instance of the custom web component.
+   * Creates a new instance of the Component class.
    */
   constructor() {
     super();
@@ -155,23 +148,23 @@ export default class Component extends CustomElement {
   }
 
   /**
-   * Returns a proxy object for accessing and manipulating element attributes.
+   * Returns a proxy object for element attributes.
    */
   get attr(): ElementAttributesProxy {
     return this.#attr;
   }
 
   /**
-   * Returns the internal NodeStructure instance that manages the component's content.
+   * Returns the internal NodeStructure instance.
    */
   get structure(): NodeStructure<ComponentContentContainer> {
     return this.#structure;
   }
 
   /**
-   * Returns the same content container of `this.structure.host`.
+   * Returns the same of `this.structure.host`.
    *
-   * This is a convenient way to access the content container (host element) of the component's NodeStructure.
+   * This is a convenient way to access the content container of the component.
    */
   get content(): ComponentContentContainer {
     return this.#structure.host;
@@ -212,7 +205,9 @@ export default class Component extends CustomElement {
   }
 
   /**
-   * Dispatches a custom event on the component's content container.
+   * Dispatches a custom event on the content container of the component.
+   *
+   * The event bubbles out of the shadow DOM.
    *
    * @param type - The type of the event to dispatch.
    * @param detail - Details to include in the event object.
@@ -228,7 +223,7 @@ export default class Component extends CustomElement {
   }
 
   /**
-   * Creates the content container (host element) for the component's NodeStructure.
+   * Creates the content container for the internal NodeStructure.
    *
    * By default, this method creates an open shadow DOM.
    */
@@ -237,16 +232,16 @@ export default class Component extends CustomElement {
   }
 
   /**
-   * Renders the component's structure with the latest template content.
+   * Renders DOM with the template content.
    */
   override render(): void {
     this.#structure.update(this.template());
   }
 
   /**
-   * Creates the component's template content.
+   * Creates the template content.
    *
-   * This method should be implemented by subclasses to return the content for the NodeStructure to update.
+   * This method should be implemented by subclasses to return the content.
    */
   template(): NodeStructureContent {
     return '';

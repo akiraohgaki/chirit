@@ -3,11 +3,10 @@ import Observable from './Observable.ts';
 import dom from './dom.ts';
 
 /**
- * State management store.
+ * An observable store for complex state management.
  *
  * This class provides a way to manages the state and notifies observers when the state is updated.
  *
- * This is ideal for complex state management.
  * If you need atomic state management, consider using the `ObservableValue` class.
  *
  * ----
@@ -32,7 +31,7 @@ import dom from './dom.ts';
  * // state.count: 0
  * ```
  *
- * ### Recommended usage of the Store class
+ * ### Recommended usage
  *
  * Create a custom class that extends the Store class to model the state.
  *
@@ -70,7 +69,7 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   /**
    * Creates a new instance of the Store class.
    *
-   * @param state - The initial state of the store.
+   * @param state - The initial state.
    */
   constructor(state: T) {
     super();
@@ -80,14 +79,14 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   }
 
   /**
-   * Returns the current state of the store.
+   * Returns the current state.
    */
   get state(): T {
     return this.#state;
   }
 
   /**
-   * Resets the state of the store to the initial state.
+   * Resets the state to the initial state.
    */
   reset(): void {
     this.#state = dom.globalThis.structuredClone(this.#initialState);
@@ -95,7 +94,7 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   }
 
   /**
-   * Updates the state of the store with a partial object.
+   * Updates the state with a partial object.
    *
    * @param state - The partial state object to merge into the current state.
    */
@@ -105,7 +104,7 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   }
 
   /**
-   * Notifies all subscribed observers of the state of the store.
+   * Notifies all subscribed observers of the current state.
    */
   override notify(): void {
     super.notify(this.#state);

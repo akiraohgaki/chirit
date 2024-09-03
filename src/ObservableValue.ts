@@ -1,11 +1,10 @@
 import Observable from './Observable.ts';
 
 /**
- * Represents an observable value.
+ * An observable value for atomic state management.
  *
  * This class provides a way to manages the state and notifies observers when the state is updated.
  *
- * This is ideal for atomic state management.
  * If you need complex state management, consider using the `Store` class.
  *
  * ----
@@ -72,7 +71,7 @@ export default class ObservableValue<T> extends Observable<T> {
   }
 
   /**
-   * Notifies all subscribed observers of the value.
+   * Notifies all subscribed observers of the current value.
    */
   override notify(): void {
     super.notify(this.#value);

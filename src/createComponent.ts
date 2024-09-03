@@ -3,15 +3,17 @@ import type { CreateComponentOptions, NodeStructureContent } from './types.ts';
 import Component from './Component.ts';
 
 /**
- * Creates a new component based on the provided options.
+ * Creates custom web components.
  *
- * This function is a convenient way to creates a component use Component class.
+ * This function is a convenient way to creates a component based on `Component` class.
+ *
+ * If you want to create a complex component, consider using the `Component` class.
  *
  * ----
  *
  * ### Basic usage
  *
- * Create a custom component.
+ * Create a component.
  *
  * ```ts
  * const debugMode = new ObservableValue(true);
@@ -23,7 +25,6 @@ import Component from './Component.ts';
  *     init(context) {
  *       context.clickHandler = (event) => {
  *         context.dispatch('color-preview-click');
- *
  *         if (debugMode.get()) {
  *           console.log(event);
  *         }
@@ -41,21 +42,20 @@ import Component from './Component.ts';
  *
  *       return `
  *         <style>
- *           :host {
- *             display: inline-block;
- *             width: ${size};
- *             height: ${size};
- *           }
- *           div {
- *             width: 100%;
- *             height: 100%;
- *             background-color: ${color};
- *           }
+ *         :host {
+ *           display: inline-block;
+ *           width: ${size};
+ *           height: ${size};
+ *         }
+ *         div {
+ *           width: 100%;
+ *           height: 100%;
+ *           background-color: ${color};
+ *         }
  *         </style>
  *
  *         <div onclick="this.clickHandler(event)">
- *         ${debugMode.get() ? '[debug mode]' : ''}
- *         ${color}
+ *         ${debugMode.get() ? color : ''}
  *         </div>
  *       `;
  *     },
@@ -67,12 +67,14 @@ import Component from './Component.ts';
  *
  * ```html
  * <color-preview color="#ff0000" size="100px"></color-preview>
+ * <color-preview color="#00ff00" size="100px"></color-preview>
+ * <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * @template T - The type of the created component class.
+ * @template T - The type of the component class.
  *
  * @param name - The name of the custom element.
- * @param options - Options for configuring the component.
+ * @param options - The options for configuring the component.
  */
 export default function createComponent<T = Component>(name: string, options?: CreateComponentOptions<T>): T {
   const CustomComponent = class extends Component {

@@ -3,9 +3,9 @@ import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from '.
 import dom from './dom.ts';
 
 /**
- * A client-side router.
+ * A client-side router for front-end application.
  *
- * This class provides a convenient way to manage routes and handle navigation events within an application.
+ * This class manages routes and handle navigation events within an application.
  * It supports both hash-based routing and history-based routing modes.
  *
  * ----
@@ -53,13 +53,13 @@ export default class Router {
    * Creates a new instance of the Router class.
    *
    * @param mode - The routing mode to use (`hash` or `history`).
-   * @param base - The optional base path for all routes.
+   * @param base - The base path for all routes.
    *
    * @throws {Error} - If the provided mode is not `hash` or `history`.
    */
   constructor(mode: RouterMode, base: string = '') {
     if (mode !== 'hash' && mode !== 'history') {
-      throw new Error('The mode must be set "hash" or "history".');
+      throw new Error('The routing mode must be set to "hash" or "history".');
     }
 
     this.#mode = mode;
@@ -83,7 +83,7 @@ export default class Router {
   }
 
   /**
-   * Returns the base path for all routes.
+   * Returns the current base path.
    */
   get base(): string {
     return this.#base;
@@ -136,7 +136,7 @@ export default class Router {
   }
 
   /**
-   * Removes a route pattern from the router.
+   * Removes a route pattern.
    *
    * @param pattern - The route pattern to remove.
    */
