@@ -9,16 +9,15 @@ const _HTMLElement = dom.globalThis.HTMLElement;
  *
  * ----
  *
- * ### Basic usage
- *
- * Create a custom class that extends the CustomElement class and define the custom element.
- *
+ * @example Create a custom element
  * ```ts
+ * // Create a custom class that extends the CustomElement class.
  * class ColorPreviewElement extends CustomElement {
  *   static override get observedAttributes(): Array<string> {
  *     return ['color', 'size'];
  *   }
  *
+ *   // When a observed attributes changes, the element is re-rendered.
  *   override render(): void {
  *     const color = this.getAttribute('color') ?? '#000000';
  *     const size = this.getAttribute('size') ?? '100px';
@@ -38,14 +37,11 @@ const _HTMLElement = dom.globalThis.HTMLElement;
  *
  * // Define the custom element.
  * ColorPreviewElement.define('color-preview');
- *  ```
  *
- * Use the custom element.
- *
- * ```html
- * <color-preview color="#ff0000" size="100px"></color-preview>
- * <color-preview color="#00ff00" size="100px"></color-preview>
- * <color-preview color="#0000ff" size="100px"></color-preview>
+ * // Use the custom element in HTML.
+ * // <color-preview color="#ff0000" size="100px"></color-preview>
+ * // <color-preview color="#00ff00" size="100px"></color-preview>
+ * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  */
 export default class CustomElement extends _HTMLElement {

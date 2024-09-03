@@ -10,8 +10,7 @@ import dom from './dom.ts';
  *
  * ----
  *
- * ### Basic usage
- *
+ * @example Basic usage
  * ```ts
  * const router = new Router('hash');
  *
@@ -31,7 +30,6 @@ import dom from './dom.ts';
  * router.onchange = (event) => {
  *   console.log('Route changed:', event);
  * };
- *
  * router.onerror = (error) => {
  *   console.error('Error occurred:', error);
  * };

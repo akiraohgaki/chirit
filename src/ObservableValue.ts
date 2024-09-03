@@ -9,8 +9,7 @@ import Observable from './Observable.ts';
  *
  * ----
  *
- * ### Basic usage
- *
+ * @example Basic usage
  * ```ts
  * const count = new ObservableValue(0);
  *

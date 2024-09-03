@@ -11,14 +11,18 @@ import Component from './Component.ts';
  *
  * ----
  *
- * ### Basic usage
- *
- * Create a component.
- *
+ * @example Create a component
  * ```ts
+ * // The interface of the component to be created.
+ * interface ColorPreviewComponentInterface extends Component {
+ *   clickHandler: (event: Event) => void;
+ * }
+ *
+ * // An observable value for atomic state management.
  * const debugMode = new ObservableValue(true);
  *
- * createComponent<Component & { clickHandler: (event: Event) => void }>(
+ * // Create the component as color-preview element.
+ * createComponent<ColorPreviewComponentInterface>(
  *   'color-preview',
  *   {
  *     observedAttributes: ['color', 'size'],
@@ -61,14 +65,11 @@ import Component from './Component.ts';
  *     },
  *   },
  * );
- * ```
  *
- * Use the custom element.
- *
- * ```html
- * <color-preview color="#ff0000" size="100px"></color-preview>
- * <color-preview color="#00ff00" size="100px"></color-preview>
- * <color-preview color="#0000ff" size="100px"></color-preview>
+ * // Use the custom element in HTML.
+ * // <color-preview color="#ff0000" size="100px"></color-preview>
+ * // <color-preview color="#00ff00" size="100px"></color-preview>
+ * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
  * @template T - The type of the component class.

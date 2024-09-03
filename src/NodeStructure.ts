@@ -11,8 +11,7 @@ const hostCollection = new WeakSet();
  *
  * ----
  *
- * #### Basic usage
- *
+ * @example Update the content of the host node
  * ```ts
  * const host = document.createElement('div');
  * const context = { eventHandler: (event: Event) => console.log(event) };
@@ -22,7 +21,7 @@ const hostCollection = new WeakSet();
  * nodeStructure.update(`
  *   <h1>Hello</h1>
  * `);
- * // HTML:
+ * // HTML
  * // <div>
  * // <h1>Hello</h1>
  * // </div>
@@ -31,7 +30,7 @@ const hostCollection = new WeakSet();
  *   <h1>Hello</h1>
  *   <button onclick="this.eventHandler(event)">Click me</button>
  * `);
- * // HTML:
+ * // HTML
  * // <div>
  * // <h1>Hello</h1>
  * // <button>Click me</button>

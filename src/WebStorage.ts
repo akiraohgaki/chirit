@@ -10,34 +10,22 @@ import dom from './dom.ts';
  *
  * ----
  *
- * ### Basic usage
- *
- * Set and get a value.
- *
+ * @example Basic usage
  * ```ts
+ * // Set and get values in the storage.
  * const storage = new WebStorage('local');
- * storage.set('user_settings', { colorTheme: 'dark' });
- * const settings = storage.get('user_settings');
- * ```
+ * storage.set('app_first_run', false);
+ * const isAppFirstRun = storage.get('app_first_run');
  *
- * Define prefix for keys.
- *
- * ```ts
+ * // Define prefix for keys.
  * const user = new WebStorage('local', 'user_');
  * // these actual key name is user_settings.
  * user.set('settings', { colorTheme: 'dark' });
  * const settings = user.get('settings');
- * ```
  *
- * ### Important note
- *
- * When using this class the actual data is stored as a special JSON object.
- *
- * ```ts
- * const app = new WebStorage('local', 'app_');
- * app.set('first_run', false);
- * console.log(localStorage.getItem('app_first_run'));
- * // '{"_k":"first_run","_v":false}'
+ * // When using this class the actual data is stored as a special JSON object.
+ * console.log(localStorage.getItem('user_settings'));
+ * // '{"_k":"settings","_v":{"colorTheme":"dark"}}'
  * ```
  */
 export default class WebStorage {

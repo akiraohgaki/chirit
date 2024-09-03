@@ -7,8 +7,7 @@ import type { Observer } from './types.ts';
  *
  * ----
  *
- * ### Basic usage
- *
+ * @example Basic usage
  * ```ts
  * const updateEvent = new Observable<string>();
  *

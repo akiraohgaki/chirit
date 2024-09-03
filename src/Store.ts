@@ -11,8 +11,7 @@ import dom from './dom.ts';
  *
  * ----
  *
- * ### Basic usage
- *
+ * @example Basic usage
  * ```ts
  * const initialState = { count: 0 };
  *
@@ -31,13 +30,11 @@ import dom from './dom.ts';
  * // state.count: 0
  * ```
  *
- * ### Recommended usage
- *
- * Create a custom class that extends the Store class to model the state.
- *
+ * @example Cteate a custom store
  * ```ts
  * const initialState = { count: 0 };
  *
+ * // Create a custom class that extends the Store class to model the state.
  * class Counter extends Store<typeof initialState> {
  *   increment() {
  *     this.update({ count: this.state.count + 1 });

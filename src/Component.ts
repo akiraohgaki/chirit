@@ -14,11 +14,9 @@ import dom from './dom.ts';
  *
  * ----
  *
- * ### Basic usage
- *
- * Create a custom class that extends the Component class and define the custom element.
- *
+ * @example Create a component
  * ```ts
+ * // Create a custom class that extends the Component class.
  * class ColorPreviewComponent extends Component {
  *   static override get observedAttributes(): Array<string> {
  *     return ['color', 'size'];
@@ -54,30 +52,25 @@ import dom from './dom.ts';
  *
  * // Define the custom element.
  * ColorPreviewComponent.define('color-preview');
+ *
+ * // Use the custom element in HTML.
+ * // <color-preview color="#ff0000" size="100px"></color-preview>
+ * // <color-preview color="#00ff00" size="100px"></color-preview>
+ * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * Use the custom element.
- *
- * ```html
- * <color-preview color="#ff0000" size="100px"></color-preview>
- * <color-preview color="#00ff00" size="100px"></color-preview>
- * <color-preview color="#0000ff" size="100px"></color-preview>
- * ```
- *
- * ### State management in component
- *
- * You can use `Store` or `ObservableValue` to manage the shared state of a components.
- *
+ * @example State management in component
  * ```ts
+ * // An observable store for complex state management.
  * const colorPreviewStore = new Store({
  *   color: '#000000',
  *   size: '100px',
  * });
  *
+ * // An observable value for atomic state management.
  * const debugMode = new ObservableValue(true);
- * ```
  *
- * ```ts
+ * // Create a custom class that extends the Component class.
  * class ColorPreviewComponent extends Component {
  *   override connectedCallback(): void {
  *     super.connectedCallback(); // must always be called first
@@ -121,14 +114,11 @@ import dom from './dom.ts';
  *
  * // Define the custom element.
  * ColorPreviewComponent.define('color-preview');
- * ```
  *
- * State is shared.
- *
- * ```html
- * <color-preview></color-preview>
- * <color-preview></color-preview>
- * <color-preview></color-preview>
+ * // Use the custom element in HTML.
+ * // <color-preview></color-preview>
+ * // <color-preview></color-preview>
+ * // <color-preview></color-preview>
  * ```
  */
 export default class Component extends CustomElement {

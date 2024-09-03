@@ -5,8 +5,7 @@
  *
  * ----
  *
- * ### Basic usage
- *
+ * @example Element's attribute manipulation
  * ```ts
  * const element = document.createElement('color-preview');
  *
