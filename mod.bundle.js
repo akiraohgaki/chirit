@@ -1,10 +1,8 @@
-const VERSION = '1.5.0';
-export { VERSION as VERSION };
 const __default = {
     globalThis: globalThis
 };
-const _HTMLElement = __default.globalThis.HTMLElement;
-class CustomElement extends _HTMLElement {
+const HTMLElementRef = __default.globalThis.HTMLElement;
+class CustomElement extends HTMLElementRef {
     #updateCounter;
     #updateTimerId;
     #updateDelay;
@@ -86,7 +84,7 @@ class ElementAttributesProxy {
                     targetRef = null;
                 }
             }
-            throw new Error('The element not available.');
+            throw new Error('The target element is not available.');
         };
         return new Proxy({}, {
             set: (_target, name, value)=>{
@@ -177,7 +175,7 @@ class NodeStructure {
                 this.#hostRef = null;
             }
         }
-        throw new Error('The node not available.');
+        throw new Error('The host node is not available.');
     }
     #getContext() {
         if (this.#contextRef) {
@@ -389,29 +387,6 @@ class Observable {
         }
     }
 }
-class ObservableValue extends Observable {
-    #initialValue;
-    #value;
-    constructor(value){
-        super();
-        this.#initialValue = value;
-        this.#value = value;
-    }
-    reset() {
-        this.#value = this.#initialValue;
-        this.notify();
-    }
-    set(value) {
-        this.#value = value;
-        this.notify();
-    }
-    get() {
-        return this.#value;
-    }
-    notify() {
-        super.notify(this.#value);
-    }
-}
 class Router {
     #mode;
     #base;
@@ -422,7 +397,7 @@ class Router {
     #popstateCallback;
     constructor(mode, base = ''){
         if (mode !== 'hash' && mode !== 'history') {
-            throw new Error('The mode must be set "hash" or "history".');
+            throw new Error('The routing mode must be set to "hash" or "history".');
         }
         this.#mode = mode;
         this.#base = base && !base.endsWith('/') ? base + '/' : base;
@@ -544,6 +519,29 @@ class Router {
         return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
     }
 }
+class State extends Observable {
+    #initialState;
+    #state;
+    constructor(state){
+        super();
+        this.#initialState = state;
+        this.#state = state;
+    }
+    reset() {
+        this.#state = this.#initialState;
+        this.notify();
+    }
+    set(state) {
+        this.#state = state;
+        this.notify();
+    }
+    get() {
+        return this.#state;
+    }
+    notify() {
+        super.notify(this.#state);
+    }
+}
 class Store extends Observable {
     #initialState;
     #state;
@@ -590,7 +588,7 @@ class WebStorage {
                 }
             default:
                 {
-                    throw new Error('The mode must be set "local" or "session".');
+                    throw new Error('The storage mode must be set to "local" or "session".');
                 }
         }
     }
@@ -645,7 +643,7 @@ export { CustomElement as CustomElement };
 export { ElementAttributesProxy as ElementAttributesProxy };
 export { NodeStructure as NodeStructure };
 export { Observable as Observable };
-export { ObservableValue as ObservableValue };
 export { Router as Router };
+export { State as State };
 export { Store as Store };
 export { WebStorage as WebStorage };
