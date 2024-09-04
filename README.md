@@ -41,14 +41,14 @@ TypeScript
 ```ts
 import { Component, State } from '@akiraohgaki/chirit';
 
-// `State` is an observable state for atomic state management.
+// The State class is an observable state for atomic state management.
 const epochTimeState = new State(Date.now());
 
 setInterval(() => {
   epochTimeState.set(Date.now());
 }, 100);
 
-// `Component` is a base class for building custom web components.
+// The Component class is a base class for building custom web components.
 class EpochTimeComponent extends Component {
   override connectedCallback(): void {
     super.connectedCallback();
