@@ -1,4 +1,16 @@
 {
+  "name": "@akiraohgaki/chirit",
+  "version": "1.6.0",
+  "exports": "./mod.ts",
+  "publish": {
+    "include": [
+      "src/**/*.ts",
+      "mod.ts",
+      "deno.json",
+      "README.md",
+      "LICENSE"
+    ]
+  },
   "compilerOptions": {
     "lib": [
       "deno.ns",

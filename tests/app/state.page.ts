@@ -1,8 +1,8 @@
-import { ObservableValue } from '../../mod.ts';
+import { State } from '../../mod.ts';
 import { addLog, createActions } from './page.ts';
 
 export default function (): void {
-  let observableValue: ObservableValue<string>;
+  let state: State<string>;
 
   const observer1 = (value: string) => {
     addLog(`observer1: ${value}`);
@@ -16,29 +16,29 @@ export default function (): void {
 
   createActions({
     'init': () => {
-      observableValue = new ObservableValue('');
+      state = new State('');
     },
     'method-subscribe': () => {
-      observableValue.subscribe(observer1);
-      observableValue.subscribe(observer2);
-      observableValue.subscribe(observer3);
+      state.subscribe(observer1);
+      state.subscribe(observer2);
+      state.subscribe(observer3);
     },
     'method-unsubscribe': () => {
-      observableValue.unsubscribe(observer1);
-      observableValue.unsubscribe(observer2);
-      observableValue.unsubscribe(observer3);
+      state.unsubscribe(observer1);
+      state.unsubscribe(observer2);
+      state.unsubscribe(observer3);
     },
     'method-notify': () => {
-      observableValue.notify();
+      state.notify();
     },
     'method-reset': () => {
-      observableValue.reset();
+      state.reset();
     },
     'method-set': () => {
-      observableValue.set('text');
+      state.set('text');
     },
     'method-get': () => {
-      addLog(observableValue.get());
+      addLog(state.get());
     },
   });
 }

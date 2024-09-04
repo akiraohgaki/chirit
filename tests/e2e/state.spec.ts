@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 
-const initialValue = '';
-const updatedValue = 'text';
+const initialState = '';
+const updatedState = 'text';
 
-test.describe('/observablevalue', () => {
+test.describe('/state', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/observablevalue');
+    await page.goto('/state');
 
     await page.locator('[data-action="init"]').click();
   });
@@ -33,32 +33,32 @@ test.describe('/observablevalue', () => {
 
     await expect(page.locator('[data-log]')).toHaveText([
       'action: method-get',
-      initialValue,
+      initialState,
 
       'action: method-notify',
 
       'action: method-subscribe',
 
       'action: method-notify',
-      `observer1: ${initialValue}`,
-      `observer2: ${initialValue}`,
-      `observer3: ${initialValue}`,
+      `observer1: ${initialState}`,
+      `observer2: ${initialState}`,
+      `observer3: ${initialState}`,
 
       'action: method-set',
-      `observer1: ${updatedValue}`,
-      `observer2: ${updatedValue}`,
-      `observer3: ${updatedValue}`,
+      `observer1: ${updatedState}`,
+      `observer2: ${updatedState}`,
+      `observer3: ${updatedState}`,
 
       'action: method-get',
-      updatedValue,
+      updatedState,
 
       'action: method-reset',
-      `observer1: ${initialValue}`,
-      `observer2: ${initialValue}`,
-      `observer3: ${initialValue}`,
+      `observer1: ${initialState}`,
+      `observer2: ${initialState}`,
+      `observer3: ${initialState}`,
 
       'action: method-get',
-      initialValue,
+      initialState,
 
       'action: method-unsubscribe',
 
