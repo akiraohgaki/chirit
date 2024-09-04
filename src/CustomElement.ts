@@ -1,6 +1,6 @@
 import dom from './dom.ts';
 
-const _HTMLElement = dom.globalThis.HTMLElement;
+const HTMLElementRef = dom.globalThis.HTMLElement;
 
 /**
  * A base class for building custom elements.
@@ -44,7 +44,7 @@ const _HTMLElement = dom.globalThis.HTMLElement;
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  */
-export default class CustomElement extends _HTMLElement {
+export default class CustomElement extends HTMLElementRef {
   #updateCounter: number;
 
   #updateTimerId: number | undefined;
