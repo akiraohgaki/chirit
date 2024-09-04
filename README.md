@@ -9,13 +9,13 @@ It provides a library for Web components, state management, client-side routing,
 TypeScript
 
 ```ts
-import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.5/mod.ts';
+import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.6/mod.ts';
 ```
 
 JavaScript
 
 ```js
-import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.5/mod.bundle.js';
+import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.6/mod.bundle.js';
 ```
 
 ## Install
@@ -29,7 +29,7 @@ deno add @akiraohgaki/chirit
 Use with npm
 
 ```sh
-npx jsr add @akiraohgaki/jsr-test
+npx jsr add @akiraohgaki/chirit
 ```
 
 See https://jsr.io/@akiraohgaki/chirit for install with other package managers.
@@ -50,16 +50,21 @@ setInterval(() => {
 
 // The Component class is a base class for building custom web components.
 class EpochTimeComponent extends Component {
+  static override get observedAttributes(): Array<string> {
+    return ['milliseconds'];
+  }
+
   override connectedCallback(): void {
-    super.connectedCallback();
-    this.observe(epochTimeState);
+    super.connectedCallback(); // must always be called first
+    this.observe(epochTimeState); // observe the observables
   }
 
   override disconnectedCallback(): void {
-    this.unobserve(epochTimeState);
-    super.disconnectedCallback();
+    this.unobserve(epochTimeState); // unobserve the observables
+    super.disconnectedCallback(); // should always be called last
   }
 
+  // When a observed attributes or states changes, the template content is re-rendered.
   override template(): string {
     return `
       <style>
@@ -82,6 +87,7 @@ class EpochTimeComponent extends Component {
   }
 }
 
+// Define the custom element.
 EpochTimeComponent.define('epoch-time');
 ```
 
