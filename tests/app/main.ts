@@ -5,8 +5,8 @@ import customelementPage from './customelement.page.ts';
 import elementattributesproxyPage from './elementattributesproxy.page.ts';
 import nodestructurePage from './nodestructure.page.ts';
 import observablePage from './observable.page.ts';
-import observablevaluePage from './observablevalue.page.ts';
 import routerPage from './router.page.ts';
+import statePage from './state.page.ts';
 import storePage from './store.page.ts';
 import webstoragePage from './webstorage.page.ts';
 
@@ -17,8 +17,8 @@ const pages: Record<string, { (): void }> = {
   elementattributesproxyPage,
   nodestructurePage,
   observablePage,
-  observablevaluePage,
   routerPage,
+  statePage,
   storePage,
   webstoragePage,
 };
