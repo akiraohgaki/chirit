@@ -5,7 +5,7 @@ import Component from './Component.ts';
 /**
  * Creates custom web components.
  *
- * This function is a convenient way to creates a component based on `Component` class.
+ * This function is a convenient way to creates a component based on the `Component` class.
  *
  * If you want to create a complex component, consider using the `Component` class.
  *
@@ -18,7 +18,7 @@ import Component from './Component.ts';
  *   clickHandler: (event: Event) => void;
  * }
  *
- * // `State` is an observable state for atomic state management.
+ * // The State class is an observable state for atomic state management.
  * const debugState = new State(true);
  *
  * // Create the component as color-preview element.
