@@ -61,24 +61,24 @@ import dom from './dom.ts';
  *
  * @example State management in component
  * ```ts
- * // An observable store for complex state management.
+ * // `Store` is an observable store for complex state management.
  * const colorPreviewStore = new Store({
  *   color: '#000000',
  *   size: '100px',
  * });
  *
- * // An observable value for atomic state management.
- * const debugMode = new ObservableValue(true);
+ * // `State` is an observable state for atomic state management.
+ * const debugState = new State(true);
  *
  * // Create a custom class that extends the Component class.
  * class ColorPreviewComponent extends Component {
  *   override connectedCallback(): void {
  *     super.connectedCallback(); // must always be called first
- *     this.observe(colorPreviewStore, debugMode);
+ *     this.observe(colorPreviewStore, debugState);
  *   }
  *
  *   override disconnectedCallback(): void {
- *     this.unobserve(colorPreviewStore, debugMode);
+ *     this.unobserve(colorPreviewStore, debugState);
  *     super.disconnectedCallback(); // should always be called last
  *   }
  *
@@ -99,14 +99,14 @@ import dom from './dom.ts';
  *       </style>
  *
  *       <div onclick="this.clickHandler(event)">
- *       ${debugMode.get() ? colorPreviewStore.state.color : ''}
+ *       ${debugState.get() ? colorPreviewStore.state.color : ''}
  *       </div>
  *     `;
  *   }
  *
  *   clickHandler(event: Event): void {
  *     this.dispatch('color-preview-click');
- *     if (debugMode.get()) {
+ *     if (debugState.get()) {
  *       console.log(event);
  *     }
  *   }

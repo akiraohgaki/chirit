@@ -18,8 +18,8 @@ import Component from './Component.ts';
  *   clickHandler: (event: Event) => void;
  * }
  *
- * // An observable value for atomic state management.
- * const debugMode = new ObservableValue(true);
+ * // `State` is an observable state for atomic state management.
+ * const debugState = new State(true);
  *
  * // Create the component as color-preview element.
  * createComponent<ColorPreviewComponentInterface>(
@@ -29,16 +29,16 @@ import Component from './Component.ts';
  *     init(context) {
  *       context.clickHandler = (event) => {
  *         context.dispatch('color-preview-click');
- *         if (debugMode.get()) {
+ *         if (debugState.get()) {
  *           console.log(event);
  *         }
  *       };
  *     },
  *     connected(context) {
- *       context.observe(debugMode);
+ *       context.observe(debugState);
  *     },
  *     disconnected(context) {
- *       context.unobserve(debugMode);
+ *       context.unobserve(debugState);
  *     },
  *     template(context) {
  *       const color = context.attr.color ?? '#000000';
@@ -59,7 +59,7 @@ import Component from './Component.ts';
  *         </style>
  *
  *         <div onclick="this.clickHandler(event)">
- *         ${debugMode.get() ? color : ''}
+ *         ${debugState.get() ? color : ''}
  *         </div>
  *       `;
  *     },

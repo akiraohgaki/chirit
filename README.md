@@ -39,24 +39,24 @@ See https://jsr.io/@akiraohgaki/chirit for install with other package managers.
 TypeScript
 
 ```ts
-import { Component, ObservableValue } from '@akiraohgaki/chirit';
+import { Component, State } from '@akiraohgaki/chirit';
 
-// ObservableValue: an observable value for atomic state management.
-const epochTime = new ObservableValue(Date.now());
+// `State` is an observable state for atomic state management.
+const epochTimeState = new State(Date.now());
 
 setInterval(() => {
-  epochTime.set(Date.now());
+  epochTimeState.set(Date.now());
 }, 100);
 
-// Component: a base class for building custom web components.
+// `Component` is a base class for building custom web components.
 class EpochTimeComponent extends Component {
   override connectedCallback(): void {
     super.connectedCallback();
-    this.observe(epochTime);
+    this.observe(epochTimeState);
   }
 
   override disconnectedCallback(): void {
-    this.unobserve(epochTime);
+    this.unobserve(epochTimeState);
     super.disconnectedCallback();
   }
 
@@ -72,13 +72,13 @@ class EpochTimeComponent extends Component {
       </style>
 
       <span onclick="this.clickHandler(event)">
-      ${this.attr.milliseconds ? epochTime.get() : epochTime.get() * 1000}
+      ${this.attr.milliseconds ? epochTimeState.get() : epochTimeState.get() * 1000}
       </span>
     `;
   }
 
   clickHandler(event: Event): void {
-    console.log(event, epochTime.get());
+    console.log(event, epochTimeState.get());
   }
 }
 
