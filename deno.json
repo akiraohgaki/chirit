@@ -77,7 +77,6 @@
   },
   "imports": {
     "@deno/emit": "jsr:@deno/emit",
-    "@playwright/test": "npm:@playwright/test",
     "@std/assert": "jsr:@std/assert",
     "jsdom": "https://jspm.dev/jsdom"
   }
