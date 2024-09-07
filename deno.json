@@ -73,12 +73,10 @@
     "test:unit": "deno test tests/unit/",
     "test:e2e": "cd tests/e2e && npx playwright test",
     "test:teardown": "echo 'Skip task test:teardown'",
-    "test:app": "deno task test:app:bundle && deno task test:app:serve",
-    "test:app:bundle": "cd tests/app && deno run --allow-env --allow-read --allow-write --allow-net https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts main.ts main.bundle.js",
-    "test:app:serve": "cd tests/app && deno run --allow-net --allow-read server.ts",
-    "serve": "echo 'Skip task serve'"
+    "serve": "cd tests/playground && deno run --allow-env --allow-read --allow-net server.ts"
   },
   "imports": {
+    "@deno/emit": "jsr:@deno/emit",
     "@playwright/test": "npm:@playwright/test",
     "@std/assert": "jsr:@std/assert",
     "jsdom": "https://jspm.dev/jsdom"

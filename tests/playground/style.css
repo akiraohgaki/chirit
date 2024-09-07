@@ -1,0 +1,24 @@
+:root {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  padding: 2rem;
+}
+
+[data-content="code"] {
+  display: block;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 7px;
+  background-color: #eeeeee;
+}
+
+[data-content="results"],
+[data-content="logs"] {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #cccccc;
+  border-radius: 7px;
+}
