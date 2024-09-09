@@ -77,7 +77,7 @@ export default class CustomElement extends HTMLElementRef {
     this.#updateCounter = 0;
 
     this.#updateTimerId = undefined;
-    this.#updateDelay = 100;
+    this.#updateDelay = 50;
     this.#updatePromiseResolvers = [];
   }
 
