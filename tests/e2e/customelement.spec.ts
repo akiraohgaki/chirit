@@ -171,18 +171,18 @@ test.describe('CustomElement', () => {
       this.addLog(testElement.outerHTML);
 
       testElement.setAttribute('attr0', 'a');
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testElement.outerHTML);
 
       testElement.setAttribute('attr1', 'b');
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testElement.outerHTML);
 
       testElement.setAttribute('attr1', 'c');
       testElement.setAttribute('attr1', 'd');
       testElement.setAttribute('attr1', 'e');
       testElement.setAttribute('attr1', 'f');
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testElement.outerHTML);
     `;
 
@@ -232,7 +232,7 @@ test.describe('CustomElement', () => {
       this.addLog(testElement.updateCounter);
 
       testElement.setAttribute('attr1', 'a');
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testElement.updateCounter);
 
       testElement.setAttribute('attr1', 'b');
@@ -240,7 +240,7 @@ test.describe('CustomElement', () => {
       testElement.setAttribute('attr1', 'd');
       testElement.setAttribute('attr1', 'e');
       testElement.setAttribute('attr1', 'f');
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testElement.updateCounter);
     `;
 
@@ -294,14 +294,14 @@ test.describe('CustomElement', () => {
       isUpdatedCallbackError = false;
 
       testElement.setAttribute('attr1', 'a');
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testElement.outerHTML);
 
       isRenderError = false;
       isUpdatedCallbackError = true;
 
       testElement.setAttribute('attr1', 'b');
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testElement.outerHTML);
     `;
 

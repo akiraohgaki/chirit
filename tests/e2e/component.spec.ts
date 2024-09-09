@@ -164,13 +164,13 @@ test.describe('Component', () => {
 
       state1.set(1);
       state2.set(1);
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testComponent.content.innerHTML);
 
       testComponent.unobserve(state1, state2);
       state1.set(2);
       state2.set(2);
-      await this.wait(200);
+      await this.wait(100);
       this.addLog(testComponent.content.innerHTML);
     `;
 

@@ -40,7 +40,7 @@ Deno.test('DOM in Deno', async (t) => {
     const testComponent = document.querySelector('test-component') as TestComponent;
     testComponent.attr.attr1 = 'a';
 
-    await wait(200);
+    await wait(100);
 
     assertStrictEquals(
       testComponent.outerHTML,
