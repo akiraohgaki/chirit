@@ -122,7 +122,7 @@ test.describe('CustomElement', () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('moved to a different page', async ({ page }) => {
+  test('moved to a different page', async ({ page }, testInfo) => {
     const code = `
       ${testElementDefinitionCode}
 
@@ -155,10 +155,25 @@ test.describe('CustomElement', () => {
       'updatedCallback',
     ];
 
+    const logsFirefox = [
+      'observedAttributes',
+      'constructor',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element></test-element>',
+      'disconnectedCallback',
+      'adoptedCallback',
+      'connectedCallback',
+    ];
+
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
-    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+    await expect(page.locator('[data-content="log"]')).toHaveText(
+      testInfo.project.name === 'firefox' ? logsFirefox : logs,
+    );
   });
 
   test('attribute changed', async ({ page }) => {
