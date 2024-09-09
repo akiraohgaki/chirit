@@ -1,97 +1,83 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('/elementattributesproxy', () => {
+test.describe('ElementAttributesProxy', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/elementattributesproxy');
-
-    await page.locator('[data-action="init"]').click();
   });
 
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: init',
-      '<div></div>',
-    ]);
+  test('class instance', async ({ page }) => {
+    const code = `
+      const { ElementAttributesProxy } = this.chirit;
+
+      const target = document.createElement('div');
+
+      const elementAttributesProxy = new ElementAttributesProxy(target);
+
+      this.addLog(elementAttributesProxy instanceof ElementAttributesProxy);
+      this.addLog(elementAttributesProxy instanceof Object);
+    `;
+
+    const logs = [
+      'false',
+      'true',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('Traps', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
+  test('attribute manipulation', async ({ page }) => {
+    const code = `
+      const { ElementAttributesProxy } = this.chirit;
 
-    await page.locator('[data-action="trap-set"]').click();
-    await page.locator('[data-action="trap-set-invalid"]').click();
-    await page.locator('[data-action="trap-get"]').click();
-    await page.locator('[data-action="trap-has"]').click();
-    await page.locator('[data-action="trap-ownkeys"]').click();
-    await page.locator('[data-action="trap-getownpropertydescriptor"]').click();
-    await page.locator('[data-action="trap-deleteproperty"]').click();
-    await page.locator('[data-action="trap-deleteproperty"]').click();
-    await page.locator('[data-action="trap-get"]').click();
-    await page.locator('[data-action="trap-has"]').click();
-    await page.locator('[data-action="trap-ownkeys"]').click();
-    await page.locator('[data-action="trap-getownpropertydescriptor"]').click();
+      const target = document.createElement('div');
+      this.addResult(target);
+      this.addLog(target.outerHTML);
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: trap-set',
-      '<div attr1="attr1" data-attr2="attr2"></div>',
+      const elementAttributesProxy = new ElementAttributesProxy(target);
 
-      'action: trap-set-invalid',
-      /exception: .+/,
+      this.addLog(elementAttributesProxy.attr0);
 
-      'action: trap-get',
-      'attr1: attr1',
-      'data-attr2: attr2',
-      '<div attr1="attr1" data-attr2="attr2"></div>',
+      elementAttributesProxy.attr1 = '1';
+      this.addLog(elementAttributesProxy.attr1);
+      this.addResult(target);
+      this.addLog(target.outerHTML);
 
-      'action: trap-has',
-      'attr1: true',
-      'data-attr2: true',
-      '<div attr1="attr1" data-attr2="attr2"></div>',
+      elementAttributesProxy['attr2'] = '2';
+      this.addLog(elementAttributesProxy['attr2']);
+      this.addResult(target);
+      this.addLog(target.outerHTML);
 
-      'action: trap-ownkeys',
-      JSON.stringify(['attr1', 'data-attr2']),
-      '<div attr1="attr1" data-attr2="attr2"></div>',
+      this.addLog(Object.keys(elementAttributesProxy).toSorted());
+      this.addLog(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'attr1') !== undefined);
 
-      'action: trap-getownpropertydescriptor',
-      'attr1: true',
-      'data-attr2: true',
-      '<div attr1="attr1" data-attr2="attr2"></div>',
+      delete elementAttributesProxy.attr2;
+      this.addResult(target);
+      this.addLog(target.outerHTML);
 
-      'action: trap-deleteproperty',
+      this.addLog('attr1' in elementAttributesProxy);
+      this.addLog('attr2' in elementAttributesProxy);
+    `;
+
+    const logs = [
       '<div></div>',
+      'undefined',
+      '1',
+      '<div attr1="1"></div>',
+      '2',
+      '<div attr1="1" attr2="2"></div>',
+      '["attr1","attr2"]',
+      'true',
+      '<div attr1="1"></div>',
+      'true',
+      'false',
+    ];
 
-      'action: trap-deleteproperty',
-      /exception: .+/,
-
-      'action: trap-get',
-      'attr1: undefined',
-      'data-attr2: undefined',
-      '<div></div>',
-
-      'action: trap-has',
-      'attr1: false',
-      'data-attr2: false',
-      '<div></div>',
-
-      'action: trap-ownkeys',
-      JSON.stringify([]),
-      '<div></div>',
-
-      'action: trap-getownpropertydescriptor',
-      'attr1: false',
-      'data-attr2: false',
-      '<div></div>',
-    ]);
-  });
-
-  test('Object instance', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="object-instance"]').click();
-
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: object-instance',
-      'object instance of ElementAttributesProxy: false',
-      'object instance of Object: true',
-    ]);
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });

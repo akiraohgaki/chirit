@@ -3,8 +3,6 @@ deno.lock
 package-lock.json
 node_modules/
 
-/tests/app/main.bundle.js
-
 /tests/e2e/test-results/
 /tests/e2e/playwright-report/
 /tests/e2e/blob-report/

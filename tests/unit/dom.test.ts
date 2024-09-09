@@ -4,9 +4,9 @@ import { Component } from '../../mod.ts';
 
 const document = dom.globalThis.document;
 
-function sleep(time: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
+async function wait(ms: number): Promise<void> {
+  await new Promise((resolve) => {
+    setTimeout(resolve, ms);
   });
 }
 
@@ -15,39 +15,40 @@ class TestComponent extends Component {
     return ['attr1'];
   }
   override template(): string {
-    return `<p>${this.attr.attr1}</p>`;
+    return `<span>${this.attr.attr1}</span>`;
   }
 }
+
 TestComponent.define('test-component');
 
 Deno.test('DOM in Deno', async (t) => {
   await t.step('Component initialization', () => {
-    document.body.innerHTML = '<test-component attr1="attr1"></test-component>';
+    document.body.innerHTML = '<test-component attr1="1"></test-component>';
     const testComponent = document.querySelector('test-component') as TestComponent;
 
     assertStrictEquals(
       testComponent.outerHTML,
-      '<test-component attr1="attr1"></test-component>',
+      '<test-component attr1="1"></test-component>',
     );
     assertStrictEquals(
       testComponent.shadowRoot?.innerHTML,
-      '<p>attr1</p>',
+      '<span>1</span>',
     );
   });
 
   await t.step('Component updating', async () => {
     const testComponent = document.querySelector('test-component') as TestComponent;
-    testComponent.attr.attr1 = 'text';
+    testComponent.attr.attr1 = 'a';
 
-    await sleep(200);
+    await wait(100);
 
     assertStrictEquals(
       testComponent.outerHTML,
-      '<test-component attr1="text"></test-component>',
+      '<test-component attr1="a"></test-component>',
     );
     assertStrictEquals(
       testComponent.shadowRoot?.innerHTML,
-      '<p>text</p>',
+      '<span>a</span>',
     );
   });
 });

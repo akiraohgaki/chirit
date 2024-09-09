@@ -1,182 +1,209 @@
 import { expect, test } from '@playwright/test';
 
-const methodLogs = [
-  'action: prop-size',
-  '0',
-
-  'action: method-set',
-
-  'action: prop-size',
-  '9',
-
-  'action: method-keys',
-  JSON.stringify([
-    'test_array',
-    'test_boolean',
-    'test_invalidjson',
-    'test_invalidobject',
-    'test_null',
-    'test_number',
-    'test_object',
-    'test_string',
-    'test_undefined',
-  ]),
-
-  'action: method-get',
-  JSON.stringify([
-    true,
-    1,
-    'text',
-    [0, 1, 2],
-    { 'key0': 0, 'key1': 1, 'key2': 2 },
-    null,
-    null,
-    'invalid',
-    '{}',
-    null,
-  ]),
-  JSON.stringify([
-    '{"_k":"boolean","_v":true}',
-    '{"_k":"number","_v":1}',
-    '{"_k":"string","_v":"text"}',
-    '{"_k":"array","_v":[0,1,2]}',
-    '{"_k":"object","_v":{"key0":0,"key1":1,"key2":2}}',
-    '{"_k":"null","_v":null}',
-    '{"_k":"undefined"}',
-    'invalid',
-    '{}',
-    null,
-  ]),
-
-  'action: method-delete',
-
-  'action: prop-size',
-  '0',
-
-  'action: method-set',
-
-  'action: prop-size',
-  '9',
-
-  'action: method-clear',
-
-  'action: prop-size',
-  '0',
-];
-
-test.describe('/webstorage (local)', () => {
+test.describe('WebStorage', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/webstorage');
-
-    await page.locator('[data-action="init-local"]').click();
   });
 
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: init-local',
-    ]);
+  test('invalid storage mode', async ({ page }) => {
+    const code = `
+      const { WebStorage } = this.chirit;
+
+      try {
+        const webStorage = new WebStorage();
+      } catch (exception) {
+        if (exception instanceof Error) {
+          this.addLog('Error: ' + exception.message);
+        }
+      }
+
+      try {
+        const webStorage = new WebStorage('invalid');
+      } catch (exception) {
+        if (exception instanceof Error) {
+          this.addLog('Error: ' + exception.message);
+        }
+      }
+    `;
+
+    const logs = [
+      /Error: .+/,
+      /Error: .+/,
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('Properties', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
+  test('local storage mode', async ({ page }) => {
+    const code = `
+      const { WebStorage } = this.chirit;
 
-    await page.locator('[data-action="prop-mode"]').click();
-    await page.locator('[data-action="prop-prefix"]').click();
-    await page.locator('[data-action="prop-size"]').click();
+      const webStorage = new WebStorage('local', 'test_');
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: prop-mode',
+      this.addLog(webStorage.mode);
+      this.addLog(webStorage.prefix);
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys());
+
+      this.addLog(webStorage.get('item0'));
+
+      localStorage.setItem('test_item1', 'test1');
+      this.addLog(localStorage.getItem('test_item1'));
+      this.addLog(webStorage.get('item1'));
+
+      webStorage.set('item2', 'test2');
+      this.addLog(localStorage.getItem('test_item2'));
+      this.addLog(webStorage.get('item2'));
+
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys().sort());
+
+      webStorage.delete('item1');
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys());
+
+      webStorage.clear();
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys());
+    `;
+
+    const logs = [
       'local',
-
-      'action: prop-prefix',
       'test_',
-
-      'action: prop-size',
       '0',
-    ]);
+      '[]',
+      'null',
+      'test1',
+      'test1',
+      '{"_v":"test2"}',
+      'test2',
+      '2',
+      '["test_item1","test_item2"]',
+      '1',
+      '["test_item2"]',
+      '0',
+      '[]',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('Methods', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
+  test('session storage mode', async ({ page }) => {
+    const code = `
+      const { WebStorage } = this.chirit;
 
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-set"]').click();
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-keys"]').click();
-    await page.locator('[data-action="method-get"]').click();
-    await page.locator('[data-action="method-delete"]').click();
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-set"]').click();
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-clear"]').click();
-    await page.locator('[data-action="prop-size"]').click();
+      const webStorage = new WebStorage('session', 'test_');
 
-    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
-  });
-});
+      this.addLog(webStorage.mode);
+      this.addLog(webStorage.prefix);
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys());
 
-test.describe('/webstorage (session)', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/webstorage');
+      this.addLog(webStorage.get('item0'));
 
-    await page.locator('[data-action="init-session"]').click();
-  });
+      sessionStorage.setItem('test_item1', 'test1');
+      this.addLog(sessionStorage.getItem('test_item1'));
+      this.addLog(webStorage.get('item1'));
 
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: init-session',
-    ]);
-  });
+      webStorage.set('item2', 'test2');
+      this.addLog(sessionStorage.getItem('test_item2'));
+      this.addLog(webStorage.get('item2'));
 
-  test('Properties', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys().sort());
 
-    await page.locator('[data-action="prop-mode"]').click();
-    await page.locator('[data-action="prop-prefix"]').click();
-    await page.locator('[data-action="prop-size"]').click();
+      webStorage.delete('item1');
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys());
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: prop-mode',
+      webStorage.clear();
+      this.addLog(webStorage.size);
+      this.addLog(webStorage.keys());
+    `;
+
+    const logs = [
       'session',
-
-      'action: prop-prefix',
       'test_',
-
-      'action: prop-size',
       '0',
-    ]);
+      '[]',
+      'null',
+      'test1',
+      'test1',
+      '{"_v":"test2"}',
+      'test2',
+      '2',
+      '["test_item1","test_item2"]',
+      '1',
+      '["test_item2"]',
+      '0',
+      '[]',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('Methods', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
+  test('data in the storage', async ({ page }) => {
+    const code = `
+      const { WebStorage } = this.chirit;
 
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-set"]').click();
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-keys"]').click();
-    await page.locator('[data-action="method-get"]').click();
-    await page.locator('[data-action="method-delete"]').click();
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-set"]').click();
-    await page.locator('[data-action="prop-size"]').click();
-    await page.locator('[data-action="method-clear"]').click();
-    await page.locator('[data-action="prop-size"]').click();
+      const webStorage = new WebStorage('local');
 
-    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
-  });
-});
+      webStorage.set('boolean', true);
+      webStorage.set('number', 1);
+      webStorage.set('string', 'text');
+      webStorage.set('array', [0]);
+      webStorage.set('object', { key: 'value' });
+      webStorage.set('null', null);
+      webStorage.set('undefined', undefined);
 
-test.describe('/webstorage (invalid)', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/webstorage');
+      this.addLog(webStorage.get('boolean'));
+      this.addLog(webStorage.get('number'));
+      this.addLog(webStorage.get('string'));
+      this.addLog(webStorage.get('array'));
+      this.addLog(webStorage.get('object'));
+      this.addLog(webStorage.get('null'));
+      this.addLog(webStorage.get('undefined'));
 
-    await page.locator('[data-action="init-invalid"]').click();
-  });
+      this.addLog(localStorage.getItem('boolean'));
+      this.addLog(localStorage.getItem('number'));
+      this.addLog(localStorage.getItem('string'));
+      this.addLog(localStorage.getItem('array'));
+      this.addLog(localStorage.getItem('object'));
+      this.addLog(localStorage.getItem('null'));
+      this.addLog(localStorage.getItem('undefined'));
 
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: init-invalid',
-      /exception: .+/,
-    ]);
+      webStorage.clear();
+    `;
+
+    const logs = [
+      'true',
+      '1',
+      'text',
+      '[0]',
+      '{"key":"value"}',
+      'null',
+      'undefined',
+      '{"_v":true}',
+      '{"_v":1}',
+      '{"_v":"text"}',
+      '{"_v":[0]}',
+      '{"_v":{"key":"value"}}',
+      '{"_v":null}',
+      '{}',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });

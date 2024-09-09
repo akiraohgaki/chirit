@@ -1,42 +1,40 @@
 import { expect, test } from '@playwright/test';
 
-const notifyValue = 'text';
-
-test.describe('/observable', () => {
+test.describe('Observable', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/observable');
-
-    await page.locator('[data-action="init"]').click();
   });
 
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: init',
-    ]);
-  });
+  test('notification', async ({ page }) => {
+    const code = `
+      const { Observable } = this.chirit;
 
-  test('Methods', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
+      const observer1 = (state) => {
+        this.addLog(state);
+      };
+      const observer2 = (state) => {
+        this.addLog(state);
+      };
 
-    await page.locator('[data-action="method-notify"]').click();
-    await page.locator('[data-action="method-subscribe"]').click();
-    await page.locator('[data-action="method-notify"]').click();
-    await page.locator('[data-action="method-unsubscribe"]').click();
-    await page.locator('[data-action="method-notify"]').click();
+      const observable = new Observable();
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: method-notify',
+      observable.subscribe(observer1);
+      observable.subscribe(observer2);
+      observable.notify(true);
 
-      'action: method-subscribe',
+      observable.unsubscribe(observer1);
+      observable.unsubscribe(observer2);
+      observable.notify(true);
+    `;
 
-      'action: method-notify',
-      `observer1: ${notifyValue}`,
-      `observer2: ${notifyValue}`,
-      `observer3: ${notifyValue}`,
+    const logs = [
+      'true',
+      'true',
+    ];
 
-      'action: method-unsubscribe',
-
-      'action: method-notify',
-    ]);
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });

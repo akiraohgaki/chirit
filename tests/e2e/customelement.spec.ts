@@ -1,298 +1,339 @@
 import { expect, test } from '@playwright/test';
-import { sleep } from './util.ts';
 
-const propLogs = [
-  'action: prop-updatecounter',
-  '0',
-  '<test-element></test-element>',
-];
+const testElementDefinitionCode = `
+  const { CustomElement } = this.chirit;
+  const addLog = this.addLog;
 
-const methodLogs = [
-  'action: method-update',
-  'update',
-  'updateSync',
-  'render',
-  'updatedCallback',
-  '<test-element></test-element>',
+  let isRenderError = false;
+  let isUpdatedCallbackError = false;
 
-  'action: prop-updatecounter',
-  '1',
-  '<test-element></test-element>',
-
-  'action: method-updatesync',
-  'updateSync',
-  'render',
-  'updatedCallback',
-  '<test-element></test-element>',
-
-  'action: prop-updatecounter',
-  '2',
-  '<test-element></test-element>',
-
-  'action: method-render',
-  'render',
-  '<test-element></test-element>',
-
-  'action: prop-updatecounter',
-  '2',
-  '<test-element></test-element>',
-];
-
-test.describe('/customelement (constructor)', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/customelement');
-
-    await page.locator('[data-action="method-define"]').click();
-    await page.locator('[data-action="init-constructor"]').click();
-  });
-
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: method-define',
-      'observedAttributes',
-      'defined: true',
-
-      'action: init-constructor',
-      'constructor',
-      '<test-element></test-element>',
-    ]);
-  });
-
-  test('Properties', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="prop-updatecounter"]').click();
-
-    await expect(page.locator('[data-log]')).toHaveText(propLogs);
-  });
-
-  test('Methods', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="method-update"]').click();
-    await sleep(200);
-    await page.locator('[data-action="prop-updatecounter"]').click();
-    await page.locator('[data-action="method-updatesync"]').click();
-    await page.locator('[data-action="prop-updatecounter"]').click();
-    await page.locator('[data-action="method-render"]').click();
-    await page.locator('[data-action="prop-updatecounter"]').click();
-
-    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
-  });
-});
-
-test.describe('/customelement (createElement)', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/customelement');
-
-    await page.locator('[data-action="method-define"]').click();
-    await page.locator('[data-action="init-createelement"]').click();
-  });
-
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: method-define',
-      'observedAttributes',
-      'defined: true',
-
-      'action: init-createelement',
-      'constructor',
-      '<test-element></test-element>',
-    ]);
-  });
-
-  test('Properties', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="prop-updatecounter"]').click();
-
-    await expect(page.locator('[data-log]')).toHaveText(propLogs);
-  });
-
-  test('Methods', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="method-update"]').click();
-    await sleep(200);
-    await page.locator('[data-action="prop-updatecounter"]').click();
-    await page.locator('[data-action="method-updatesync"]').click();
-    await page.locator('[data-action="prop-updatecounter"]').click();
-    await page.locator('[data-action="method-render"]').click();
-    await page.locator('[data-action="prop-updatecounter"]').click();
-
-    await expect(page.locator('[data-log]')).toHaveText(methodLogs);
-  });
-});
-
-test.describe('/customelement (HTML)', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/customelement');
-
-    await page.locator('[data-action="method-define"]').click();
-    await page.locator('[data-action="init-html"]').click();
-  });
-
-  test('Initialization', async ({ page }) => {
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: method-define',
-      'observedAttributes',
-      'defined: true',
-
-      'action: init-html',
-      'constructor',
-      'attributeChangedCallback',
-      'connectedCallback',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element attr1="attr1">test-element</test-element>',
-    ]);
-  });
-
-  test('Properties', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="prop-updatecounter"]').click();
-
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: prop-updatecounter',
-      '1',
-      '<test-element attr1="attr1">test-element</test-element>',
-    ]);
-  });
-
-  test('Methods', async ({ page }) => {
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="method-update"]').click();
-    await sleep(200);
-    await page.locator('[data-action="prop-updatecounter"]').click();
-    await page.locator('[data-action="method-updatesync"]').click();
-    await page.locator('[data-action="prop-updatecounter"]').click();
-    await page.locator('[data-action="method-render"]').click();
-    await page.locator('[data-action="prop-updatecounter"]').click();
-
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: method-update',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element attr1="attr1">test-element</test-element>',
-
-      'action: prop-updatecounter',
-      '2',
-      '<test-element attr1="attr1">test-element</test-element>',
-
-      'action: method-updatesync',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element attr1="attr1">test-element</test-element>',
-
-      'action: prop-updatecounter',
-      '3',
-      '<test-element attr1="attr1">test-element</test-element>',
-
-      'action: method-render',
-      'render',
-      '<test-element attr1="attr1">test-element</test-element>',
-
-      'action: prop-updatecounter',
-      '3',
-      '<test-element attr1="attr1">test-element</test-element>',
-    ]);
-  });
-
-  test('Callbacks', async ({ page }, testInfo) => {
-    const isFirefox = testInfo.project.name === 'firefox';
-
-    await page.locator('[data-action="clear-log"]').click();
-
-    await page.locator('[data-action="callback-attributechangedcallback"]').click();
-    await sleep(200);
-    await page.locator('[data-action="callback-connectedcallback"]').click();
-    await sleep(200);
-    await page.locator('[data-action="callback-disconnectedcallback"]').click();
-    await sleep(200);
-    if (!isFirefox) {
-      // Skip with Firefox,
-      // because when move a custom element to another document,
-      // Firefox resets the element as an unknown tag
-      await page.locator('[data-action="callback-adoptedcallback"]').click();
-      await sleep(200);
+  class TestElement extends CustomElement {
+    static get observedAttributes() {
+      addLog('observedAttributes');
+      return ['attr1', ...super.observedAttributes];
     }
-    await page.locator('[data-action="callback-updatedcallback"]').click();
-    await page.locator('[data-action="callback-errorcallback"]').click();
+    constructor() {
+      addLog('constructor');
+      super();
+    }
+    attributeChangedCallback(name, oldValue, newValue, namespace) {
+      addLog('attributeChangedCallback');
+      super.attributeChangedCallback(name, oldValue, newValue, namespace);
+    }
+    connectedCallback() {
+      addLog('connectedCallback');
+      super.connectedCallback();
+    }
+    disconnectedCallback() {
+      addLog('disconnectedCallback');
+      super.disconnectedCallback();
+    }
+    adoptedCallback(oldDocument, newDocument) {
+      addLog('adoptedCallback');
+      super.adoptedCallback(oldDocument, newDocument);
+    }
+    update() {
+      addLog('update');
+      return super.update();
+    }
+    updateSync() {
+      addLog('updateSync');
+      super.updateSync();
+    }
+    render() {
+      addLog('render');
+      if (isRenderError) {
+        throw new Error('error');
+      }
+      super.render();
+      if (this.getAttribute('attr0') || this.getAttribute('attr1')) {
+        this.textContent = 'attr0:' + this.getAttribute('attr0') + ';'
+          + 'attr1:' + this.getAttribute('attr1') + ';';
+      }
+    }
+    updatedCallback() {
+      addLog('updatedCallback');
+      if (isUpdatedCallbackError) {
+        throw new Error('error');
+      }
+      super.updatedCallback();
+    }
+    errorCallback(exception) {
+      addLog('errorCallback');
+      if (exception instanceof Error) {
+        addLog(exception.message);
+      }
+      super.errorCallback(exception);
+    }
+  }
 
-    const callbackAdoptedcallbackLogs = isFirefox ? [] : [
-      'action: callback-adoptedcallback',
+  TestElement.define('test-element');
+`;
+
+test.describe('CustomElement', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/customelement');
+  });
+
+  test('custom element definition', async ({ page }) => {
+    const code = `
+      ${testElementDefinitionCode}
+
+      this.addLog(customElements.get('test-element') !== undefined);
+    `;
+
+    const logs = [
+      'observedAttributes',
+      'true',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test('connected or disconnected', async ({ page }) => {
+    const code = `
+      ${testElementDefinitionCode}
+
+      this.addResult('<test-element></test-element>');
+
+      const testElement = document.querySelector('test-element');
+      this.addLog(testElement.outerHTML);
+
+      testElement.remove();
+    `;
+
+    const logs = [
+      'observedAttributes',
+      'constructor',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element></test-element>',
+      'disconnectedCallback',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test('moved to a different page', async ({ page }) => {
+    const code = `
+      ${testElementDefinitionCode}
+
+      this.addResult('<test-element></test-element>');
+
+      const testElement = document.querySelector('test-element');
+      this.addLog(testElement.outerHTML);
+
+      const iframe = document.createElement('iframe');
+      iframe.srcdoc = '<!DOCTYPE html><html><head></head><body></body></html>';
+      this.addResult(iframe);
+
+      document.querySelector('iframe').contentWindow.document.body.appendChild(testElement);
+    `;
+
+    const logs = [
+      'observedAttributes',
+      'constructor',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element></test-element>',
       'disconnectedCallback',
       'adoptedCallback',
       'connectedCallback',
       'update',
-      'disconnectedCallback',
-      'adoptedCallback',
-      'connectedCallback',
-      'update',
-      '<test-element attr1="attr1">test-element</test-element>',
       'updateSync',
       'render',
       'updatedCallback',
     ];
 
-    await expect(page.locator('[data-log]')).toHaveText([
-      'action: callback-attributechangedcallback',
-      'attributeChangedCallback',
-      '<test-element attr1="attr1">test-element</test-element>',
-      'attributeChangedCallback',
-      'update',
-      '<test-element attr1="text">test-element</test-element>',
-      'attributeChangedCallback',
-      'update',
-      '<test-element attr1="attr1">test-element</test-element>',
-      'updateSync',
-      'render',
-      'updatedCallback',
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
 
-      'action: callback-connectedcallback',
-      'disconnectedCallback',
+  test('attribute changed', async ({ page }) => {
+    const code = `
+      ${testElementDefinitionCode}
+
+      this.addResult('<test-element attr0="0" attr1="1"></test-element>');
+
+      const testElement = document.querySelector('test-element');
+      this.addLog(testElement.outerHTML);
+
+      testElement.setAttribute('attr0', 'a');
+      await this.wait(100);
+      this.addLog(testElement.outerHTML);
+
+      testElement.setAttribute('attr1', 'b');
+      await this.wait(100);
+      this.addLog(testElement.outerHTML);
+
+      testElement.setAttribute('attr1', 'c');
+      testElement.setAttribute('attr1', 'd');
+      testElement.setAttribute('attr1', 'e');
+      testElement.setAttribute('attr1', 'f');
+      await this.wait(100);
+      this.addLog(testElement.outerHTML);
+    `;
+
+    const logs = [
+      'observedAttributes',
+      'constructor',
+      'attributeChangedCallback',
       'connectedCallback',
-      'update',
-      '<test-element attr1="attr1">test-element</test-element>',
       'updateSync',
       'render',
       'updatedCallback',
+      '<test-element attr0="0" attr1="1">attr0:0;attr1:1;</test-element>',
+      '<test-element attr0="a" attr1="1">attr0:0;attr1:1;</test-element>',
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element attr0="a" attr1="b">attr0:a;attr1:b;</test-element>',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element attr0="a" attr1="f">attr0:a;attr1:f;</test-element>',
+    ];
 
-      'action: callback-disconnectedcallback',
-      'disconnectedCallback',
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test('asynchronous update', async ({ page }) => {
+    const code = `
+      ${testElementDefinitionCode}
+
+      this.addResult('<test-element attr0="0" attr1="1"></test-element>');
+
+      const testElement = document.querySelector('test-element');
+      this.addLog(testElement.updateCounter);
+
+      testElement.setAttribute('attr1', 'a');
+      await this.wait(100);
+      this.addLog(testElement.updateCounter);
+
+      testElement.setAttribute('attr1', 'b');
+      testElement.setAttribute('attr1', 'c');
+      testElement.setAttribute('attr1', 'd');
+      testElement.setAttribute('attr1', 'e');
+      testElement.setAttribute('attr1', 'f');
+      await this.wait(100);
+      this.addLog(testElement.updateCounter);
+    `;
+
+    const logs = [
+      'observedAttributes',
+      'constructor',
+      'attributeChangedCallback',
       'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '1',
+      'attributeChangedCallback',
       'update',
-      '<test-element attr1="attr1">test-element</test-element>',
       'updateSync',
       'render',
       'updatedCallback',
-
-      ...callbackAdoptedcallbackLogs,
-
-      'action: callback-updatedcallback',
+      '2',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
       'updateSync',
       'render',
       'updatedCallback',
-      '<test-element attr1="attr1">test-element</test-element>',
+      '3',
+    ];
 
-      'action: callback-errorcallback',
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test('error handling', async ({ page }) => {
+    const code = `
+      ${testElementDefinitionCode}
+
+      this.addResult('<test-element attr0="0" attr1="1"></test-element>');
+
+      const testElement = document.querySelector('test-element');
+      this.addLog(testElement.outerHTML);
+
+      isRenderError = true;
+      isUpdatedCallbackError = false;
+
+      testElement.setAttribute('attr1', 'a');
+      await this.wait(100);
+      this.addLog(testElement.outerHTML);
+
+      isRenderError = false;
+      isUpdatedCallbackError = true;
+
+      testElement.setAttribute('attr1', 'b');
+      await this.wait(100);
+      this.addLog(testElement.outerHTML);
+    `;
+
+    const logs = [
+      'observedAttributes',
+      'constructor',
+      'attributeChangedCallback',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element attr0="0" attr1="1">attr0:0;attr1:1;</test-element>',
+      'attributeChangedCallback',
+      'update',
       'updateSync',
       'render',
       'errorCallback',
-      'exception: error',
-      '<test-element attr1="attr1">test-element</test-element>',
+      'error',
+      '<test-element attr0="0" attr1="a">attr0:0;attr1:1;</test-element>',
+      'attributeChangedCallback',
+      'update',
       'updateSync',
       'render',
       'updatedCallback',
       'errorCallback',
-      'exception: error',
-      '<test-element attr1="attr1">test-element</test-element>',
-    ]);
+      'error',
+      '<test-element attr0="0" attr1="b">attr0:0;attr1:b;</test-element>',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });

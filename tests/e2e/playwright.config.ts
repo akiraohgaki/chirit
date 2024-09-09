@@ -31,7 +31,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'cd .././ && deno task test:app',
+    command: 'cd ../../ && deno task serve',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },
