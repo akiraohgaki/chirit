@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Component", () => {
+test.describe('Component', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/component");
+    await page.goto('/component');
   });
 
-  test("inherited features", async ({ page }) => {
+  test('inherited features', async ({ page }) => {
     const code = `
       const { Component, CustomElement, NodeStructure } = this.chirit;
 
@@ -32,12 +32,12 @@ test.describe("Component", () => {
 
     const logs = [
       '<test-component attr0="0"></test-component>',
-      "<span>0</span>",
-      "true",
-      "true",
-      "true",
-      "true",
-      "true",
+      '<span>0</span>',
+      'true',
+      'true',
+      'true',
+      'true',
+      'true',
     ];
 
     console.log(code);
@@ -46,7 +46,7 @@ test.describe("Component", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("content container", async ({ page }) => {
+  test('content container', async ({ page }) => {
     const code = `
       const { Component } = this.chirit;
 
@@ -80,10 +80,10 @@ test.describe("Component", () => {
     `;
 
     const logs = [
-      "<test-component1></test-component1>",
-      "true",
-      "<test-component2><div></div></test-component2>",
-      "true",
+      '<test-component1></test-component1>',
+      'true',
+      '<test-component2><div></div></test-component2>',
+      'true',
     ];
 
     console.log(code);
@@ -92,7 +92,7 @@ test.describe("Component", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("event handling", async ({ page }) => {
+  test('event handling', async ({ page }) => {
     const code = `
       const { Component } = this.chirit;
 
@@ -119,7 +119,7 @@ test.describe("Component", () => {
     `;
 
     const logs = [
-      "<test-component></test-component>",
+      '<test-component></test-component>',
     ];
 
     console.log(code);
@@ -127,14 +127,14 @@ test.describe("Component", () => {
     await page.locator('[data-action="runCode"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
 
-    await page.locator("test-component").click();
+    await page.locator('test-component').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([
       ...logs,
-      "click",
+      'click',
     ]);
   });
 
-  test("state management", async ({ page }) => {
+  test('state management', async ({ page }) => {
     const code = `
       const { Component, State } = this.chirit;
 
@@ -175,10 +175,10 @@ test.describe("Component", () => {
     `;
 
     const logs = [
-      "<test-component></test-component>",
-      "<span>state1:0;state2:0;</span>",
-      "<span>state1:1;state2:1;</span>",
-      "<span>state1:1;state2:1;</span>",
+      '<test-component></test-component>',
+      '<span>state1:0;state2:0;</span>',
+      '<span>state1:1;state2:1;</span>',
+      '<span>state1:1;state2:1;</span>',
     ];
 
     console.log(code);

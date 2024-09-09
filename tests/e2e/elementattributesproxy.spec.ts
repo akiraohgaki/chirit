@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("ElementAttributesProxy", () => {
+test.describe('ElementAttributesProxy', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/elementattributesproxy");
+    await page.goto('/elementattributesproxy');
   });
 
-  test("class instance", async ({ page }) => {
+  test('class instance', async ({ page }) => {
     const code = `
       const { ElementAttributesProxy } = this.chirit;
 
@@ -18,8 +18,8 @@ test.describe("ElementAttributesProxy", () => {
     `;
 
     const logs = [
-      "false",
-      "true",
+      'false',
+      'true',
     ];
 
     console.log(code);
@@ -28,7 +28,7 @@ test.describe("ElementAttributesProxy", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("attribute manipulation", async ({ page }) => {
+  test('attribute manipulation', async ({ page }) => {
     const code = `
       const { ElementAttributesProxy } = this.chirit;
 
@@ -62,7 +62,7 @@ test.describe("ElementAttributesProxy", () => {
     `;
 
     const logs = [
-      "<div></div>",
+      '<div></div>',
       'undefined',
       '1',
       '<div attr1="1"></div>',

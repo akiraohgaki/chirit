@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Observable", () => {
+test.describe('Observable', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/observable");
+    await page.goto('/observable');
   });
 
-  test("notification", async ({ page }) => {
+  test('notification', async ({ page }) => {
     const code = `
       const { Observable } = this.chirit;
 
@@ -28,8 +28,8 @@ test.describe("Observable", () => {
     `;
 
     const logs = [
-      "true",
-      "true",
+      'true',
+      'true',
     ];
 
     console.log(code);

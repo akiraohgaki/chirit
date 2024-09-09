@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("WebStorage", () => {
+test.describe('WebStorage', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/webstorage");
+    await page.goto('/webstorage');
   });
 
-  test("invalid storage mode", async ({ page }) => {
+  test('invalid storage mode', async ({ page }) => {
     const code = `
       const { WebStorage } = this.chirit;
 
@@ -37,7 +37,7 @@ test.describe("WebStorage", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("local storage mode", async ({ page }) => {
+  test('local storage mode', async ({ page }) => {
     const code = `
       const { WebStorage } = this.chirit;
 
@@ -71,21 +71,21 @@ test.describe("WebStorage", () => {
     `;
 
     const logs = [
-      "local",
-      "test_",
-      "0",
-      "[]",
-      "null",
-      "test1",
-      "test1",
+      'local',
+      'test_',
+      '0',
+      '[]',
+      'null',
+      'test1',
+      'test1',
       '{"_k":"item2","_v":"test2"}',
-      "test2",
-      "2",
+      'test2',
+      '2',
       '["test_item1","test_item2"]',
-      "1",
+      '1',
       '["test_item2"]',
-      "0",
-      "[]",
+      '0',
+      '[]',
     ];
 
     console.log(code);
@@ -94,7 +94,7 @@ test.describe("WebStorage", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("session storage mode", async ({ page }) => {
+  test('session storage mode', async ({ page }) => {
     const code = `
       const { WebStorage } = this.chirit;
 
@@ -128,21 +128,21 @@ test.describe("WebStorage", () => {
     `;
 
     const logs = [
-      "session",
-      "test_",
-      "0",
-      "[]",
-      "null",
-      "test1",
-      "test1",
+      'session',
+      'test_',
+      '0',
+      '[]',
+      'null',
+      'test1',
+      'test1',
       '{"_k":"item2","_v":"test2"}',
-      "test2",
-      "2",
+      'test2',
+      '2',
       '["test_item1","test_item2"]',
-      "1",
+      '1',
       '["test_item2"]',
-      "0",
-      "[]",
+      '0',
+      '[]',
     ];
 
     console.log(code);
@@ -151,7 +151,7 @@ test.describe("WebStorage", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("data in the storage", async ({ page }) => {
+  test('data in the storage', async ({ page }) => {
     const code = `
       const { WebStorage } = this.chirit;
 
@@ -185,13 +185,13 @@ test.describe("WebStorage", () => {
     `;
 
     const logs = [
-      "true",
-      "1",
-      "text",
-      "[0]",
+      'true',
+      '1',
+      'text',
+      '[0]',
       '{"key":"value"}',
-      "null",
-      "undefined",
+      'null',
+      'undefined',
       '{"_k":"boolean","_v":true}',
       '{"_k":"number","_v":1}',
       '{"_k":"string","_v":"text"}',

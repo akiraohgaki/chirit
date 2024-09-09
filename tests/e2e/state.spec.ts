@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("State", () => {
+test.describe('State', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/state");
+    await page.goto('/state');
   });
 
-  test("state management", async ({ page }) => {
+  test('state management', async ({ page }) => {
     const code = `
       const { State } = this.chirit;
 
@@ -21,9 +21,9 @@ test.describe("State", () => {
     `;
 
     const logs = [
-      "0",
-      "1",
-      "0",
+      '0',
+      '1',
+      '0',
     ];
 
     console.log(code);
@@ -32,7 +32,7 @@ test.describe("State", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("state change notification", async ({ page }) => {
+  test('state change notification', async ({ page }) => {
     const code = `
       const { State } = this.chirit;
 
@@ -54,9 +54,9 @@ test.describe("State", () => {
     `;
 
     const logs = [
-      "0",
-      "1",
-      "0",
+      '0',
+      '1',
+      '0',
     ];
 
     console.log(code);

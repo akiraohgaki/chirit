@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("createComponent", () => {
+test.describe('createComponent', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/createcomponent");
+    await page.goto('/createcomponent');
   });
 
-  test("custom element definition", async ({ page }) => {
+  test('custom element definition', async ({ page }) => {
     const code = `
       const { createComponent, Component } = this.chirit;
 
@@ -18,9 +18,9 @@ test.describe("createComponent", () => {
     `;
 
     const logs = [
-      "true",
-      "false",
-      "true",
+      'true',
+      'false',
+      'true',
     ];
 
     console.log(code);
@@ -29,7 +29,7 @@ test.describe("createComponent", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("connected or disconnected", async ({ page }) => {
+  test('connected or disconnected', async ({ page }) => {
     const code = `
       const { createComponent } = this.chirit;
       const addLog = this.addLog;
@@ -61,12 +61,12 @@ test.describe("createComponent", () => {
     `;
 
     const logs = [
-      "init",
-      "template",
-      "connected",
+      'init',
+      'template',
+      'connected',
       '<test-component attr1="1"></test-component>',
-      "<span>1</span>",
-      "disconnected",
+      '<span>1</span>',
+      'disconnected',
     ];
 
     console.log(code);

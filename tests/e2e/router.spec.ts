@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Router", () => {
+test.describe('Router', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/router");
+    await page.goto('/router');
   });
 
-  test("invalid routing mode", async ({ page }) => {
+  test('invalid routing mode', async ({ page }) => {
     const code = `
       const { Router } = this.chirit;
 
@@ -37,7 +37,7 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("history-based routing mode: routing", async ({ page, baseURL }) => {
+  test('history-based routing mode: routing', async ({ page, baseURL }) => {
     const code = `
       const { Router } = this.chirit;
 
@@ -76,19 +76,19 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "history",
-      "/router/history/",
-      baseURL + "/router/history/a/1/2",
+      'history',
+      '/router/history/',
+      baseURL + '/router/history/a/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router/history/b/1/2",
+      baseURL + '/router/history/b/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router/history/",
-      baseURL + "/router/",
-      baseURL + "/",
-      baseURL + "/router/history/#hash",
-      baseURL + "/router/history/?query=true",
-      baseURL + "/",
-      baseURL + "/router/history/noroute",
+      baseURL + '/router/history/',
+      baseURL + '/router/',
+      baseURL + '/',
+      baseURL + '/router/history/#hash',
+      baseURL + '/router/history/?query=true',
+      baseURL + '/',
+      baseURL + '/router/history/noroute',
     ];
 
     console.log(code);
@@ -97,8 +97,8 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("history-based routing mode: reload to different origin", async ({ page }) => {
-    const url = "https://example.com/";
+  test('history-based routing mode: reload to different origin', async ({ page }) => {
+    const url = 'https://example.com/';
 
     const code = `
       const { Router } = this.chirit;
@@ -115,7 +115,7 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText([]);
   });
 
-  test("history-based routing mode: events", async ({ page, baseURL }) => {
+  test('history-based routing mode: events', async ({ page, baseURL }) => {
     const code = `
       const { Router } = this.chirit;
 
@@ -141,11 +141,11 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "pushstate",
-      baseURL + "/change",
-      "pushstate",
-      baseURL + "/error",
-      "error",
+      'pushstate',
+      baseURL + '/change',
+      'pushstate',
+      baseURL + '/error',
+      'error',
     ];
 
     console.log(code);
@@ -157,15 +157,15 @@ test.describe("Router", () => {
     await page.goForward();
     await expect(page.locator('[data-content="log"]')).toHaveText([
       ...logs,
-      "popstate",
-      baseURL + "/change",
-      "popstate",
-      baseURL + "/error",
-      "error",
+      'popstate',
+      baseURL + '/change',
+      'popstate',
+      baseURL + '/error',
+      'error',
     ]);
   });
 
-  test("hash-based routing mode: routing", async ({ page, baseURL }) => {
+  test('hash-based routing mode: routing', async ({ page, baseURL }) => {
     const code = `
       const { Router } = this.chirit;
 
@@ -209,17 +209,17 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "hash",
-      "/router/hash/",
-      baseURL + "/router#/router/hash/a/1/2",
+      'hash',
+      '/router/hash/',
+      baseURL + '/router#/router/hash/a/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router#/router/hash/b/1/2",
+      baseURL + '/router#/router/hash/b/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router#/router/hash/",
-      baseURL + "/router#/router/",
-      baseURL + "/router#/",
-      baseURL + "/router#/router/hash/hash",
-      baseURL + "/router#/router/hash/noroute",
+      baseURL + '/router#/router/hash/',
+      baseURL + '/router#/router/',
+      baseURL + '/router#/',
+      baseURL + '/router#/router/hash/hash',
+      baseURL + '/router#/router/hash/noroute',
     ];
 
     console.log(code);
@@ -228,7 +228,7 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("hash-based routing mode: reload to query string", async ({ page, baseURL }) => {
+  test('hash-based routing mode: reload to query string', async ({ page, baseURL }) => {
     const code = `
       const { Router } = this.chirit;
 
@@ -242,11 +242,11 @@ test.describe("Router", () => {
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
-    await expect(page).toHaveURL(baseURL + "/router?query=true");
+    await expect(page).toHaveURL(baseURL + '/router?query=true');
     await expect(page.locator('[data-content="log"]')).toHaveText([]);
   });
 
-  test("hash-based routing mode: reload to same origin", async ({ page, baseURL }) => {
+  test('hash-based routing mode: reload to same origin', async ({ page, baseURL }) => {
     const code = `
       const { Router } = this.chirit;
 
@@ -260,12 +260,12 @@ test.describe("Router", () => {
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
-    await expect(page).toHaveURL(baseURL + "/");
+    await expect(page).toHaveURL(baseURL + '/');
     await expect(page.locator('[data-content="log"]')).toHaveText([]);
   });
 
-  test("hash-based routing mode: reload to different origin", async ({ page }) => {
-    const url = "https://example.com/";
+  test('hash-based routing mode: reload to different origin', async ({ page }) => {
+    const url = 'https://example.com/';
 
     const code = `
       const { Router } = this.chirit;
@@ -282,7 +282,7 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText([]);
   });
 
-  test("hash-based routing mode: events", async ({ page, baseURL }) => {
+  test('hash-based routing mode: events', async ({ page, baseURL }) => {
     const code = `
       const { Router } = this.chirit;
 
@@ -310,11 +310,11 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "hashchange",
-      baseURL + "/router#/change",
-      "hashchange",
-      baseURL + "/router#/error",
-      "error",
+      'hashchange',
+      baseURL + '/router#/change',
+      'hashchange',
+      baseURL + '/router#/error',
+      'error',
     ];
 
     console.log(code);
@@ -326,11 +326,11 @@ test.describe("Router", () => {
     await page.goForward();
     await expect(page.locator('[data-content="log"]')).toHaveText([
       ...logs,
-      "hashchange",
-      baseURL + "/router#/change",
-      "hashchange",
-      baseURL + "/router#/error",
-      "error",
+      'hashchange',
+      baseURL + '/router#/change',
+      'hashchange',
+      baseURL + '/router#/error',
+      'error',
     ]);
   });
 });

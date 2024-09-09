@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("NodeStructure", () => {
+test.describe('NodeStructure', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/nodestructure");
+    await page.goto('/nodestructure');
   });
 
-  test("content type", async ({ page }) => {
+  test('content type', async ({ page }) => {
     const code = `
       const { NodeStructure } = this.chirit;
 
@@ -41,11 +41,11 @@ test.describe("NodeStructure", () => {
     `;
 
     const logs = [
-      "<div></div>",
-      "<div><span>1</span></div>",
-      "<div><span>2</span></div>",
-      "<div><span>3</span><span>4</span></div>",
-      "<div><span>5</span><span>6</span></div>",
+      '<div></div>',
+      '<div><span>1</span></div>',
+      '<div><span>2</span></div>',
+      '<div><span>3</span><span>4</span></div>',
+      '<div><span>5</span><span>6</span></div>',
     ];
 
     console.log(code);
@@ -54,7 +54,7 @@ test.describe("NodeStructure", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("diff and patch", async ({ page }) => {
+  test('diff and patch', async ({ page }) => {
     const code = `
       const { NodeStructure } = this.chirit;
 
@@ -119,7 +119,7 @@ test.describe("NodeStructure", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("event handler", async ({ page }) => {
+  test('event handler', async ({ page }) => {
     const code = `
       const { NodeStructure } = this.chirit;
 
@@ -154,14 +154,14 @@ test.describe("NodeStructure", () => {
     await page.locator('[data-action="runCode"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
 
-    await page.locator("#nodestructure-host > button").click();
+    await page.locator('#nodestructure-host > button').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([
       ...logs,
-      "click",
+      'click',
     ]);
   });
 
-  test("clone", async ({ page }) => {
+  test('clone', async ({ page }) => {
     const code = `
       const { NodeStructure } = this.chirit;
 
@@ -182,9 +182,9 @@ test.describe("NodeStructure", () => {
     `;
 
     const logs = [
-      "<div></div>",
-      "<div><span>1</span></div>",
-      "<span>1</span>",
+      '<div></div>',
+      '<div><span>1</span></div>',
+      '<span>1</span>',
     ];
 
     console.log(code);

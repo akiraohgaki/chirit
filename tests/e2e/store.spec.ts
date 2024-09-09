@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Store", () => {
+test.describe('Store', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/store");
+    await page.goto('/store');
   });
 
-  test("state management", async ({ page }) => {
+  test('state management', async ({ page }) => {
     const code = `
       const { Store } = this.chirit;
 
@@ -29,11 +29,11 @@ test.describe("Store", () => {
 
     const logs = [
       '{"updated":false,"key":null}',
-      "false",
+      'false',
       '{"updated":true,"key":null}',
-      "false",
+      'false',
       '{"updated":false,"key":null}',
-      "false",
+      'false',
     ];
 
     console.log(code);
@@ -42,7 +42,7 @@ test.describe("Store", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("state change notification", async ({ page }) => {
+  test('state change notification', async ({ page }) => {
     const code = `
       const { Store } = this.chirit;
 
