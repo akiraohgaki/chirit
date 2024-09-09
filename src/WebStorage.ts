@@ -25,7 +25,7 @@ import dom from './dom.ts';
  *
  * // When using this class the actual data is stored as a special JSON object.
  * console.log(localStorage.getItem('user_settings'));
- * // '{"_k":"settings","_v":{"colorTheme":"dark"}}'
+ * // '{"_v":{"colorTheme":"dark"}}'
  * ```
  */
 export default class WebStorage {
@@ -105,7 +105,7 @@ export default class WebStorage {
     // Stores value as special JSON object
     this.#storage.setItem(
       this.#prefix + key,
-      JSON.stringify({ _k: key, _v: value }),
+      JSON.stringify({ _v: value }),
     );
   }
 
@@ -122,9 +122,7 @@ export default class WebStorage {
     if (value) {
       try {
         const deserializedValue = JSON.parse(value);
-        if (deserializedValue?._k === key) {
-          return deserializedValue._v;
-        }
+        return deserializedValue?._v;
       } catch {
         void 0;
       }
