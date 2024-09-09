@@ -17,7 +17,7 @@ class CustomElement extends HTMLElementRef {
         super();
         this.#updateCounter = 0;
         this.#updateTimerId = undefined;
-        this.#updateDelay = 100;
+        this.#updateDelay = 50;
         this.#updatePromiseResolvers = [];
     }
     get updateCounter() {
@@ -612,7 +612,6 @@ class WebStorage {
     }
     set(key, value) {
         this.#storage.setItem(this.#prefix + key, JSON.stringify({
-            _k: key,
             _v: value
         }));
     }
@@ -621,9 +620,7 @@ class WebStorage {
         if (value) {
             try {
                 const deserializedValue = JSON.parse(value);
-                if (deserializedValue?._k === key) {
-                    return deserializedValue._v;
-                }
+                return deserializedValue?._v;
             } catch  {
                 void 0;
             }
