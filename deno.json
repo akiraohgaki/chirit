@@ -73,7 +73,7 @@
     "test:unit": "deno test tests/unit/",
     "test:e2e": "cd tests/e2e && npx playwright test",
     "test:teardown": "echo 'Skip task test:teardown'",
-    "serve": "cd tests/playground && deno run --allow-env --allow-read --allow-net server.ts"
+    "serve": "cd tests/playground && deno run --allow-env --allow-read --allow-write --allow-net server.ts"
   },
   "imports": {
     "@deno/emit": "jsr:@deno/emit",
