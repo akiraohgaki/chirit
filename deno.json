@@ -9,6 +9,7 @@
     "include": [
       "src/**/*.ts",
       "mod.ts",
+      "types.ts",
       "deno.json",
       "README.md",
       "LICENSE"
