@@ -1,4 +1,6 @@
-export * from './src/types.ts';
+/**
+ * @module @akiraohgaki/chirit
+ */
 
 export { default as createComponent } from './src/createComponent.ts';
 
