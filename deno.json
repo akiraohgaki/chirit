@@ -1,7 +1,10 @@
 {
   "name": "@akiraohgaki/chirit",
   "version": "1.6.1",
-  "exports": "./mod.ts",
+  "exports": {
+    ".": "./mod.ts",
+    "./types": "./types.ts"
+  },
   "publish": {
     "include": [
       "src/**/*.ts",
