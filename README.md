@@ -40,73 +40,45 @@ See https://jsr.io/@akiraohgaki/chirit for install with other package managers.
 
 ### Examples
 
-TypeScript
+A component that shows current epoch time.
+
+TypeScript/JavaScript
 
 ```ts
-import { Component, State } from '@akiraohgaki/chirit';
+import { createComponent, State } from '@akiraohgaki/chirit';
 
-// The State class is an observable state for atomic state management.
 const epochTimeState = new State(Date.now());
+setInterval(() => { epochTimeState.set(Date.now()); }, 100);
 
-setInterval(() => {
-  epochTimeState.set(Date.now());
-}, 100);
-
-// The Component class is a base class for building custom web components.
-class EpochTimeComponent extends Component {
-  static override get observedAttributes(): Array<string> {
-    return ['milliseconds'];
-  }
-
-  override connectedCallback(): void {
-    super.connectedCallback(); // must always be called first
-    this.observe(epochTimeState); // observe the observables
-  }
-
-  override disconnectedCallback(): void {
-    this.unobserve(epochTimeState); // unobserve the observables
-    super.disconnectedCallback(); // should always be called last
-  }
-
-  // When a observed attributes or states changed, the template content is re-rendered.
-  override template(): string {
+createComponent('epoch-time', {
+  observedAttributes: ['color'],
+  init: (context) => {
+    context.observe(epochTimeState);
+  },
+  template: (context) => {
     return `
       <style>
-      :host {
-        display: inline-block;
-      }
-      span {
-        font-size: 120%;
-      }
+        :host { display: inline-block; }
+        span { font-color: ${context.attr.color}; }
       </style>
-
-      <span onclick="this.clickHandler(event)">
-      ${this.attr.milliseconds ? epochTimeState.get() : epochTimeState.get() * 1000}
-      </span>
+      <span>${epochTimeState.get()}</span>
     `;
   }
-
-  clickHandler(event: Event): void {
-    console.log(event, epochTimeState.get());
-  }
-}
-
-// Define the custom element.
-EpochTimeComponent.define('epoch-time');
+});
 ```
 
 HTML
 
 ```html
-<epoch-time milliseconds="true"></epoch-time>
+<epoch-time color="green"></epoch-time>
 ```
 
 ## Features
 
 ### Web components
 
-- [Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component)
 - [createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent)
+- [Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component)
 
 ### State management
 
