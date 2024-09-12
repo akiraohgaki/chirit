@@ -48,7 +48,9 @@ TypeScript/JavaScript
 import { createComponent, State } from '@akiraohgaki/chirit';
 
 const epochTimeState = new State(Date.now());
-setInterval(() => { epochTimeState.set(Date.now()); }, 100);
+setInterval(() => {
+  epochTimeState.set(Date.now());
+}, 100);
 
 createComponent('epoch-time', {
   observedAttributes: ['color'],
@@ -63,7 +65,7 @@ createComponent('epoch-time', {
       </style>
       <span>${epochTimeState.get()}</span>
     `;
-  }
+  },
 });
 ```
 
