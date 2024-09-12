@@ -61,7 +61,7 @@ createComponent('epoch-time', {
     return `
       <style>
         :host { display: inline-block; }
-        span { font-color: ${context.attr.color}; }
+        span { color: ${context.attr.color}; }
       </style>
       <span>${epochTimeState.get()}</span>
     `;
