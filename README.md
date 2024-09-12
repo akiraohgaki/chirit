@@ -1,10 +1,14 @@
 # Chirit
 
+[![JSR](https://jsr.io/badges/@akiraohgaki/chirit)](https://jsr.io/@akiraohgaki/chirit)
+
 A library for building front-end applications.
 
 It provides a library for Web components, state management, client-side routing, Web storage, and more.
 
-## CDN
+## Usage
+
+### CDN
 
 TypeScript
 
@@ -18,7 +22,7 @@ JavaScript
 import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.6/mod.bundle.js';
 ```
 
-## Install
+### Install
 
 Use with Deno
 
@@ -34,7 +38,7 @@ npx jsr add @akiraohgaki/chirit
 
 See https://jsr.io/@akiraohgaki/chirit for install with other package managers.
 
-## Example
+### Examples
 
 TypeScript
 
@@ -64,7 +68,7 @@ class EpochTimeComponent extends Component {
     super.disconnectedCallback(); // should always be called last
   }
 
-  // When a observed attributes or states changes, the template content is re-rendered.
+  // When a observed attributes or states changed, the template content is re-rendered.
   override template(): string {
     return `
       <style>
@@ -97,7 +101,27 @@ HTML
 <epoch-time milliseconds="true"></epoch-time>
 ```
 
-## Documents
+## Features
+
+### Web components
+
+- [Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component)
+- [createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent)
+
+### State management
+
+- [Store](https://jsr.io/@akiraohgaki/chirit/doc/~/Store)
+- [State](https://jsr.io/@akiraohgaki/chirit/doc/~/State)
+
+### Client-side routing
+
+- [Router](https://jsr.io/@akiraohgaki/chirit/doc/~/Router)
+
+### Web storage
+
+- [WebStorage](https://jsr.io/@akiraohgaki/chirit/doc/~/WebStorage)
+
+## Documentation
 
 https://jsr.io/@akiraohgaki/chirit/doc
 
