@@ -193,7 +193,7 @@ test.describe('NodeStructure', () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('reference to host element', async ({ page }) => {
+  test('reference to host element', async ({ page }, testInfo) => {
     const code = `
       const { NodeStructure } = this.chirit;
 
