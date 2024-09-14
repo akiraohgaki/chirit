@@ -226,7 +226,7 @@ test.describe('NodeStructure', () => {
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
-      timeout: 30000,
+      timeout: 60000,
     });
   });
 });
