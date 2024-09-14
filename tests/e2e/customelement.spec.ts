@@ -138,7 +138,7 @@ test.describe('CustomElement', () => {
       document.querySelector('iframe').contentWindow.document.body.appendChild(testElement);
     `;
 
-    const logs = [
+    let logs = [
       'observedAttributes',
       'constructor',
       'connectedCallback',
@@ -155,25 +155,26 @@ test.describe('CustomElement', () => {
       'updatedCallback',
     ];
 
-    const logsFirefox = [
-      'observedAttributes',
-      'constructor',
-      'connectedCallback',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element></test-element>',
-      'disconnectedCallback',
-      'adoptedCallback',
-      'connectedCallback',
-    ];
+    // The behavior is different in Firefox.
+    if (testInfo.project.name === 'firefox') {
+      logs = [
+        'observedAttributes',
+        'constructor',
+        'connectedCallback',
+        'updateSync',
+        'render',
+        'updatedCallback',
+        '<test-element></test-element>',
+        'disconnectedCallback',
+        'adoptedCallback',
+        'connectedCallback',
+      ];
+    }
 
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
-    await expect(page.locator('[data-content="log"]')).toHaveText(
-      testInfo.project.name === 'firefox' ? logsFirefox : logs,
-    );
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
   test('attribute changed', async ({ page }) => {

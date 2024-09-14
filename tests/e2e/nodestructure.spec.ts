@@ -218,18 +218,23 @@ test.describe('NodeStructure', () => {
       }, 1000);
     `;
 
-    const logs = [
+    let logs = [
       /Error: .+/,
     ];
 
-    const logsFirefox = [];
+    let timeout = 60000;
+
+    // GC is slow in Firefox, so skip the check.
+    if (testInfo.project.name === 'firefox') {
+      logs = [];
+      timeout = 1000;
+    }
 
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
-    await expect(page.locator('[data-content="log"]')).toHaveText(
-      testInfo.project.name === 'firefox' ? logsFirefox : logs,
-      { timeout: 60000 },
-    );
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
+      timeout,
+    });
   });
 });
