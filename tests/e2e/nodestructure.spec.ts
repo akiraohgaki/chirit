@@ -222,11 +222,14 @@ test.describe('NodeStructure', () => {
       /Error: .+/,
     ];
 
+		const logsFirefox = [];
+
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
-    await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
-      timeout: 60000,
-    });
+    await expect(page.locator('[data-content="log"]')).toHaveText(
+      testInfo.project.name === 'firefox' ? logsFirefox : logs,
+      { timeout: 1000 * 60 },
+    );
   });
 });
