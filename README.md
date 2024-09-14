@@ -8,26 +8,33 @@ It provides a library for Web components, state management, client-side routing,
 
 ## Usage
 
-### CDN
+### Import from CDN
 
 TypeScript
 
 ```ts
-import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.6/mod.ts';
+import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@version/mod.ts';
 ```
 
 JavaScript
 
 ```js
-import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@1.6/mod.bundle.js';
+import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@version/mod.bundle.js';
 ```
 
-### Install
+> [!NOTE]
+> Replace the @version in the URL to specific version.
+
+### Import from a local installed package
 
 Use with Deno
 
 ```sh
 deno add @akiraohgaki/chirit
+```
+
+```ts
+import * as chirit from '@akiraohgaki/chirit';
 ```
 
 Use with npm
@@ -36,7 +43,12 @@ Use with npm
 npx jsr add @akiraohgaki/chirit
 ```
 
-See https://jsr.io/@akiraohgaki/chirit for install with other package managers.
+```ts
+import * as chirit from '@akiraohgaki/chirit';
+```
+
+> [!TIP]
+> See https://jsr.io/@akiraohgaki/chirit for install with other package managers.
 
 ### Examples
 
@@ -48,6 +60,7 @@ TypeScript/JavaScript
 import { createComponent, State } from '@akiraohgaki/chirit';
 
 const epochTimeState = new State(Date.now());
+
 setInterval(() => {
   epochTimeState.set(Date.now());
 }, 100);
