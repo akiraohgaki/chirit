@@ -71,7 +71,7 @@
     "check": "deno fmt && deno lint && deno check mod.ts types.ts",
     "build": "deno task build:setup && deno task build:bundle && deno task build:teardown",
     "build:setup": "echo 'Skip task build:setup'",
-    "build:bundle": "deno run -A https://raw.githubusercontent.com/akiraohgaki/helper-script/main/deno-bundle.ts --minify=true mod.ts mod.bundle.js",
+    "build:bundle": "deno run -A jsr:@akiraohgaki/devsrv/bundle --minify=true mod.ts mod.bundle.js",
     "build:teardown": "echo 'Skip task build:teardown'",
     "test": "deno task test:setup && deno task test:unit && deno task test:e2e && deno task test:teardown",
     "test:setup": "cd tests/e2e && npm install && npx playwright install --with-deps",
