@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  fix:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,16 +19,13 @@ jobs:
         with:
           deno-version: vx.x.x
 
-      - name: Format
-        run: deno fmt
+      - name: Check
+        run: deno task check
 
       - uses: akiraohgaki/actions/git-commit-push@main
 
-      - name: Lint
-        run: deno lint
-
   build:
-    needs: fix
+    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
