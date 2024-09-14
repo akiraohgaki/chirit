@@ -23,7 +23,7 @@ import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@version/
 ```
 
 > [!NOTE]
-> Replace the @version in the URL to specific version.
+> Replace the @version in the URL to a specific version.
 
 ### Import from a local installed package
 
