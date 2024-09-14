@@ -25,34 +25,30 @@ import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@version/
 > [!NOTE]
 > Replace the @version in the URL to a specific version.
 
-### Import from a local installed package
+### Import from package
 
-Use with Deno
+Add package
 
 ```sh
+# Use with Deno
 deno add @akiraohgaki/chirit
-```
 
-```ts
-import * as chirit from '@akiraohgaki/chirit';
-```
-
-Use with npm
-
-```sh
+# Use with npm
 npx jsr add @akiraohgaki/chirit
-```
-
-```ts
-import * as chirit from '@akiraohgaki/chirit';
 ```
 
 > [!TIP]
 > See https://jsr.io/@akiraohgaki/chirit for install with other package managers.
 
+Import module
+
+```ts
+import * as chirit from '@akiraohgaki/chirit';
+```
+
 ### Examples
 
-A component that shows current epoch time.
+This is a component that shows current epoch time.
 
 TypeScript/JavaScript
 
