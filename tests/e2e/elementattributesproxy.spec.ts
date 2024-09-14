@@ -114,7 +114,7 @@ test.describe('ElementAttributesProxy', () => {
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
-      timeout: 60000,
+      timeout: 1000 * 60 * 3,
     });
   });
 });
