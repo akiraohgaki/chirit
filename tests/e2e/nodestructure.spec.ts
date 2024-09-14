@@ -222,7 +222,7 @@ test.describe('NodeStructure', () => {
       /Error: .+/,
     ];
 
-		const logsFirefox = [];
+    const logsFirefox = [];
 
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
