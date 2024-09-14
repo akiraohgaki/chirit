@@ -117,7 +117,7 @@ test.describe('ElementAttributesProxy', () => {
     await page.locator('[data-action="runCode"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(
       testInfo.project.name === 'firefox' ? logsFirefox : logs,
-      { timeout: 1000 * 60 },
+      { timeout: 60000 },
     );
   });
 });
