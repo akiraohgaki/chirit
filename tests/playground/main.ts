@@ -78,7 +78,17 @@ template.innerHTML = `
 <main>
 <section id="code">
 <h2>Code</h2>
-<pre><code data-content="code" contenteditable>this.addLog(this);</code></pre>
+<pre><code data-content="code" contenteditable>
+// const { createComponent, State } = this.chirit;
+
+this.addResult('result');
+this.addLog('log');
+
+await this.wait(5000);
+
+this.clearResults();
+this.clearLogs();
+</code></pre>
 <button data-action="runCode">Run</button>
 </section>
 
