@@ -78,7 +78,7 @@
     "test:unit": "deno test tests/unit/",
     "test:e2e": "cd tests/e2e && npx playwright test",
     "test:teardown": "echo 'Skip task test:teardown'",
-    "serve": "deno run -A jsr:@akiraohgaki/devsrv/server tests/playground"
+    "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/playground"
   },
   "imports": {
     "@std/assert": "jsr:@std/assert",
