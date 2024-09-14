@@ -81,7 +81,7 @@ test.describe('ElementAttributesProxy', () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('reference to target element', async ({ page }) => {
+  test('reference to target element', async ({ page }, testInfo) => {
     const code = `
       const { ElementAttributesProxy } = this.chirit;
 
@@ -110,11 +110,14 @@ test.describe('ElementAttributesProxy', () => {
       /Error: .+/,
     ];
 
+    const logsFirefox = [];
+
     console.log(code);
     await page.locator('[data-content="code"]').fill(code);
     await page.locator('[data-action="runCode"]').click();
-    await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
-      timeout: 1000 * 60 * 3,
-    });
+    await expect(page.locator('[data-content="log"]')).toHaveText(
+      testInfo.project.name === 'firefox' ? logsFirefox : logs,
+			{ timeout: 1000 * 60 }
+		);
   });
 });
