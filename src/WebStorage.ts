@@ -117,16 +117,18 @@ export default class WebStorage {
    * @returns The stored value, or `null` if not found.
    */
   get(key: string): unknown {
-    // Returns original value stored in special JSON object
     const value = this.#storage.getItem(this.#prefix + key);
     if (value) {
       try {
+        // Returns original value stored in special JSON object
         const deserializedValue = JSON.parse(value);
         return deserializedValue?._v;
       } catch {
-        void 0;
+        // Returns raw value if JSON.parse error occured
+        return value;
       }
     }
+    // Returns '' or null
     return value;
   }
 

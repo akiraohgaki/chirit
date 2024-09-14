@@ -192,4 +192,41 @@ test.describe('NodeStructure', () => {
     await page.locator('[data-action="runCode"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
+
+  test('reference to host element', async ({ page }) => {
+    const code = `
+      const { NodeStructure } = this.chirit;
+
+      const host = document.createElement('div');
+      host.id = 'nodestructure-host';
+
+      const nodeStructure = new NodeStructure(host);
+
+      host.remove();
+
+      const timerId = setInterval(() => {
+        try {
+          if (nodeStructure.host.id) {
+            void 0;
+          }
+        } catch (exception) {
+          if (exception instanceof Error) {
+            this.addLog('Error: ' + exception.message);
+          }
+          clearInterval(timerId);
+        }
+      }, 1000);
+    `;
+
+    const logs = [
+      /Error: .+/,
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
+      timeout: 60000,
+    });
+  });
 });

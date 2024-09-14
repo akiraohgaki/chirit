@@ -80,4 +80,41 @@ test.describe('ElementAttributesProxy', () => {
     await page.locator('[data-action="runCode"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
+
+  test('reference to target element', async ({ page }) => {
+    const code = `
+      const { ElementAttributesProxy } = this.chirit;
+
+      const target = document.createElement('div');
+      target.id = 'element-attributes-proxy-target';
+
+      const elementAttributesProxy = new ElementAttributesProxy(target);
+
+      target.remove();
+
+      const timerId = setInterval(() => {
+        try {
+          if (elementAttributesProxy.id) {
+            void 0;
+          }
+        } catch (exception) {
+          if (exception instanceof Error) {
+            this.addLog('Error: ' + exception.message);
+          }
+          clearInterval(timerId);
+        }
+      }, 1000);
+    `;
+
+    const logs = [
+      /Error: .+/,
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
+      timeout: 60000,
+    });
+  });
 });
