@@ -88,14 +88,14 @@ export default class Router {
   }
 
   /**
-   * The function to be called when the route changes.
+   * The function to be called when the route changed.
    */
   set onchange(handler: OnEventHandler) {
     this.#onchange = handler;
   }
 
   /**
-   * The function to be called when the route changes.
+   * The function to be called when the route changed.
    */
   get onchange(): OnEventHandler {
     return this.#onchange;

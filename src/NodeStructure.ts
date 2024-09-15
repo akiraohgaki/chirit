@@ -7,7 +7,8 @@ const hostCollection = new WeakSet();
 /**
  * Manages the structure of DOM nodes.
  *
- * This class manages the lifecycle of associated DOM nodes and contexts to simplify DOM manipulation.
+ * This class simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
+ * DOM updates are optimized through a diffing process.
  *
  * ----
  *
@@ -35,6 +36,18 @@ const hostCollection = new WeakSet();
  * // <h1>Hello</h1>
  * // <button>Click me</button>
  * // </div>
+ * ```
+ *
+ * @example Adopt the styles to the host node
+ * ```ts
+ * const element = document.querySelector('custom-element');
+ *
+ * const nodeStructure = new NodeStructure(element.shadowRoot);
+ *
+ * nodeStructure.adoptStyles([
+ *   ...document.adoptedStyleSheets,
+ *   `:host { diaplay: inline-block; }`
+ * ]);
  * ```
  *
  * @template T - The type of the host node (e.g., HTMLElement).

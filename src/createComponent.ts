@@ -40,22 +40,20 @@ import Component from './Component.ts';
  *     disconnected(context) {
  *       context.unobserve(debugState);
  *     },
+ *     styles(_context) {
+ *       return `
+ *         :host { display: inline-block; }
+ *         div { width: 100%; height: 100%; }
+ *       `;
+ *     },
  *     template(context) {
  *       const color = context.attr.color ?? '#000000';
  *       const size = context.attr.size ?? '100px';
  *
  *       return `
  *         <style>
- *         :host {
- *           display: inline-block;
- *           width: ${size};
- *           height: ${size};
- *         }
- *         div {
- *           width: 100%;
- *           height: 100%;
- *           background-color: ${color};
- *         }
+ *         :host { width: ${size}; height: ${size}; }
+ *         div { background-color: ${color}; }
  *         </style>
  *
  *         <div onclick="this.clickHandler(event)">

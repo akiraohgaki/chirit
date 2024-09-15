@@ -22,23 +22,22 @@ import dom from './dom.ts';
  *     return ['color', 'size'];
  *   }
  *
- *   // When a observed attributes changes, the template content is re-rendered.
+ *   override styles(): string {
+ *     return `
+ *       :host { display: inline-block; }
+ *       div { width: 100%; height: 100%; }
+ *     `;
+ *   }
+ *
+ *   // When a observed attributes changed, the template content is re-rendered.
  *   override template(): string {
  *     const color = this.attr.color ?? '#000000';
  *     const size = this.attr.size ?? '100px';
  *
  *     return `
  *       <style>
- *       :host {
- *         display: inline-block;
- *         width: ${size};
- *         height: ${size};
- *       }
- *       div {
- *         width: 100%;
- *         height: 100%;
- *         background-color: ${color};
- *       }
+ *       :host { width: ${size}; height: ${size}; }
+ *       div { background-color: ${color}; }
  *       </style>
  *
  *       <div onclick="this.clickHandler(event)"></div>
@@ -82,18 +81,22 @@ import dom from './dom.ts';
  *     super.disconnectedCallback(); // should always be called last
  *   }
  *
- *   // When a observed state changes, the template content is re-rendered.
+ *   override styles(): string {
+ *     return `
+ *       :host { display: inline-block; }
+ *       div { width: 100%; height: 100%; }
+ *     `;
+ *   }
+ *
+ *   // When a observed state changed, the template content is re-rendered.
  *   override template(): string {
  *     return `
  *       <style>
  *       :host {
- *         display: inline-block;
  *         width: ${colorPreviewStore.state.size};
  *         height: ${colorPreviewStore.state.size};
  *       }
  *       div {
- *         width: 100%;
- *         height: 100%;
  *         background-color: ${colorPreviewStore.state.color};
  *       }
  *       </style>
