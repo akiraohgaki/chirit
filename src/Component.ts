@@ -1,4 +1,4 @@
-import type { ComponentContentContainer, NodeStructureContent } from './types.ts';
+import type { ComponentContentContainer, NodeStructureContent, NodeStructureStyles } from './types.ts';
 
 import CustomElement from './CustomElement.ts';
 import ElementAttributesProxy from './ElementAttributesProxy.ts';
@@ -222,10 +222,22 @@ export default class Component extends CustomElement {
   }
 
   /**
-   * Renders DOM with the template content.
+   * Renders DOM with the styles and the template content.
    */
   override render(): void {
+    if (!this.updateCounter && this.#structure.host instanceof dom.globalThis.ShadowRoot) {
+      this.#structure.adoptStyles(this.styles());
+    }
     this.#structure.update(this.template());
+  }
+
+  /**
+   * Creates the styles.
+   *
+   * This method should be implemented by subclasses to return the styles.
+   */
+  styles(): NodeStructureStyles {
+    return [];
   }
 
   /**
