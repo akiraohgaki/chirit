@@ -10,6 +10,9 @@ test.describe('Component', () => {
       const { Component, CustomElement, NodeStructure } = this.chirit;
 
       class TestComponent extends Component {
+        styles() {
+          return 'span { color: red; }';
+        }
         template() {
           return '<span>0</span>';
         }
@@ -28,6 +31,7 @@ test.describe('Component', () => {
       this.addLog(testComponent.attr.attr0 === '0'); // ElementAttributesProxy
       this.addLog(testComponent.structure instanceof NodeStructure);
       this.addLog(testComponent.content === testComponent.structure.host);
+      this.addLog(Array.from(testComponent.content.adoptedStyleSheets).length);
     `;
 
     const logs = [
@@ -38,6 +42,7 @@ test.describe('Component', () => {
       'true',
       'true',
       'true',
+      '1',
     ];
 
     console.log(code);
