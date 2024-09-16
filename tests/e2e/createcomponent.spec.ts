@@ -60,7 +60,6 @@ test.describe('createComponent', () => {
       const testComponent = document.querySelector('test-component');
       this.addLog(testComponent.outerHTML);
       this.addLog(testComponent.content.innerHTML);
-      this.addLog(Array.from(testComponent.content.adoptedStyleSheets).length);
 
       testComponent.remove();
     `;
@@ -72,7 +71,6 @@ test.describe('createComponent', () => {
       'connected',
       '<test-component attr1="1"></test-component>',
       '<span>1</span>',
-      '1',
       'disconnected',
     ];
 

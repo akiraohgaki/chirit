@@ -14,7 +14,7 @@ test.describe('Component', () => {
           return 'span { color: red; }';
         }
         template() {
-          return '<span>0</span>';
+          return '<span>adoptedStyleSheets:' + Array.from(this.content.adoptedStyleSheets).length + '</span>';
         }
       }
 
@@ -31,18 +31,62 @@ test.describe('Component', () => {
       this.addLog(testComponent.attr.attr0 === '0'); // ElementAttributesProxy
       this.addLog(testComponent.structure instanceof NodeStructure);
       this.addLog(testComponent.content === testComponent.structure.host);
-      this.addLog(Array.from(testComponent.content.adoptedStyleSheets).length);
     `;
 
     const logs = [
       '<test-component attr0="0"></test-component>',
-      '<span>0</span>',
+      '<span>adoptedStyleSheets:1</span>',
       'true',
       'true',
       'true',
       'true',
       'true',
-      '1',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test('rendering', async ({ page }) => {
+    const code = `
+      const { Component } = this.chirit;
+      const addLog = this.addLog;
+
+      class TestComponent extends Component {
+        styles() {
+          addLog('styles');
+          return 'span { color: red; }';
+        }
+        template() {
+          addLog('template');
+          return '<span>adoptedStyleSheets:' + Array.from(this.content.adoptedStyleSheets).length + '</span>';
+        }
+      }
+
+      TestComponent.define('test-component');
+
+      this.addResult('<test-component></test-component>');
+
+      const testComponent = document.querySelector('test-component');
+      this.addLog(testComponent.outerHTML);
+      this.addLog(testComponent.content.innerHTML);
+
+      testComponent.render();
+
+      this.addLog(testComponent.outerHTML);
+      this.addLog(testComponent.content.innerHTML);
+    `;
+
+    const logs = [
+      'styles',
+      'template',
+      '<test-component></test-component>',
+      '<span>adoptedStyleSheets:1</span>',
+      'template',
+      '<test-component></test-component>',
+      '<span>adoptedStyleSheets:1</span>',
     ];
 
     console.log(code);
