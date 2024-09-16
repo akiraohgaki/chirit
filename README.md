@@ -66,21 +66,14 @@ createComponent('epoch-time', {
   init: (context) => {
     context.observe(epochTimeState);
   },
-  styles: () => {
-    return [
-      ...document.adoptedStyleSheets,
-      `
-        :host { display: inline-block; }
-        span { font-size: 140%; }
-      `,
-    ];
-  },
-  template: (context) => {
-    return `
-      <style>span { color: ${context.attr.color}; }</style>
-      <span>${epochTimeState.get()}</span>
-    `;
-  },
+  styles: () => `
+    :host { display: inline-block; }
+    span { font-size: 140%; }
+  `,
+  template: (context) => `
+    <style>span { color: ${context.attr.color}; }</style>
+    <span>${epochTimeState.get()}</span>
+  `,
 });
 ```
 
