@@ -30,10 +30,10 @@ import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@version/
 Add package
 
 ```sh
-# Use with Deno
+# Deno
 deno add @akiraohgaki/chirit
 
-# Use with npm
+# Node.js
 npx jsr add @akiraohgaki/chirit
 ```
 
@@ -66,12 +66,18 @@ createComponent('epoch-time', {
   init: (context) => {
     context.observe(epochTimeState);
   },
+  styles: () => {
+    return [
+      ...document.adoptedStyleSheets,
+      `
+        :host { display: inline-block; }
+        span { font-size: 140%; }
+      `,
+    ];
+  },
   template: (context) => {
     return `
-      <style>
-        :host { display: inline-block; }
-        span { color: ${context.attr.color}; }
-      </style>
+      <style>span { color: ${context.attr.color}; }</style>
       <span>${epochTimeState.get()}</span>
     `;
   },
