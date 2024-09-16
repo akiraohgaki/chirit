@@ -144,6 +144,11 @@ export default class NodeStructure<T extends Node> {
     return this.#createDocumentFragment(host.childNodes);
   }
 
+  /**
+   * Gets the host node.
+   *
+   * @throws {Error} - If the host node is not available.
+   */
   #getHost(): T {
     if (this.#hostRef) {
       const host = this.#hostRef.deref();
@@ -156,6 +161,11 @@ export default class NodeStructure<T extends Node> {
     throw new Error('The host node is not available.');
   }
 
+  /**
+   * Gets the context object.
+   *
+   * @returns The context object, or `undefined` if it is not available.
+   */
   #getContext(): unknown {
     if (this.#contextRef) {
       const context = this.#contextRef.deref();
@@ -168,6 +178,11 @@ export default class NodeStructure<T extends Node> {
     return undefined;
   }
 
+  /**
+   * Creates document fragment.
+   *
+   * @param content - The content into the document fragment.
+   */
   #createDocumentFragment(content: NodeStructureContent): DocumentFragment {
     if (typeof content === 'string') {
       // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement.
@@ -189,6 +204,12 @@ export default class NodeStructure<T extends Node> {
     return documentFragment;
   }
 
+  /**
+   * Patch the nodes inside of the original node.
+   *
+   * @param original - The original node.
+   * @param diff - The diff node.
+   */
   #patchNodesInsideOf(original: Node, diff: Node): void {
     if (original.hasChildNodes() || diff.hasChildNodes()) {
       // NodeList of Node.childNodes is live so must be convert to array.
@@ -206,6 +227,13 @@ export default class NodeStructure<T extends Node> {
     }
   }
 
+  /**
+   * Patch the nodes.
+   *
+   * @param parent - The parent node.
+   * @param original - The original node.
+   * @param diff - The diff node.
+   */
   #patchNodes(parent: Node, original: Node | null, diff: Node | null): void {
     if (original && !diff) {
       parent.removeChild(original);
@@ -233,6 +261,12 @@ export default class NodeStructure<T extends Node> {
     }
   }
 
+  /**
+   * Patch the attributes of the element.
+   *
+   * @param original - The original element.
+   * @param diff - The diff element.
+   */
   #patchAttributes(original: Element, diff: Element): void {
     // NamedNodeMap of Element.attributes is live so must be convert to array.
     if (original.hasAttributes()) {
@@ -255,6 +289,11 @@ export default class NodeStructure<T extends Node> {
     }
   }
 
+  /**
+   * Fix the onevent handlers inside of the target node.
+   *
+   * @param target - The target node.
+   */
   #fixOneventHandlersInsideOf(target: Node): void {
     if (target.hasChildNodes()) {
       for (const node of Array.from(target.childNodes)) {
@@ -265,6 +304,11 @@ export default class NodeStructure<T extends Node> {
     }
   }
 
+  /**
+   * Fix the onevent handlers of the target element.
+   *
+   * @param target - The target element.
+   */
   #fixOneventHandlers(target: Element): void {
     if (target.hasAttributes()) {
       // NamedNodeMap of Element.attributes is live so must be convert to array.
