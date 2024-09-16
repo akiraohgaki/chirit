@@ -12,9 +12,6 @@ output() {
 
 rm -rf "${OUTPUT_FILE}"
 
-output ./README.md
-output ./LICENSE
-output ./deno.json
 output ./mod.ts
 output ./types.ts
 
