@@ -22,11 +22,14 @@ import dom from './dom.ts';
  *     return ['color', 'size'];
  *   }
  *
- *   override styles(): string {
- *     return `
- *       :host { display: inline-block; }
- *       div { width: 100%; height: 100%; }
- *     `;
+ *   override styles(): Array<string | CSSStyleSheet> {
+ *     return [
+ *       ...document.adoptedStyleSheets,
+ *       `
+ *         :host { display: inline-block; }
+ *         div { width: 100%; height: 100%; }
+ *       `,
+ *     ];
  *   }
  *
  *   // When a observed attributes changed, the template content is re-rendered.
@@ -40,6 +43,7 @@ import dom from './dom.ts';
  *       div { background-color: ${color}; }
  *       </style>
  *
+ *       <!-- The execution context for an event handler is the component instance. -->
  *       <div onclick="this.clickHandler(event)"></div>
  *     `;
  *   }
@@ -81,11 +85,14 @@ import dom from './dom.ts';
  *     super.disconnectedCallback(); // should always be called last
  *   }
  *
- *   override styles(): string {
- *     return `
- *       :host { display: inline-block; }
- *       div { width: 100%; height: 100%; }
- *     `;
+ *   override styles(): Array<string | CSSStyleSheet> {
+ *     return [
+ *       ...document.adoptedStyleSheets,
+ *       `
+ *         :host { display: inline-block; }
+ *         div { width: 100%; height: 100%; }
+ *       `,
+ *     ];
  *   }
  *
  *   // When a observed state changed, the template content is re-rendered.
@@ -101,6 +108,7 @@ import dom from './dom.ts';
  *       }
  *       </style>
  *
+ *       <!-- The execution context for an event handler is the component instance. -->
  *       <div onclick="this.clickHandler(event)">
  *       ${debugState.get() ? colorPreviewStore.state.color : ''}
  *       </div>

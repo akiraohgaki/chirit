@@ -26,7 +26,7 @@ import Component from './Component.ts';
  *   'color-preview',
  *   {
  *     observedAttributes: ['color', 'size'],
- *     init(context) {
+ *     init: (context) => {
  *       context.clickHandler = (event) => {
  *         context.dispatch('color-preview-click');
  *         if (debugState.get()) {
@@ -34,19 +34,22 @@ import Component from './Component.ts';
  *         }
  *       };
  *     },
- *     connected(context) {
+ *     connected: (context) => {
  *       context.observe(debugState);
  *     },
- *     disconnected(context) {
+ *     disconnected: (context) => {
  *       context.unobserve(debugState);
  *     },
- *     styles(_context) {
- *       return `
- *         :host { display: inline-block; }
- *         div { width: 100%; height: 100%; }
- *       `;
+ *     styles: (_context) => {
+ *       return [
+ *         ...document.adoptedStyleSheets,
+ *         `
+ *           :host { display: inline-block; }
+ *           div { width: 100%; height: 100%; }
+ *         `,
+ *       ];
  *     },
- *     template(context) {
+ *     template: (context) => {
  *       const color = context.attr.color ?? '#000000';
  *       const size = context.attr.size ?? '100px';
  *
@@ -56,6 +59,7 @@ import Component from './Component.ts';
  *         div { background-color: ${color}; }
  *         </style>
  *
+ *         <!-- The execution context for an event handler is the component instance. -->
  *         <div onclick="this.clickHandler(event)">
  *         ${debugState.get() ? color : ''}
  *         </div>
