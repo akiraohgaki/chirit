@@ -5,7 +5,7 @@ const HTMLElementRef = dom.globalThis.HTMLElement;
 /**
  * A base class for building custom elements.
  *
- * This class provides a mechanism for asynchronous updates and lifecycle callbacks.
+ * This class provides a mechanism for asynchronous updates and handling lifecycle callbacks.
  *
  * ----
  *

@@ -6,11 +6,11 @@ import NodeStructure from './NodeStructure.ts';
 import dom from './dom.ts';
 
 /**
- * A base class for building custom web components.
+ * A base class for creating custom web components.
  *
- * This class is built on `CustomElement`, `ElementAttributesProxy`, and `NodeStructure`, inheriting their features.
+ * This class as a base class for creating reusable web components, it provides many powerful features.
  *
- * If you want to quickly create a component, consider using the `createComponent` function.
+ * If you need a quick way to create a component, consider using the `createComponent` function.
  *
  * ----
  *

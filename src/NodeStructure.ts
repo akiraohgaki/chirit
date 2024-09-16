@@ -81,9 +81,9 @@ export default class NodeStructure<T extends Node> {
   }
 
   /**
-   * Adopts the styles to the host node.
+   * Adopts styles to the host node.
    *
-   * This method only works if the host node is a `Document` or `ShadowRoot`.
+   * This method works only if the host node is a `Document` or `ShadowRoot`.
    *
    * @param styles - The styles to adopt to the host node.
    *
