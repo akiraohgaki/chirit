@@ -2,6 +2,8 @@
  * @module @akiraohgaki/chirit
  */
 
+export * from './src/types.ts';
+
 export { default as createComponent } from './src/createComponent.ts';
 
 export { default as Component } from './src/Component.ts';

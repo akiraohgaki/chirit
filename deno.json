@@ -2,14 +2,12 @@
   "name": "@akiraohgaki/chirit",
   "version": "1.7.1",
   "exports": {
-    ".": "./mod.ts",
-    "./types": "./types.ts"
+    ".": "./mod.ts"
   },
   "publish": {
     "include": [
       "src/**/*.ts",
       "mod.ts",
-      "types.ts",
       "deno.json",
       "README.md",
       "LICENSE"
@@ -68,7 +66,7 @@
     ]
   },
   "tasks": {
-    "check": "deno fmt && deno lint && deno check mod.ts types.ts",
+    "check": "deno fmt && deno lint && deno check mod.ts",
     "build": "deno task build:setup && deno task build:bundle && deno task build:teardown",
     "build:setup": "echo 'Skip task build:setup'",
     "build:bundle": "deno run -A jsr:@akiraohgaki/devsrv/bundle --minify=true mod.ts mod.bundle.js",
