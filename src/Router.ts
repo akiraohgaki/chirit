@@ -249,13 +249,11 @@ export default class Router {
    */
   #invokeRouteHandler(path: string): void {
     try {
-      if (this.#routeCollection.size) {
-        for (const [pattern, handler] of this.#routeCollection) {
-          const matches = path.match(new RegExp(pattern));
-          if (matches) {
-            handler(matches.groups ?? {});
-            break;
-          }
+      for (const [pattern, handler] of this.#routeCollection) {
+        const matches = path.match(new RegExp(pattern));
+        if (matches) {
+          handler(matches.groups ?? {});
+          break;
         }
       }
     } catch (exception) {

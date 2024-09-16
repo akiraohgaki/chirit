@@ -59,10 +59,8 @@ export default class Observable<T = unknown> {
    * @param value - The value to notify.
    */
   notify(value: T): void {
-    if (this.#observerCollection.size) {
-      for (const observer of this.#observerCollection) {
-        observer(value);
-      }
+    for (const observer of this.#observerCollection) {
+      observer(value);
     }
   }
 }

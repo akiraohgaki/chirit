@@ -179,11 +179,9 @@ export default class Component extends CustomElement {
    * @param args - The objects to observe for changes.
    */
   observe(...args: Array<unknown>): void {
-    if (args.length) {
-      for (const arg of args as Array<Record<string, unknown>>) {
-        if (arg.subscribe && typeof arg.subscribe === 'function') {
-          arg.subscribe(this.update);
-        }
+    for (const arg of args as Array<Record<string, unknown>>) {
+      if (arg.subscribe && typeof arg.subscribe === 'function') {
+        arg.subscribe(this.update);
       }
     }
   }
@@ -196,11 +194,9 @@ export default class Component extends CustomElement {
    * @param args - The objects to stop observing.
    */
   unobserve(...args: Array<unknown>): void {
-    if (args.length) {
-      for (const arg of args as Array<Record<string, unknown>>) {
-        if (arg.unsubscribe && typeof arg.unsubscribe === 'function') {
-          arg.unsubscribe(this.update);
-        }
+    for (const arg of args as Array<Record<string, unknown>>) {
+      if (arg.unsubscribe && typeof arg.unsubscribe === 'function') {
+        arg.unsubscribe(this.update);
       }
     }
   }

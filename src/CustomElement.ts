@@ -163,10 +163,8 @@ export default class CustomElement extends HTMLElementRef {
 
       this.updateSync();
 
-      if (promiseResolvers.length) {
-        for (const resolve of promiseResolvers) {
-          resolve();
-        }
+      for (const resolve of promiseResolvers) {
+        resolve();
       }
     }, this.#updateDelay);
 
