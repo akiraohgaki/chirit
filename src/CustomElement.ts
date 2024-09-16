@@ -47,8 +47,8 @@ const HTMLElementRef = dom.globalThis.HTMLElement;
 export default class CustomElement extends HTMLElementRef {
   #updateCounter: number;
 
-  #updateTimerId: number | undefined;
   #updateDelay: number;
+  #updateTimerId: number | undefined;
   #updatePromiseResolvers: Array<{ (): void }>;
 
   /**
@@ -76,8 +76,8 @@ export default class CustomElement extends HTMLElementRef {
 
     this.#updateCounter = 0;
 
-    this.#updateTimerId = undefined;
     this.#updateDelay = 50;
+    this.#updateTimerId = undefined;
     this.#updatePromiseResolvers = [];
   }
 
@@ -163,10 +163,8 @@ export default class CustomElement extends HTMLElementRef {
 
       this.updateSync();
 
-      if (promiseResolvers.length) {
-        for (const resolve of promiseResolvers) {
-          resolve();
-        }
+      for (const resolve of promiseResolvers) {
+        resolve();
       }
     }, this.#updateDelay);
 
