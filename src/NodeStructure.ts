@@ -1,4 +1,4 @@
-import type { NodeStructureContent, OnEventHandler } from './types.ts';
+import type { NodeStructureContent, NodeStructureStyles, OnEventHandler } from './types.ts';
 
 import dom from './dom.ts';
 
@@ -7,7 +7,8 @@ const hostCollection = new WeakSet();
 /**
  * Manages the structure of DOM nodes.
  *
- * This class manages the lifecycle of associated DOM nodes and contexts to simplify DOM manipulation.
+ * This class simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
+ * DOM updates are optimized through a diffing process.
  *
  * ----
  *
@@ -35,6 +36,18 @@ const hostCollection = new WeakSet();
  * // <h1>Hello</h1>
  * // <button>Click me</button>
  * // </div>
+ * ```
+ *
+ * @example Adopt the styles to the host node
+ * ```ts
+ * const element = document.querySelector('custom-element');
+ *
+ * const nodeStructure = new NodeStructure(element.shadowRoot);
+ *
+ * nodeStructure.adoptStyles([
+ *   ...document.adoptedStyleSheets,
+ *   `:host { diaplay: inline-block; }`
+ * ]);
  * ```
  *
  * @template T - The type of the host node (e.g., HTMLElement).
@@ -65,6 +78,40 @@ export default class NodeStructure<T extends Node> {
    */
   get host(): T {
     return this.#getHost();
+  }
+
+  /**
+   * Adopts the styles to the host node.
+   *
+   * This method only works if the host node is a `Document` or `ShadowRoot`.
+   *
+   * @param styles - The styles to adopt to the host node.
+   *
+   * @throws {Error} - If the host node is not available.
+   */
+  adoptStyles(styles: NodeStructureStyles): void {
+    const host = this.#getHost();
+
+    if (host instanceof dom.globalThis.Document || host instanceof dom.globalThis.ShadowRoot) {
+      const sheets: Array<CSSStyleSheet> = [];
+      const entries = Array.isArray(styles) ? styles : [styles];
+
+      for (const entry of entries) {
+        if (entry instanceof dom.globalThis.CSSStyleSheet) {
+          sheets.push(entry);
+        } else if (typeof entry === 'string') {
+          const sheet = new dom.globalThis.CSSStyleSheet();
+          sheet.replaceSync(entry);
+          sheets.push(sheet);
+        }
+      }
+
+      if (sheets.length) {
+        host.adoptedStyleSheets = sheets;
+      }
+    } else {
+      console.warn('The styles cannot be adopted because the host node is not a Document or ShadowRoot.');
+    }
   }
 
   /**

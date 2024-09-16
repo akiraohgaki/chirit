@@ -17,7 +17,7 @@ const HTMLElementRef = dom.globalThis.HTMLElement;
  *     return ['color', 'size'];
  *   }
  *
- *   // When a observed attributes changes, the element is re-rendered.
+ *   // When a observed attributes changed, the element is re-rendered.
  *   override render(): void {
  *     const color = this.getAttribute('color') ?? '#000000';
  *     const size = this.getAttribute('size') ?? '100px';
@@ -89,7 +89,7 @@ export default class CustomElement extends HTMLElementRef {
   }
 
   /**
-   * Callback invoked when an observed attribute changes.
+   * Callback invoked when an observed attribute changed.
    *
    * By default, the element is updated.
    *

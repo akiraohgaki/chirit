@@ -5,7 +5,55 @@ test.describe('NodeStructure', () => {
     await page.goto('/nodestructure');
   });
 
-  test('content type', async ({ page }) => {
+  test('style sheets', async ({ page }) => {
+    const code = `
+      const { NodeStructure } = this.chirit;
+
+      class TestElement extends HTMLElement {
+        constructor() {
+          super();
+          this.attachShadow({ mode: 'open' });
+          this.shadowRoot.innerHTML = '<span>NodeStructure</span>';
+        }
+      }
+      customElements.define('test-element', TestElement);
+      this.addResult('<test-element></test-element>');
+      const testElement = document.querySelector('test-element');
+
+      const nodeStructure = new NodeStructure(testElement.shadowRoot);
+      this.addLog(Array.from(nodeStructure.host.adoptedStyleSheets).length);
+
+      const style = ':host { font-size: 140%; }';
+      nodeStructure.adoptStyles(style);
+      this.addLog(Array.from(nodeStructure.host.adoptedStyleSheets).length);
+
+      const sheet = new CSSStyleSheet();
+      sheet.replaceSync(':host { color: red; }');
+      nodeStructure.adoptStyles(sheet);
+      this.addLog(Array.from(nodeStructure.host.adoptedStyleSheets).length);
+
+      nodeStructure.adoptStyles([style, sheet]);
+      this.addLog(Array.from(nodeStructure.host.adoptedStyleSheets).length);
+
+      nodeStructure.adoptStyles([...nodeStructure.host.adoptedStyleSheets, style, sheet]);
+      this.addLog(Array.from(nodeStructure.host.adoptedStyleSheets).length);
+    `;
+
+    const logs = [
+      '0',
+      '1',
+      '1',
+      '2',
+      '4',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"]').fill(code);
+    await page.locator('[data-action="runCode"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test('content', async ({ page }) => {
     const code = `
       const { NodeStructure } = this.chirit;
 

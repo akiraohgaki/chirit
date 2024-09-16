@@ -19,6 +19,10 @@ export interface CreateComponentOptions<T> {
    */
   disconnected?: { (context: T): void };
   /**
+   * Creates the styles.
+   */
+  styles?: { (context: T): NodeStructureStyles };
+  /**
    * Creates the template content.
    */
   template?: { (context: T): NodeStructureContent };
@@ -56,6 +60,11 @@ export interface RouteHandler {
  * Content container in Component.
  */
 export type ComponentContentContainer = Element | DocumentFragment;
+
+/**
+ * Styles in NodeStructure.
+ */
+export type NodeStructureStyles = string | CSSStyleSheet | Array<string | CSSStyleSheet>;
 
 /**
  * Content in NodeStructure.

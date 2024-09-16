@@ -45,6 +45,10 @@ test.describe('createComponent', () => {
         disconnected: (_context) => {
           addLog('disconnected');
         },
+        styles: () => {
+          addLog('styles');
+          return ':host { color: red; }';
+        },
         template: (context) => {
           addLog('template');
           return '<span>' + context.attr.attr1 + '</span>';
@@ -62,6 +66,7 @@ test.describe('createComponent', () => {
 
     const logs = [
       'init',
+      'styles',
       'template',
       'connected',
       '<test-component attr1="1"></test-component>',
