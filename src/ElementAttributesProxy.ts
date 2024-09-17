@@ -66,7 +66,7 @@ export default class ElementAttributesProxy {
       },
       get: (_target, name) => {
         const target = getTarget();
-        // Returns undefined instead of null if attribute is not exist.
+        // Returns `undefined` instead of `null` if attribute is not exist.
         if (typeof name === 'string' && target.hasAttribute(name)) {
           return target.getAttribute(name);
         }
