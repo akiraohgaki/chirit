@@ -44,8 +44,8 @@ export default class Router {
   #onerror: OnErrorHandler;
 
   #routeCollection: Map<string, RouteHandler>;
-  #hashchangeCallback: { (event: HashChangeEvent): void };
-  #popstateCallback: { (event: PopStateEvent): void };
+  #_hashchangeCallback: (event: HashChangeEvent) => void;
+  #_popstateCallback: (event: PopStateEvent) => void;
 
   /**
    * Creates a new instance of the Router class.
@@ -69,8 +69,8 @@ export default class Router {
     };
 
     this.#routeCollection = new Map();
-    this.#hashchangeCallback = this.#handleHashchange.bind(this);
-    this.#popstateCallback = this.#handlePopstate.bind(this);
+    this.#_hashchangeCallback = this.#hashchangeCallback.bind(this);
+    this.#_popstateCallback = this.#popstateCallback.bind(this);
   }
 
   /**
@@ -124,9 +124,9 @@ export default class Router {
   set(pattern: string, handler: RouteHandler): void {
     if (!this.#routeCollection.size) {
       if (this.#mode === 'hash') {
-        dom.globalThis.addEventListener('hashchange', this.#hashchangeCallback);
+        dom.globalThis.addEventListener('hashchange', this.#_hashchangeCallback);
       } else if (this.#mode === 'history') {
-        dom.globalThis.addEventListener('popstate', this.#popstateCallback);
+        dom.globalThis.addEventListener('popstate', this.#_popstateCallback);
       }
     }
 
@@ -143,9 +143,9 @@ export default class Router {
 
     if (!this.#routeCollection.size) {
       if (this.#mode === 'hash') {
-        dom.globalThis.removeEventListener('hashchange', this.#hashchangeCallback);
+        dom.globalThis.removeEventListener('hashchange', this.#_hashchangeCallback);
       } else if (this.#mode === 'history') {
-        dom.globalThis.removeEventListener('popstate', this.#popstateCallback);
+        dom.globalThis.removeEventListener('popstate', this.#_popstateCallback);
       }
     }
   }
@@ -223,21 +223,21 @@ export default class Router {
   }
 
   /**
-   * Handles hashchange events.
+   * Callback invoked when hashchange event fired.
    *
    * @param event - The hashchange event object.
    */
-  #handleHashchange(event: HashChangeEvent): void {
+  #hashchangeCallback(event: HashChangeEvent): void {
     this.#onchange(event);
     this.#invokeRouteHandler(dom.globalThis.location.hash.substring(1));
   }
 
   /**
-   * Handles popstate events.
+   * Callback invoked when popstate event fired.
    *
    * @param event - The popstate event object.
    */
-  #handlePopstate(event: PopStateEvent): void {
+  #popstateCallback(event: PopStateEvent): void {
     this.#onchange(event);
     this.#invokeRouteHandler(dom.globalThis.location.pathname);
   }
