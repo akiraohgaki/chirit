@@ -102,7 +102,7 @@ export default class WebStorage {
    * @param value - The value to store.
    */
   set(key: string, value: unknown): void {
-    // Stores value as special JSON object
+    // Stores value as special JSON object.
     this.#storage.setItem(
       this.#prefix + key,
       JSON.stringify({ _v: value }),
@@ -114,22 +114,26 @@ export default class WebStorage {
    *
    * @param key - The key to use.
    *
-   * @returns The stored value, or `null` if not found.
+   * @returns The stored value, or `undefined` if not found.
    */
   get(key: string): unknown {
     const value = this.#storage.getItem(this.#prefix + key);
-    if (value) {
-      try {
-        // Returns original value stored in special JSON object
-        const deserializedValue = JSON.parse(value);
-        return deserializedValue?._v;
-      } catch {
-        // Returns raw value if JSON.parse error occured
-        return value;
+    if (typeof value === 'string') {
+      if (value) {
+        try {
+          // Returns original value stored in special JSON object.
+          const deserializedValue = JSON.parse(value);
+          return deserializedValue._v;
+        } catch {
+          // Returns raw value if error occured.
+          return value;
+        }
       }
+      // Returns ''.
+      return value;
     }
-    // Returns '' or null
-    return value;
+    // Returns `undefined` instead of `null`.
+    return undefined;
   }
 
   /**
