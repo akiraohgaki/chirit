@@ -51,9 +51,9 @@ import * as chirit from '@akiraohgaki/chirit';
 
 ### Examples
 
-#### Component
+#### Web components
 
-Create a simple component using the `createComponent`:
+Create a simple component using the `createComponent` function:
 
 TypeScript/JavaScript
 
@@ -80,7 +80,7 @@ HTML
 
 #### State management
 
-Create a counter component using the `State`:
+Create a counter component using the `State` class:
 
 TypeScript/JavaScript
 
@@ -92,7 +92,7 @@ const counterState = new State(0);
 createComponent('counter-component', {
   init: (context) => {
     context.observe(counterState);
-    context.inclement = () => {
+    context.increment = () => {
       counterState.set(counterState.get() + 1);
     };
     context.decrement = () => {
@@ -117,7 +117,7 @@ HTML
 
 ### Web components
 
-[Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component)
+[Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component) class:
 
 - Lifecycle callbacks: updatedCallback, errorCallback, etc.
 - Reactive to attribute and state changes: Automatically re-renders when attributes or observed states change.
@@ -126,29 +126,29 @@ HTML
 - DOM diffing: Efficiently updates the DOM node tree when content changes.
 - Custom event dispatching: Publish events to communicate with other components.
 
-[createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent)
+[createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent) function:
 
-- A convenient function for quickly creating components based on the `Component`.
+- A convenient function for quickly creating components based on the `Component` class.
 
 ### State management
 
-[Store](https://jsr.io/@akiraohgaki/chirit/doc/~/Store)
+[Store](https://jsr.io/@akiraohgaki/chirit/doc/~/Store) class:
 
 - An observable store for managing complex state.
 
-[State](https://jsr.io/@akiraohgaki/chirit/doc/~/State)
+[State](https://jsr.io/@akiraohgaki/chirit/doc/~/State) class:
 
 - An observable state for managing atomic state.
 
 ### Client-side routing
 
-[Router](https://jsr.io/@akiraohgaki/chirit/doc/~/Router)
+[Router](https://jsr.io/@akiraohgaki/chirit/doc/~/Router) class:
 
 - Supports both hash-based and history-based routing.
 
 ### Web storage
 
-[WebStorage](https://jsr.io/@akiraohgaki/chirit/doc/~/WebStorage)
+[WebStorage](https://jsr.io/@akiraohgaki/chirit/doc/~/WebStorage) class:
 
 - Provides a consistent interface for interacting with `localStorage` and `sessionStorage`.
 - Stores and retrieves values as JSON serializable objects.
