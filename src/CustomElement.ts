@@ -49,7 +49,7 @@ export default class CustomElement extends HTMLElementRef {
 
   #updateDelay: number;
   #updateTimerId: number | undefined;
-  #updatePromiseResolvers: Array<{ (): void }>;
+  #updatePromiseResolvers: Array<() => void>;
 
   /**
    * Returns an observed attributes.

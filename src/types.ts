@@ -9,52 +9,44 @@ export interface CreateComponentOptions<T> {
   /**
    * Callback invoked when the element is created.
    */
-  init?: { (context: T): void };
+  init?: (context: T) => void;
   /**
    * Callback invoked when the element is connected to a parent node.
    */
-  connected?: { (context: T): void };
+  connected?: (context: T) => void;
   /**
    * Callback invoked when the element is disconnected from a parent node.
    */
-  disconnected?: { (context: T): void };
+  disconnected?: (context: T) => void;
   /**
    * Creates the styles.
    */
-  styles?: { (context: T): NodeStructureStyles };
+  styles?: (context: T) => NodeStructureStyles;
   /**
    * Creates the template content.
    */
-  template?: { (context: T): NodeStructureContent };
+  template?: (context: T) => NodeStructureContent;
 }
 
 /**
  * General event handler.
  */
-export interface OnEventHandler {
-  (event: Event): unknown;
-}
+export type OnEventHandler = (event: Event) => unknown;
 
 /**
  * General error handler.
  */
-export interface OnErrorHandler {
-  (exception: unknown): unknown;
-}
+export type OnErrorHandler = (exception: unknown) => unknown;
 
 /**
  * Observer for Observable.
  */
-export interface Observer<T> {
-  (value: T): void;
-}
+export type Observer<T> = (value: T) => void;
 
 /**
  * Route handler for Router.
  */
-export interface RouteHandler {
-  (params: Record<string, string>): void;
-}
+export type RouteHandler = (params: Record<string, string>) => void;
 
 /**
  * Content container in Component.
