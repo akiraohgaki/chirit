@@ -103,6 +103,7 @@ export default class WebStorage {
    */
   set(key: string, value: unknown): void {
     // Stores value as special JSON object.
+    // If the value is `undefined`, `_v` is not contained in the JSON.
     this.#storage.setItem(
       this.#prefix + key,
       JSON.stringify({ _v: value }),
@@ -121,15 +122,19 @@ export default class WebStorage {
     if (typeof value === 'string') {
       if (value) {
         try {
-          // Returns original value stored in special JSON object.
           const deserializedValue = JSON.parse(value);
-          return deserializedValue._v;
+          if (typeof deserializedValue === 'object' && deserializedValue !== null) {
+            // Returns original value stored in special JSON object, or `undefined` if `_v` is not found.
+            return deserializedValue._v;
+          }
+          // Returns raw value if not an object.
+          return value;
         } catch {
-          // Returns raw value if error occured.
+          // Returns raw value if JSON.parse error occured.
           return value;
         }
       }
-      // Returns ''.
+      // Returns raw value as ''.
       return value;
     }
     // Returns `undefined` instead of `null`.
