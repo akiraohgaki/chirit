@@ -241,6 +241,8 @@ export default class Component extends CustomElement {
   /**
    * Creates the styles.
    *
+   * This method works only if the content container is a `ShadowRoot`.
+   *
    * This method should be implemented by subclasses to return the styles.
    */
   styles(): NodeStructureStyles {
