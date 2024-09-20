@@ -1,67 +1,62 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
 const testElementDefinitionCode = `
-  const { CustomElement } = this.chirit;
-  const addLog = this.addLog;
-
   let isRenderError = false;
   let isUpdatedCallbackError = false;
 
   class TestElement extends CustomElement {
     static get observedAttributes() {
-      addLog('observedAttributes');
+      playground.logs.add('observedAttributes');
       return ['attr1', ...super.observedAttributes];
     }
     constructor() {
-      addLog('constructor');
+      playground.logs.add('constructor');
       super();
     }
     attributeChangedCallback(name, oldValue, newValue, namespace) {
-      addLog('attributeChangedCallback');
+      playground.logs.add('attributeChangedCallback');
       super.attributeChangedCallback(name, oldValue, newValue, namespace);
     }
     connectedCallback() {
-      addLog('connectedCallback');
+      playground.logs.add('connectedCallback');
       super.connectedCallback();
     }
     disconnectedCallback() {
-      addLog('disconnectedCallback');
+      playground.logs.add('disconnectedCallback');
       super.disconnectedCallback();
     }
     adoptedCallback(oldDocument, newDocument) {
-      addLog('adoptedCallback');
+      playground.logs.add('adoptedCallback');
       super.adoptedCallback(oldDocument, newDocument);
     }
     update() {
-      addLog('update');
+      playground.logs.add('update');
       return super.update();
     }
     updateSync() {
-      addLog('updateSync');
+      playground.logs.add('updateSync');
       super.updateSync();
     }
     render() {
-      addLog('render');
+      playground.logs.add('render');
       if (isRenderError) {
         throw new Error('error');
       }
       super.render();
-      if (this.getAttribute('attr0') || this.getAttribute('attr1')) {
-        this.textContent = 'attr0:' + this.getAttribute('attr0') + ';'
-          + 'attr1:' + this.getAttribute('attr1') + ';';
-      }
+      this.innerHTML = '<span>attr1:' + (this.getAttribute('attr1') ?? '') + '</span>'
+        + '<span>attr2:' + (this.getAttribute('attr2') ?? '') + '</span>';
     }
     updatedCallback() {
-      addLog('updatedCallback');
+      playground.logs.add('updatedCallback');
       if (isUpdatedCallbackError) {
         throw new Error('error');
       }
       super.updatedCallback();
     }
     errorCallback(exception) {
-      addLog('errorCallback');
+      playground.logs.add('errorCallback');
       if (exception instanceof Error) {
-        addLog(exception.message);
+        playground.logs.add(exception.message);
       }
       super.errorCallback(exception);
     }
@@ -70,286 +65,303 @@ const testElementDefinitionCode = `
   TestElement.define('test-element');
 `;
 
-test.describe('CustomElement', () => {
+test.describe("CustomElement", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/customelement');
+    await page.goto("/customelement.playground");
   });
 
-  test('custom element definition', async ({ page }) => {
+  test("custom element definition", async ({ page, baseURL }) => {
     const code = `
+      import { CustomElement } from '${baseURL}/mod.bundle.js';
+
       ${testElementDefinitionCode}
 
-      this.addLog(customElements.get('test-element') !== undefined);
+      playground.logs.add(customElements.get('test-element') !== undefined);
     `;
 
     const logs = [
-      'observedAttributes',
-      'true',
+      "observedAttributes",
+      "true",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('connected or disconnected', async ({ page }) => {
+  test("connected or disconnected", async ({ page, baseURL }) => {
     const code = `
+      import { CustomElement } from '${baseURL}/mod.bundle.js';
+
       ${testElementDefinitionCode}
 
-      this.addResult('<test-element></test-element>');
+      playground.content.set('<test-element></test-element>');
 
-      const testElement = document.querySelector('test-element');
-      this.addLog(testElement.outerHTML);
+      const testElement = playground.content.get().querySelector('test-element');
+
+      playground.logs.add(testElement.outerHTML);
 
       testElement.remove();
     `;
 
     const logs = [
-      'observedAttributes',
-      'constructor',
-      'connectedCallback',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element></test-element>',
-      'disconnectedCallback',
+      "observedAttributes",
+      "constructor",
+      "connectedCallback",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      "<test-element><span>attr1:</span><span>attr2:</span></test-element>",
+      "disconnectedCallback",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('moved to a different page', async ({ page }, testInfo) => {
+  test("moved to a different page", async ({ page, baseURL }, testInfo) => {
     const code = `
+      import { CustomElement } from '${baseURL}/mod.bundle.js';
+
       ${testElementDefinitionCode}
 
-      this.addResult('<test-element></test-element>');
+      playground.content.set('<test-element></test-element>');
 
-      const testElement = document.querySelector('test-element');
-      this.addLog(testElement.outerHTML);
+      const testElement = playground.content.get().querySelector('test-element');
+
+      playground.logs.add(testElement.outerHTML);
 
       const iframe = document.createElement('iframe');
       iframe.srcdoc = '<!DOCTYPE html><html><head></head><body></body></html>';
-      this.addResult(iframe);
 
-      document.querySelector('iframe').contentWindow.document.body.appendChild(testElement);
+      playground.content.set(iframe);
+
+      playground.content.get().querySelector('iframe').contentWindow.document.body.appendChild(testElement);
     `;
 
     let logs = [
-      'observedAttributes',
-      'constructor',
-      'connectedCallback',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element></test-element>',
-      'disconnectedCallback',
-      'adoptedCallback',
-      'connectedCallback',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
+      "observedAttributes",
+      "constructor",
+      "connectedCallback",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      "<test-element><span>attr1:</span><span>attr2:</span></test-element>",
+      "disconnectedCallback",
+      "adoptedCallback",
+      "connectedCallback",
+      "update",
+      "updateSync",
+      "render",
+      "updatedCallback",
     ];
 
     // The behavior is different in Firefox.
-    if (testInfo.project.name === 'firefox') {
+    if (testInfo.project.name === "firefox") {
       logs = [
-        'observedAttributes',
-        'constructor',
-        'connectedCallback',
-        'updateSync',
-        'render',
-        'updatedCallback',
-        '<test-element></test-element>',
-        'disconnectedCallback',
-        'adoptedCallback',
-        'connectedCallback',
+        "observedAttributes",
+        "constructor",
+        "connectedCallback",
+        "updateSync",
+        "render",
+        "updatedCallback",
+        "<test-element><span>attr1:</span><span>attr2:</span></test-element>",
+        "disconnectedCallback",
+        "adoptedCallback",
+        "connectedCallback",
       ];
     }
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('attribute changed', async ({ page }) => {
+  test("attribute changed", async ({ page, baseURL }) => {
     const code = `
+      import { CustomElement } from '${baseURL}/mod.bundle.js';
+
       ${testElementDefinitionCode}
 
-      this.addResult('<test-element attr0="0" attr1="1"></test-element>');
+      playground.content.set('<test-element attr1="1" attr2="2"></test-element>');
 
-      const testElement = document.querySelector('test-element');
-      this.addLog(testElement.outerHTML);
+      const testElement = playground.content.get().querySelector('test-element');
 
-      testElement.setAttribute('attr0', 'a');
-      await this.wait(100);
-      this.addLog(testElement.outerHTML);
-
-      testElement.setAttribute('attr1', 'b');
-      await this.wait(100);
-      this.addLog(testElement.outerHTML);
-
-      testElement.setAttribute('attr1', 'c');
-      testElement.setAttribute('attr1', 'd');
-      testElement.setAttribute('attr1', 'e');
-      testElement.setAttribute('attr1', 'f');
-      await this.wait(100);
-      this.addLog(testElement.outerHTML);
-    `;
-
-    const logs = [
-      'observedAttributes',
-      'constructor',
-      'attributeChangedCallback',
-      'connectedCallback',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element attr0="0" attr1="1">attr0:0;attr1:1;</test-element>',
-      '<test-element attr0="a" attr1="1">attr0:0;attr1:1;</test-element>',
-      'attributeChangedCallback',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element attr0="a" attr1="b">attr0:a;attr1:b;</test-element>',
-      'attributeChangedCallback',
-      'update',
-      'attributeChangedCallback',
-      'update',
-      'attributeChangedCallback',
-      'update',
-      'attributeChangedCallback',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element attr0="a" attr1="f">attr0:a;attr1:f;</test-element>',
-    ];
-
-    console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
-    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
-  });
-
-  test('asynchronous update', async ({ page }) => {
-    const code = `
-      ${testElementDefinitionCode}
-
-      this.addResult('<test-element attr0="0" attr1="1"></test-element>');
-
-      const testElement = document.querySelector('test-element');
-      this.addLog(testElement.updateCounter);
+      playground.logs.add(testElement.outerHTML);
 
       testElement.setAttribute('attr1', 'a');
-      await this.wait(100);
-      this.addLog(testElement.updateCounter);
+
+      await playground.wait(100);
+
+      playground.logs.add(testElement.outerHTML);
 
       testElement.setAttribute('attr1', 'b');
       testElement.setAttribute('attr1', 'c');
-      testElement.setAttribute('attr1', 'd');
-      testElement.setAttribute('attr1', 'e');
-      testElement.setAttribute('attr1', 'f');
-      await this.wait(100);
-      this.addLog(testElement.updateCounter);
+
+      await playground.wait(100);
+
+      playground.logs.add(testElement.outerHTML);
+
+      testElement.setAttribute('attr2', 'x');
+
+      await playground.wait(100);
+
+      playground.logs.add(testElement.outerHTML);
     `;
 
     const logs = [
-      'observedAttributes',
-      'constructor',
-      'attributeChangedCallback',
-      'connectedCallback',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '1',
-      'attributeChangedCallback',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '2',
-      'attributeChangedCallback',
-      'update',
-      'attributeChangedCallback',
-      'update',
-      'attributeChangedCallback',
-      'update',
-      'attributeChangedCallback',
-      'update',
-      'attributeChangedCallback',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '3',
+      "observedAttributes",
+      "constructor",
+      "attributeChangedCallback",
+      "connectedCallback",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      '<test-element attr1="1" attr2="2"><span>attr1:1</span><span>attr2:2</span></test-element>',
+      "attributeChangedCallback",
+      "update",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      '<test-element attr1="a" attr2="2"><span>attr1:a</span><span>attr2:2</span></test-element>',
+      "attributeChangedCallback",
+      "update",
+      "attributeChangedCallback",
+      "update",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      '<test-element attr1="c" attr2="2"><span>attr1:c</span><span>attr2:2</span></test-element>',
+      '<test-element attr1="c" attr2="x"><span>attr1:c</span><span>attr2:2</span></test-element>',
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('error handling', async ({ page }) => {
+  test("asynchronous update", async ({ page, baseURL }) => {
     const code = `
+      import { CustomElement } from '${baseURL}/mod.bundle.js';
+
       ${testElementDefinitionCode}
 
-      this.addResult('<test-element attr0="0" attr1="1"></test-element>');
+      playground.content.set('<test-element attr1="1" attr2="2"></test-element>');
 
-      const testElement = document.querySelector('test-element');
-      this.addLog(testElement.outerHTML);
+      const testElement = playground.content.get().querySelector('test-element');
+
+      playground.logs.add(testElement.updateCounter);
+
+      testElement.setAttribute('attr1', 'a');
+
+      await playground.wait(100);
+
+      playground.logs.add(testElement.updateCounter);
+
+      testElement.setAttribute('attr1', 'b');
+      testElement.setAttribute('attr1', 'c');
+
+      await playground.wait(100);
+
+      playground.logs.add(testElement.updateCounter);
+    `;
+
+    const logs = [
+      "observedAttributes",
+      "constructor",
+      "attributeChangedCallback",
+      "connectedCallback",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      "1",
+      "attributeChangedCallback",
+      "update",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      "2",
+      "attributeChangedCallback",
+      "update",
+      "attributeChangedCallback",
+      "update",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      "3",
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test("error handling", async ({ page, baseURL }) => {
+    const code = `
+      import { CustomElement } from '${baseURL}/mod.bundle.js';
+
+      ${testElementDefinitionCode}
+
+      playground.content.set('<test-element attr1="1" attr2="2"></test-element>');
+
+      const testElement = playground.content.get().querySelector('test-element');
+
+      playground.logs.add(testElement.outerHTML);
 
       isRenderError = true;
       isUpdatedCallbackError = false;
 
       testElement.setAttribute('attr1', 'a');
-      await this.wait(100);
-      this.addLog(testElement.outerHTML);
+
+      await playground.wait(100);
+
+      playground.logs.add(testElement.outerHTML);
 
       isRenderError = false;
       isUpdatedCallbackError = true;
 
       testElement.setAttribute('attr1', 'b');
-      await this.wait(100);
-      this.addLog(testElement.outerHTML);
+
+      await playground.wait(100);
+
+      playground.logs.add(testElement.outerHTML);
     `;
 
     const logs = [
-      'observedAttributes',
-      'constructor',
-      'attributeChangedCallback',
-      'connectedCallback',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      '<test-element attr0="0" attr1="1">attr0:0;attr1:1;</test-element>',
-      'attributeChangedCallback',
-      'update',
-      'updateSync',
-      'render',
-      'errorCallback',
-      'error',
-      '<test-element attr0="0" attr1="a">attr0:0;attr1:1;</test-element>',
-      'attributeChangedCallback',
-      'update',
-      'updateSync',
-      'render',
-      'updatedCallback',
-      'errorCallback',
-      'error',
-      '<test-element attr0="0" attr1="b">attr0:0;attr1:b;</test-element>',
+      "observedAttributes",
+      "constructor",
+      "attributeChangedCallback",
+      "connectedCallback",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      '<test-element attr1="1" attr2="2"><span>attr1:1</span><span>attr2:2</span></test-element>',
+      "attributeChangedCallback",
+      "update",
+      "updateSync",
+      "render",
+      "errorCallback",
+      "error",
+      '<test-element attr1="a" attr2="2"><span>attr1:1</span><span>attr2:2</span></test-element>',
+      "attributeChangedCallback",
+      "update",
+      "updateSync",
+      "render",
+      "updatedCallback",
+      "errorCallback",
+      "error",
+      '<test-element attr1="b" attr2="2"><span>attr1:b</span><span>attr2:2</span></test-element>',
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });
