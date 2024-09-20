@@ -1,19 +1,19 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('WebStorage', () => {
+test.describe("WebStorage", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/webstorage');
+    await page.goto("/webstorage.playground");
   });
 
-  test('invalid storage mode', async ({ page }) => {
+  test("invalid storage mode", async ({ page, baseURL }) => {
     const code = `
-      const { WebStorage } = this.chirit;
+      import { WebStorage } from '${baseURL}/mod.bundle.js';
 
       try {
         const webStorage = new WebStorage();
       } catch (exception) {
         if (exception instanceof Error) {
-          this.addLog('Error: ' + exception.message);
+          playground.logs.add('Error: ' + exception.message);
         }
       }
 
@@ -21,7 +21,7 @@ test.describe('WebStorage', () => {
         const webStorage = new WebStorage('invalid');
       } catch (exception) {
         if (exception instanceof Error) {
-          this.addLog('Error: ' + exception.message);
+          playground.logs.add('Error: ' + exception.message);
         }
       }
     `;
@@ -32,128 +32,136 @@ test.describe('WebStorage', () => {
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('local storage mode', async ({ page }) => {
+  test("local storage mode", async ({ page, baseURL }) => {
     const code = `
-      const { WebStorage } = this.chirit;
+      import { WebStorage } from '${baseURL}/mod.bundle.js';
 
       const webStorage = new WebStorage('local', 'test_');
 
-      this.addLog(webStorage.mode);
-      this.addLog(webStorage.prefix);
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys());
+      playground.logs.add(webStorage.mode);
+      playground.logs.add(webStorage.prefix);
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys());
 
-      this.addLog(webStorage.get('item0'));
+      playground.logs.add(webStorage.get('item0'));
 
-      localStorage.setItem('test_item1', 'test1');
-      this.addLog(localStorage.getItem('test_item1'));
-      this.addLog(webStorage.get('item1'));
+      localStorage.setItem('test_item1', 'a');
 
-      webStorage.set('item2', 'test2');
-      this.addLog(localStorage.getItem('test_item2'));
-      this.addLog(webStorage.get('item2'));
+      playground.logs.add(localStorage.getItem('test_item1'));
+      playground.logs.add(webStorage.get('item1'));
 
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys().sort());
+      webStorage.set('item2', 'b');
+
+      playground.logs.add(localStorage.getItem('test_item2'));
+      playground.logs.add(webStorage.get('item2'));
+
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys().sort());
 
       webStorage.delete('item1');
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys());
+
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys());
 
       webStorage.clear();
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys());
+
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys());
     `;
 
     const logs = [
-      'local',
-      'test_',
-      '0',
-      '[]',
-      'undefined',
-      'test1',
-      'test1',
-      '{"_v":"test2"}',
-      'test2',
-      '2',
+      "local",
+      "test_",
+      "0",
+      "[]",
+      "undefined",
+      "a",
+      "a",
+      '{"_v":"b"}',
+      "b",
+      "2",
       '["test_item1","test_item2"]',
-      '1',
+      "1",
       '["test_item2"]',
-      '0',
-      '[]',
+      "0",
+      "[]",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('session storage mode', async ({ page }) => {
+  test("session storage mode", async ({ page, baseURL }) => {
     const code = `
-      const { WebStorage } = this.chirit;
+      import { WebStorage } from '${baseURL}/mod.bundle.js';
 
       const webStorage = new WebStorage('session', 'test_');
 
-      this.addLog(webStorage.mode);
-      this.addLog(webStorage.prefix);
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys());
+      playground.logs.add(webStorage.mode);
+      playground.logs.add(webStorage.prefix);
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys());
 
-      this.addLog(webStorage.get('item0'));
+      playground.logs.add(webStorage.get('item0'));
 
-      sessionStorage.setItem('test_item1', 'test1');
-      this.addLog(sessionStorage.getItem('test_item1'));
-      this.addLog(webStorage.get('item1'));
+      sessionStorage.setItem('test_item1', 'a');
 
-      webStorage.set('item2', 'test2');
-      this.addLog(sessionStorage.getItem('test_item2'));
-      this.addLog(webStorage.get('item2'));
+      playground.logs.add(sessionStorage.getItem('test_item1'));
+      playground.logs.add(webStorage.get('item1'));
 
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys().sort());
+      webStorage.set('item2', 'b');
+
+      playground.logs.add(sessionStorage.getItem('test_item2'));
+      playground.logs.add(webStorage.get('item2'));
+
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys().sort());
 
       webStorage.delete('item1');
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys());
+
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys());
 
       webStorage.clear();
-      this.addLog(webStorage.size);
-      this.addLog(webStorage.keys());
+
+      playground.logs.add(webStorage.size);
+      playground.logs.add(webStorage.keys());
     `;
 
     const logs = [
-      'session',
-      'test_',
-      '0',
-      '[]',
-      'undefined',
-      'test1',
-      'test1',
-      '{"_v":"test2"}',
-      'test2',
-      '2',
+      "session",
+      "test_",
+      "0",
+      "[]",
+      "undefined",
+      "a",
+      "a",
+      '{"_v":"b"}',
+      "b",
+      "2",
       '["test_item1","test_item2"]',
-      '1',
+      "1",
       '["test_item2"]',
-      '0',
-      '[]',
+      "0",
+      "[]",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('data in the storage', async ({ page }) => {
+  test("data in the storage", async ({ page, baseURL }) => {
     const code = `
-      const { WebStorage } = this.chirit;
+      import { WebStorage } from '${baseURL}/mod.bundle.js';
 
       const webStorage = new WebStorage('local');
 
@@ -165,45 +173,45 @@ test.describe('WebStorage', () => {
       webStorage.set('null', null);
       webStorage.set('undefined', undefined);
 
-      this.addLog(webStorage.get('boolean'));
-      this.addLog(webStorage.get('number'));
-      this.addLog(webStorage.get('string'));
-      this.addLog(webStorage.get('array'));
-      this.addLog(webStorage.get('object'));
-      this.addLog(webStorage.get('null'));
-      this.addLog(webStorage.get('undefined'));
+      playground.logs.add(webStorage.get('boolean'));
+      playground.logs.add(webStorage.get('number'));
+      playground.logs.add(webStorage.get('string'));
+      playground.logs.add(webStorage.get('array'));
+      playground.logs.add(webStorage.get('object'));
+      playground.logs.add(webStorage.get('null'));
+      playground.logs.add(webStorage.get('undefined'));
 
-      this.addLog(localStorage.getItem('boolean'));
-      this.addLog(localStorage.getItem('number'));
-      this.addLog(localStorage.getItem('string'));
-      this.addLog(localStorage.getItem('array'));
-      this.addLog(localStorage.getItem('object'));
-      this.addLog(localStorage.getItem('null'));
-      this.addLog(localStorage.getItem('undefined'));
+      playground.logs.add(localStorage.getItem('boolean'));
+      playground.logs.add(localStorage.getItem('number'));
+      playground.logs.add(localStorage.getItem('string'));
+      playground.logs.add(localStorage.getItem('array'));
+      playground.logs.add(localStorage.getItem('object'));
+      playground.logs.add(localStorage.getItem('null'));
+      playground.logs.add(localStorage.getItem('undefined'));
 
       webStorage.clear();
     `;
 
     const logs = [
-      'true',
-      '1',
-      'text',
-      '[0]',
+      "true",
+      "1",
+      "text",
+      "[0]",
       '{"key":"value"}',
-      'null',
-      'undefined',
+      "null",
+      "undefined",
       '{"_v":true}',
       '{"_v":1}',
       '{"_v":"text"}',
       '{"_v":[0]}',
       '{"_v":{"key":"value"}}',
       '{"_v":null}',
-      '{}',
+      "{}",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });

@@ -1,89 +1,93 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('ElementAttributesProxy', () => {
+test.describe("ElementAttributesProxy", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/elementattributesproxy');
+    await page.goto("/elementattributesproxy.playground");
   });
 
-  test('class instance', async ({ page }) => {
+  test("class instance", async ({ page, baseURL }) => {
     const code = `
-      const { ElementAttributesProxy } = this.chirit;
+      import { ElementAttributesProxy } from '${baseURL}/mod.bundle.js';
 
       const target = document.createElement('div');
 
       const elementAttributesProxy = new ElementAttributesProxy(target);
 
-      this.addLog(elementAttributesProxy instanceof ElementAttributesProxy);
-      this.addLog(elementAttributesProxy instanceof Object);
+      playground.logs.add(elementAttributesProxy instanceof ElementAttributesProxy);
+      playground.logs.add(elementAttributesProxy instanceof Object);
     `;
 
     const logs = [
-      'false',
-      'true',
+      "false",
+      "true",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('attribute manipulation', async ({ page }) => {
+  test("attribute manipulation", async ({ page, baseURL }) => {
     const code = `
-      const { ElementAttributesProxy } = this.chirit;
+      import { ElementAttributesProxy } from '${baseURL}/mod.bundle.js';
 
       const target = document.createElement('div');
-      this.addResult(target);
-      this.addLog(target.outerHTML);
+
+      playground.content.set(target);
+
+      playground.logs.add(target.outerHTML);
 
       const elementAttributesProxy = new ElementAttributesProxy(target);
 
-      this.addLog(elementAttributesProxy.attr0);
+      playground.logs.add(elementAttributesProxy.attr0);
 
       elementAttributesProxy.attr1 = '1';
-      this.addLog(elementAttributesProxy.attr1);
-      this.addResult(target);
-      this.addLog(target.outerHTML);
+
+      playground.logs.add(elementAttributesProxy.attr1);
+
+      playground.logs.add(target.outerHTML);
 
       elementAttributesProxy['attr2'] = '2';
-      this.addLog(elementAttributesProxy['attr2']);
-      this.addResult(target);
-      this.addLog(target.outerHTML);
 
-      this.addLog(Object.keys(elementAttributesProxy).toSorted());
-      this.addLog(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'attr1') !== undefined);
+      playground.logs.add(elementAttributesProxy['attr2']);
+
+      playground.logs.add(target.outerHTML);
+
+      playground.logs.add(Object.keys(elementAttributesProxy).toSorted());
+      playground.logs.add(Object.getOwnPropertyDescriptor(elementAttributesProxy, 'attr1') !== undefined);
 
       delete elementAttributesProxy.attr2;
-      this.addResult(target);
-      this.addLog(target.outerHTML);
 
-      this.addLog('attr1' in elementAttributesProxy);
-      this.addLog('attr2' in elementAttributesProxy);
+      playground.logs.add(target.outerHTML);
+
+      playground.logs.add('attr1' in elementAttributesProxy);
+      playground.logs.add('attr2' in elementAttributesProxy);
     `;
 
     const logs = [
-      '<div></div>',
-      'undefined',
-      '1',
+      "<div></div>",
+      "undefined",
+      "1",
       '<div attr1="1"></div>',
-      '2',
+      "2",
       '<div attr1="1" attr2="2"></div>',
       '["attr1","attr2"]',
-      'true',
+      "true",
       '<div attr1="1"></div>',
-      'true',
-      'false',
+      "true",
+      "false",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('reference to target element', async ({ page }, testInfo) => {
+  test("reference to target element", async ({ page, baseURL }, testInfo) => {
     const code = `
-      const { ElementAttributesProxy } = this.chirit;
+      import { ElementAttributesProxy } from '${baseURL}/mod.bundle.js';
 
       const target = document.createElement('div');
       target.id = 'element-attributes-proxy-target';
@@ -99,7 +103,7 @@ test.describe('ElementAttributesProxy', () => {
           }
         } catch (exception) {
           if (exception instanceof Error) {
-            this.addLog('Error: ' + exception.message);
+            playground.logs.add('Error: ' + exception.message);
           }
           clearInterval(timerId);
         }
@@ -113,14 +117,14 @@ test.describe('ElementAttributesProxy', () => {
     let timeout = 60000;
 
     // GC is slow in Firefox, so skip the check.
-    if (testInfo.project.name === 'firefox') {
+    if (testInfo.project.name === "firefox") {
       logs = [];
       timeout = 1000;
     }
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs, {
       timeout,
     });

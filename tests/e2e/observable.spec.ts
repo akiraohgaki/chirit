@@ -1,40 +1,44 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('Observable', () => {
+test.describe("Observable", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/observable');
+    await page.goto("/observable.playground");
   });
 
-  test('notification', async ({ page }) => {
+  test("notification", async ({ page, baseURL }) => {
     const code = `
-      const { Observable } = this.chirit;
+      import { Observable } from '${baseURL}/mod.bundle.js';
 
       const observer1 = (state) => {
-        this.addLog(state);
+        playground.logs.add(state);
       };
       const observer2 = (state) => {
-        this.addLog(state);
+        playground.logs.add(state);
       };
 
       const observable = new Observable();
 
+      observable.notify(0);
+
       observable.subscribe(observer1);
       observable.subscribe(observer2);
-      observable.notify(true);
+
+      observable.notify(1);
 
       observable.unsubscribe(observer1);
       observable.unsubscribe(observer2);
-      observable.notify(true);
+
+      observable.notify(2);
     `;
 
     const logs = [
-      'true',
-      'true',
+      "1",
+      "1",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });

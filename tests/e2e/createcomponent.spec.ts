@@ -1,82 +1,81 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from "@playwright/test";
 
-test.describe('createComponent', () => {
+test.describe("createComponent", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/createcomponent');
+    await page.goto("/createcomponent.playground");
   });
 
-  test('custom element definition', async ({ page }) => {
+  test("custom element definition", async ({ page, baseURL }) => {
     const code = `
-      const { createComponent, Component } = this.chirit;
+      import { createComponent, Component } from '${baseURL}/mod.bundle.js';
 
       const TestComponent = createComponent('test-component');
 
-      this.addLog(customElements.get('test-component') !== undefined);
-
-      this.addLog(TestComponent instanceof Component);
-      this.addLog(TestComponent instanceof Function);
+      playground.logs.add(customElements.get('test-component') !== undefined);
+      playground.logs.add(TestComponent instanceof Component);
+      playground.logs.add(TestComponent instanceof Function);
     `;
 
     const logs = [
-      'true',
-      'false',
-      'true',
+      "true",
+      "false",
+      "true",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('connected or disconnected', async ({ page }) => {
+  test("connected or disconnected", async ({ page, baseURL }) => {
     const code = `
-      const { createComponent } = this.chirit;
-      const addLog = this.addLog;
+      import { createComponent } from '${baseURL}/mod.bundle.js';
 
       createComponent('test-component', {
         observedAttributes: ['attr1'],
         init: (_context) => {
-          addLog('init');
+          playground.logs.add('init');
         },
         connected: (_context) => {
-          addLog('connected');
+          playground.logs.add('connected');
         },
         disconnected: (_context) => {
-          addLog('disconnected');
+          playground.logs.add('disconnected');
         },
         styles: () => {
-          addLog('styles');
+          playground.logs.add('styles');
           return ':host { color: red; }';
         },
         template: (context) => {
-          addLog('template');
-          return '<span>' + context.attr.attr1 + '</span>';
+          playground.logs.add('template');
+          return '<span>attr1:' + context.attr.attr1 + '</span>';
         }
       });
 
-      this.addResult('<test-component attr1="1"></test-component>');
+      playground.content.set('<test-component attr1="1"></test-component>');
 
-      const testComponent = document.querySelector('test-component');
-      this.addLog(testComponent.outerHTML);
-      this.addLog(testComponent.content.innerHTML);
+      const testComponent = playground.content.get().querySelector('test-component');
+
+      playground.logs.add(testComponent.outerHTML);
+      playground.logs.add(testComponent.content.innerHTML);
 
       testComponent.remove();
     `;
 
     const logs = [
-      'init',
-      'styles',
-      'template',
-      'connected',
+      "init",
+      "styles",
+      "template",
+      "connected",
       '<test-component attr1="1"></test-component>',
-      '<span>1</span>',
-      'disconnected',
+      "<span>attr1:1</span>",
+      "disconnected",
     ];
 
     console.log(code);
-    await page.locator('[data-content="code"]').fill(code);
-    await page.locator('[data-action="runCode"]').click();
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 });
