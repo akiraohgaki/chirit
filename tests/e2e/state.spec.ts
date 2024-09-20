@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("State", () => {
+test.describe('State', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/state.playground");
+    await page.goto('/state.playground');
   });
 
-  test("state management", async ({ page, baseURL }) => {
+  test('state management', async ({ page, baseURL }) => {
     const code = `
       import { State } from '${baseURL}/mod.bundle.js';
 
@@ -23,9 +23,9 @@ test.describe("State", () => {
     `;
 
     const logs = [
-      "0",
-      "1",
-      "0",
+      '0',
+      '1',
+      '0',
     ];
 
     console.log(code);
@@ -34,7 +34,7 @@ test.describe("State", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("state change notification", async ({ page, baseURL }) => {
+  test('state change notification', async ({ page, baseURL }) => {
     const code = `
       import { State } from '${baseURL}/mod.bundle.js';
 
@@ -58,9 +58,9 @@ test.describe("State", () => {
     `;
 
     const logs = [
-      "0",
-      "1",
-      "0",
+      '0',
+      '1',
+      '0',
     ];
 
     console.log(code);

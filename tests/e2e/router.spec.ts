@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Router", () => {
+test.describe('Router', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/router.playground");
+    await page.goto('/router.playground');
   });
 
-  test("invalid routing mode", async ({ page, baseURL }) => {
+  test('invalid routing mode', async ({ page, baseURL }) => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
@@ -37,7 +37,7 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("history-based routing mode: routing", async ({ page, baseURL }) => {
+  test('history-based routing mode: routing', async ({ page, baseURL }) => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
@@ -77,19 +77,19 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "history",
-      "/router.playground/history/",
-      baseURL + "/router.playground/history/a/1/2",
+      'history',
+      '/router.playground/history/',
+      baseURL + '/router.playground/history/a/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router.playground/history/b/1/2",
+      baseURL + '/router.playground/history/b/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router.playground/history/",
-      baseURL + "/router.playground/",
-      baseURL + "/",
-      baseURL + "/router.playground/history/#hash",
-      baseURL + "/router.playground/history/?query=true",
-      baseURL + "/",
-      baseURL + "/router.playground/history/noroute",
+      baseURL + '/router.playground/history/',
+      baseURL + '/router.playground/',
+      baseURL + '/',
+      baseURL + '/router.playground/history/#hash',
+      baseURL + '/router.playground/history/?query=true',
+      baseURL + '/',
+      baseURL + '/router.playground/history/noroute',
     ];
 
     console.log(code);
@@ -98,8 +98,8 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("history-based routing mode: reload to different origin", async ({ page, baseURL }) => {
-    const url = "https://example.com/";
+  test('history-based routing mode: reload to different origin', async ({ page, baseURL }) => {
+    const url = 'https://example.com/';
 
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
@@ -116,7 +116,7 @@ test.describe("Router", () => {
     await expect(page).toHaveURL(url);
   });
 
-  test("history-based routing mode: events", async ({ page, baseURL }) => {
+  test('history-based routing mode: events', async ({ page, baseURL }) => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
@@ -142,19 +142,19 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "pushstate",
-      baseURL + "/change",
-      "pushstate",
-      baseURL + "/error",
-      "error",
+      'pushstate',
+      baseURL + '/change',
+      'pushstate',
+      baseURL + '/error',
+      'error',
     ];
 
     const logsAfterPopstate = [
-      "popstate",
-      baseURL + "/change",
-      "popstate",
-      baseURL + "/error",
-      "error",
+      'popstate',
+      baseURL + '/change',
+      'popstate',
+      baseURL + '/error',
+      'error',
     ];
 
     console.log(code);
@@ -170,7 +170,7 @@ test.describe("Router", () => {
     ]);
   });
 
-  test("hash-based routing mode: routing", async ({ page, baseURL }) => {
+  test('hash-based routing mode: routing', async ({ page, baseURL }) => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
@@ -215,17 +215,17 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "hash",
-      "/router.playground/hash/",
-      baseURL + "/router.playground#/router.playground/hash/a/1/2",
+      'hash',
+      '/router.playground/hash/',
+      baseURL + '/router.playground#/router.playground/hash/a/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router.playground#/router.playground/hash/b/1/2",
+      baseURL + '/router.playground#/router.playground/hash/b/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + "/router.playground#/router.playground/hash/",
-      baseURL + "/router.playground#/router.playground/",
-      baseURL + "/router.playground#/",
-      baseURL + "/router.playground#/router.playground/hash/hash",
-      baseURL + "/router.playground#/router.playground/hash/noroute",
+      baseURL + '/router.playground#/router.playground/hash/',
+      baseURL + '/router.playground#/router.playground/',
+      baseURL + '/router.playground#/',
+      baseURL + '/router.playground#/router.playground/hash/hash',
+      baseURL + '/router.playground#/router.playground/hash/noroute',
     ];
 
     console.log(code);
@@ -234,7 +234,7 @@ test.describe("Router", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("hash-based routing mode: reload to query string", async ({ page, baseURL }) => {
+  test('hash-based routing mode: reload to query string', async ({ page, baseURL }) => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
@@ -249,10 +249,10 @@ test.describe("Router", () => {
     await page.locator('[data-content="code"] code').fill(code);
     await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([]);
-    await expect(page).toHaveURL(baseURL + "/router.playground?query=true");
+    await expect(page).toHaveURL(baseURL + '/router.playground?query=true');
   });
 
-  test("hash-based routing mode: reload to same origin", async ({ page, baseURL }) => {
+  test('hash-based routing mode: reload to same origin', async ({ page, baseURL }) => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
@@ -267,11 +267,11 @@ test.describe("Router", () => {
     await page.locator('[data-content="code"] code').fill(code);
     await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([]);
-    await expect(page).toHaveURL(baseURL + "/");
+    await expect(page).toHaveURL(baseURL + '/');
   });
 
-  test("hash-based routing mode: reload to different origin", async ({ page, baseURL }) => {
-    const url = "https://example.com/";
+  test('hash-based routing mode: reload to different origin', async ({ page, baseURL }) => {
+    const url = 'https://example.com/';
 
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
@@ -288,7 +288,7 @@ test.describe("Router", () => {
     await expect(page).toHaveURL(url);
   });
 
-  test("hash-based routing mode: events", async ({ page, baseURL }) => {
+  test('hash-based routing mode: events', async ({ page, baseURL }) => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
@@ -316,19 +316,19 @@ test.describe("Router", () => {
     `;
 
     const logs = [
-      "hashchange",
-      baseURL + "/router.playground#/change",
-      "hashchange",
-      baseURL + "/router.playground#/error",
-      "error",
+      'hashchange',
+      baseURL + '/router.playground#/change',
+      'hashchange',
+      baseURL + '/router.playground#/error',
+      'error',
     ];
 
     const logsAfterHashchange = [
-      "hashchange",
-      baseURL + "/router.playground#/change",
-      "hashchange",
-      baseURL + "/router.playground#/error",
-      "error",
+      'hashchange',
+      baseURL + '/router.playground#/change',
+      'hashchange',
+      baseURL + '/router.playground#/error',
+      'error',
     ];
 
     console.log(code);

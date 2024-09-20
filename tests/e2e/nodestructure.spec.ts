@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("NodeStructure", () => {
+test.describe('NodeStructure', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/nodestructure.playground");
+    await page.goto('/nodestructure.playground');
   });
 
-  test("style sheets", async ({ page, baseURL }) => {
+  test('style sheets', async ({ page, baseURL }) => {
     const code = `
       import { NodeStructure } from '${baseURL}/mod.bundle.js';
 
@@ -48,11 +48,11 @@ test.describe("NodeStructure", () => {
     `;
 
     const logs = [
-      "0",
-      "1",
-      "1",
-      "2",
-      "4",
+      '0',
+      '1',
+      '1',
+      '2',
+      '4',
     ];
 
     console.log(code);
@@ -61,7 +61,7 @@ test.describe("NodeStructure", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("content", async ({ page, baseURL }) => {
+  test('content', async ({ page, baseURL }) => {
     const code = `
       import { NodeStructure } from '${baseURL}/mod.bundle.js';
 
@@ -98,11 +98,11 @@ test.describe("NodeStructure", () => {
     `;
 
     const logs = [
-      "<div></div>",
-      "<div><span>1</span></div>",
-      "<div><span>2</span></div>",
-      "<div><span>3</span><span>4</span></div>",
-      "<div><span>5</span><span>6</span></div>",
+      '<div></div>',
+      '<div><span>1</span></div>',
+      '<div><span>2</span></div>',
+      '<div><span>3</span><span>4</span></div>',
+      '<div><span>5</span><span>6</span></div>',
     ];
 
     console.log(code);
@@ -111,7 +111,7 @@ test.describe("NodeStructure", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("diff and patch", async ({ page, baseURL }) => {
+  test('diff and patch', async ({ page, baseURL }) => {
     const code = `
       import { NodeStructure } from '${baseURL}/mod.bundle.js';
 
@@ -165,11 +165,11 @@ test.describe("NodeStructure", () => {
     `;
 
     const logs = [
-      "<div></div>",
-      "<div><span>1</span></div>",
-      "<div><span>1</span><span>2</span></div>",
-      "<div><p>a</p><span>1</span><span>2</span></div>",
-      "<div><p>a</p></div>",
+      '<div></div>',
+      '<div><span>1</span></div>',
+      '<div><span>1</span><span>2</span></div>',
+      '<div><p>a</p><span>1</span><span>2</span></div>',
+      '<div><p>a</p></div>',
       '<div><p title="a">a</p></div>',
       '<div><p title="a" class="a">a</p></div>',
       '<div><p class="a">a</p></div>',
@@ -184,7 +184,7 @@ test.describe("NodeStructure", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("event binding", async ({ page, baseURL }) => {
+  test('event binding', async ({ page, baseURL }) => {
     const code = `
       import { NodeStructure } from '${baseURL}/mod.bundle.js';
 
@@ -206,11 +206,11 @@ test.describe("NodeStructure", () => {
     `;
 
     const logs = [
-      "<div><button>click me</button></div>",
+      '<div><button>click me</button></div>',
     ];
 
     const logsAfterButtonClick = [
-      "click",
+      'click',
     ];
 
     console.log(code);
@@ -225,7 +225,7 @@ test.describe("NodeStructure", () => {
     ]);
   });
 
-  test("clone", async ({ page, baseURL }) => {
+  test('clone', async ({ page, baseURL }) => {
     const code = `
       import { NodeStructure } from '${baseURL}/mod.bundle.js';
 
@@ -244,9 +244,9 @@ test.describe("NodeStructure", () => {
     `;
 
     const logs = [
-      "<div><span>1</span></div>",
-      "true",
-      "<span>1</span>",
+      '<div><span>1</span></div>',
+      'true',
+      '<span>1</span>',
     ];
 
     console.log(code);
@@ -255,7 +255,7 @@ test.describe("NodeStructure", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("reference to host element", async ({ page, baseURL }, testInfo) => {
+  test('reference to host element', async ({ page, baseURL }, testInfo) => {
     const code = `
       import { NodeStructure } from '${baseURL}/mod.bundle.js';
 
@@ -287,7 +287,7 @@ test.describe("NodeStructure", () => {
     let timeout = 60000;
 
     // GC is slow in Firefox, so skip the check.
-    if (testInfo.project.name === "firefox") {
+    if (testInfo.project.name === 'firefox') {
       logs = [];
       timeout = 1000;
     }

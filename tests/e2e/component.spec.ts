@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Component", () => {
+test.describe('Component', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/component.playground");
+    await page.goto('/component.playground');
   });
 
-  test("inherited features", async ({ page, baseURL }) => {
+  test('inherited features', async ({ page, baseURL }) => {
     const code = `
       import { Component, CustomElement, NodeStructure } from '${baseURL}/mod.bundle.js';
 
@@ -35,12 +35,12 @@ test.describe("Component", () => {
 
     const logs = [
       '<test-component attr1="1"></test-component>',
-      "<span>adoptedStyleSheets:1</span>",
-      "true",
-      "true",
-      "true",
-      "true",
-      "true",
+      '<span>adoptedStyleSheets:1</span>',
+      'true',
+      'true',
+      'true',
+      'true',
+      'true',
     ];
 
     console.log(code);
@@ -49,7 +49,7 @@ test.describe("Component", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("rendering", async ({ page, baseURL }) => {
+  test('rendering', async ({ page, baseURL }) => {
     const code = `
       import { Component } from '${baseURL}/mod.bundle.js';
 
@@ -79,12 +79,12 @@ test.describe("Component", () => {
     `;
 
     const logs = [
-      "styles",
-      "template",
-      "<test-component></test-component>",
-      "<span>adoptedStyleSheets:1</span>",
-      "template",
-      "<span>adoptedStyleSheets:1</span>",
+      'styles',
+      'template',
+      '<test-component></test-component>',
+      '<span>adoptedStyleSheets:1</span>',
+      'template',
+      '<span>adoptedStyleSheets:1</span>',
     ];
 
     console.log(code);
@@ -93,7 +93,7 @@ test.describe("Component", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("content container", async ({ page, baseURL }) => {
+  test('content container', async ({ page, baseURL }) => {
     const code = `
       import { Component } from '${baseURL}/mod.bundle.js';
 
@@ -127,10 +127,10 @@ test.describe("Component", () => {
     `;
 
     const logs = [
-      "<test-component1></test-component1>",
-      "true",
-      "<test-component2><div></div></test-component2>",
-      "true",
+      '<test-component1></test-component1>',
+      'true',
+      '<test-component2><div></div></test-component2>',
+      'true',
     ];
 
     console.log(code);
@@ -139,7 +139,7 @@ test.describe("Component", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("event handling", async ({ page, baseURL }) => {
+  test('event handling', async ({ page, baseURL }) => {
     const code = `
       import { Component } from '${baseURL}/mod.bundle.js';
 
@@ -168,12 +168,12 @@ test.describe("Component", () => {
     `;
 
     const logs = [
-      "<test-component></test-component>",
-      "<button>click me</button>",
+      '<test-component></test-component>',
+      '<button>click me</button>',
     ];
 
     const logsAfterComponentClick = [
-      "click",
+      'click',
     ];
 
     console.log(code);
@@ -188,7 +188,7 @@ test.describe("Component", () => {
     ]);
   });
 
-  test("state management", async ({ page, baseURL }) => {
+  test('state management', async ({ page, baseURL }) => {
     const code = `
       import { Component, State } from '${baseURL}/mod.bundle.js';
 
@@ -233,10 +233,10 @@ test.describe("Component", () => {
     `;
 
     const logs = [
-      "<test-component></test-component>",
-      "<span>state1:0</span><span>state2:0</span>",
-      "<span>state1:1</span><span>state2:1</span>",
-      "<span>state1:1</span><span>state2:1</span>",
+      '<test-component></test-component>',
+      '<span>state1:0</span><span>state2:0</span>',
+      '<span>state1:1</span><span>state2:1</span>',
+      '<span>state1:1</span><span>state2:1</span>',
     ];
 
     console.log(code);

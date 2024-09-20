@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("createComponent", () => {
+test.describe('createComponent', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/createcomponent.playground");
+    await page.goto('/createcomponent.playground');
   });
 
-  test("custom element definition", async ({ page, baseURL }) => {
+  test('custom element definition', async ({ page, baseURL }) => {
     const code = `
       import { createComponent, Component } from '${baseURL}/mod.bundle.js';
 
@@ -17,9 +17,9 @@ test.describe("createComponent", () => {
     `;
 
     const logs = [
-      "true",
-      "false",
-      "true",
+      'true',
+      'false',
+      'true',
     ];
 
     console.log(code);
@@ -28,7 +28,7 @@ test.describe("createComponent", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("connected or disconnected", async ({ page, baseURL }) => {
+  test('connected or disconnected', async ({ page, baseURL }) => {
     const code = `
       import { createComponent } from '${baseURL}/mod.bundle.js';
 
@@ -64,13 +64,13 @@ test.describe("createComponent", () => {
     `;
 
     const logs = [
-      "init",
-      "styles",
-      "template",
-      "connected",
+      'init',
+      'styles',
+      'template',
+      'connected',
       '<test-component attr1="1"></test-component>',
-      "<span>attr1:1</span>",
-      "disconnected",
+      '<span>attr1:1</span>',
+      'disconnected',
     ];
 
     console.log(code);

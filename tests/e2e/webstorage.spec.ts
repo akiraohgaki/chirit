@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("WebStorage", () => {
+test.describe('WebStorage', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/webstorage.playground");
+    await page.goto('/webstorage.playground');
   });
 
-  test("invalid storage mode", async ({ page, baseURL }) => {
+  test('invalid storage mode', async ({ page, baseURL }) => {
     const code = `
       import { WebStorage } from '${baseURL}/mod.bundle.js';
 
@@ -37,7 +37,7 @@ test.describe("WebStorage", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("local storage mode", async ({ page, baseURL }) => {
+  test('local storage mode', async ({ page, baseURL }) => {
     const code = `
       import { WebStorage } from '${baseURL}/mod.bundle.js';
 
@@ -75,21 +75,21 @@ test.describe("WebStorage", () => {
     `;
 
     const logs = [
-      "local",
-      "test_",
-      "0",
-      "[]",
-      "undefined",
-      "a",
-      "a",
+      'local',
+      'test_',
+      '0',
+      '[]',
+      'undefined',
+      'a',
+      'a',
       '{"_v":"b"}',
-      "b",
-      "2",
+      'b',
+      '2',
       '["test_item1","test_item2"]',
-      "1",
+      '1',
       '["test_item2"]',
-      "0",
-      "[]",
+      '0',
+      '[]',
     ];
 
     console.log(code);
@@ -98,7 +98,7 @@ test.describe("WebStorage", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("session storage mode", async ({ page, baseURL }) => {
+  test('session storage mode', async ({ page, baseURL }) => {
     const code = `
       import { WebStorage } from '${baseURL}/mod.bundle.js';
 
@@ -136,21 +136,21 @@ test.describe("WebStorage", () => {
     `;
 
     const logs = [
-      "session",
-      "test_",
-      "0",
-      "[]",
-      "undefined",
-      "a",
-      "a",
+      'session',
+      'test_',
+      '0',
+      '[]',
+      'undefined',
+      'a',
+      'a',
       '{"_v":"b"}',
-      "b",
-      "2",
+      'b',
+      '2',
       '["test_item1","test_item2"]',
-      "1",
+      '1',
       '["test_item2"]',
-      "0",
-      "[]",
+      '0',
+      '[]',
     ];
 
     console.log(code);
@@ -159,7 +159,7 @@ test.describe("WebStorage", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("data in the storage", async ({ page, baseURL }) => {
+  test('data in the storage', async ({ page, baseURL }) => {
     const code = `
       import { WebStorage } from '${baseURL}/mod.bundle.js';
 
@@ -193,20 +193,20 @@ test.describe("WebStorage", () => {
     `;
 
     const logs = [
-      "true",
-      "1",
-      "text",
-      "[0]",
+      'true',
+      '1',
+      'text',
+      '[0]',
       '{"key":"value"}',
-      "null",
-      "undefined",
+      'null',
+      'undefined',
       '{"_v":true}',
       '{"_v":1}',
       '{"_v":"text"}',
       '{"_v":[0]}',
       '{"_v":{"key":"value"}}',
       '{"_v":null}',
-      "{}",
+      '{}',
     ];
 
     console.log(code);

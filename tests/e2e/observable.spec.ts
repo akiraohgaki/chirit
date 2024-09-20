@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Observable", () => {
+test.describe('Observable', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/observable.playground");
+    await page.goto('/observable.playground');
   });
 
-  test("notification", async ({ page, baseURL }) => {
+  test('notification', async ({ page, baseURL }) => {
     const code = `
       import { Observable } from '${baseURL}/mod.bundle.js';
 
@@ -32,8 +32,8 @@ test.describe("Observable", () => {
     `;
 
     const logs = [
-      "1",
-      "1",
+      '1',
+      '1',
     ];
 
     console.log(code);

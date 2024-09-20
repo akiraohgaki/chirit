@@ -1,11 +1,11 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("ElementAttributesProxy", () => {
+test.describe('ElementAttributesProxy', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/elementattributesproxy.playground");
+    await page.goto('/elementattributesproxy.playground');
   });
 
-  test("class instance", async ({ page, baseURL }) => {
+  test('class instance', async ({ page, baseURL }) => {
     const code = `
       import { ElementAttributesProxy } from '${baseURL}/mod.bundle.js';
 
@@ -18,8 +18,8 @@ test.describe("ElementAttributesProxy", () => {
     `;
 
     const logs = [
-      "false",
-      "true",
+      'false',
+      'true',
     ];
 
     console.log(code);
@@ -28,7 +28,7 @@ test.describe("ElementAttributesProxy", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("attribute manipulation", async ({ page, baseURL }) => {
+  test('attribute manipulation', async ({ page, baseURL }) => {
     const code = `
       import { ElementAttributesProxy } from '${baseURL}/mod.bundle.js';
 
@@ -66,17 +66,17 @@ test.describe("ElementAttributesProxy", () => {
     `;
 
     const logs = [
-      "<div></div>",
-      "undefined",
-      "1",
+      '<div></div>',
+      'undefined',
+      '1',
       '<div attr1="1"></div>',
-      "2",
+      '2',
       '<div attr1="1" attr2="2"></div>',
       '["attr1","attr2"]',
-      "true",
+      'true',
       '<div attr1="1"></div>',
-      "true",
-      "false",
+      'true',
+      'false',
     ];
 
     console.log(code);
@@ -85,7 +85,7 @@ test.describe("ElementAttributesProxy", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("reference to target element", async ({ page, baseURL }, testInfo) => {
+  test('reference to target element', async ({ page, baseURL }, testInfo) => {
     const code = `
       import { ElementAttributesProxy } from '${baseURL}/mod.bundle.js';
 
@@ -117,7 +117,7 @@ test.describe("ElementAttributesProxy", () => {
     let timeout = 60000;
 
     // GC is slow in Firefox, so skip the check.
-    if (testInfo.project.name === "firefox") {
+    if (testInfo.project.name === 'firefox') {
       logs = [];
       timeout = 1000;
     }

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
 const testElementDefinitionCode = `
   let isRenderError = false;
@@ -65,12 +65,12 @@ const testElementDefinitionCode = `
   TestElement.define('test-element');
 `;
 
-test.describe("CustomElement", () => {
+test.describe('CustomElement', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/customelement.playground");
+    await page.goto('/customelement.playground');
   });
 
-  test("custom element definition", async ({ page, baseURL }) => {
+  test('custom element definition', async ({ page, baseURL }) => {
     const code = `
       import { CustomElement } from '${baseURL}/mod.bundle.js';
 
@@ -80,8 +80,8 @@ test.describe("CustomElement", () => {
     `;
 
     const logs = [
-      "observedAttributes",
-      "true",
+      'observedAttributes',
+      'true',
     ];
 
     console.log(code);
@@ -90,7 +90,7 @@ test.describe("CustomElement", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("connected or disconnected", async ({ page, baseURL }) => {
+  test('connected or disconnected', async ({ page, baseURL }) => {
     const code = `
       import { CustomElement } from '${baseURL}/mod.bundle.js';
 
@@ -106,14 +106,14 @@ test.describe("CustomElement", () => {
     `;
 
     const logs = [
-      "observedAttributes",
-      "constructor",
-      "connectedCallback",
-      "updateSync",
-      "render",
-      "updatedCallback",
-      "<test-element><span>attr1:</span><span>attr2:</span></test-element>",
-      "disconnectedCallback",
+      'observedAttributes',
+      'constructor',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element><span>attr1:</span><span>attr2:</span></test-element>',
+      'disconnectedCallback',
     ];
 
     console.log(code);
@@ -122,7 +122,7 @@ test.describe("CustomElement", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("moved to a different page", async ({ page, baseURL }, testInfo) => {
+  test('moved to a different page', async ({ page, baseURL }, testInfo) => {
     const code = `
       import { CustomElement } from '${baseURL}/mod.bundle.js';
 
@@ -143,35 +143,35 @@ test.describe("CustomElement", () => {
     `;
 
     let logs = [
-      "observedAttributes",
-      "constructor",
-      "connectedCallback",
-      "updateSync",
-      "render",
-      "updatedCallback",
-      "<test-element><span>attr1:</span><span>attr2:</span></test-element>",
-      "disconnectedCallback",
-      "adoptedCallback",
-      "connectedCallback",
-      "update",
-      "updateSync",
-      "render",
-      "updatedCallback",
+      'observedAttributes',
+      'constructor',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '<test-element><span>attr1:</span><span>attr2:</span></test-element>',
+      'disconnectedCallback',
+      'adoptedCallback',
+      'connectedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
     ];
 
     // The behavior is different in Firefox.
-    if (testInfo.project.name === "firefox") {
+    if (testInfo.project.name === 'firefox') {
       logs = [
-        "observedAttributes",
-        "constructor",
-        "connectedCallback",
-        "updateSync",
-        "render",
-        "updatedCallback",
-        "<test-element><span>attr1:</span><span>attr2:</span></test-element>",
-        "disconnectedCallback",
-        "adoptedCallback",
-        "connectedCallback",
+        'observedAttributes',
+        'constructor',
+        'connectedCallback',
+        'updateSync',
+        'render',
+        'updatedCallback',
+        '<test-element><span>attr1:</span><span>attr2:</span></test-element>',
+        'disconnectedCallback',
+        'adoptedCallback',
+        'connectedCallback',
       ];
     }
 
@@ -181,7 +181,7 @@ test.describe("CustomElement", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("attribute changed", async ({ page, baseURL }) => {
+  test('attribute changed', async ({ page, baseURL }) => {
     const code = `
       import { CustomElement } from '${baseURL}/mod.bundle.js';
 
@@ -214,27 +214,27 @@ test.describe("CustomElement", () => {
     `;
 
     const logs = [
-      "observedAttributes",
-      "constructor",
-      "attributeChangedCallback",
-      "connectedCallback",
-      "updateSync",
-      "render",
-      "updatedCallback",
+      'observedAttributes',
+      'constructor',
+      'attributeChangedCallback',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
       '<test-element attr1="1" attr2="2"><span>attr1:1</span><span>attr2:2</span></test-element>',
-      "attributeChangedCallback",
-      "update",
-      "updateSync",
-      "render",
-      "updatedCallback",
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
       '<test-element attr1="a" attr2="2"><span>attr1:a</span><span>attr2:2</span></test-element>',
-      "attributeChangedCallback",
-      "update",
-      "attributeChangedCallback",
-      "update",
-      "updateSync",
-      "render",
-      "updatedCallback",
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
       '<test-element attr1="c" attr2="2"><span>attr1:c</span><span>attr2:2</span></test-element>',
       '<test-element attr1="c" attr2="x"><span>attr1:c</span><span>attr2:2</span></test-element>',
     ];
@@ -245,7 +245,7 @@ test.describe("CustomElement", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("asynchronous update", async ({ page, baseURL }) => {
+  test('asynchronous update', async ({ page, baseURL }) => {
     const code = `
       import { CustomElement } from '${baseURL}/mod.bundle.js';
 
@@ -272,28 +272,28 @@ test.describe("CustomElement", () => {
     `;
 
     const logs = [
-      "observedAttributes",
-      "constructor",
-      "attributeChangedCallback",
-      "connectedCallback",
-      "updateSync",
-      "render",
-      "updatedCallback",
-      "1",
-      "attributeChangedCallback",
-      "update",
-      "updateSync",
-      "render",
-      "updatedCallback",
-      "2",
-      "attributeChangedCallback",
-      "update",
-      "attributeChangedCallback",
-      "update",
-      "updateSync",
-      "render",
-      "updatedCallback",
-      "3",
+      'observedAttributes',
+      'constructor',
+      'attributeChangedCallback',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '1',
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '2',
+      'attributeChangedCallback',
+      'update',
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      '3',
     ];
 
     console.log(code);
@@ -302,7 +302,7 @@ test.describe("CustomElement", () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test("error handling", async ({ page, baseURL }) => {
+  test('error handling', async ({ page, baseURL }) => {
     const code = `
       import { CustomElement } from '${baseURL}/mod.bundle.js';
 
@@ -334,28 +334,28 @@ test.describe("CustomElement", () => {
     `;
 
     const logs = [
-      "observedAttributes",
-      "constructor",
-      "attributeChangedCallback",
-      "connectedCallback",
-      "updateSync",
-      "render",
-      "updatedCallback",
+      'observedAttributes',
+      'constructor',
+      'attributeChangedCallback',
+      'connectedCallback',
+      'updateSync',
+      'render',
+      'updatedCallback',
       '<test-element attr1="1" attr2="2"><span>attr1:1</span><span>attr2:2</span></test-element>',
-      "attributeChangedCallback",
-      "update",
-      "updateSync",
-      "render",
-      "errorCallback",
-      "error",
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'errorCallback',
+      'error',
       '<test-element attr1="a" attr2="2"><span>attr1:1</span><span>attr2:2</span></test-element>',
-      "attributeChangedCallback",
-      "update",
-      "updateSync",
-      "render",
-      "updatedCallback",
-      "errorCallback",
-      "error",
+      'attributeChangedCallback',
+      'update',
+      'updateSync',
+      'render',
+      'updatedCallback',
+      'errorCallback',
+      'error',
       '<test-element attr1="b" attr2="2"><span>attr1:b</span><span>attr2:2</span></test-element>',
     ];
 
