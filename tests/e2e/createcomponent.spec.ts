@@ -53,9 +53,9 @@ test.describe('createComponent', () => {
         }
       });
 
-      playground.content.set('<test-component attr1="1"></test-component>');
+      playground.preview.set('<test-component attr1="1"></test-component>');
 
-      const testComponent = playground.content.get().querySelector('test-component');
+      const testComponent = playground.preview.get().querySelector('test-component');
 
       playground.logs.add(testComponent.outerHTML);
       playground.logs.add(testComponent.content.innerHTML);

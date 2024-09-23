@@ -19,9 +19,9 @@ test.describe('NodeStructure', () => {
 
       customElements.define('test-element', TestElement);
 
-      playground.content.set('<test-element></test-element>');
+      playground.preview.set('<test-element></test-element>');
 
-      const testElement = playground.content.get().querySelector('test-element');
+      const testElement = playground.preview.get().querySelector('test-element');
 
       const nodeStructure = new NodeStructure(testElement.shadowRoot);
 
@@ -67,7 +67,7 @@ test.describe('NodeStructure', () => {
 
       const host = document.createElement('div');
 
-      playground.content.set(host);
+      playground.preview.set(host);
 
       const nodeStructure = new NodeStructure(host);
 
@@ -117,7 +117,7 @@ test.describe('NodeStructure', () => {
 
       const host = document.createElement('div');
 
-      playground.content.set(host);
+      playground.preview.set(host);
 
       const nodeStructure = new NodeStructure(host);
 
@@ -190,7 +190,7 @@ test.describe('NodeStructure', () => {
 
       const host = document.createElement('div');
 
-      playground.content.set(host);
+      playground.preview.set(host);
 
       const context = {
         eventHandler: (event) => {
@@ -218,7 +218,7 @@ test.describe('NodeStructure', () => {
     await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
 
-    await page.locator('[data-content="content"] button').click();
+    await page.locator('[data-content="preview"] button').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([
       ...logs,
       ...logsAfterButtonClick,

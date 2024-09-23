@@ -34,7 +34,7 @@ test.describe('ElementAttributesProxy', () => {
 
       const target = document.createElement('div');
 
-      playground.content.set(target);
+      playground.preview.set(target);
 
       playground.logs.add(target.outerHTML);
 

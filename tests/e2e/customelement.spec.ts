@@ -96,9 +96,9 @@ test.describe('CustomElement', () => {
 
       ${testElementDefinitionCode}
 
-      playground.content.set('<test-element></test-element>');
+      playground.preview.set('<test-element></test-element>');
 
-      const testElement = playground.content.get().querySelector('test-element');
+      const testElement = playground.preview.get().querySelector('test-element');
 
       playground.logs.add(testElement.outerHTML);
 
@@ -128,18 +128,18 @@ test.describe('CustomElement', () => {
 
       ${testElementDefinitionCode}
 
-      playground.content.set('<test-element></test-element>');
+      playground.preview.set('<test-element></test-element>');
 
-      const testElement = playground.content.get().querySelector('test-element');
+      const testElement = playground.preview.get().querySelector('test-element');
 
       playground.logs.add(testElement.outerHTML);
 
       const iframe = document.createElement('iframe');
       iframe.srcdoc = '<!DOCTYPE html><html><head></head><body></body></html>';
 
-      playground.content.set(iframe);
+      playground.preview.set(iframe);
 
-      playground.content.get().querySelector('iframe').contentWindow.document.body.appendChild(testElement);
+      playground.preview.get().querySelector('iframe').contentWindow.document.body.appendChild(testElement);
     `;
 
     let logs = [
@@ -187,9 +187,9 @@ test.describe('CustomElement', () => {
 
       ${testElementDefinitionCode}
 
-      playground.content.set('<test-element attr1="1" attr2="2"></test-element>');
+      playground.preview.set('<test-element attr1="1" attr2="2"></test-element>');
 
-      const testElement = playground.content.get().querySelector('test-element');
+      const testElement = playground.preview.get().querySelector('test-element');
 
       playground.logs.add(testElement.outerHTML);
 
@@ -251,9 +251,9 @@ test.describe('CustomElement', () => {
 
       ${testElementDefinitionCode}
 
-      playground.content.set('<test-element attr1="1" attr2="2"></test-element>');
+      playground.preview.set('<test-element attr1="1" attr2="2"></test-element>');
 
-      const testElement = playground.content.get().querySelector('test-element');
+      const testElement = playground.preview.get().querySelector('test-element');
 
       playground.logs.add(testElement.updateCounter);
 
@@ -308,9 +308,9 @@ test.describe('CustomElement', () => {
 
       ${testElementDefinitionCode}
 
-      playground.content.set('<test-element attr1="1" attr2="2"></test-element>');
+      playground.preview.set('<test-element attr1="1" attr2="2"></test-element>');
 
-      const testElement = playground.content.get().querySelector('test-element');
+      const testElement = playground.preview.get().querySelector('test-element');
 
       playground.logs.add(testElement.outerHTML);
 

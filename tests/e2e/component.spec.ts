@@ -20,9 +20,9 @@ test.describe('Component', () => {
 
       TestComponent.define('test-component');
 
-      playground.content.set('<test-component attr1="1"></test-component>');
+      playground.preview.set('<test-component attr1="1"></test-component>');
 
-      const testComponent = playground.content.get().querySelector('test-component');
+      const testComponent = playground.preview.get().querySelector('test-component');
 
       playground.logs.add(testComponent.outerHTML);
       playground.logs.add(testComponent.content.innerHTML);
@@ -66,9 +66,9 @@ test.describe('Component', () => {
 
       TestComponent.define('test-component');
 
-      playground.content.set('<test-component></test-component>');
+      playground.preview.set('<test-component></test-component>');
 
-      const testComponent = playground.content.get().querySelector('test-component');
+      const testComponent = playground.preview.get().querySelector('test-component');
 
       playground.logs.add(testComponent.outerHTML);
       playground.logs.add(testComponent.content.innerHTML);
@@ -101,9 +101,9 @@ test.describe('Component', () => {
 
       TestComponent1.define('test-component1');
 
-      playground.content.set('<test-component1></test-component1>');
+      playground.preview.set('<test-component1></test-component1>');
 
-      const testComponent1 = playground.content.get().querySelector('test-component1');
+      const testComponent1 = playground.preview.get().querySelector('test-component1');
 
       playground.logs.add(testComponent1.outerHTML);
       playground.logs.add(testComponent1.content instanceof ShadowRoot);
@@ -118,9 +118,9 @@ test.describe('Component', () => {
 
       TestComponent2.define('test-component2');
 
-      playground.content.set('<test-component2></test-component2>');
+      playground.preview.set('<test-component2></test-component2>');
 
-      const testComponent2 = playground.content.get().querySelector('test-component2');
+      const testComponent2 = playground.preview.get().querySelector('test-component2');
 
       playground.logs.add(testComponent2.outerHTML);
       playground.logs.add(testComponent2.content instanceof HTMLDivElement);
@@ -155,9 +155,9 @@ test.describe('Component', () => {
 
       TestComponent.define('test-component');
 
-      playground.content.set('<test-component></test-component>');
+      playground.preview.set('<test-component></test-component>');
 
-      const testComponent = playground.content.get().querySelector('test-component');
+      const testComponent = playground.preview.get().querySelector('test-component');
 
       playground.logs.add(testComponent.outerHTML);
       playground.logs.add(testComponent.content.innerHTML);
@@ -181,7 +181,7 @@ test.describe('Component', () => {
     await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
 
-    await page.locator('[data-content="content"] test-component').click();
+    await page.locator('[data-content="preview"] test-component').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([
       ...logs,
       ...logsAfterComponentClick,
@@ -208,9 +208,9 @@ test.describe('Component', () => {
 
       TestComponent.define('test-component');
 
-      playground.content.set('<test-component></test-component>');
+      playground.preview.set('<test-component></test-component>');
 
-      const testComponent = playground.content.get().querySelector('test-component');
+      const testComponent = playground.preview.get().querySelector('test-component');
 
       playground.logs.add(testComponent.outerHTML);
       playground.logs.add(testComponent.content.innerHTML);
