@@ -9,7 +9,7 @@ test.describe('css', () => {
     const code = `
       import { css } from '${baseURL}/mod.bundle.js';
 
-      const sheet = css\`span { diaplay: ${'inline-block'}; }\`;
+      const sheet = css\`span { color: ${'red'}; }\`;
 
       playground.logs.add(sheet instanceof CSSStyleSheet);
       playground.logs.add(sheet.cssRules[0].cssText);
@@ -17,7 +17,7 @@ test.describe('css', () => {
 
     const logs = [
       'true',
-      'span { diaplay: inline-block; }',
+      'span { color: red; }',
     ];
 
     console.log(code);
