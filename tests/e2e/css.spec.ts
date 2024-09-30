@@ -7,7 +7,7 @@ test.describe('css', () => {
 
   test('Tagged template literal', async ({ page, baseURL }) => {
     const code = `
-      import { html } from '${baseURL}/mod.bundle.js';
+      import { css } from '${baseURL}/mod.bundle.js';
 
       const sheet = css\`span { diaplay: ${'inline-block'}; }\`;
 
