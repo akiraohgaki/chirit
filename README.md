@@ -140,12 +140,12 @@ HTML
 [html](https://jsr.io/@akiraohgaki/chirit/doc/~/html) function:
 
 - A tagged template function for HTML.
-- Some editors make syntax highlighting, formatting, and suggestions for template literals.
+- Some code editors make syntax highlighting, formatting, and suggestions for template literals.
 
 [css](https://jsr.io/@akiraohgaki/chirit/doc/~/css) function:
 
 - A tagged template function for CSS.
-- Some editors make syntax highlighting, formatting, and suggestions for template literals.
+- Some code editors make syntax highlighting, formatting, and suggestions for template literals.
 
 ### State management
 
