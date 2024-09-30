@@ -19,7 +19,7 @@ import dom from './dom.ts';
  * @param strings - The string parts of the template literal.
  * @param values - The interpolated values of the template literal.
  */
-export default function html(strings: Array<string>, ...values: Array<unknown>): DocumentFragment {
+export default function html(strings: TemplateStringsArray, ...values: Array<unknown>): DocumentFragment {
   const content = strings.reduce((acc, str, i) => {
     return acc + str + (i < values.length ? values[i] : '');
   }, '');
