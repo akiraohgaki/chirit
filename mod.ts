@@ -5,6 +5,8 @@
 export * from './src/types.ts';
 
 export { default as createComponent } from './src/createComponent.ts';
+export { default as css } from './src/css.ts';
+export { default as html } from './src/html.ts';
 
 export { default as Component } from './src/Component.ts';
 export { default as CustomElement } from './src/CustomElement.ts';
