@@ -1,9 +1,9 @@
 import dom from './dom.ts';
 
 /**
- * Tagged template literal for HTML.
+ * Creates a DocumentFragment from a template literals.
  *
- * Creates a DocumentFragment from a template string.
+ * This function is a tagged template function for HTML.
  *
  * ----
  *

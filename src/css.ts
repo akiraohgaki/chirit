@@ -1,9 +1,9 @@
 import dom from './dom.ts';
 
 /**
- * Tagged template literal for CSS.
+ * Creates a CSSStyleSheet from a template literals.
  *
- * Creates a CSSStyleSheet from a template string.
+ * This function is a tagged template function for CSS.
  *
  * ----
  *
