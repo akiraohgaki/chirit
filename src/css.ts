@@ -9,9 +9,9 @@ import dom from './dom.ts';
  *
  * @example Basic usage
  * ```ts
- * const display = 'inline-block';
+ * const color = 'red';
  *
- * const sheet = css`span { diaplay: ${display}; }`;
+ * const sheet = css`span { color: ${color}; }`;
  *
  * document.adoptedStyleSheets = [sheet];
  * ```
