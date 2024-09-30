@@ -58,17 +58,22 @@ Create a simple component using the `createComponent` function:
 TypeScript/JavaScript
 
 ```ts
-import { createComponent } from '@akiraohgaki/chirit';
+import { createComponent, css, html } from '@akiraohgaki/chirit';
+// `css` and `html` tagged template functions are optional.
 
 createComponent('message-component', {
   observedAttributes: ['message'],
-  styles: () => `
-    :host { display: inline-block; }
-    span { font-size: 140%; }
-  `,
-  template: (context) => `
-    <span>${context.attr.message}</span>
-  `,
+  styles: () => {
+    return css`
+      :host { display: inline-block; }
+      span { font-size: 140%; }
+    `;
+  },
+  template: (context) => {
+    return html`
+      <span>${context.attr.message}</span>
+    `;
+  },
 });
 ```
 
@@ -85,7 +90,7 @@ Create a counter component using the `State` class:
 TypeScript/JavaScript
 
 ```ts
-import { createComponent, State } from '@akiraohgaki/chirit';
+import { createComponent, html, State } from '@akiraohgaki/chirit';
 
 const counterState = new State(0);
 
@@ -99,11 +104,13 @@ createComponent('counter-component', {
       counterState.set(counterState.get() - 1);
     };
   },
-  template: (context) => `
-    <span>${counterState.get()}</span>
-    <button onclick="this.increment()">+</button>
-    <button onclick="this.decrement()">-</button>
-  `,
+  template: (context) => {
+    return html`
+      <span>${counterState.get()}</span>
+      <button onclick="this.increment()">+</button>
+      <button onclick="this.decrement()">-</button>
+    `;
+  },
 });
 ```
 
@@ -129,6 +136,16 @@ HTML
 [createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent) function:
 
 - A convenient function for quickly creating components based on the `Component` class.
+
+[html](https://jsr.io/@akiraohgaki/chirit/doc/~/html) function:
+
+- A tagged template function for HTML.
+- Some editors make syntax highlighting, formatting, and suggestions for template literals.
+
+[css](https://jsr.io/@akiraohgaki/chirit/doc/~/css) function:
+
+- A tagged template function for CSS.
+- Some editors make syntax highlighting, formatting, and suggestions for template literals.
 
 ### State management
 
