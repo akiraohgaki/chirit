@@ -11,7 +11,7 @@ import dom from './dom.ts';
  * ```ts
  * const message = 'Hello';
  *
- * const fragment = html`<p>${message}</p>`;
+ * const fragment = html`<span>${message}</span>`;
  *
  * document.body.appendChild(fragment);
  * ```
