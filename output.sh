@@ -13,6 +13,7 @@ output() {
 rm -rf "${OUTPUT_FILE}"
 
 output ./mod.ts
+output ./dom.ts
 
 for file in ./src/*; do
   output "${file}"
