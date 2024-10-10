@@ -1,8 +1,25 @@
 /**
  * A module for handling globalThis across various execution contexts.
  *
- * Ideal for use cases such as server-side rendering and unit testing.
+ * Main use cases such as server-side rendering and unit testing.
+ *
+ * ----
+ *
+ * @example Basic usage
+ * ```ts
+ * dom.globalThis = jsdom.window;
+ * ```
  */
-export default {
+const dom = {
   globalThis: globalThis,
 };
+
+// A workaround for importing mod.ts into non-browser environment.
+if (!dom.globalThis.HTMLElement) {
+  dom.globalThis = {
+    ...dom.globalThis,
+    HTMLElement: class HTMLElement {},
+  } as typeof globalThis;
+}
+
+export default dom;
