@@ -2,12 +2,14 @@
   "name": "@akiraohgaki/chirit",
   "version": "1.8.1",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./dom": "./dom.ts"
   },
   "publish": {
     "include": [
       "src/**/*.ts",
       "mod.ts",
+      "dom.ts",
       "deno.json",
       "README.md",
       "LICENSE"
@@ -79,7 +81,6 @@
     "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/playground"
   },
   "imports": {
-    "@std/assert": "jsr:@std/assert",
-    "jsdom": "https://jspm.dev/jsdom"
+    "@std/assert": "jsr:@std/assert"
   }
 }
