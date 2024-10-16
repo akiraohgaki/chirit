@@ -31,7 +31,7 @@ import * as chirit from 'https://cdn.jsdelivr.net/gh/akiraohgaki/chirit@version/
 Add package with Deno
 
 ```sh
-deno add @akiraohgaki/chirit
+deno add jsr:@akiraohgaki/chirit
 ```
 
 Add package with npm
