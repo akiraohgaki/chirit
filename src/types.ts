@@ -1,7 +1,13 @@
+import type { default as Component } from './Component.ts';
+
 /**
  * Options for createComponent.
  */
 export interface CreateComponentOptions<T> {
+  /**
+   * The base component to be extended.
+   */
+  base?: typeof Component;
   /**
    * List of an observed attributes.
    */
