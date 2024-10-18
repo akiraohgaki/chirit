@@ -25,6 +25,7 @@ import Component from './Component.ts';
  * createComponent<ColorPreviewComponentInterface>(
  *   'color-preview',
  *   {
+ *     base: Component,
  *     observedAttributes: ['color', 'size'],
  *     init: (context) => {
  *       context.clickHandler = (event) => {
@@ -80,7 +81,9 @@ import Component from './Component.ts';
  * @param options - The options for configuring the component.
  */
 export default function createComponent<T = Component>(name: string, options?: CreateComponentOptions<T>): T {
-  const CustomComponent = class extends Component {
+  const BaseComponent = options?.base ?? Component;
+
+  const CustomComponent = class extends BaseComponent {
     static override get observedAttributes(): Array<string> {
       return (options?.observedAttributes && Array.isArray(options.observedAttributes))
         ? options.observedAttributes
