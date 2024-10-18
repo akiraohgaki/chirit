@@ -28,6 +28,38 @@ test.describe('createComponent', () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
+  test('specific base component', async ({ page, baseURL }) => {
+    const code = `
+      import { createComponent, Component } from '${baseURL}/mod.bundle.js';
+
+      class BaseComponent extends Component {
+        prop1 = 1;
+        createContentContainer() {
+          return this.attachShadow({ mode: 'open', delegatesFocus: true });
+        }
+      }
+
+      createComponent('test-component', { base: BaseComponent });
+
+      playground.preview.set('<test-component></test-component>');
+
+      const testComponent = playground.preview.get().querySelector('test-component');
+
+      playground.logs.add(testComponent.prop1);
+      playground.logs.add(testComponent.content.delegatesFocus);
+    `;
+
+    const logs = [
+      '1',
+      'true',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
   test('connected or disconnected', async ({ page, baseURL }) => {
     const code = `
       import { createComponent } from '${baseURL}/mod.bundle.js';
