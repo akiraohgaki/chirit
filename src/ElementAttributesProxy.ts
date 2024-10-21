@@ -35,7 +35,7 @@ export default class ElementAttributesProxy {
   [key: string]: string;
 
   /**
-   * Creates a new Proxy object but the instance is not the NodeStructure class.
+   * Creates a new Proxy object but the instance is not the ElementAttributesProxy class.
    *
    * @param target - The target element whose attributes this proxy will manage.
    */
