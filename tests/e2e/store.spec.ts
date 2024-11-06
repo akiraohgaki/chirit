@@ -5,7 +5,7 @@ test.describe('Store', () => {
     await page.goto('/store.playground');
   });
 
-  test('state management', async ({ page, baseURL }) => {
+  test('state management with object', async ({ page, baseURL }) => {
     const code = `
       import { Store } from '${baseURL}/mod.bundle.js';
 
