@@ -59,11 +59,11 @@ test.describe('State', () => {
     `;
 
     const logs = [
-      '{ "updated":false }',
+      '{"updated":false}',
       'false',
-      '{ "updated":true }',
+      '{"updated":true}',
       'false',
-      '{ "updated":false }',
+      '{"updated":false}',
       'false',
     ];
 
