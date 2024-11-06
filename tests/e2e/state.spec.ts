@@ -34,6 +34,45 @@ test.describe('State', () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
+  test('state management with object', async ({ page, baseURL }) => {
+    const code = `
+      import { State } from '${baseURL}/mod.bundle.js';
+
+      const initialState = { updated: false };
+
+      const state = new State(initialState);
+
+      playground.logs.add(state.get());
+      playground.logs.add(state.get() === initialState);
+
+      const previousState = state.get();
+
+      state.set({ updated: true });
+
+      playground.logs.add(state.get());
+      playground.logs.add(state.get() === previousState);
+
+      state.reset();
+
+      playground.logs.add(state.get());
+      playground.logs.add(state.get() === initialState);
+    `;
+
+    const logs = [
+      '{ "updated":false }',
+      'false',
+      '{ "updated":true }',
+      'false',
+      '{ "updated":false }',
+      'false',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
   test('state change notification', async ({ page, baseURL }) => {
     const code = `
       import { State } from '${baseURL}/mod.bundle.js';
