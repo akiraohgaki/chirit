@@ -1,5 +1,7 @@
 import Observable from './Observable.ts';
 
+import dom from './dom.ts';
+
 /**
  * An observable state for atomic state management.
  *
@@ -40,15 +42,15 @@ export default class State<T> extends Observable<T> {
   constructor(state: T) {
     super();
 
-    this.#initialState = state;
-    this.#state = state;
+    this.#initialState = dom.globalThis.structuredClone(state);
+    this.#state = dom.globalThis.structuredClone(state);
   }
 
   /**
    * Resets the state to the initial state.
    */
   reset(): void {
-    this.#state = this.#initialState;
+    this.#state = dom.globalThis.structuredClone(this.#initialState);
     this.notify();
   }
 
@@ -58,7 +60,7 @@ export default class State<T> extends Observable<T> {
    * @param state - The new state.
    */
   set(state: T): void {
-    this.#state = state;
+    this.#state = dom.globalThis.structuredClone(state);
     this.notify();
   }
 
