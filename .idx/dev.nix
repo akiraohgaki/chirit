@@ -16,7 +16,6 @@
       "foxundermoon.shell-format"
       "mhutchie.git-graph"
       "denoland.vscode-deno"
-      "runem.lit-plugin"
     ];
 
     previews = {
