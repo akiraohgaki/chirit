@@ -21,13 +21,10 @@
     previews = {
       enable = true;
       previews = {
-        #web = {
-        #  command = ["deno" "task" "serve"];
-        #  manager = "web";
-        #  env = {
-        #    PORT = "$PORT";
-        #  };
-        #};
+        web = {
+          command = ["deno" "task" "serve" "--port=$PORT"];
+          manager = "web";
+        };
       };
     };
 
