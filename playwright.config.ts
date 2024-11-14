@@ -4,7 +4,7 @@ import process from 'node:process';
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './',
+  testDir: './tests/e2e/',
   timeout: 60000 * 5,
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -31,7 +31,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'cd ../../ && deno task serve',
+    command: 'deno task serve',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
   },
