@@ -79,7 +79,7 @@
     "test:unit": "deno test -A --coverage && deno coverage --html",
     "test:e2e": "deno run -A npm:playwright test",
     "test:teardown": "echo 'Skip task test:teardown'",
-    "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/playground"
+    "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/demo"
   },
   "imports": {
     "@playwright/test": "npm:@playwright/test",
