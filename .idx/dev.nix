@@ -5,7 +5,7 @@
     pkgs.openssh
     pkgs.nano
     pkgs.deno
-    pkgs.nodejs_22
+    pkgs.nodejs_latest
   ];
 
   env = {};
