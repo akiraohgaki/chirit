@@ -110,7 +110,7 @@ export default class NodeStructure<T extends Node> {
         host.adoptedStyleSheets = sheets;
       }
     } else {
-      console.warn('The styles cannot be adopted because the host node is not a Document or ShadowRoot.');
+      console.warn('The styles cannot be adopted because the host node is not a "Document" or "ShadowRoot".');
     }
   }
 
