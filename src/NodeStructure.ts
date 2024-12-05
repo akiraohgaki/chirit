@@ -343,7 +343,7 @@ export default class NodeStructure<T extends Node> {
    */
   #clearOneventHandlers(): void {
     for (const [target, onevent] of this.#oneventCollection) {
-      const oneventTarget = target as unknown as Record<string, OnEventHandler>;
+      const oneventTarget = target as unknown as Record<string, null>;
       oneventTarget[onevent] = null;
     }
 
