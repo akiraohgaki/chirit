@@ -55,6 +55,7 @@ const hostCollection = new WeakSet();
 export default class NodeStructure<T extends Node> {
   #hostRef: WeakRef<T> | null;
   #contextRef: WeakRef<Record<string, unknown>> | null;
+  #oneventCollection: Set<[Element, string]>;
 
   /**
    * Creates a new instance of the NodeStructure class.
@@ -69,6 +70,9 @@ export default class NodeStructure<T extends Node> {
     // Avoid circular references to make GC easier.
     this.#hostRef = new WeakRef(host);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
+
+    // Manage onevent handlers
+    this.#oneventCollection = new Set();
   }
 
   /**
@@ -123,6 +127,8 @@ export default class NodeStructure<T extends Node> {
    */
   update(content: NodeStructureContent): void {
     const host = this.#getHost();
+
+    this.#clearOneventHandlers();
 
     if (content instanceof dom.globalThis.Document || content instanceof dom.globalThis.DocumentFragment) {
       this.#patchNodesInsideOf(host, content);
@@ -321,6 +327,7 @@ export default class NodeStructure<T extends Node> {
             const context = this.#getContext();
             target.removeAttribute(attribute.name);
             oneventTarget[onevent] = handler.bind(context ?? target);
+            this.#oneventCollection.add([target, onevent]);
           }
         }
       }
@@ -329,5 +336,17 @@ export default class NodeStructure<T extends Node> {
     if (!hostCollection.has(target)) {
       this.#fixOneventHandlersInsideOf(target);
     }
+  }
+
+  /**
+   * Clears the onevent handlers.
+   */
+  #clearOneventHandlers(): void {
+    for (const [target, onevent] of this.#oneventCollection) {
+      const oneventTarget = target as unknown as Record<string, OnEventHandler>;
+      oneventTarget[onevent] = null;
+    }
+
+    this.#oneventCollection.clear();
   }
 }
