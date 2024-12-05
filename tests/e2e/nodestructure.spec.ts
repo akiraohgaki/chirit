@@ -200,13 +200,17 @@ test.describe('NodeStructure', () => {
 
       const nodeStructure = new NodeStructure(host, context);
 
-      nodeStructure.update('<button onclick="this.eventHandler(event)">click me</button>');
+      const button1 = '<button data-onevent="true" onclick="this.eventHandler(event)">click me</button>';
+      const button2 = '<button data-onevent="false">click me</button>';
+
+      nodeStructure.update(button1);
+      nodeStructure.update(button2 + button1);
 
       playground.logs.add(nodeStructure.host.outerHTML);
     `;
 
     const logs = [
-      '<div><button>click me</button></div>',
+      '<div><button data-onevent="false">click me</button><button data-onevent="true">click me</button></div>',
     ];
 
     const logsAfterButtonClick = [
@@ -218,7 +222,8 @@ test.describe('NodeStructure', () => {
     await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
 
-    await page.locator('[data-content="preview"] button').click();
+    await page.locator('[data-content="preview"] button[data-onevent="false"]').click();
+    await page.locator('[data-content="preview"] button[data-onevent="true"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([
       ...logs,
       ...logsAfterButtonClick,
