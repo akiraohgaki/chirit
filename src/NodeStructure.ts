@@ -322,11 +322,14 @@ export default class NodeStructure<T extends Node> {
         if (attribute.name.search(/^on\w+/i) !== -1) {
           const onevent = attribute.name.toLowerCase();
           const oneventTarget = target as unknown as Record<string, OnEventHandler>;
+
           if (onevent in target && typeof oneventTarget[onevent] === 'function') {
             const handler = new Function('event', attribute.value);
             const context = this.#getContext();
+
             target.removeAttribute(attribute.name);
             oneventTarget[onevent] = handler.bind(context ?? target);
+
             this.#oneventCollection.add([target, onevent]);
           }
         }
