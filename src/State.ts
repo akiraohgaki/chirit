@@ -9,6 +9,8 @@ import dom from './dom.ts';
  *
  * If you need complex state management, consider using the `Store` class.
  *
+ * This class also work in non-browser environment.
+ *
  * ----
  *
  * @example Basic usage

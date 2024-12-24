@@ -9,6 +9,8 @@ import dom from './dom.ts';
  *
  * If you need atomic state management, consider using the `State` class.
  *
+ * This class also work in non-browser environment.
+ *
  * ----
  *
  * @example Basic usage
