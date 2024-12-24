@@ -53,7 +53,6 @@ Deno.test('WebStorage', async (t) => {
     assertEquals(webStorage.keys(), []);
   });
 
-  /*
   await t.step('session storage mode', () => {
     const webStorage = new WebStorage('session', 'test_');
 
@@ -64,14 +63,14 @@ Deno.test('WebStorage', async (t) => {
 
     assertEquals(webStorage.get('item0'), undefined);
 
-    localStorage.setItem('test_item1', 'a');
+    sessionStorage.setItem('test_item1', 'a');
 
-    assertEquals(localStorage.getItem('test_item1'), 'a');
+    assertEquals(sessionStorage.getItem('test_item1'), 'a');
     assertEquals(webStorage.get('item1'), 'a');
 
     webStorage.set('item2', 'b');
 
-    assertEquals(localStorage.getItem('test_item2'), '{"_v":"b"}');
+    assertEquals(sessionStorage.getItem('test_item2'), '{"_v":"b"}');
     assertEquals(webStorage.get('item2'), 'b');
 
     assertEquals(webStorage.size, 2);
@@ -87,7 +86,6 @@ Deno.test('WebStorage', async (t) => {
     assertEquals(webStorage.size, 0);
     assertEquals(webStorage.keys(), []);
   });
-  */
 
   await t.step('data in the storage', () => {
     const webStorage = new WebStorage('local');
