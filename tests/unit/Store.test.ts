@@ -39,6 +39,8 @@ Deno.test('Store', async (t) => {
 
     store.notify();
 
+    store.update({ updated: false });
+
     store.update({ updated: true });
 
     store.reset();
