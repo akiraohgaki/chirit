@@ -1,11 +1,11 @@
 import Observable from './Observable.ts';
-
+import compareValues from './compareValues.ts';
 import dom from './dom.ts';
 
 /**
  * An observable state for atomic state management.
  *
- * This class provides a way to manages the state and notifies observers when the state is updated.
+ * This class provides a way to manages the state and notifies observers when the state is changed.
  *
  * If you need complex state management, consider using the `Store` class.
  *
@@ -52,8 +52,13 @@ export default class State<T> extends Observable<T> {
    * Resets the state to the initial state.
    */
   reset(): void {
+    const isEqual = compareValues(this.#state, this.#initialState);
+
     this.#state = dom.globalThis.structuredClone(this.#initialState);
-    this.notify();
+
+    if (!isEqual) {
+      this.notify();
+    }
   }
 
   /**
@@ -62,8 +67,13 @@ export default class State<T> extends Observable<T> {
    * @param state - The new state.
    */
   set(state: T): void {
+    const isEqual = compareValues(this.#state, state);
+
     this.#state = dom.globalThis.structuredClone(state);
-    this.notify();
+
+    if (!isEqual) {
+      this.notify();
+    }
   }
 
   /**

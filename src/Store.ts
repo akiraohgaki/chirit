@@ -1,11 +1,11 @@
 import Observable from './Observable.ts';
-
+import compareValues from './compareValues.ts';
 import dom from './dom.ts';
 
 /**
  * An observable store for complex state management.
  *
- * This class provides a way to manages the state and notifies observers when the state is updated.
+ * This class provides a way to manages the state and notifies observers when the state is changed.
  *
  * If you need atomic state management, consider using the `State` class.
  *
@@ -88,8 +88,13 @@ export default class Store<T extends Record<string, unknown>> extends Observable
    * Resets the state to the initial state.
    */
   reset(): void {
+    const isEqual = compareValues(this.#state, this.#initialState);
+
     this.#state = dom.globalThis.structuredClone(this.#initialState);
-    this.notify();
+
+    if (!isEqual) {
+      this.notify();
+    }
   }
 
   /**
@@ -98,8 +103,15 @@ export default class Store<T extends Record<string, unknown>> extends Observable
    * @param state - The partial state object to merge into the current state.
    */
   update(state: Partial<T>): void {
-    this.#state = dom.globalThis.structuredClone({ ...this.#state, ...state });
-    this.notify();
+    const newState = { ...this.#state, ...state };
+
+    const isEqual = compareValues(this.#state, newState);
+
+    this.#state = dom.globalThis.structuredClone(newState);
+
+    if (!isEqual) {
+      this.notify();
+    }
   }
 
   /**
