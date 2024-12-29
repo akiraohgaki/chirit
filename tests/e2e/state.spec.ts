@@ -87,6 +87,8 @@ test.describe('State', () => {
 
       state.notify();
 
+      state.set(0);
+
       state.set(1);
 
       state.reset();

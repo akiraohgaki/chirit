@@ -60,6 +60,8 @@ test.describe('Store', () => {
 
       store.notify();
 
+      store.update({ updated: false });
+
       store.update({ updated: true });
 
       store.reset();

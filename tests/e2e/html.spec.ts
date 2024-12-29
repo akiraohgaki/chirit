@@ -5,7 +5,7 @@ test.describe('html', () => {
     await page.goto('/html.playground');
   });
 
-  test('Tagged template literal', async ({ page, baseURL }) => {
+  test('tagged template literal', async ({ page, baseURL }) => {
     const code = `
       import { html } from '${baseURL}/mod.bundle.js';
 

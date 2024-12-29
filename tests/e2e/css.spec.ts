@@ -5,7 +5,7 @@ test.describe('css', () => {
     await page.goto('/css.playground');
   });
 
-  test('Tagged template literal', async ({ page, baseURL }) => {
+  test('tagged template literal', async ({ page, baseURL }) => {
     const code = `
       import { css } from '${baseURL}/mod.bundle.js';
 
