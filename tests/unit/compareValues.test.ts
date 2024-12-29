@@ -32,11 +32,15 @@ Deno.test('compareValues', async (t) => {
 
     assertEquals(compareValues({ a: 0 }, { a: 1 }), false);
 
+    assertEquals(compareValues({ a: 0 }, { b: 1 }), false);
+
     assertEquals(compareValues({ a: 0 }, { a: 0, b: 1 }), false);
 
     const array = [0];
 
     assertEquals(compareValues([array, array], [array, array]), true);
+
+    assertEquals(compareValues([array, array], [[0], array]), true);
 
     assertEquals(compareValues([array, array], [[0], [0]]), false);
 
