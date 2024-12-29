@@ -4,6 +4,7 @@
 
 export * from './src/types.ts';
 
+export { default as compareValues } from './src/compareValues.ts';
 export { default as createComponent } from './src/createComponent.ts';
 export { default as css } from './src/css.ts';
 export { default as html } from './src/html.ts';

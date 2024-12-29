@@ -8,6 +8,8 @@ import dom from './dom.ts';
  * This class provides a consistent interface for interacting with web storage (localStorage or sessionStorage).
  * Any value to JSON serializable can be stored in the storage.
  *
+ * This class also work in Deno.
+ *
  * ----
  *
  * @example Basic usage

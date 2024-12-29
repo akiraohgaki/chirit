@@ -5,6 +5,8 @@ import type { Observer } from './types.ts';
  *
  * This class provides a way to notifies observers when a new value is available.
  *
+ * This class also work in non-browser environment.
+ *
  * ----
  *
  * @example Basic usage

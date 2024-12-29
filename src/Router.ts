@@ -172,7 +172,7 @@ export default class Router {
     let newVirtualPath = '';
 
     if (url.search(/^[A-Za-z0-9\+\-\.]+:\/\/|\?|#/) !== -1) {
-      const newUrl = new dom.globalThis.URL(url, dom.globalThis.location.href);
+      const newUrl = new URL(url, dom.globalThis.location.href);
       const newUrlParts = newUrl.href.split('#');
       const oldUrlParts = dom.globalThis.location.href.split('#');
 
@@ -187,8 +187,8 @@ export default class Router {
     }
 
     const oldVirtualPath = dom.globalThis.location.hash.substring(1);
-    const oldVirtualUrl = new dom.globalThis.URL(oldVirtualPath, dom.globalThis.location.origin);
-    const newVirtualUrl = new dom.globalThis.URL(this.#resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
+    const oldVirtualUrl = new URL(oldVirtualPath, dom.globalThis.location.origin);
+    const newVirtualUrl = new URL(this.#resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
 
     if (newVirtualUrl.pathname !== oldVirtualPath) {
       dom.globalThis.location.hash = newVirtualUrl.pathname;
@@ -206,7 +206,7 @@ export default class Router {
    * @param url - The URL to navigate to.
    */
   #navigateWithHistoryMode(url: string): void {
-    const newUrl = new dom.globalThis.URL(this.#resolveBaseUrl(url), dom.globalThis.location.href);
+    const newUrl = new URL(this.#resolveBaseUrl(url), dom.globalThis.location.href);
 
     if (newUrl.origin !== dom.globalThis.location.origin) {
       dom.globalThis.location.href = newUrl.href;
