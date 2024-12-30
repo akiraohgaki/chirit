@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Component', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/component.playground');
+    await page.goto('/Component.playground');
   });
 
   test('inherited features', async ({ page, baseURL }) => {

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('WebStorage', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/webstorage.playground');
+    await page.goto('/WebStorage.playground');
   });
 
   test('invalid storage mode', async ({ page, baseURL }) => {

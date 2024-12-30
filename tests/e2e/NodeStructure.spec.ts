@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('NodeStructure', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/nodestructure.playground');
+    await page.goto('/NodeStructure.playground');
   });
 
   test('style sheets', async ({ page, baseURL }) => {

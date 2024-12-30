@@ -104,7 +104,7 @@ createComponent('counter-component', {
       counterState.set(counterState.get() - 1);
     };
   },
-  template: (context) => {
+  template: () => {
     return html`
       <span>${counterState.get()}</span>
       <button onclick="this.increment()">+</button>
