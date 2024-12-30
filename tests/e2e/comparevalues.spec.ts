@@ -10,66 +10,64 @@ test.describe('compareValues', () => {
       import { compareValues } from '${baseURL}/mod.bundle.js';
 
       playground.logs.add(compareValues(0, 0));
-
       playground.logs.add(compareValues(0, 1));
-
       playground.logs.add(compareValues(0, ''));
+      playground.logs.add(compareValues(0, null));
+      playground.logs.add(compareValues(0, undefined));
 
       playground.logs.add(compareValues([], []));
-
       playground.logs.add(compareValues([], null));
 
-      playground.logs.add(compareValues([], undefined));
-
       playground.logs.add(compareValues([0], [0]));
-
       playground.logs.add(compareValues([0], [1]));
-
       playground.logs.add(compareValues([0], [0, 1]));
 
       playground.logs.add(compareValues({}, {}));
-
       playground.logs.add(compareValues({}, null));
 
-      playground.logs.add(compareValues({}, undefined));
-
       playground.logs.add(compareValues({ a: 0 }, { a: 0 }));
-
       playground.logs.add(compareValues({ a: 0 }, { a: 1 }));
-
+      playground.logs.add(compareValues({ a: 0 }, { b: 1 }));
       playground.logs.add(compareValues({ a: 0 }, { a: 0, b: 1 }));
 
-      const array = [0];
+      const set = new Set([0]);
+      playground.logs.add(compareValues(set, set));
+      playground.logs.add(compareValues(set, new Set([0])));
 
-      playground.logs.add(compareValues([array, array], [array, array]));
+      const arr = [0];
+      playground.logs.add(compareValues([arr, arr], [arr, arr]));
+      playground.logs.add(compareValues([arr, arr], [[0], arr]));
+      playground.logs.add(compareValues([arr, arr], [[0], [0]]));
 
-      playground.logs.add(compareValues([array, array], [[0], [0]]));
-
-      const collection = new Set([0]);
-
-      playground.logs.add(compareValues([collection], [collection]));
-
-      playground.logs.add(compareValues([collection], [new Set([0])]));
+      const obj = { a: 0 };
+      playground.logs.add(compareValues({ a: obj, b: obj }, { a: obj, b: obj }));
+      playground.logs.add(compareValues({ a: obj, b: obj }, { a: { a: 0 }, b: obj }));
+      playground.logs.add(compareValues({ a: obj, b: obj }, { a: { a: 0 }, b: { a: 0 } }));
     `;
 
     const logs = [
       'true',
       'false',
       'false',
+      'false',
+      'false',
+      'true',
+      'false',
       'true',
       'false',
       'false',
       'true',
       'false',
-      'false',
       'true',
       'false',
-      'false',
-      'true',
       'false',
       'false',
       'true',
       'false',
+      'true',
+      'true',
+      'false',
+      'true',
       'true',
       'false',
     ];
