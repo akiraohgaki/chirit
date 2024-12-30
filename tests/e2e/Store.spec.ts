@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Store', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/store.playground');
+    await page.goto('/Store.playground');
   });
 
   test('state management with object', async ({ page, baseURL }) => {

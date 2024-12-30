@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('ElementAttributesProxy', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/elementattributesproxy.playground');
+    await page.goto('/ElementAttributesProxy.playground');
   });
 
   test('class instance', async ({ page, baseURL }) => {

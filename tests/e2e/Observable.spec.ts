@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Observable', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/observable.playground');
+    await page.goto('/Observable.playground');
   });
 
   test('notification', async ({ page, baseURL }) => {

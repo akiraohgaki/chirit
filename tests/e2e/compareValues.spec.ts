@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('compareValues', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/comparevalues.playground');
+    await page.goto('/compareValues.playground');
   });
 
   test('compare two values', async ({ page, baseURL }) => {

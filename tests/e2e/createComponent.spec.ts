@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('createComponent', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/createcomponent.playground');
+    await page.goto('/createComponent.playground');
   });
 
   test('custom element definition', async ({ page, baseURL }) => {

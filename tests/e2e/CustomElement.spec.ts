@@ -67,7 +67,7 @@ const testElementDefinitionCode = `
 
 test.describe('CustomElement', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/customelement.playground');
+    await page.goto('/CustomElement.playground');
   });
 
   test('custom element definition', async ({ page, baseURL }) => {

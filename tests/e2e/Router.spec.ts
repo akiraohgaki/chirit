@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Router', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/router.playground');
+    await page.goto('/Router.playground');
   });
 
   test('invalid routing mode', async ({ page, baseURL }) => {
