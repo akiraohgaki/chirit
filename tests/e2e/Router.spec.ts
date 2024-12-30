@@ -41,16 +41,16 @@ test.describe('Router', () => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
-      const router = new Router('history', '/router.playground/history');
+      const router = new Router('history', '/Router.playground/history');
 
       playground.logs.add(router.mode);
       playground.logs.add(router.base);
 
-      router.set('/router.playground/history/a/:name1/:name2', (params) => {
+      router.set('/Router.playground/history/a/:name1/:name2', (params) => {
         playground.logs.add(location.href);
         playground.logs.add(params);
       });
-      router.set('/router.playground/history/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)', (params) => {
+      router.set('/Router.playground/history/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)', (params) => {
         playground.logs.add(location.href);
         playground.logs.add(params);
       });
@@ -67,8 +67,8 @@ test.describe('Router', () => {
       router.navigate('?query=true');
       router.navigate(location.origin);
 
-      router.delete('/router.playground/history/a/:name1/:name2');
-      router.delete('/router.playground/history/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)');
+      router.delete('/Router.playground/history/a/:name1/:name2');
+      router.delete('/Router.playground/history/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)');
       router.delete('.*');
 
       router.navigate('noroute');
@@ -78,18 +78,18 @@ test.describe('Router', () => {
 
     const logs = [
       'history',
-      '/router.playground/history/',
-      baseURL + '/router.playground/history/a/1/2',
+      '/Router.playground/history/',
+      baseURL + '/Router.playground/history/a/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + '/router.playground/history/b/1/2',
+      baseURL + '/Router.playground/history/b/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + '/router.playground/history/',
-      baseURL + '/router.playground/',
+      baseURL + '/Router.playground/history/',
+      baseURL + '/Router.playground/',
       baseURL + '/',
-      baseURL + '/router.playground/history/#hash',
-      baseURL + '/router.playground/history/?query=true',
+      baseURL + '/Router.playground/history/#hash',
+      baseURL + '/Router.playground/history/?query=true',
       baseURL + '/',
-      baseURL + '/router.playground/history/noroute',
+      baseURL + '/Router.playground/history/noroute',
     ];
 
     console.log(code);
@@ -174,16 +174,16 @@ test.describe('Router', () => {
     const code = `
       import { Router } from '${baseURL}/mod.bundle.js';
 
-      const router = new Router('hash', '/router.playground/hash');
+      const router = new Router('hash', '/Router.playground/hash');
 
       playground.logs.add(router.mode);
       playground.logs.add(router.base);
 
-      router.set('/router.playground/hash/a/:name1/:name2', (params) => {
+      router.set('/Router.playground/hash/a/:name1/:name2', (params) => {
         playground.logs.add(location.href);
         playground.logs.add(params);
       });
-      router.set('/router.playground/hash/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)', (params) => {
+      router.set('/Router.playground/hash/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)', (params) => {
         playground.logs.add(location.href);
         playground.logs.add(params);
       });
@@ -204,8 +204,8 @@ test.describe('Router', () => {
       router.navigate('#hash');
       await playground.wait(40);
 
-      router.delete('/router.playground/hash/a/:name1/:name2');
-      router.delete('/router.playground/hash/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)');
+      router.delete('/Router.playground/hash/a/:name1/:name2');
+      router.delete('/Router.playground/hash/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)');
       router.delete('.*');
 
       router.navigate('noroute');
@@ -216,16 +216,16 @@ test.describe('Router', () => {
 
     const logs = [
       'hash',
-      '/router.playground/hash/',
-      baseURL + '/router.playground#/router.playground/hash/a/1/2',
+      '/Router.playground/hash/',
+      baseURL + '/Router.playground#/Router.playground/hash/a/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + '/router.playground#/router.playground/hash/b/1/2',
+      baseURL + '/Router.playground#/Router.playground/hash/b/1/2',
       '{"name1":"1","name2":"2"}',
-      baseURL + '/router.playground#/router.playground/hash/',
-      baseURL + '/router.playground#/router.playground/',
-      baseURL + '/router.playground#/',
-      baseURL + '/router.playground#/router.playground/hash/hash',
-      baseURL + '/router.playground#/router.playground/hash/noroute',
+      baseURL + '/Router.playground#/Router.playground/hash/',
+      baseURL + '/Router.playground#/Router.playground/',
+      baseURL + '/Router.playground#/',
+      baseURL + '/Router.playground#/Router.playground/hash/hash',
+      baseURL + '/Router.playground#/Router.playground/hash/noroute',
     ];
 
     console.log(code);
@@ -249,7 +249,7 @@ test.describe('Router', () => {
     await page.locator('[data-content="code"] code').fill(code);
     await page.locator('[data-action="code.run"]').click();
     await expect(page.locator('[data-content="log"]')).toHaveText([]);
-    await expect(page).toHaveURL(baseURL + '/router.playground?query=true');
+    await expect(page).toHaveURL(baseURL + '/Router.playground?query=true');
   });
 
   test('hash-based routing mode: reload to same origin', async ({ page, baseURL }) => {
@@ -317,17 +317,17 @@ test.describe('Router', () => {
 
     const logs = [
       'hashchange',
-      baseURL + '/router.playground#/change',
+      baseURL + '/Router.playground#/change',
       'hashchange',
-      baseURL + '/router.playground#/error',
+      baseURL + '/Router.playground#/error',
       'error',
     ];
 
     const logsAfterHashchange = [
       'hashchange',
-      baseURL + '/router.playground#/change',
+      baseURL + '/Router.playground#/change',
       'hashchange',
-      baseURL + '/router.playground#/error',
+      baseURL + '/Router.playground#/error',
       'error',
     ];
 

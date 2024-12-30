@@ -11,7 +11,7 @@ test.describe('dom', () => {
 
       playground.logs.add('HTMLElement' in globalThis);
       playground.logs.add('HTMLElement' in dom.globalThis);
-      playground.logs.add(dom.globalThis.HTMLElement instanceof globalThis.HTMLElement);
+      playground.logs.add(dom.globalThis.HTMLElement === globalThis.HTMLElement);
     `;
 
     const logs = [
