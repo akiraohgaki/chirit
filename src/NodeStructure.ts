@@ -87,7 +87,7 @@ export default class NodeStructure<T extends Node> {
   /**
    * Adopts styles to the host node.
    *
-   * This method works only if the host node is a `Document` or `ShadowRoot`.
+   * This method works only if the host node is a Document or ShadowRoot.
    *
    * @param styles - The styles to adopt to the host node.
    *
@@ -170,7 +170,7 @@ export default class NodeStructure<T extends Node> {
   /**
    * Gets the context object.
    *
-   * @returns The context object, or `undefined` if it is not available.
+   * @returns The context object, or undefined if it is not available.
    */
   #getContext(): unknown {
     if (this.#contextRef) {

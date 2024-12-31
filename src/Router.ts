@@ -50,10 +50,10 @@ export default class Router {
   /**
    * Creates a new instance of the Router class.
    *
-   * @param mode - The routing mode to use (`hash` or `history`).
+   * @param mode - The routing mode to use (hash or history).
    * @param base - The base path for all routes.
    *
-   * @throws {Error} - If the provided mode is not `hash` or `history`.
+   * @throws {Error} - If the provided mode is not hash or history.
    */
   constructor(mode: RouterMode, base: string = '') {
     if (mode !== 'hash' && mode !== 'history') {
@@ -276,7 +276,7 @@ export default class Router {
    * @param pattern - The route pattern to fix.
    */
   #fixRoutePattern(pattern: string): string {
-    // Replace `:name` to `(?<name>[^/?#]+)` but don't replace if it's a part of non-capturing groups `(?:pattern)`.
+    // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups (?:pattern).
     // And the pattern may start with `:` so prefix the pattern with `/` and remove it when the replacement complete.
     return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
   }

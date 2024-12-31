@@ -39,10 +39,10 @@ export default class WebStorage {
   /**
    * Creates a new instance of the WebStorage class.
    *
-   * @param mode - The storage mode to use (`local` or `session`).
+   * @param mode - The storage mode to use (local or session).
    * @param prefix - The prefix to add to keys.
    *
-   * @throws {Error} - If the provided mode is not `local` or `session`.
+   * @throws {Error} - If the provided mode is not local or session.
    */
   constructor(mode: WebStorageMode, prefix: string = '') {
     this.#mode = mode;
@@ -105,7 +105,7 @@ export default class WebStorage {
    */
   set(key: string, value: unknown): void {
     // Stores value as special JSON object.
-    // If the value is `undefined`, `_v` is not contained in the JSON.
+    // If the value is undefined, _v is not contained in the JSON.
     this.#storage.setItem(
       this.#prefix + key,
       JSON.stringify({ _v: value }),
@@ -117,7 +117,7 @@ export default class WebStorage {
    *
    * @param key - The key to use.
    *
-   * @returns The stored value, or `undefined` if not found.
+   * @returns The stored value, or undefined if not found.
    */
   get(key: string): unknown {
     const value = this.#storage.getItem(this.#prefix + key);
@@ -126,7 +126,7 @@ export default class WebStorage {
         try {
           const deserializedValue = JSON.parse(value);
           if (typeof deserializedValue === 'object' && deserializedValue !== null) {
-            // Returns original value stored in special JSON object, or `undefined` if `_v` is not found.
+            // Returns original value stored in special JSON object, or undefined if _v is not found.
             return deserializedValue._v;
           }
           // Returns raw value if not an object.
@@ -139,7 +139,7 @@ export default class WebStorage {
       // Returns raw value as ''.
       return value;
     }
-    // Returns `undefined` instead of `null`.
+    // Returns undefined instead of null.
     return undefined;
   }
 

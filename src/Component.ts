@@ -174,7 +174,7 @@ export default class Component extends CustomElement {
   /**
    * Observes one or more objects for changes.
    *
-   * If the object has a `subscribe` function, it will be called with the `update` method of this component as a callback for change notifications.
+   * If the object has a `subscribe` function, it will be called with the `this.update` method of this component as a callback for change notifications.
    *
    * @param args - The objects to observe for changes.
    */
@@ -189,7 +189,7 @@ export default class Component extends CustomElement {
   /**
    * Stops observing one or more objects for changes.
    *
-   * If the object has an `unsubscribe` function, it will be called with the `update` method of this component to remove it from the list of observers.
+   * If the object has an `unsubscribe` function, it will be called with the `this.update` method of this component to remove it from the list of observers.
    *
    * @param args - The objects to stop observing.
    */
@@ -241,7 +241,7 @@ export default class Component extends CustomElement {
   /**
    * Creates the styles.
    *
-   * This method works only if the content container is a `ShadowRoot`.
+   * This method works only if the content container is a ShadowRoot.
    *
    * This method should be implemented by subclasses to return the styles.
    */
