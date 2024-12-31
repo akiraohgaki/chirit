@@ -167,7 +167,7 @@ HTML
 
 [WebStorage](https://jsr.io/@akiraohgaki/chirit/doc/~/WebStorage) class:
 
-- Provides a consistent interface for interacting with `localStorage` and `sessionStorage`.
+- Provides a consistent interface for interacting with localStorage and sessionStorage.
 - Stores and retrieves values as JSON serializable objects.
 
 ## Documentation
