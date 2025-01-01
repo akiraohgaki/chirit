@@ -37,12 +37,16 @@ test.describe('compareValues', () => {
       const arr = [0];
       playground.logs.add(compareValues([arr, arr], [arr, arr]));
       playground.logs.add(compareValues([arr, arr], [[0], arr]));
+      playground.logs.add(compareValues([[0], arr], [arr, arr]));
       playground.logs.add(compareValues([arr, arr], [[0], [0]]));
+      playground.logs.add(compareValues([[0], [0]], [arr, arr]));
 
       const obj = { a: 0 };
       playground.logs.add(compareValues({ a: obj, b: obj }, { a: obj, b: obj }));
       playground.logs.add(compareValues({ a: obj, b: obj }, { a: { a: 0 }, b: obj }));
+      playground.logs.add(compareValues({ a: { a: 0 }, b: obj }, { a: obj, b: obj }));
       playground.logs.add(compareValues({ a: obj, b: obj }, { a: { a: 0 }, b: { a: 0 } }));
+      playground.logs.add(compareValues({ a: { a: 0 }, b: { a: 0 } }, { a: obj, b: obj }));
     `;
 
     const logs = [
@@ -66,9 +70,13 @@ test.describe('compareValues', () => {
       'false',
       'true',
       'true',
+      'true',
+      'false',
       'false',
       'true',
       'true',
+      'true',
+      'false',
       'false',
     ];
 
