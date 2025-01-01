@@ -53,7 +53,7 @@ import * as chirit from '@akiraohgaki/chirit';
 
 #### Web components
 
-Create a simple component using the `createComponent` function:
+Create a simple component using the createComponent function:
 
 TypeScript/JavaScript
 
@@ -85,7 +85,7 @@ HTML
 
 #### State management
 
-Create a counter component using the `State` class:
+Create a counter component using the State class:
 
 TypeScript/JavaScript
 
@@ -135,7 +135,7 @@ HTML
 
 [createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent) function:
 
-- A convenient function for quickly creating components based on the `Component` class.
+- A convenient function for quickly creating components based on the Component class.
 
 [html](https://jsr.io/@akiraohgaki/chirit/doc/~/html) function:
 
