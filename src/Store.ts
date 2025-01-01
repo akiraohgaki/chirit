@@ -7,7 +7,7 @@ import dom from './dom.ts';
  *
  * This class provides a way to manages the state and notifies observers when the state is changed.
  *
- * If you need atomic state management, consider using the `State` class.
+ * If you need atomic state management, consider using the State class.
  *
  * This class also work in non-browser environment.
  *

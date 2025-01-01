@@ -7,7 +7,7 @@ import dom from './dom.ts';
  *
  * This class provides a way to manages the state and notifies observers when the state is changed.
  *
- * If you need complex state management, consider using the `Store` class.
+ * If you need complex state management, consider using the Store class.
  *
  * This class also work in non-browser environment.
  *
