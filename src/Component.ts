@@ -10,7 +10,7 @@ import dom from './dom.ts';
  *
  * This class as a base class for creating reusable web components, it provides many powerful features.
  *
- * If you need a quick way to create a component, consider using the `createComponent` function.
+ * If you need a quick way to create a component, consider using the createComponent function.
  *
  * ----
  *
@@ -163,7 +163,7 @@ export default class Component extends CustomElement {
   }
 
   /**
-   * Returns the same of `this.structure.host`.
+   * Returns the same of Component.structure.host.
    *
    * This is a convenient way to access the content container of the component.
    */
@@ -174,7 +174,7 @@ export default class Component extends CustomElement {
   /**
    * Observes one or more objects for changes.
    *
-   * If the object has a `subscribe` function, it will be called with the `this.update` method of this component as a callback for change notifications.
+   * If the object has a subscribe function, it will be called with the Component.update method of this component as a callback for change notifications.
    *
    * @param args - The objects to observe for changes.
    */
@@ -189,7 +189,7 @@ export default class Component extends CustomElement {
   /**
    * Stops observing one or more objects for changes.
    *
-   * If the object has an `unsubscribe` function, it will be called with the `this.update` method of this component to remove it from the list of observers.
+   * If the object has an unsubscribe function, it will be called with the Component.update method of this component to remove it from the list of observers.
    *
    * @param args - The objects to stop observing.
    */

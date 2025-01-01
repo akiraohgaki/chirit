@@ -31,8 +31,8 @@ export default function compareValues(
   }
 
   if ((valueA !== null && typeof valueA === 'object') && (valueB !== null && typeof valueB === 'object')) {
-    if (track.has(valueA)) {
-      return track.has(valueB);
+    if (track.has(valueA) || track.has(valueB)) {
+      return track.has(valueA) && track.has(valueB);
     }
     track.add(valueA);
     track.add(valueB);

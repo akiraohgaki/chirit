@@ -5,9 +5,9 @@ import Component from './Component.ts';
 /**
  * Creates custom web components.
  *
- * This function is a convenient way to creates a component based on the `Component` class.
+ * This function is a convenient way to creates a component based on the Component class.
  *
- * If you need to create a complex component, consider using the `Component` class.
+ * If you need to create a complex component, consider using the Component class.
  *
  * ----
  *

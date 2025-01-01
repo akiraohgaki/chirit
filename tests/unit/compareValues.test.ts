@@ -32,11 +32,15 @@ Deno.test('compareValues', async (t) => {
     const arr = [0];
     assertEquals(compareValues([arr, arr], [arr, arr]), true);
     assertEquals(compareValues([arr, arr], [[0], arr]), true);
+    assertEquals(compareValues([[0], arr], [arr, arr]), true);
     assertEquals(compareValues([arr, arr], [[0], [0]]), false);
+    assertEquals(compareValues([[0], [0]], [arr, arr]), false);
 
     const obj = { a: 0 };
     assertEquals(compareValues({ a: obj, b: obj }, { a: obj, b: obj }), true);
     assertEquals(compareValues({ a: obj, b: obj }, { a: { a: 0 }, b: obj }), true);
+    assertEquals(compareValues({ a: { a: 0 }, b: obj }, { a: obj, b: obj }), true);
     assertEquals(compareValues({ a: obj, b: obj }, { a: { a: 0 }, b: { a: 0 } }), false);
+    assertEquals(compareValues({ a: { a: 0 }, b: { a: 0 } }, { a: obj, b: obj }), false);
   });
 });
