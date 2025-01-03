@@ -31,7 +31,7 @@ export default function isEqual(valueA: unknown, valueB: unknown): boolean {
  * @param valueB - The second value to compare.
  * @param track - A WeakSet to track circular references.
  */
-function isDeepEqual(valueA: unknown valueB: unknown track: WeakSet<object>): boolean {
+function isDeepEqual(valueA: unknown, valueB: unknown, track: WeakSet<object>): boolean {
   if (typeof valueA !== typeof valueB) {
     return false;
   }
