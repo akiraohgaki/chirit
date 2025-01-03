@@ -14,9 +14,9 @@ export { default as State } from './src/State.ts';
 export { default as Store } from './src/Store.ts';
 export { default as WebStorage } from './src/WebStorage.ts';
 
-export { default as compareValues } from './src/compareValues.ts';
 export { default as createComponent } from './src/createComponent.ts';
 export { default as css } from './src/css.ts';
 export { default as html } from './src/html.ts';
+export { default as isEqual } from './src/isEqual.ts';
 
 export { default as dom } from './src/dom.ts';

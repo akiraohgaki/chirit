@@ -12,20 +12,26 @@
  * const valueA = { a: { b: [0, 1] } };
  * const valueB = { a: { b: [0, 1, 2] } };
  *
- * if (!compareValues(valueA, valueB)) {
+ * if (!isEqual(valueA, valueB)) {
  *   //...
  * }
  * ```
  *
  * @param valueA - The first value to compare.
  * @param valueB - The second value to compare.
+ */
+export default function isEqual|(valueA: unknown, valueB: unknown): boolean {
+  return isDeepEqual(valueA, valueB, new WeakSet());
+}
+
+/**
+ * Compares two values for equality.
+ *
+ * @param valueA - The first value to compare.
+ * @param valueB - The second value to compare.
  * @param track - A WeakSet to track circular references.
  */
-export default function compareValues(
-  valueA: unknown,
-  valueB: unknown,
-  track: WeakSet<object> = new WeakSet(),
-): boolean {
+function isDeepEqual(valueA: unknown valueB: unknown track: WeakSet<object>): boolean {
   if (typeof valueA !== typeof valueB) {
     return false;
   }
@@ -43,7 +49,7 @@ export default function compareValues(
       }
 
       for (let i = 0; i < valueA.length; i++) {
-        if (!compareValues(valueA[i], valueB[i], track)) {
+        if (!isDeepEqual(valueA[i], valueB[i], track)) {
           return false;
         }
       }
@@ -61,7 +67,7 @@ export default function compareValues(
 
       for (const key of keysA) {
         if (
-          !compareValues(
+          !isDeepEqual(
             (valueA as Record<string, unknown>)[key],
             (valueB as Record<string, unknown>)[key],
             track,

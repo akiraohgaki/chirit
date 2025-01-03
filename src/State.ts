@@ -1,5 +1,5 @@
 import Observable from './Observable.ts';
-import compareValues from './compareValues.ts';
+import isEqual from './isEqual.ts';
 import dom from './dom.ts';
 
 /**
@@ -52,11 +52,11 @@ export default class State<T> extends Observable<T> {
    * Resets the state to the initial state.
    */
   reset(): void {
-    const isEqual = compareValues(this.#state, this.#initialState);
+    const isEquiv = isEqual(this.#state, this.#initialState);
 
     this.#state = dom.globalThis.structuredClone(this.#initialState);
 
-    if (!isEqual) {
+    if (!isEquiv) {
       this.notify();
     }
   }
@@ -67,11 +67,11 @@ export default class State<T> extends Observable<T> {
    * @param state - The new state.
    */
   set(state: T): void {
-    const isEqual = compareValues(this.#state, state);
+    const isEquiv = isEqual(this.#state, state);
 
     this.#state = dom.globalThis.structuredClone(state);
 
-    if (!isEqual) {
+    if (!isEquiv) {
       this.notify();
     }
   }

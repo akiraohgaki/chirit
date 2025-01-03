@@ -1,5 +1,5 @@
 import Observable from './Observable.ts';
-import compareValues from './compareValues.ts';
+import isEqual from './isEqual.ts';
 import dom from './dom.ts';
 
 /**
@@ -88,11 +88,11 @@ export default class Store<T extends Record<string, unknown>> extends Observable
    * Resets the state to the initial state.
    */
   reset(): void {
-    const isEqual = compareValues(this.#state, this.#initialState);
+    const isEquiv = isEqual(this.#state, this.#initialState);
 
     this.#state = dom.globalThis.structuredClone(this.#initialState);
 
-    if (!isEqual) {
+    if (!isEquiv) {
       this.notify();
     }
   }
@@ -105,11 +105,11 @@ export default class Store<T extends Record<string, unknown>> extends Observable
   update(state: Partial<T>): void {
     const newState = { ...this.#state, ...state };
 
-    const isEqual = compareValues(this.#state, newState);
+    const isEquiv = isEqual(this.#state, newState);
 
     this.#state = dom.globalThis.structuredClone(newState);
 
-    if (!isEqual) {
+    if (!isEquiv) {
       this.notify();
     }
   }
