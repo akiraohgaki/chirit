@@ -38,7 +38,7 @@ test.describe('State', () => {
     const code = `
       import { State } from '${baseURL}/mod.bundle.js';
 
-      const initialState = { updated: false };
+      const initialState = { updated: false, key: null };
 
       const state = new State(initialState);
 
@@ -47,7 +47,7 @@ test.describe('State', () => {
 
       const previousState = state.get();
 
-      state.set({ updated: true });
+      state.set({ updated: true, key: null });
 
       playground.logs.add(state.get());
       playground.logs.add(state.get() === previousState);
@@ -59,11 +59,11 @@ test.describe('State', () => {
     `;
 
     const logs = [
-      '{"updated":false}',
+      '{"updated":false,"key":null}',
       'false',
-      '{"updated":true}',
+      '{"updated":true,"key":null}',
       'false',
-      '{"updated":false}',
+      '{"updated":false,"key":null}',
       'false',
     ];
 
@@ -77,19 +77,21 @@ test.describe('State', () => {
     const code = `
       import { State } from '${baseURL}/mod.bundle.js';
 
+      const initialState = { updated: false, key: null };
+
       const observer = (state) => {
         playground.logs.add(state);
       };
 
-      const state = new State(0);
+      const state = new State(initialState);
 
       state.subscribe(observer);
 
       state.notify();
 
-      state.set(0);
+      state.set({ updated: false, key: null });
 
-      state.set(1);
+      state.set({ updated: true, key: null });
 
       state.reset();
 
@@ -99,9 +101,9 @@ test.describe('State', () => {
     `;
 
     const logs = [
-      '0',
-      '1',
-      '0',
+      '{"updated":false,"key":null}',
+      '{"updated":true,"key":null}',
+      '{"updated":false,"key":null}',
     ];
 
     console.log(code);
