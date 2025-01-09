@@ -80,8 +80,8 @@
     "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/demo"
   },
   "imports": {
-    "@playwright/test": "npm:@playwright/test",
-    "@std/assert": "jsr:@std/assert"
+    "@playwright/test": "npm:@playwright/test@^1.49.1",
+    "@std/assert": "jsr:@std/assert@^1.0.10"
   },
   "nodeModulesDir": "auto"
 }
