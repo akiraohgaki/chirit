@@ -2,12 +2,14 @@
   "name": "@akiraohgaki/chirit",
   "version": "1.10.0",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./utils": "./utils.ts"
   },
   "publish": {
     "include": [
       "src/**/*.ts",
       "mod.ts",
+      "utils.ts",
       "deno.json",
       "README.md",
       "LICENSE"
