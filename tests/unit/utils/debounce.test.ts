@@ -1,0 +1,22 @@
+import { assertEquals } from '@std/assert';
+
+import { debounce, sleep } from '../../../utils.ts';
+
+Deno.test('debounce', async (t) => {
+  await t.step('debounced function', async () => {
+    const logs: Array<number> = [];
+
+    const debouncedFunc = debounce((value: number) => {
+      logs.push(value);
+    }, 50);
+
+    debouncedFunc(1);
+    debouncedFunc(2);
+    await sleep(100);
+    debouncedFunc(3);
+    debouncedFunc(4);
+    await sleep(100);
+
+    assertEquals(logs, [2, 4]);
+  });
+});
