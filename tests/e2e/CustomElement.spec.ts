@@ -195,20 +195,20 @@ test.describe('CustomElement', () => {
 
       testElement.setAttribute('attr1', 'a');
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testElement.outerHTML);
 
       testElement.setAttribute('attr1', 'b');
       testElement.setAttribute('attr1', 'c');
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testElement.outerHTML);
 
       testElement.setAttribute('attr2', 'x');
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testElement.outerHTML);
     `;
@@ -259,14 +259,14 @@ test.describe('CustomElement', () => {
 
       testElement.setAttribute('attr1', 'a');
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testElement.updateCounter);
 
       testElement.setAttribute('attr1', 'b');
       testElement.setAttribute('attr1', 'c');
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testElement.updateCounter);
     `;
@@ -319,7 +319,7 @@ test.describe('CustomElement', () => {
 
       testElement.setAttribute('attr1', 'a');
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testElement.outerHTML);
 
@@ -328,7 +328,7 @@ test.describe('CustomElement', () => {
 
       testElement.setAttribute('attr1', 'b');
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testElement.outerHTML);
     `;

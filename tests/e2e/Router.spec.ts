@@ -192,24 +192,24 @@ test.describe('Router', () => {
       });
 
       router.navigate('a/1/2');
-      await playground.wait(40);
+      await playground.sleep(40);
       router.navigate('b/1/2');
-      await playground.wait(40);
+      await playground.sleep(40);
       router.navigate('./');
-      await playground.wait(40);
+      await playground.sleep(40);
       router.navigate('../');
-      await playground.wait(40);
+      await playground.sleep(40);
       router.navigate('/');
-      await playground.wait(40);
+      await playground.sleep(40);
       router.navigate('#hash');
-      await playground.wait(40);
+      await playground.sleep(40);
 
       router.delete('/Router.playground/hash/a/:name1/:name2');
       router.delete('/Router.playground/hash/b/(?<name1>[^/?#]+)/(?<name2>[^/?#]+)');
       router.delete('.*');
 
       router.navigate('noroute');
-      await playground.wait(40);
+      await playground.sleep(40);
 
       playground.logs.add(location.href);
     `;
@@ -310,9 +310,9 @@ test.describe('Router', () => {
       });
 
       router.navigate('/change');
-      await playground.wait(40);
+      await playground.sleep(40);
       router.navigate('/error');
-      await playground.wait(40);
+      await playground.sleep(40);
     `;
 
     const logs = [
