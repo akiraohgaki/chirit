@@ -15,7 +15,7 @@
  *
  * debouncedFunc(); // Canceled
  * debouncedFunc(); // Executed
- * await new Promise((resolve) => setTimeout(resolve, 100));
+ * await sleep(100);
  * debouncedFunc(); // Canceled
  * debouncedFunc(); // Executed
  * ```

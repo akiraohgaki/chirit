@@ -15,7 +15,7 @@
  *
  * throttledFunc(); // Executed
  * throttledFunc(); // Canceled
- * await new Promise((resolve) => setTimeout(resolve, 100));
+ * await sleep(100);
  * throttledFunc(); // Executed
  * throttledFunc(); // Canceled
  * ```
