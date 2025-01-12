@@ -11,20 +11,21 @@
  * ```ts
  * const debouncedFunc = debounce(() => {
  *   //...
- * }, 1000);
+ * }, 50);
  *
  * debouncedFunc(); // Canceled
+ * debouncedFunc(); // Executed
+ * await new Promise((resolve) => setTimeout(resolve, 100));
  * debouncedFunc(); // Canceled
- * debouncedFunc(); // Canceled
- * debouncedFunc(); // Executed after 1000ms
+ * debouncedFunc(); // Executed
  * ```
  *
  * @param func - The function to debounce.
- * @param wait - The number of milliseconds to wait.
+ * @param ms - The number of milliseconds to wait.
  */
 export default function debounce<T extends Array<unknown>>(
   func: (...args: T) => unknown,
-  wait: number,
+  ms: number,
 ): (...args: T) => void {
   let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
 
@@ -32,6 +33,6 @@ export default function debounce<T extends Array<unknown>>(
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
       func(...args);
-    }, wait);
+    }, ms);
   };
 }

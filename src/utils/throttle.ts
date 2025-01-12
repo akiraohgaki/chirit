@@ -11,22 +11,21 @@
  * ```ts
  * const throttledFunc = throttle(() => {
  *   //...
- * }, 1000);
+ * }, 50);
  *
  * throttledFunc(); // Executed
  * throttledFunc(); // Canceled
- * setTimeout(() => {
- *   throttledFunc(); // Executed after 1500ms
- *   throttledFunc(); // Canceled
- * }, 1500);
+ * await new Promise((resolve) => setTimeout(resolve, 100));
+ * throttledFunc(); // Executed
+ * throttledFunc(); // Canceled
  * ```
  *
  * @param func - The function to throttle.
- * @param wait - The number of milliseconds to wait.
+ * @param ms - The number of milliseconds to wait.
  */
 export default function throttle<T extends Array<unknown>>(
   func: (...args: T) => unknown,
-  wait: number,
+  ms: number,
 ): (...args: T) => void {
   let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
 
@@ -38,6 +37,6 @@ export default function throttle<T extends Array<unknown>>(
     func(...args);
     timeoutId = setTimeout(() => {
       timeoutId = undefined;
-    }, wait);
+    }, ms);
   };
 }
