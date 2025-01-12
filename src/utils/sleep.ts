@@ -13,8 +13,8 @@
  *
  * @param ms - The number of milliseconds to wait.
  */
-export default function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
+export default async function sleep(ms: number): Promise<void> {
+  await new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
 }
