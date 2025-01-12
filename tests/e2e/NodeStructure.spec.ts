@@ -271,7 +271,7 @@ test.describe('NodeStructure', () => {
 
       host.remove();
 
-      const timerId = setInterval(() => {
+      const intervalId = setInterval(() => {
         try {
           if (nodeStructure.host.id) {
             void 0;
@@ -280,7 +280,7 @@ test.describe('NodeStructure', () => {
           if (exception instanceof Error) {
             playground.logs.add('Error: ' + exception.message);
           }
-          clearInterval(timerId);
+          clearInterval(intervalId);
         }
       }, 1000);
     `;

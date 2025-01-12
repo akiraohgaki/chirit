@@ -46,7 +46,7 @@ export default class CustomElement extends dom.globalThis.HTMLElement {
   #updateCounter: number;
 
   #updateDelay: number;
-  #updateTimerId: number | undefined;
+  #updateTimeoutId: number | undefined;
   #updatePromiseResolvers: Array<() => void>;
 
   /**
@@ -75,7 +75,7 @@ export default class CustomElement extends dom.globalThis.HTMLElement {
     this.#updateCounter = 0;
 
     this.#updateDelay = 50;
-    this.#updateTimerId = undefined;
+    this.#updateTimeoutId = undefined;
     this.#updatePromiseResolvers = [];
   }
 
@@ -147,14 +147,14 @@ export default class CustomElement extends dom.globalThis.HTMLElement {
    * Updates the element asynchronously, scheduling an update for later execution.
    */
   update(): Promise<void> {
-    if (this.#updateTimerId !== undefined) {
-      dom.globalThis.clearTimeout(this.#updateTimerId);
-      this.#updateTimerId = undefined;
+    if (this.#updateTimeoutId !== undefined) {
+      dom.globalThis.clearTimeout(this.#updateTimeoutId);
+      this.#updateTimeoutId = undefined;
     }
 
-    this.#updateTimerId = dom.globalThis.setTimeout(() => {
-      dom.globalThis.clearTimeout(this.#updateTimerId);
-      this.#updateTimerId = undefined;
+    this.#updateTimeoutId = dom.globalThis.setTimeout(() => {
+      dom.globalThis.clearTimeout(this.#updateTimeoutId);
+      this.#updateTimeoutId = undefined;
 
       // Should retrieve all Promise resolvers associated with this update before proceeding.
       const promiseResolvers = this.#updatePromiseResolvers.splice(0);
