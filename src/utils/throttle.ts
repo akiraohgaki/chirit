@@ -27,14 +27,19 @@ export default function throttle<T extends Array<unknown>>(
   func: (...args: T) => unknown,
   ms: number,
 ): (...args: T) => void {
+  let isRunning = false;
   let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
 
   return (...args: T) => {
-    if (timeoutId !== undefined) {
+    if (isRunning || timeoutId !== undefined) {
       return;
     }
 
-    func(...args);
+    isRunning = true;
+    Promise.resolve(func(...args)).finally(() => {
+      isRunning = false;
+    });
+
     timeoutId = setTimeout(() => {
       timeoutId = undefined;
     }, ms);
