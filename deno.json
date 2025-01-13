@@ -1,6 +1,6 @@
 {
   "name": "@akiraohgaki/chirit",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "exports": {
     ".": "./mod.ts",
     "./utils": "./utils.ts"
