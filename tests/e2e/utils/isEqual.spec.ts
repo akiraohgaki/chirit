@@ -2,12 +2,12 @@ import { expect, test } from '@playwright/test';
 
 test.describe('isEqual', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/isEqual.playground');
+    await page.goto('/utils/isEqual.playground');
   });
 
   test('compare two values', async ({ page, baseURL }) => {
     const code = `
-      import { isEqual } from '${baseURL}/mod.bundle.js';
+      import { isEqual } from '${baseURL}/utils.bundle.js';
 
       playground.logs.add(isEqual(0, 0));
       playground.logs.add(isEqual(0, 1));

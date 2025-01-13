@@ -2,12 +2,14 @@
   "name": "@akiraohgaki/chirit",
   "version": "1.10.0",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./mod.ts",
+    "./utils": "./utils.ts"
   },
   "publish": {
     "include": [
       "src/**/*.ts",
       "mod.ts",
+      "utils.ts",
       "deno.json",
       "README.md",
       "LICENSE"
@@ -67,16 +69,19 @@
     ]
   },
   "tasks": {
-    "check": "deno fmt && deno lint && deno check mod.ts",
-    "build": "deno task build:setup && deno task build:bundle && deno task build:teardown",
-    "build:setup": "echo 'Skip task build:setup'",
-    "build:bundle": "deno run -A jsr:@akiraohgaki/devsrv/bundle --minify=true mod.ts mod.bundle.js",
-    "build:teardown": "echo 'Skip task build:teardown'",
-    "test": "deno task test:setup && deno task test:unit && deno task test:e2e && deno task test:teardown",
-    "test:setup": "deno run -A npm:playwright install --with-deps",
+    "check": "deno task check:pre && deno task check:check && deno task check:post",
+    "check:pre": "deno outdated && deno fmt && deno lint",
+    "check:check": "deno check mod.ts utils.ts",
+    "check:post": "echo 'Skip task check:post'",
+    "build": "deno task build:pre && deno task build:build && deno task build:post",
+    "build:pre": "echo 'Skip task build:pre'",
+    "build:build": "deno run -A jsr:@akiraohgaki/devsrv/bundle --minify=true mod.ts mod.bundle.js",
+    "build:post": "echo 'Skip task build:post'",
+    "test": "deno task test:pre && deno task test:unit && deno task test:e2e && deno task test:post",
+    "test:pre": "deno run -A npm:playwright install --with-deps",
     "test:unit": "deno test -A --coverage && deno coverage --html",
     "test:e2e": "deno run -A npm:playwright test",
-    "test:teardown": "echo 'Skip task test:teardown'",
+    "test:post": "echo 'Skip task test:post'",
     "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/demo"
   },
   "imports": {

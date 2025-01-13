@@ -1,6 +1,6 @@
 import Observable from './Observable.ts';
-import isEqual from './isEqual.ts';
 import dom from './dom.ts';
+import isEqual from './utils/isEqual.ts';
 
 /**
  * An observable store for complex state management.

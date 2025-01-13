@@ -218,7 +218,7 @@ test.describe('Component', () => {
       state1.set(1);
       state2.set(1);
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testComponent.content.innerHTML);
 
@@ -227,7 +227,7 @@ test.describe('Component', () => {
       state1.set(2);
       state2.set(2);
 
-      await playground.wait(100);
+      await playground.sleep(100);
 
       playground.logs.add(testComponent.content.innerHTML);
     `;

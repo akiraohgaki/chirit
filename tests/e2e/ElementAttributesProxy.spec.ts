@@ -96,7 +96,7 @@ test.describe('ElementAttributesProxy', () => {
 
       target.remove();
 
-      const timerId = setInterval(() => {
+      const intervalId = setInterval(() => {
         try {
           if (elementAttributesProxy.id) {
             void 0;
@@ -105,7 +105,7 @@ test.describe('ElementAttributesProxy', () => {
           if (exception instanceof Error) {
             playground.logs.add('Error: ' + exception.message);
           }
-          clearInterval(timerId);
+          clearInterval(intervalId);
         }
       }, 1000);
     `;

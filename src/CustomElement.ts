@@ -1,4 +1,5 @@
 import dom from './dom.ts';
+import debounce from './utils/debounce.ts';
 
 /**
  * A base class for building custom elements.
@@ -45,9 +46,7 @@ import dom from './dom.ts';
 export default class CustomElement extends dom.globalThis.HTMLElement {
   #updateCounter: number;
 
-  #updateDelay: number;
-  #updateTimerId: number | undefined;
-  #updatePromiseResolvers: Array<() => void>;
+  #debouncedUpdate: () => void;
 
   /**
    * Returns an observed attributes.
@@ -74,9 +73,7 @@ export default class CustomElement extends dom.globalThis.HTMLElement {
 
     this.#updateCounter = 0;
 
-    this.#updateDelay = 50;
-    this.#updateTimerId = undefined;
-    this.#updatePromiseResolvers = [];
+    this.#debouncedUpdate = debounce(this.updateSync.bind(this), 50);
   }
 
   /**
@@ -146,29 +143,8 @@ export default class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Updates the element asynchronously, scheduling an update for later execution.
    */
-  update(): Promise<void> {
-    if (this.#updateTimerId !== undefined) {
-      dom.globalThis.clearTimeout(this.#updateTimerId);
-      this.#updateTimerId = undefined;
-    }
-
-    this.#updateTimerId = dom.globalThis.setTimeout(() => {
-      dom.globalThis.clearTimeout(this.#updateTimerId);
-      this.#updateTimerId = undefined;
-
-      // Should retrieve all Promise resolvers associated with this update before proceeding.
-      const promiseResolvers = this.#updatePromiseResolvers.splice(0);
-
-      this.updateSync();
-
-      for (const resolve of promiseResolvers) {
-        resolve();
-      }
-    }, this.#updateDelay);
-
-    return new Promise((resolve) => {
-      this.#updatePromiseResolvers.push(resolve);
-    });
+  update(): void {
+    this.#debouncedUpdate();
   }
 
   /**
