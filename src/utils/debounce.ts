@@ -27,12 +27,21 @@ export default function debounce<T extends Array<unknown>>(
   func: (...args: T) => unknown,
   ms: number,
 ): (...args: T) => void {
+  let isRunning = false;
   let timeoutId: ReturnType<typeof setTimeout> | undefined = undefined;
 
   return (...args: T) => {
+    if (isRunning) {
+      return;
+    }
+
     clearTimeout(timeoutId);
+
     timeoutId = setTimeout(() => {
-      func(...args);
+      isRunning = true;
+      Promise.resolve(func(...args)).finally(() => {
+        isRunning = false;
+      });
     }, ms);
   };
 }
