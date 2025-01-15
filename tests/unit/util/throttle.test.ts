@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
 
-import { sleep, throttle } from '../../../utils.ts';
+import { sleep, throttle } from '../../../util.ts';
 
 Deno.test('throttle', async (t) => {
   await t.step('throttled function', async () => {

@@ -1,5 +1,5 @@
 import dom from './dom.ts';
-import debounce from './utils/debounce.ts';
+import debounce from './util/debounce.ts';
 
 /**
  * A base class for building custom elements.

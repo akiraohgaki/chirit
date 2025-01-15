@@ -1,29 +1,29 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('throttle', () => {
+test.describe('debounce', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/utils/throttle.playground');
+    await page.goto('/util/debounce.playground');
   });
 
-  test('throttled function', async ({ page, baseURL }) => {
+  test('debounced function', async ({ page, baseURL }) => {
     const code = `
-      import { throttle } from '${baseURL}/utils.bundle.js';
+      import { debounce } from '${baseURL}/util.bundle.js';
 
-      const throttledFunc = throttle((value) => {
+      const debouncedFunc = debounce((value) => {
         playground.logs.add(value);
       }, 50);
 
-      throttledFunc(1);
-      throttledFunc(2);
+      debouncedFunc(1);
+      debouncedFunc(2);
       await playground.sleep(100);
-      throttledFunc(3);
-      throttledFunc(4);
+      debouncedFunc(3);
+      debouncedFunc(4);
       await playground.sleep(100);
     `;
 
     const logs = [
-      '1',
-      '3',
+      '2',
+      '4',
     ];
 
     console.log(code);
@@ -32,25 +32,25 @@ test.describe('throttle', () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('time-consuming throttled function', async ({ page, baseURL }) => {
+  test('time-consuming debounced function', async ({ page, baseURL }) => {
     const code = `
-      import { throttle } from '${baseURL}/utils.bundle.js';
+      import { debounce } from '${baseURL}/util.bundle.js';
 
-      const throttledFunc = throttle(async (value) => {
+      const debouncedFunc = debounce(async (value) => {
         await playground.sleep(150);
         playground.logs.add(value);
       }, 50);
 
-      throttledFunc(1);
-      throttledFunc(2);
+      debouncedFunc(1);
+      debouncedFunc(2);
       await playground.sleep(100);
-      throttledFunc(3);
-      throttledFunc(4);
+      debouncedFunc(3);
+      debouncedFunc(4);
       await playground.sleep(100);
     `;
 
     const logs = [
-      '1',
+      '2',
     ];
 
     console.log(code);

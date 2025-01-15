@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
 
-import { isEqual } from '../../../utils.ts';
+import { isEqual } from '../../../util.ts';
 
 Deno.test('isEqual', async (t) => {
   await t.step('compare two values', () => {

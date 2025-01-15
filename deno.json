@@ -3,13 +3,13 @@
   "version": "1.11.0",
   "exports": {
     ".": "./mod.ts",
-    "./utils": "./utils.ts"
+    "./util": "./util.ts"
   },
   "publish": {
     "include": [
       "src/**/*.ts",
       "mod.ts",
-      "utils.ts",
+      "util.ts",
       "deno.json",
       "README.md",
       "LICENSE"
@@ -71,7 +71,7 @@
   "tasks": {
     "check": "deno task check:pre && deno task check:check && deno task check:post",
     "check:pre": "deno outdated && deno fmt && deno lint",
-    "check:check": "deno check mod.ts utils.ts",
+    "check:check": "deno check mod.ts util.ts",
     "check:post": "echo 'Skip task check:post'",
     "build": "deno task build:pre && deno task build:build && deno task build:post",
     "build:pre": "echo 'Skip task build:pre'",

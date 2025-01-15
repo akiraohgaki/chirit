@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
 
-import { debounce, sleep } from '../../../utils.ts';
+import { debounce, sleep } from '../../../util.ts';
 
 Deno.test('debounce', async (t) => {
   await t.step('debounced function', async () => {

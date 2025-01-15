@@ -2,12 +2,12 @@ import { expect, test } from '@playwright/test';
 
 test.describe('sleep', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/utils/sleep.playground');
+    await page.goto('/util/sleep.playground');
   });
 
   test('pauses the execution', async ({ page, baseURL }) => {
     const code = `
-      import { sleep } from '${baseURL}/utils.bundle.js';
+      import { sleep } from '${baseURL}/util.bundle.js';
 
       const timeA = Date.now();
       await sleep(100);

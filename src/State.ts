@@ -1,6 +1,6 @@
 import Observable from './Observable.ts';
 import dom from './dom.ts';
-import isEqual from './utils/isEqual.ts';
+import isEqual from './util/isEqual.ts';
 
 /**
  * An observable state for atomic state management.

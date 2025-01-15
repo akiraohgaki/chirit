@@ -1,6 +1,6 @@
 import { assertEquals } from '@std/assert';
 
-import { sleep } from '../../../utils.ts';
+import { sleep } from '../../../util.ts';
 
 Deno.test('sleep', async (t) => {
   await t.step('pauses the execution', async () => {
