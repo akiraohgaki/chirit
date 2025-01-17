@@ -35,13 +35,18 @@ export default function throttle<T extends Array<unknown>>(
       return;
     }
 
-    isRunning = true;
-    Promise.resolve(func(...args)).finally(() => {
-      isRunning = false;
-    });
-
     timeoutId = setTimeout(() => {
       timeoutId = undefined;
     }, ms);
+
+    isRunning = true;
+
+    Promise.resolve().then(() => {
+      return func(...args);
+    }).catch((exception) => {
+      console.error(exception);
+    }).finally(() => {
+      isRunning = false;
+    });
   };
 }
