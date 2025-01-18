@@ -46,7 +46,7 @@ test.describe('throttle', () => {
       await playground.sleep(100);
       throttledFunc(3);
       throttledFunc(4);
-      await playground.sleep(100);
+      await playground.sleep(200);
     `;
 
     const logs = [

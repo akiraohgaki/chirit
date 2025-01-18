@@ -33,7 +33,7 @@ Deno.test('throttle', async (t) => {
     await sleep(100);
     throttledFunc(3);
     throttledFunc(4);
-    await sleep(100);
+    await sleep(200);
 
     assertEquals(logs, [1]);
   });

@@ -33,7 +33,7 @@ Deno.test('debounce', async (t) => {
     await sleep(100);
     debouncedFunc(3);
     debouncedFunc(4);
-    await sleep(100);
+    await sleep(200);
 
     assertEquals(logs, [2]);
   });

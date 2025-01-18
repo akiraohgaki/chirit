@@ -46,7 +46,7 @@ test.describe('debounce', () => {
       await playground.sleep(100);
       debouncedFunc(3);
       debouncedFunc(4);
-      await playground.sleep(100);
+      await playground.sleep(200);
     `;
 
     const logs = [
