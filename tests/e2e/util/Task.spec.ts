@@ -112,8 +112,8 @@ test.describe('Task', () => {
     `;
 
     const logs = [
-      false,
-      true,
+      'false',
+      'true',
       'task1',
       'task2',
       'task3',
