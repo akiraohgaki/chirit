@@ -39,7 +39,12 @@ export default function debounce<T extends Array<unknown>>(
 
     timeoutId = setTimeout(() => {
       isRunning = true;
-      Promise.resolve(func(...args)).finally(() => {
+
+      Promise.resolve().then(() => {
+        return func(...args);
+      }).catch((exception) => {
+        console.error(exception);
+      }).finally(() => {
         isRunning = false;
       });
     }, ms);

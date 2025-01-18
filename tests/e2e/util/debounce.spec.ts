@@ -32,7 +32,7 @@ test.describe('debounce', () => {
     await expect(page.locator('[data-content="log"]')).toHaveText(logs);
   });
 
-  test('time-consuming debounced function', async ({ page, baseURL }) => {
+  test('time-consuming processing', async ({ page, baseURL }) => {
     const code = `
       import { debounce } from '${baseURL}/util.bundle.js';
 
@@ -51,6 +51,34 @@ test.describe('debounce', () => {
 
     const logs = [
       '2',
+    ];
+
+    console.log(code);
+    await page.locator('[data-content="code"] code').fill(code);
+    await page.locator('[data-action="code.run"]').click();
+    await expect(page.locator('[data-content="log"]')).toHaveText(logs);
+  });
+
+  test('error handling (see error log in test output)', async ({ page, baseURL }) => {
+    const code = `
+      import { debounce } from '${baseURL}/util.bundle.js';
+
+      const debouncedFunc = debounce((value) => {
+        playground.logs.add(value);
+        throw new Error('' + value);
+      }, 50);
+
+      debouncedFunc(1);
+      debouncedFunc(2);
+      await playground.sleep(100);
+      debouncedFunc(3);
+      debouncedFunc(4);
+      await playground.sleep(100);
+    `;
+
+    const logs = [
+      '2',
+      '4',
     ];
 
     console.log(code);
