@@ -63,6 +63,7 @@ import isEqual from './util/isEqual.ts';
  */
 export default class Store<T extends Record<string, unknown>> extends Observable<T> {
   #initialState: T;
+
   #state: T;
 
   /**

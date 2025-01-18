@@ -134,6 +134,7 @@ import dom from './dom.ts';
  */
 export default class Component extends CustomElement {
   #attr: ElementAttributesProxy;
+
   #structure: NodeStructure<ComponentContentContainer>;
 
   /**

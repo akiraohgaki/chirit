@@ -39,12 +39,17 @@ import dom from './dom.ts';
  */
 export default class Router {
   #mode: RouterMode;
+
   #base: string;
+
   #onchange: OnEventHandler;
+
   #onerror: OnErrorHandler;
 
   #routeCollection: Map<string, RouteHandler>;
+
   #_hashchangeCallback: (event: HashChangeEvent) => void;
+
   #_popstateCallback: (event: PopStateEvent) => void;
 
   /**

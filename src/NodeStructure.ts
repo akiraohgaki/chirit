@@ -54,7 +54,9 @@ const hostCollection = new WeakSet();
  */
 export default class NodeStructure<T extends Node> {
   #hostRef: WeakRef<T> | null;
+
   #contextRef: WeakRef<Record<string, unknown>> | null;
+
   #oneventCollection: Set<[Element, string]>;
 
   /**

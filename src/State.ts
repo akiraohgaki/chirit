@@ -34,6 +34,7 @@ import isEqual from './util/isEqual.ts';
  */
 export default class State<T> extends Observable<T> {
   #initialState: T;
+
   #state: T;
 
   /**

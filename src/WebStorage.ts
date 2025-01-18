@@ -32,6 +32,7 @@ import dom from './dom.ts';
  */
 export default class WebStorage {
   #mode: WebStorageMode;
+
   #prefix: string;
 
   #storage: Storage;
