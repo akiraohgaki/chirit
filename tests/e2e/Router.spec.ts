@@ -125,8 +125,8 @@ test.describe('Router', () => {
       router.onchange = (event) => {
         playground.logs.add(event.type);
       };
-      router.onerror = (error) => {
-        playground.logs.add(error.message);
+      router.onerror = (exception) => {
+        playground.logs.add(exception.message);
       };
 
       router.set('/error', () => {
@@ -297,8 +297,8 @@ test.describe('Router', () => {
       router.onchange = (event) => {
         playground.logs.add(event.type);
       };
-      router.onerror = (error) => {
-        playground.logs.add(error.message);
+      router.onerror = (exception) => {
+        playground.logs.add(exception.message);
       };
 
       router.set('/error', () => {
