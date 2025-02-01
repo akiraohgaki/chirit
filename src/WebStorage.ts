@@ -1,5 +1,3 @@
-import type { WebStorageMode } from './types.ts';
-
 import { dom } from './dom.ts';
 
 /**
@@ -31,7 +29,7 @@ import { dom } from './dom.ts';
  * ```
  */
 export class WebStorage {
-  #mode: WebStorageMode;
+  #mode: 'local' | 'session';
 
   #prefix: string;
 
@@ -45,7 +43,7 @@ export class WebStorage {
    *
    * @throws {Error} - If the provided mode is not local or session.
    */
-  constructor(mode: WebStorageMode, prefix: string = '') {
+  constructor(mode: 'local' | 'session', prefix: string = '') {
     this.#mode = mode;
     this.#prefix = prefix;
 
@@ -67,7 +65,7 @@ export class WebStorage {
   /**
    * Returns the current storage mode.
    */
-  get mode(): WebStorageMode {
+  get mode(): 'local' | 'session' {
     return this.#mode;
   }
 

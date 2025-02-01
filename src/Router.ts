@@ -1,5 +1,3 @@
-import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from './types.ts';
-
 import { dom } from './dom.ts';
 
 /**
@@ -28,25 +26,25 @@ import { dom } from './dom.ts';
  * });
  *
  * router.onchange = (event) => {
- *   console.log('Route changed:', event);
+ *   console.log('URL state has changed.', event);
  * };
- * router.onerror = (error) => {
- *   console.error('Error occurred:', error);
+ * router.onerror = (exception) => {
+ *   console.error('An error occurred while routing.', exception);
  * };
  *
  * router.navigate(location.href);
  * ```
  */
 export class Router {
-  #mode: RouterMode;
+  #mode: 'hash' | 'history';
 
   #base: string;
 
-  #onchange: OnEventHandler;
+  #onchange: (event: Event) => unknown;
 
-  #onerror: OnErrorHandler;
+  #onerror: (exception: unknown) => unknown;
 
-  #routeCollection: Map<string, RouteHandler>;
+  #routeCollection: Map<string, (params: Record<string, string>) => unknown>;
 
   #_hashchangeCallback: (event: HashChangeEvent) => void;
 
@@ -60,7 +58,7 @@ export class Router {
    *
    * @throws {Error} - If the provided mode is not hash or history.
    */
-  constructor(mode: RouterMode, base: string = '') {
+  constructor(mode: 'hash' | 'history', base: string = '') {
     if (mode !== 'hash' && mode !== 'history') {
       throw new Error('The routing mode must be set to "hash" or "history".');
     }
@@ -81,7 +79,7 @@ export class Router {
   /**
    * Returns the current routing mode.
    */
-  get mode(): RouterMode {
+  get mode(): 'hash' | 'history' {
     return this.#mode;
   }
 
@@ -95,28 +93,28 @@ export class Router {
   /**
    * The function to be called when the route changed.
    */
-  set onchange(handler: OnEventHandler) {
+  set onchange(handler: (event: Event) => unknown) {
     this.#onchange = handler;
   }
 
   /**
    * The function to be called when the route changed.
    */
-  get onchange(): OnEventHandler {
+  get onchange(): (event: Event) => unknown {
     return this.#onchange;
   }
 
   /**
    * The function to be called when an error occurs.
    */
-  set onerror(handler: OnErrorHandler) {
+  set onerror(handler: (exception: unknown) => unknown) {
     this.#onerror = handler;
   }
 
   /**
    * The function to be called when an error occurs.
    */
-  get onerror(): OnErrorHandler {
+  get onerror(): (exception: unknown) => unknown {
     return this.#onerror;
   }
 
@@ -126,7 +124,7 @@ export class Router {
    * @param pattern - The route pattern with named parameters.
    * @param handler - The function to be called when the route is matched.
    */
-  set(pattern: string, handler: RouteHandler): void {
+  set(pattern: string, handler: (params: Record<string, string>) => unknown): void {
     if (!this.#routeCollection.size) {
       if (this.#mode === 'hash') {
         dom.globalThis.addEventListener('hashchange', this.#_hashchangeCallback);

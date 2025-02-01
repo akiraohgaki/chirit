@@ -1,5 +1,3 @@
-import type { NodeStructureContent, NodeStructureStyles, OnEventHandler } from './types.ts';
-
 import { dom } from './dom.ts';
 
 const hostCollection = new WeakSet();
@@ -95,7 +93,7 @@ export class NodeStructure<T extends Node> {
    *
    * @throws {Error} - If the host node is not available.
    */
-  adoptStyles(styles: NodeStructureStyles): void {
+  adoptStyles(styles: string | CSSStyleSheet | Array<string | CSSStyleSheet>): void {
     const host = this.#getHost();
 
     if (host instanceof dom.globalThis.Document || host instanceof dom.globalThis.ShadowRoot) {
@@ -127,7 +125,7 @@ export class NodeStructure<T extends Node> {
    *
    * @throws {Error} - If the host node is not available.
    */
-  update(content: NodeStructureContent): void {
+  update(content: string | Node | NodeList): void {
     const host = this.#getHost();
 
     this.#clearOneventHandlers();
@@ -191,7 +189,7 @@ export class NodeStructure<T extends Node> {
    *
    * @param content - The content into the document fragment.
    */
-  #createDocumentFragment(content: NodeStructureContent): DocumentFragment {
+  #createDocumentFragment(content: string | Node | NodeList): DocumentFragment {
     if (typeof content === 'string') {
       // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement.
       const template = dom.globalThis.document.createElement('template');
@@ -323,7 +321,7 @@ export class NodeStructure<T extends Node> {
       for (const attribute of Array.from(target.attributes)) {
         if (attribute.name.search(/^on\w+/i) !== -1) {
           const onevent = attribute.name.toLowerCase();
-          const oneventTarget = target as unknown as Record<string, OnEventHandler>;
+          const oneventTarget = target as unknown as Record<string, (event: Event) => unknown>;
 
           if (onevent in target && typeof oneventTarget[onevent] === 'function') {
             const handler = new Function('event', attribute.value);

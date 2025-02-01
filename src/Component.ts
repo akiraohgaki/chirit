@@ -1,5 +1,3 @@
-import type { ComponentContentContainer, NodeStructureContent, NodeStructureStyles } from './types.ts';
-
 import { CustomElement } from './CustomElement.ts';
 import { ElementAttributesProxy } from './ElementAttributesProxy.ts';
 import { NodeStructure } from './NodeStructure.ts';
@@ -135,7 +133,7 @@ import { dom } from './dom.ts';
 export class Component extends CustomElement {
   #attr: ElementAttributesProxy;
 
-  #structure: NodeStructure<ComponentContentContainer>;
+  #structure: NodeStructure<Element | DocumentFragment>;
 
   /**
    * Creates a new instance of the Component class.
@@ -159,7 +157,7 @@ export class Component extends CustomElement {
   /**
    * Returns the internal NodeStructure instance.
    */
-  get structure(): NodeStructure<ComponentContentContainer> {
+  get structure(): NodeStructure<Element | DocumentFragment> {
     return this.#structure;
   }
 
@@ -168,7 +166,7 @@ export class Component extends CustomElement {
    *
    * This is a convenient way to access the content container of the component.
    */
-  get content(): ComponentContentContainer {
+  get content(): Element | DocumentFragment {
     return this.#structure.host;
   }
 
@@ -225,7 +223,7 @@ export class Component extends CustomElement {
    *
    * By default, this method creates an open shadow DOM.
    */
-  createContentContainer(): ComponentContentContainer {
+  createContentContainer(): Element | DocumentFragment {
     return this.attachShadow({ mode: 'open' });
   }
 
@@ -246,7 +244,7 @@ export class Component extends CustomElement {
    *
    * This method should be implemented by subclasses to return the styles.
    */
-  styles(): NodeStructureStyles {
+  styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
     return [];
   }
 
@@ -255,7 +253,7 @@ export class Component extends CustomElement {
    *
    * This method should be implemented by subclasses to return the content.
    */
-  template(): NodeStructureContent {
+  template(): string | Node | NodeList {
     return '';
   }
 }

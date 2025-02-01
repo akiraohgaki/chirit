@@ -1,5 +1,3 @@
-import type { Observer } from './types.ts';
-
 /**
  * Provides a way to notifies observers.
  *
@@ -28,7 +26,7 @@ import type { Observer } from './types.ts';
  * @template T - The type of the value.
  */
 export class Observable<T = unknown> {
-  #observerCollection: Set<Observer<T>>;
+  #observerCollection: Set<(value: T) => unknown>;
 
   /**
    * Creates a new instance of the Observable class.
@@ -42,7 +40,7 @@ export class Observable<T = unknown> {
    *
    * @param observer - An observer function.
    */
-  subscribe(observer: Observer<T>): void {
+  subscribe(observer: (value: T) => unknown): void {
     this.#observerCollection.add(observer);
   }
 
@@ -51,7 +49,7 @@ export class Observable<T = unknown> {
    *
    * @param observer - An observer function.
    */
-  unsubscribe(observer: Observer<T>): void {
+  unsubscribe(observer: (value: T) => unknown): void {
     this.#observerCollection.delete(observer);
   }
 

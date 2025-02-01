@@ -27,54 +27,9 @@ export interface CreateComponentOptions<T> {
   /**
    * Creates the styles.
    */
-  styles?: (context: T) => NodeStructureStyles;
+  styles?: (context: T) => string | CSSStyleSheet | Array<string | CSSStyleSheet>;
   /**
    * Creates the template content.
    */
-  template?: (context: T) => NodeStructureContent;
+  template?: (context: T) => string | Node | NodeList;
 }
-
-/**
- * General event handler.
- */
-export type OnEventHandler = (event: Event) => unknown;
-
-/**
- * General error handler.
- */
-export type OnErrorHandler = (exception: unknown) => unknown;
-
-/**
- * Observer for Observable.
- */
-export type Observer<T> = (value: T) => void;
-
-/**
- * Route handler for Router.
- */
-export type RouteHandler = (params: Record<string, string>) => void;
-
-/**
- * Content container in Component.
- */
-export type ComponentContentContainer = Element | DocumentFragment;
-
-/**
- * Styles in NodeStructure.
- */
-export type NodeStructureStyles = string | CSSStyleSheet | Array<string | CSSStyleSheet>;
-
-/**
- * Content in NodeStructure.
- */
-export type NodeStructureContent = string | Node | NodeList;
-
-/**
- * Routing mode in Router.
- */
-export type RouterMode = 'hash' | 'history';
-
-/**
- * Storage mode in WebStorage.
- */
-export type WebStorageMode = 'local' | 'session';

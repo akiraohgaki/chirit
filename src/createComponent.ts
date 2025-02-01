@@ -1,4 +1,4 @@
-import type { CreateComponentOptions, NodeStructureContent, NodeStructureStyles } from './types.ts';
+import type { CreateComponentOptions } from './types.ts';
 
 import { Component } from './Component.ts';
 
@@ -114,13 +114,13 @@ export function createComponent<T = Component>(name: string, options?: CreateCom
       super.disconnectedCallback();
     }
 
-    override styles(): NodeStructureStyles {
+    override styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
       return (options?.styles && typeof options.styles === 'function')
         ? options.styles(this as unknown as T)
         : super.styles();
     }
 
-    override template(): NodeStructureContent {
+    override template(): string | Node | NodeList {
       return (options?.template && typeof options.template === 'function')
         ? options.template(this as unknown as T)
         : super.template();
