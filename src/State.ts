@@ -1,6 +1,6 @@
-import Observable from './Observable.ts';
-import dom from './dom.ts';
-import isEqual from './util/isEqual.ts';
+import { Observable } from './Observable.ts';
+import { dom } from './dom.ts';
+import { isEqual } from './util/isEqual.ts';
 
 /**
  * An observable state for atomic state management.
@@ -32,7 +32,7 @@ import isEqual from './util/isEqual.ts';
  *
  * @template T - The type of the state.
  */
-export default class State<T> extends Observable<T> {
+export class State<T> extends Observable<T> {
   #initialState: T;
 
   #state: T;

@@ -1,6 +1,6 @@
 import type { OnErrorHandler, OnEventHandler, RouteHandler, RouterMode } from './types.ts';
 
-import dom from './dom.ts';
+import { dom } from './dom.ts';
 
 /**
  * A client-side router for front-end application.
@@ -37,7 +37,7 @@ import dom from './dom.ts';
  * router.navigate(location.href);
  * ```
  */
-export default class Router {
+export class Router {
   #mode: RouterMode;
 
   #base: string;

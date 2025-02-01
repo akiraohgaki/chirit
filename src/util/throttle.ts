@@ -23,7 +23,7 @@
  * @param func - The function to throttle.
  * @param ms - The number of milliseconds to wait.
  */
-export default function throttle<T extends Array<unknown>>(
+export function throttle<T extends Array<unknown>>(
   func: (...args: T) => unknown,
   ms: number,
 ): (...args: T) => void {

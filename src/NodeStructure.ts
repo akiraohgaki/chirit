@@ -1,6 +1,6 @@
 import type { NodeStructureContent, NodeStructureStyles, OnEventHandler } from './types.ts';
 
-import dom from './dom.ts';
+import { dom } from './dom.ts';
 
 const hostCollection = new WeakSet();
 
@@ -52,7 +52,7 @@ const hostCollection = new WeakSet();
  *
  * @template T - The type of the host node (e.g., HTMLElement).
  */
-export default class NodeStructure<T extends Node> {
+export class NodeStructure<T extends Node> {
   #hostRef: WeakRef<T> | null;
 
   #contextRef: WeakRef<Record<string, unknown>> | null;

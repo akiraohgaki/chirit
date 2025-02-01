@@ -1,9 +1,9 @@
 import type { ComponentContentContainer, NodeStructureContent, NodeStructureStyles } from './types.ts';
 
-import CustomElement from './CustomElement.ts';
-import ElementAttributesProxy from './ElementAttributesProxy.ts';
-import NodeStructure from './NodeStructure.ts';
-import dom from './dom.ts';
+import { CustomElement } from './CustomElement.ts';
+import { ElementAttributesProxy } from './ElementAttributesProxy.ts';
+import { NodeStructure } from './NodeStructure.ts';
+import { dom } from './dom.ts';
 
 /**
  * A base class for creating custom web components.
@@ -132,7 +132,7 @@ import dom from './dom.ts';
  * // <color-preview></color-preview>
  * ```
  */
-export default class Component extends CustomElement {
+export class Component extends CustomElement {
   #attr: ElementAttributesProxy;
 
   #structure: NodeStructure<ComponentContentContainer>;

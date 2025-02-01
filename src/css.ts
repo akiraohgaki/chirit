@@ -1,4 +1,4 @@
-import dom from './dom.ts';
+import { dom } from './dom.ts';
 
 /**
  * Creates a CSSStyleSheet from a template literals.
@@ -19,7 +19,7 @@ import dom from './dom.ts';
  * @param strings - The string parts of the template literal.
  * @param values - The interpolated values of the template literal.
  */
-export default function css(strings: TemplateStringsArray, ...values: Array<unknown>): CSSStyleSheet {
+export function css(strings: TemplateStringsArray, ...values: Array<unknown>): CSSStyleSheet {
   const content = strings.reduce((acc, str, i) => {
     return acc + str + (i < values.length ? values[i] : '');
   }, '');

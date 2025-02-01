@@ -1,6 +1,6 @@
 import type { WebStorageMode } from './types.ts';
 
-import dom from './dom.ts';
+import { dom } from './dom.ts';
 
 /**
  * A wrapper class for web storage.
@@ -30,7 +30,7 @@ import dom from './dom.ts';
  * // '{"_v":{"colorTheme":"dark"}}'
  * ```
  */
-export default class WebStorage {
+export class WebStorage {
   #mode: WebStorageMode;
 
   #prefix: string;

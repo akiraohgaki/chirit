@@ -1,5 +1,5 @@
-import dom from './dom.ts';
-import debounce from './util/debounce.ts';
+import { dom } from './dom.ts';
+import { debounce } from './util/debounce.ts';
 
 /**
  * A base class for building custom elements.
@@ -43,7 +43,7 @@ import debounce from './util/debounce.ts';
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  */
-export default class CustomElement extends dom.globalThis.HTMLElement {
+export class CustomElement extends dom.globalThis.HTMLElement {
   #updateCounter: number;
 
   #debouncedUpdate: () => void;

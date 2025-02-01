@@ -22,7 +22,7 @@ import type { TaskOptions } from './types.ts';
  * task.pause();
  * ```
  */
-export default class Task {
+export class Task {
   #options: TaskOptions;
 
   #loopTaskCollection: Map<() => unknown, number>;

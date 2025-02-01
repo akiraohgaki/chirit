@@ -1,6 +1,6 @@
 import type { CreateComponentOptions, NodeStructureContent, NodeStructureStyles } from './types.ts';
 
-import Component from './Component.ts';
+import { Component } from './Component.ts';
 
 /**
  * Creates custom web components.
@@ -80,7 +80,7 @@ import Component from './Component.ts';
  * @param name - The name of the custom element.
  * @param options - The options for configuring the component.
  */
-export default function createComponent<T = Component>(name: string, options?: CreateComponentOptions<T>): T {
+export function createComponent<T = Component>(name: string, options?: CreateComponentOptions<T>): T {
   const BaseComponent = options?.base ?? Component;
 
   const CustomComponent = class extends BaseComponent {

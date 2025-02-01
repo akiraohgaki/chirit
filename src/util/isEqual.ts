@@ -20,7 +20,7 @@
  * @param valueA - The first value to compare.
  * @param valueB - The second value to compare.
  */
-export default function isEqual(valueA: unknown, valueB: unknown): boolean {
+export function isEqual(valueA: unknown, valueB: unknown): boolean {
   return isDeepEqual(valueA, valueB, new WeakSet());
 }
 

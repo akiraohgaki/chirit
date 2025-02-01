@@ -1,6 +1,6 @@
-import Observable from './Observable.ts';
-import dom from './dom.ts';
-import isEqual from './util/isEqual.ts';
+import { Observable } from './Observable.ts';
+import { dom } from './dom.ts';
+import { isEqual } from './util/isEqual.ts';
 
 /**
  * An observable store for complex state management.
@@ -61,7 +61,7 @@ import isEqual from './util/isEqual.ts';
  *
  * @template T - The type of the state.
  */
-export default class Store<T extends Record<string, unknown>> extends Observable<T> {
+export class Store<T extends Record<string, unknown>> extends Observable<T> {
   #initialState: T;
 
   #state: T;

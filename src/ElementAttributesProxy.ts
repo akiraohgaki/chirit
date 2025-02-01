@@ -28,7 +28,7 @@
  * delete attr.color;
  * ```
  */
-export default class ElementAttributesProxy {
+export class ElementAttributesProxy {
   /**
    * Type of attributes
    */

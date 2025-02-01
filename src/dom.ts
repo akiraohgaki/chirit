@@ -22,4 +22,4 @@ if (!dom.globalThis.HTMLElement) {
   } as typeof globalThis;
 }
 
-export default dom;
+export { dom };

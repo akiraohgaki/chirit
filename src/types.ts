@@ -1,4 +1,4 @@
-import type { default as Component } from './Component.ts';
+import type { Component } from './Component.ts';
 
 /**
  * Options for createComponent.

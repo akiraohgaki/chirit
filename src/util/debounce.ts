@@ -23,7 +23,7 @@
  * @param func - The function to debounce.
  * @param ms - The number of milliseconds to wait.
  */
-export default function debounce<T extends Array<unknown>>(
+export function debounce<T extends Array<unknown>>(
   func: (...args: T) => unknown,
   ms: number,
 ): (...args: T) => void {

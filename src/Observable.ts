@@ -27,7 +27,7 @@ import type { Observer } from './types.ts';
  *
  * @template T - The type of the value.
  */
-export default class Observable<T = unknown> {
+export class Observable<T = unknown> {
   #observerCollection: Set<Observer<T>>;
 
   /**
