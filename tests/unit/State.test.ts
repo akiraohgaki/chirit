@@ -1,72 +1,79 @@
-import { assertEquals, assertNotStrictEquals } from '@std/assert';
+import { assert, assertEquals, assertNotStrictEquals } from '@std/assert';
 
 import { State } from '../../mod.ts';
 
 Deno.test('State', async (t) => {
-  await t.step('state management', () => {
-    const state = new State(0);
+  let state: State<number>;
 
+  await t.step('constructor()', () => {
+    state = new State(0);
+
+    assert(state);
+  });
+
+  await t.step('get()', () => {
     assertEquals(state.get(), 0);
+  });
 
+  await t.step('set()', () => {
     state.set(1);
 
     assertEquals(state.get(), 1);
+  });
 
+  await t.step('reset()', () => {
     state.reset();
 
     assertEquals(state.get(), 0);
   });
+});
 
-  await t.step('state management with object', () => {
-    const initialState = { updated: false, key: null };
+Deno.test('State management', async (t) => {
+  const initialState = { a: 0, b: 0 };
+  const updatedState = { a: 1, b: 1 };
 
-    const state = new State(initialState);
+  const states: Array<typeof initialState> = [];
 
-    assertEquals(state.get(), { updated: false, key: null });
+  const observer = (state: typeof initialState) => {
+    states.push(state);
+  };
+
+  const state = new State(initialState);
+
+  await t.step('immutable state', () => {
+    assertEquals(state.get(), initialState);
     assertNotStrictEquals(state.get(), initialState);
 
     const previousState = state.get();
 
-    state.set({ updated: true, key: null });
+    state.set(updatedState);
 
-    assertEquals(state.get(), { updated: true, key: null });
-    assertNotStrictEquals(state.get(), previousState);
+    assertEquals(state.get(), updatedState);
+    assertNotStrictEquals(state.get(), updatedState);
 
     state.reset();
 
-    assertEquals(state.get(), { updated: false, key: null });
+    assertEquals(state.get(), initialState);
+    assertEquals(state.get(), previousState);
     assertNotStrictEquals(state.get(), initialState);
+    assertNotStrictEquals(state.get(), previousState);
   });
 
   await t.step('state change notification', () => {
-    const logs: Array<unknown> = [];
-
-    const initialState = { updated: false, key: null };
-
-    const observer = (state: typeof initialState) => {
-      logs.push(state);
-    };
-
-    const state = new State(initialState);
-
     state.subscribe(observer);
 
     state.notify();
 
-    state.set({ updated: false, key: null });
+    state.set(updatedState); // changed
+    state.set(updatedState); // no changed
 
-    state.set({ updated: true, key: null });
+    state.reset(); // changed
+    state.reset(); // no changed
 
-    state.reset();
-
-    state.unsubscribe(observer);
-
-    state.notify();
-
-    assertEquals(logs, [
-      { updated: false, key: null },
-      { updated: true, key: null },
-      { updated: false, key: null },
+    assertEquals(states, [
+      initialState,
+      updatedState,
+      initialState,
     ]);
   });
 });
