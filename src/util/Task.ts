@@ -52,6 +52,13 @@ export class Task {
   }
 
   /**
+   * Returns the number of tasks in the queue.
+   */
+  get size(): number {
+    return this.#taskQueue.size;
+  }
+
+  /**
    * Checks if any task is currently running.
    */
   isRunning(): boolean {
