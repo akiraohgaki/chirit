@@ -2,22 +2,22 @@ import { assert, assertEquals } from '@std/assert';
 
 import { Observable } from '../../mod.ts';
 
+const values: Array<number> = [];
+
+function observer1(value: number): void {
+  values.push(value);
+}
+
+function observer2(value: number): void {
+  values.push(value);
+}
+
+function observer3(value: number): void {
+  values.push(value);
+}
+
 Deno.test('Observable', async (t) => {
   let observable: Observable<number>;
-
-  const values: Array<number> = [];
-
-  const observer1 = (value: number) => {
-    values.push(value);
-  };
-
-  const observer2 = (value: number) => {
-    values.push(value);
-  };
-
-  const observer3 = (value: number) => {
-    values.push(value);
-  };
 
   await t.step('constructor()', () => {
     observable = new Observable();

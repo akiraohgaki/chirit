@@ -2,12 +2,33 @@ import { assert, assertEquals } from '@std/assert';
 
 import { sleep, Task } from '../../../util.ts';
 
+async function sleepTask1(): Promise<void> {
+  await sleep(100);
+}
+
+async function sleepTask2(): Promise<void> {
+  await sleep(100);
+}
+
+async function sleepTask3(): Promise<void> {
+  await sleep(100);
+}
+
+async function waitForTaskFinished(task: Task): Promise<number> {
+  return await new Promise((resolve) => {
+    const timeA = Date.now();
+    const intervalId = setInterval(() => {
+      if (task.size === 0 && !task.isRunning()) {
+        clearInterval(intervalId);
+        const timeB = Date.now();
+        resolve(timeB - timeA);
+      }
+    }, 0);
+  });
+}
+
 Deno.test('Task', async (t) => {
   let task: Task;
-
-  const sleepTask1 = () => sleep(100);
-  const sleepTask2 = () => sleep(100);
-  const sleepTask3 = () => sleep(100);
 
   await t.step('constructor()', () => {
     task = new Task({
@@ -71,10 +92,6 @@ Deno.test('Task', async (t) => {
 });
 
 Deno.test('Task execution', async (t) => {
-  const sleepTask1 = () => sleep(100);
-  const sleepTask2 = () => sleep(100);
-  const sleepTask3 = () => sleep(100);
-
   await t.step('parallel execution', async () => {
     const task = new Task({
       maxParallelism: 3,
@@ -87,24 +104,11 @@ Deno.test('Task execution', async (t) => {
 
     task.start();
 
-    const timeA = Date.now();
-
-    await sleep(50);
-
-    await new Promise((resolve) => {
-      const intervalId = setInterval(() => {
-        if (task.size === 0 && !task.isRunning()) {
-          clearInterval(intervalId);
-          resolve(true);
-        }
-      }, 0);
-    });
-
-    const timeB = Date.now();
+    const time = await waitForTaskFinished(task);
 
     task.pause();
 
-    assert(timeB - timeA < 150);
+    assert(time < 150);
   });
 
   await t.step('delayed execution', async () => {
@@ -119,33 +123,20 @@ Deno.test('Task execution', async (t) => {
 
     task.start();
 
-    const timeA = Date.now();
-
-    await sleep(100);
-
-    await new Promise((resolve) => {
-      const intervalId = setInterval(() => {
-        if (task.size === 0 && !task.isRunning()) {
-          clearInterval(intervalId);
-          resolve(true);
-        }
-      }, 0);
-    });
-
-    const timeB = Date.now();
+    const time = await waitForTaskFinished(task);
 
     task.pause();
 
-    assert(timeB - timeA >= 150);
+    assert(time >= 150);
   });
 
   await t.step('looping task', async () => {
-    let counter = 0;
-
     const task = new Task({
       maxParallelism: 1,
       tickDelay: 0,
     });
+
+    let counter = 0;
 
     task.addLoop(() => counter++, 50);
 
@@ -159,16 +150,16 @@ Deno.test('Task execution', async (t) => {
   });
 
   await t.step('error handling (see error log in test output)', async () => {
-    const values: Array<number> = [];
-
     const task = new Task({
       maxParallelism: 1,
       tickDelay: 0,
     });
 
+    let isExecuted = false;
+
     task.add(() => {
-      values.push(1);
-      throw new Error('1');
+      isExecuted = true;
+      throw new Error('error');
     });
 
     task.start();
@@ -177,6 +168,6 @@ Deno.test('Task execution', async (t) => {
 
     task.pause();
 
-    assertEquals(values, [1]);
+    assert(isExecuted);
   });
 });

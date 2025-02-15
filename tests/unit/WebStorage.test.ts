@@ -101,6 +101,18 @@ Deno.test('Storage mode', async (t) => {
 Deno.test('Stored data', async (t) => {
   const webStorage = new WebStorage('local');
 
+  await t.step('compatibility', () => {
+    localStorage.setItem('keyA', 'value');
+    webStorage.set('keyB', 'value');
+
+    assertEquals(
+      JSON.parse(localStorage.getItem('keyB') as string)._v,
+      webStorage.get('keyA'),
+    );
+
+    webStorage.clear();
+  });
+
   await t.step('JSON serializable data', () => {
     webStorage.set('boolean', true);
     webStorage.set('number', 1);
@@ -138,18 +150,6 @@ Deno.test('Stored data', async (t) => {
 
     assertEquals(localStorage.getItem('Set'), '{"_v":{}}');
     assertEquals(localStorage.getItem('Map'), '{"_v":{}}');
-
-    webStorage.clear();
-  });
-
-  await t.step('compatibility', () => {
-    localStorage.setItem('key', 'value');
-
-    assertEquals(webStorage.get('key'), 'value');
-
-    webStorage.set('key', 'value');
-
-    assertEquals(localStorage.getItem('key'), '{"_v":"value"}');
 
     webStorage.clear();
   });

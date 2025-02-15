@@ -2,6 +2,15 @@ import { assert, assertEquals, assertNotStrictEquals } from '@std/assert';
 
 import { State } from '../../mod.ts';
 
+const initialState = { a: 0, b: 0 };
+const updatedState = { a: 1, b: 1 };
+
+const values: Array<typeof initialState> = [];
+
+function observer(value: typeof initialState): void {
+  values.push(value);
+}
+
 Deno.test('State', async (t) => {
   let state: State<number>;
 
@@ -29,15 +38,6 @@ Deno.test('State', async (t) => {
 });
 
 Deno.test('State management', async (t) => {
-  const initialState = { a: 0, b: 0 };
-  const updatedState = { a: 1, b: 1 };
-
-  const states: Array<typeof initialState> = [];
-
-  const observer = (state: typeof initialState) => {
-    states.push(state);
-  };
-
   const state = new State(initialState);
 
   await t.step('immutable state', () => {
@@ -70,7 +70,7 @@ Deno.test('State management', async (t) => {
     state.reset(); // changed
     state.reset(); // no changed
 
-    assertEquals(states, [
+    assertEquals(values, [
       initialState,
       updatedState,
       initialState,
