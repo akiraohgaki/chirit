@@ -10,14 +10,21 @@ Deno.test('WebStorage', async (t) => {
 
   await t.step('constructor()', async (t) => {
     await t.step('invalid storage mode', () => {
-      // @ts-ignore for testing
+      // @ts-ignore invalid parameter
       assertThrows(() => new WebStorage(), Error);
-      // @ts-ignore for testing
+      // @ts-ignore invalid parameter
       assertThrows(() => new WebStorage('invalid'), Error);
     });
 
     await t.step('local storage mode and prefix to keys', () => {
       webStorage = new WebStorage('local', 'test_');
+
+      assert(webStorage);
+    });
+
+    await t.step('session storage mode and prefix to keys', () => {
+      // Initialization only.
+      new WebStorage('session', 'test_');
 
       assert(webStorage);
     });
