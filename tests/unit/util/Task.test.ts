@@ -18,7 +18,7 @@ async function waitForTaskFinished(task: Task): Promise<number> {
   return await new Promise((resolve) => {
     const timeA = Date.now();
     const intervalId = setInterval(() => {
-      if (task.size === 0 && !task.isRunning()) {
+      if (task.queueSize === 0 && !task.isRunning) {
         clearInterval(intervalId);
         const timeB = Date.now();
         resolve(timeB - timeA);
@@ -39,31 +39,37 @@ Deno.test('Task', async (t) => {
     assert(task);
   });
 
-  await t.step('size', () => {
-    assertEquals(task.size, 0);
+  await t.step('queueSize', () => {
+    assertEquals(task.queueSize, 0);
   });
 
-  await t.step('isRunning()', () => {
-    assert(!task.isRunning());
+  await t.step('loopSize', () => {
+    assertEquals(task.loopSize, 0);
+  });
+
+  await t.step('isRunning', () => {
+    assert(!task.isRunning);
   });
 
   await t.step('add()', () => {
     task.add(sleepTask1);
     task.add(sleepTask2);
 
-    assertEquals(task.size, 2);
+    assertEquals(task.queueSize, 2);
   });
 
   await t.step('addLoop()', () => {
     task.addLoop(sleepTask3, 0);
 
-    assertEquals(task.size, 3);
+    assertEquals(task.queueSize, 3);
+    assertEquals(task.loopSize, 1);
   });
 
   await t.step('delete()', () => {
     task.delete(sleepTask3);
 
-    assertEquals(task.size, 2);
+    assertEquals(task.queueSize, 2);
+    assertEquals(task.loopSize, 0);
   });
 
   await t.step('start()', async () => {
@@ -71,8 +77,8 @@ Deno.test('Task', async (t) => {
 
     await sleep(50);
 
-    assertEquals(task.size, 1);
-    assert(task.isRunning());
+    assertEquals(task.queueSize, 1);
+    assert(task.isRunning);
   });
 
   await t.step('pause()', async () => {
@@ -80,14 +86,18 @@ Deno.test('Task', async (t) => {
 
     await sleep(100);
 
-    assertEquals(task.size, 1);
-    assert(!task.isRunning());
+    assertEquals(task.queueSize, 1);
+    assert(!task.isRunning);
   });
 
   await t.step('clear()', () => {
+    task.add(sleepTask1);
+    task.addLoop(sleepTask2, 0);
+
     task.clear();
 
-    assertEquals(task.size, 0);
+    assertEquals(task.queueSize, 0);
+    assertEquals(task.loopSize, 0);
   });
 });
 
