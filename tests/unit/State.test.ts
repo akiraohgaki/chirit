@@ -40,40 +40,52 @@ Deno.test('State', async (t) => {
 Deno.test('State management', async (t) => {
   const state = new State(initialState);
 
-  await t.step('immutable state', () => {
-    assertEquals(state.get(), initialState);
-    assertNotStrictEquals(state.get(), initialState);
+  const previousState = state.get();
 
-    const previousState = state.get();
+  await t.step('immutable state', async (t) => {
+    await t.step('initial state should be immutable', () => {
+      assertEquals(state.get(), initialState);
+      assertNotStrictEquals(state.get(), initialState);
+    });
 
-    state.set(updatedState);
+    await t.step('updated state should be immutable', () => {
+      state.set(updatedState);
 
-    assertEquals(state.get(), updatedState);
-    assertNotStrictEquals(state.get(), updatedState);
+      assertEquals(state.get(), updatedState);
+      assertNotStrictEquals(state.get(), updatedState);
+    });
 
-    state.reset();
+    await t.step('reset state should be immutable', () => {
+      state.reset();
 
-    assertEquals(state.get(), initialState);
-    assertEquals(state.get(), previousState);
-    assertNotStrictEquals(state.get(), initialState);
-    assertNotStrictEquals(state.get(), previousState);
+      assertEquals(state.get(), initialState);
+      assertEquals(state.get(), previousState);
+      assertNotStrictEquals(state.get(), initialState);
+      assertNotStrictEquals(state.get(), previousState);
+    });
   });
 
-  await t.step('state change notification', () => {
-    state.subscribe(observer);
+  await t.step('state change notification', async (t) => {
+    await t.step('subscribe and notify manually', () => {
+      state.subscribe(observer);
 
-    state.notify();
+      state.notify();
 
-    state.set(updatedState); // changed
-    state.set(updatedState); // no changed
+      assertEquals(values.splice(0), [initialState]);
+    });
 
-    state.reset(); // changed
-    state.reset(); // no changed
+    await t.step('when state changed', () => {
+      state.set(updatedState); // changed
+      state.set(updatedState); // no changed
 
-    assertEquals(values, [
-      initialState,
-      updatedState,
-      initialState,
-    ]);
+      assertEquals(values.splice(0), [updatedState]);
+    });
+
+    await t.step('when state reset', () => {
+      state.reset(); // changed
+      state.reset(); // no changed
+
+      assertEquals(values.splice(0), [initialState]);
+    });
   });
 });

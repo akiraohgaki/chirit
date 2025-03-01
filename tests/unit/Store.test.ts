@@ -40,6 +40,31 @@ Deno.test('Store', async (t) => {
 Deno.test('State management', async (t) => {
   const store = new Store(initialState);
 
+  const previousState = store.state;
+
+  await t.step('immutable state', async (t) => {
+    await t.step('initial state should be immutable', () => {
+      assertEquals(store.state, initialState);
+      assertNotStrictEquals(store.state, initialState);
+    });
+
+    await t.step('updated state should be immutable', () => {
+      store.update(updatedState);
+
+      assertEquals(store.state, updatedState);
+      assertNotStrictEquals(store.state, updatedState);
+    });
+
+    await t.step('reset state should be immutable', () => {
+      store.reset();
+
+      assertEquals(store.state, initialState);
+      assertEquals(store.state, previousState);
+      assertNotStrictEquals(store.state, initialState);
+      assertNotStrictEquals(store.state, previousState);
+    });
+  });
+
   await t.step('state merging', () => {
     const { a } = updatedState;
 
@@ -50,40 +75,27 @@ Deno.test('State management', async (t) => {
     store.reset();
   });
 
-  await t.step('immutable state', () => {
-    assertEquals(store.state, initialState);
-    assertNotStrictEquals(store.state, initialState);
+  await t.step('state change notification', async (t) => {
+    await t.step('subscribe and notify manually', () => {
+      store.subscribe(observer);
 
-    const previousState = store.state;
+      store.notify();
 
-    store.update(updatedState);
+      assertEquals(values.splice(0), [initialState]);
+    });
 
-    assertEquals(store.state, updatedState);
-    assertNotStrictEquals(store.state, updatedState);
+    await t.step('when state changed', () => {
+      store.update(updatedState); // changed
+      store.update(updatedState); // no changed
 
-    store.reset();
+      assertEquals(values.splice(0), [updatedState]);
+    });
 
-    assertEquals(store.state, initialState);
-    assertEquals(store.state, previousState);
-    assertNotStrictEquals(store.state, initialState);
-    assertNotStrictEquals(store.state, previousState);
-  });
+    await t.step('when state reset', () => {
+      store.reset(); // changed
+      store.reset(); // no changed
 
-  await t.step('state change notification', () => {
-    store.subscribe(observer);
-
-    store.notify();
-
-    store.update(updatedState); // changed
-    store.update(updatedState); // no changed
-
-    store.reset(); // changed
-    store.reset(); // no changed
-
-    assertEquals(values, [
-      initialState,
-      updatedState,
-      initialState,
-    ]);
+      assertEquals(values.splice(0), [initialState]);
+    });
   });
 });

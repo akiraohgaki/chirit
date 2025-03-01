@@ -26,9 +26,9 @@ Deno.test('Observable', async (t) => {
   });
 
   await t.step('notify()', () => {
-    observable.notify(0);
+    observable.notify(1);
 
-    assertEquals(values, []);
+    assertEquals(values.splice(0), []);
   });
 
   await t.step('subscribe()', () => {
@@ -38,19 +38,19 @@ Deno.test('Observable', async (t) => {
 
     observable.notify(1);
 
-    assertEquals(values, [1, 1, 1]);
+    assertEquals(values.splice(0), [1, 1, 1]);
   });
 
   await t.step('unsubscribe()', () => {
     observable.unsubscribe(observer1);
 
-    observable.notify(2);
+    observable.notify(1);
 
     observable.unsubscribe(observer2);
     observable.unsubscribe(observer3);
 
-    observable.notify(3);
+    observable.notify(1);
 
-    assertEquals(values, [1, 1, 1, 2, 2]);
+    assertEquals(values.splice(0), [1, 1]);
   });
 });
