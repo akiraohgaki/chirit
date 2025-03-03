@@ -10,7 +10,7 @@ for (const log of Playground.logs.get()) {
     break;
   }
 }
-Playground.log(testsPassed ? 'Tests passed' : 'Tests failed');
+Playground.log(testsPassed ? '[Passed]' : '[Failed]');
 `;
 
 async function runCode(page: Page, code: string): Promise<void> {
@@ -19,7 +19,7 @@ async function runCode(page: Page, code: string): Promise<void> {
 }
 
 async function expectStatus(page: Page, timeout?: number): Promise<void> {
-  await expect(page.locator('[data-content="logs"]')).toHaveText('Tests passed', { timeout });
+  await expect(page.locator('[data-content="log"]').last()).toHaveText('[Passed]', { timeout });
 }
 
 test.describe('Testing on playground page', () => {

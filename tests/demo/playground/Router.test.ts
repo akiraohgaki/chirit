@@ -4,7 +4,7 @@ import { assert, assertEquals, assertStrictEquals, assertThrows } from '@std/ass
 import { Router } from '../../../mod.ts';
 
 const initialUrl = location.href;
-const mode = location.href.search('router-history.playground') !== -1 ? 'history' : 'hash';
+const mode = location.href.search('router-hash.playground') !== -1 ? 'hash' : 'history';
 
 await Playground.test('Router', async (t) => {
   let router: Router;
