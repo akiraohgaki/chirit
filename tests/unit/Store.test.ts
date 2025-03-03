@@ -1,58 +1,101 @@
-import { assertEquals, assertNotStrictEquals } from '@std/assert';
+import { assert, assertEquals, assertNotStrictEquals } from '@std/assert';
 
 import { Store } from '../../mod.ts';
 
+const initialState = { a: 0, b: 0 };
+const updatedState = { a: 1, b: 1 };
+
+const values: Array<typeof initialState> = [];
+
+function observer(value: typeof initialState): void {
+  values.push(value);
+}
+
 Deno.test('Store', async (t) => {
-  await t.step('state management with object', () => {
-    const initialState = { updated: false, key: null };
+  let store: Store<typeof initialState>;
 
-    const store = new Store(initialState);
+  await t.step('constructor()', () => {
+    store = new Store(initialState);
 
-    assertEquals(store.state, { updated: false, key: null });
-    assertNotStrictEquals(store.state, initialState);
-
-    const previousState = store.state;
-
-    store.update({ updated: true });
-
-    assertEquals(store.state, { updated: true, key: null });
-    assertNotStrictEquals(store.state, previousState);
-
-    store.reset();
-
-    assertEquals(store.state, { updated: false, key: null });
-    assertNotStrictEquals(store.state, initialState);
+    assert(store);
   });
 
-  await t.step('state change notification', () => {
-    const logs: Array<unknown> = [];
+  await t.step('state', () => {
+    assertEquals(store.state, initialState);
+  });
 
-    const initialState = { updated: false, key: null };
+  await t.step('update()', () => {
+    store.update(updatedState);
 
-    const observer = (state: typeof initialState) => {
-      logs.push(state);
-    };
+    assertEquals(store.state, updatedState);
+  });
 
-    const store = new Store(initialState);
-
-    store.subscribe(observer);
-
-    store.notify();
-
-    store.update({ updated: false });
-
-    store.update({ updated: true });
-
+  await t.step('reset()', () => {
     store.reset();
 
-    store.unsubscribe(observer);
+    assertEquals(store.state, initialState);
+  });
+});
 
-    store.notify();
+Deno.test('State management', async (t) => {
+  const store = new Store(initialState);
 
-    assertEquals(logs, [
-      { updated: false, key: null },
-      { updated: true, key: null },
-      { updated: false, key: null },
-    ]);
+  const previousState = store.state;
+
+  await t.step('immutable state', async (t) => {
+    await t.step('initial state should be immutable', () => {
+      assertEquals(store.state, initialState);
+      assertNotStrictEquals(store.state, initialState);
+    });
+
+    await t.step('updated state should be immutable', () => {
+      store.update(updatedState);
+
+      assertEquals(store.state, updatedState);
+      assertNotStrictEquals(store.state, updatedState);
+    });
+
+    await t.step('reset state should be immutable', () => {
+      store.reset();
+
+      assertEquals(store.state, initialState);
+      assertEquals(store.state, previousState);
+      assertNotStrictEquals(store.state, initialState);
+      assertNotStrictEquals(store.state, previousState);
+    });
+  });
+
+  await t.step('state merging', () => {
+    const { a } = updatedState;
+
+    store.update({ a });
+
+    assertEquals(store.state, { ...initialState, a });
+
+    store.reset();
+  });
+
+  await t.step('state change notification', async (t) => {
+    await t.step('subscribe and notify manually', () => {
+      store.subscribe(observer);
+
+      store.notify();
+
+      assertEquals(values.splice(0), [initialState]);
+    });
+
+    await t.step('when state changed', () => {
+      store.update(updatedState); // changed
+      store.update(updatedState); // no changed
+
+      assertEquals(values.splice(0), [updatedState]);
+    });
+
+    await t.step('when state reset', () => {
+      store.reset(); // changed
+      store.reset(); // no changed
+
+      assertEquals(values.splice(0), [initialState]);
+    });
   });
 });

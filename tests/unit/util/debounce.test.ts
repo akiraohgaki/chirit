@@ -1,14 +1,19 @@
-import { assertEquals } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 
 import { debounce, sleep } from '../../../util.ts';
 
-Deno.test('debounce', async (t) => {
-  await t.step('debounced function', async () => {
-    const logs: Array<number> = [];
+const values: Array<number> = [];
 
-    const debouncedFunc = debounce((value: number) => {
-      logs.push(value);
-    }, 50);
+async function func(value: number, delay?: number): Promise<void> {
+  if (delay) {
+    await sleep(delay);
+  }
+  values.push(value);
+}
+
+Deno.test('debounce()', async (t) => {
+  await t.step('debounced function', async () => {
+    const debouncedFunc = debounce(func, 50);
 
     debouncedFunc(1);
     debouncedFunc(2);
@@ -17,42 +22,34 @@ Deno.test('debounce', async (t) => {
     debouncedFunc(4);
     await sleep(100);
 
-    assertEquals(logs, [2, 4]);
+    assertEquals(values.splice(0), [2, 4]);
   });
 
   await t.step('time-consuming processing', async () => {
-    const logs: Array<number> = [];
+    const debouncedFunc = debounce(func, 50);
 
-    const debouncedFunc = debounce(async (value: number) => {
-      await sleep(150);
-      logs.push(value);
-    }, 50);
-
-    debouncedFunc(1);
-    debouncedFunc(2);
+    debouncedFunc(1, 150);
+    debouncedFunc(2, 150);
     await sleep(100);
-    debouncedFunc(3);
-    debouncedFunc(4);
+    debouncedFunc(3, 150);
+    debouncedFunc(4, 150);
     await sleep(200);
 
-    assertEquals(logs, [2]);
+    assertEquals(values.splice(0), [2]);
   });
 
   await t.step('error handling (see error log in test output)', async () => {
-    const logs: Array<number> = [];
+    let isExecuted = false;
 
-    const debouncedFunc = debounce((value: number) => {
-      logs.push(value);
-      throw new Error('' + value);
-    }, 50);
+    const debouncedFunc = debounce(() => {
+      isExecuted = true;
+      throw new Error('error');
+    }, 0);
 
-    debouncedFunc(1);
-    debouncedFunc(2);
-    await sleep(100);
-    debouncedFunc(3);
-    debouncedFunc(4);
-    await sleep(100);
+    debouncedFunc();
 
-    assertEquals(logs, [2, 4]);
+    await sleep(50);
+
+    assert(isExecuted);
   });
 });

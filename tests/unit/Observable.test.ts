@@ -1,35 +1,56 @@
-import { assertEquals } from '@std/assert';
+import { assert, assertEquals } from '@std/assert';
 
 import { Observable } from '../../mod.ts';
 
+const values: Array<number> = [];
+
+function observer1(value: number): void {
+  values.push(value);
+}
+
+function observer2(value: number): void {
+  values.push(value);
+}
+
+function observer3(value: number): void {
+  values.push(value);
+}
+
 Deno.test('Observable', async (t) => {
-  await t.step('notification', () => {
-    const logs: Array<unknown> = [];
+  let observable: Observable<number>;
 
-    const observer1 = (state: number) => {
-      logs.push(state);
-    };
-    const observer2 = (state: number) => {
-      logs.push(state);
-    };
+  await t.step('constructor()', () => {
+    observable = new Observable();
 
-    const observable = new Observable<number>();
+    assert(observable);
+  });
 
-    observable.notify(0);
+  await t.step('notify()', () => {
+    observable.notify(1);
 
+    assertEquals(values.splice(0), []);
+  });
+
+  await t.step('subscribe()', () => {
     observable.subscribe(observer1);
     observable.subscribe(observer2);
+    observable.subscribe(observer3);
 
     observable.notify(1);
 
+    assertEquals(values.splice(0), [1, 1, 1]);
+  });
+
+  await t.step('unsubscribe()', () => {
     observable.unsubscribe(observer1);
+
+    observable.notify(1);
+
     observable.unsubscribe(observer2);
+    observable.unsubscribe(observer3);
 
-    observable.notify(2);
+    observable.notify(1);
 
-    assertEquals(logs, [
-      1,
-      1,
-    ]);
+    assertEquals(values.splice(0), [1, 1]);
   });
 });

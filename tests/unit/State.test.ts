@@ -1,72 +1,91 @@
-import { assertEquals, assertNotStrictEquals } from '@std/assert';
+import { assert, assertEquals, assertNotStrictEquals } from '@std/assert';
 
 import { State } from '../../mod.ts';
 
+const initialState = { a: 0, b: 0 };
+const updatedState = { a: 1, b: 1 };
+
+const values: Array<typeof initialState> = [];
+
+function observer(value: typeof initialState): void {
+  values.push(value);
+}
+
 Deno.test('State', async (t) => {
-  await t.step('state management', () => {
-    const state = new State(0);
+  let state: State<number>;
 
+  await t.step('constructor()', () => {
+    state = new State(0);
+
+    assert(state);
+  });
+
+  await t.step('get()', () => {
     assertEquals(state.get(), 0);
+  });
 
+  await t.step('set()', () => {
     state.set(1);
 
     assertEquals(state.get(), 1);
+  });
 
+  await t.step('reset()', () => {
     state.reset();
 
     assertEquals(state.get(), 0);
   });
+});
 
-  await t.step('state management with object', () => {
-    const initialState = { updated: false, key: null };
+Deno.test('State management', async (t) => {
+  const state = new State(initialState);
 
-    const state = new State(initialState);
+  const previousState = state.get();
 
-    assertEquals(state.get(), { updated: false, key: null });
-    assertNotStrictEquals(state.get(), initialState);
+  await t.step('immutable state', async (t) => {
+    await t.step('initial state should be immutable', () => {
+      assertEquals(state.get(), initialState);
+      assertNotStrictEquals(state.get(), initialState);
+    });
 
-    const previousState = state.get();
+    await t.step('updated state should be immutable', () => {
+      state.set(updatedState);
 
-    state.set({ updated: true, key: null });
+      assertEquals(state.get(), updatedState);
+      assertNotStrictEquals(state.get(), updatedState);
+    });
 
-    assertEquals(state.get(), { updated: true, key: null });
-    assertNotStrictEquals(state.get(), previousState);
+    await t.step('reset state should be immutable', () => {
+      state.reset();
 
-    state.reset();
-
-    assertEquals(state.get(), { updated: false, key: null });
-    assertNotStrictEquals(state.get(), initialState);
+      assertEquals(state.get(), initialState);
+      assertEquals(state.get(), previousState);
+      assertNotStrictEquals(state.get(), initialState);
+      assertNotStrictEquals(state.get(), previousState);
+    });
   });
 
-  await t.step('state change notification', () => {
-    const logs: Array<unknown> = [];
+  await t.step('state change notification', async (t) => {
+    await t.step('subscribe and notify manually', () => {
+      state.subscribe(observer);
 
-    const initialState = { updated: false, key: null };
+      state.notify();
 
-    const observer = (state: typeof initialState) => {
-      logs.push(state);
-    };
+      assertEquals(values.splice(0), [initialState]);
+    });
 
-    const state = new State(initialState);
+    await t.step('when state changed', () => {
+      state.set(updatedState); // changed
+      state.set(updatedState); // no changed
 
-    state.subscribe(observer);
+      assertEquals(values.splice(0), [updatedState]);
+    });
 
-    state.notify();
+    await t.step('when state reset', () => {
+      state.reset(); // changed
+      state.reset(); // no changed
 
-    state.set({ updated: false, key: null });
-
-    state.set({ updated: true, key: null });
-
-    state.reset();
-
-    state.unsubscribe(observer);
-
-    state.notify();
-
-    assertEquals(logs, [
-      { updated: false, key: null },
-      { updated: true, key: null },
-      { updated: false, key: null },
-    ]);
+      assertEquals(values.splice(0), [initialState]);
+    });
   });
 });

@@ -91,6 +91,13 @@ export class Router {
   }
 
   /**
+   * Returns the number of route patterns in the collection.
+   */
+  get size(): number {
+    return this.#routeCollection.size;
+  }
+
+  /**
    * The function to be called when the route changed.
    */
   set onchange(handler: (event: Event) => unknown) {

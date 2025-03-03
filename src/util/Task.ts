@@ -17,7 +17,7 @@ import type { TaskOptions } from './types.ts';
  *
  * task.add(() => console.log('task'));
  *
- * task.addLoop(async () => console.log('looping task'), 200);
+ * task.addLoop(() => console.log('looping task'), 200);
  *
  * task.pause();
  * ```
@@ -52,9 +52,23 @@ export class Task {
   }
 
   /**
+   * Returns the number of tasks in the queue.
+   */
+  get queueSize(): number {
+    return this.#taskQueue.size;
+  }
+
+  /**
+   * Returns the number of looping tasks in the collection.
+   */
+  get loopSize(): number {
+    return this.#loopTaskCollection.size;
+  }
+
+  /**
    * Checks if any task is currently running.
    */
-  isRunning(): boolean {
+  get isRunning(): boolean {
     return this.#runningCounter > 0;
   }
 
