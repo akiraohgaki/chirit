@@ -1,35 +1,32 @@
+import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertNotInstanceOf } from '@std/assert';
 
 import { Component, createComponent } from '../../../mod.ts';
 
-import { Playground } from './Playground.ts';
+class BaseComponent extends Component {
+  override createContentContainer(): ShadowRoot {
+    return this.attachShadow({ mode: 'open', delegatesFocus: true });
+  }
+}
 
 await Playground.test('createComponent()', async (t) => {
   await t.step('custom element definition', () => {
-    const TestComponent = createComponent('test-component');
+    const TestComponent1 = createComponent('test-component-1');
 
-    assert(customElements.get('test-component'));
-    assertNotInstanceOf(TestComponent, Component);
-    assertInstanceOf(TestComponent, Function);
+    assert(customElements.get('test-component-1'));
+    assertNotInstanceOf(TestComponent1, Component);
+    assertInstanceOf(TestComponent1, Function);
   });
 
   await t.step('specific base component', () => {
-    class BaseComponent extends Component {
-      override createContentContainer(): ShadowRoot {
-        return this.attachShadow({ mode: 'open', delegatesFocus: true });
-      }
-    }
-
-    createComponent('test-component-2', {
-      base: BaseComponent,
-    });
+    createComponent('test-component-2', { base: BaseComponent });
 
     const testComponent2 = document.createElement('test-component-2') as BaseComponent;
 
     assert((testComponent2.content as ShadowRoot).delegatesFocus);
   });
 
-  await t.step('component lifecycle callbacks', () => {
+  await t.step('component lifecycle callbacks', async () => {
     const values: Array<string> = [];
 
     createComponent('test-component-3', {
@@ -54,11 +51,12 @@ await Playground.test('createComponent()', async (t) => {
     });
 
     const testComponent3 = document.createElement('test-component-3') as Component;
+
     testComponent3.attr.attr1 = '1';
 
-    Playground.preview.set(testComponent3);
+    await Playground.sleep(100);
 
-    Playground.sleep(100);
+    Playground.preview.set(testComponent3);
 
     testComponent3.remove();
 
@@ -69,9 +67,6 @@ await Playground.test('createComponent()', async (t) => {
       'connected()',
       'disconnected()',
     ]);
-    assertEquals(
-      (testComponent3.content as ShadowRoot).innerHTML,
-      '<span>attr1:1</span>',
-    );
+    assertEquals((testComponent3.content as ShadowRoot).innerHTML, '<span>attr1:1</span>');
   });
 });

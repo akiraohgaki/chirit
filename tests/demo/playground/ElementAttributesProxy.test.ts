@@ -1,14 +1,28 @@
+import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertNotInstanceOf, assertThrows } from '@std/assert';
 
 import { ElementAttributesProxy } from '../../../mod.ts';
 
-import { Playground } from './Playground.ts';
+// Makes Element object in a separate scope,
+// to ensure that object are cleared by garbage collection.
+function createElementAttributesProxyForGC(): ElementAttributesProxy {
+  const element = document.createElement('div');
+  element.id = 'gc';
+
+  const elementAttributesProxy = new ElementAttributesProxy(element);
+
+  element.remove();
+
+  return elementAttributesProxy;
+}
 
 await Playground.test('ElementAttributesProxy', async (t) => {
   await t.step('constructor()', () => {
     const element = document.createElement('div');
+
     const elementAttributesProxy = new ElementAttributesProxy(element);
 
+    assert(elementAttributesProxy);
     assertNotInstanceOf(elementAttributesProxy, ElementAttributesProxy);
     assertInstanceOf(elementAttributesProxy, Object);
   });
@@ -17,6 +31,7 @@ await Playground.test('ElementAttributesProxy', async (t) => {
 await Playground.test('Proxy object', async (t) => {
   await t.step('attribute manipulation', () => {
     const element = document.createElement('div');
+
     const elementAttributesProxy = new ElementAttributesProxy(element);
 
     elementAttributesProxy.attr0 = '0';
@@ -34,19 +49,6 @@ await Playground.test('Proxy object', async (t) => {
     assertEquals(element.outerHTML, '<div attr1="1" attr2="2"></div>');
   });
 
-  // Makes Element object in a separate scope,
-  // to ensure that object are cleared by garbage collection.
-  function createElementAttributesProxyForGC(): ElementAttributesProxy {
-    const element = document.createElement('div');
-    element.id = 'gc';
-
-    const elementAttributesProxy = new ElementAttributesProxy(element);
-
-    element.remove();
-
-    return elementAttributesProxy;
-  }
-
   await t.step('garbage collection', async () => {
     if (navigator.userAgent.search('Firefox') !== -1) {
       // GC is slow in Firefox, so skip the check.
@@ -55,6 +57,7 @@ await Playground.test('Proxy object', async (t) => {
 
     const elementAttributesProxy = createElementAttributesProxyForGC();
 
+    // Wait for the element has gone.
     await new Promise((resolve) => {
       const intervalId = setInterval(() => {
         try {
@@ -65,7 +68,7 @@ await Playground.test('Proxy object', async (t) => {
           clearInterval(intervalId);
           resolve(exception);
         }
-      }, 1000);
+      }, 0);
     });
 
     assertThrows(() => elementAttributesProxy.id, Error);

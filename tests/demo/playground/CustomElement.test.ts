@@ -1,8 +1,7 @@
+import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf } from '@std/assert';
 
 import { CustomElement } from '../../../mod.ts';
-
-import { Playground } from './Playground.ts';
 
 const values: Array<string> = [];
 let isRenderError = false;
@@ -82,33 +81,26 @@ await Playground.test('CustomElement', async (t) => {
   let testElement: TestElement;
 
   await t.step('observedAttributes()', () => {
-    assertEquals(TestElement.observedAttributes, [
-      'attr1',
-    ]);
-    assertEquals(values.splice(0), [
-      'observedAttributes',
-    ]);
+    assertEquals(TestElement.observedAttributes, ['attr1']);
+    assertEquals(values.splice(0), ['observedAttributes']);
   });
 
   await t.step('define()', () => {
     TestElement.define('test-element');
 
     assert(customElements.get('test-element'));
-    assertEquals(values.splice(0), [
-      'observedAttributes',
-    ]);
+    assertEquals(values.splice(0), ['observedAttributes']);
   });
 
   await t.step('constructor()', () => {
     testElement = new TestElement();
 
     assert(testElement);
-    assertEquals(values.splice(0), [
-      'constructor()',
-    ]);
+    assertInstanceOf(testElement, HTMLElement);
+    assertEquals(values.splice(0), ['constructor()']);
   });
 
-  await t.step('updateCounter()', () => {
+  await t.step('updateCounter', () => {
     assertEquals(testElement.updateCounter, 0);
   });
 });
@@ -120,14 +112,12 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
     testElement = document.createElement('test-element') as TestElement;
 
     assertInstanceOf(testElement, TestElement);
-    assertEquals(values.splice(0), [
-      'constructor()',
-    ]);
+    assertEquals(values.splice(0), ['constructor()']);
   });
 
   await t.step('connected to parent element', () => {
     Playground.preview.set('<test-element></test-element>');
-    testElement = Playground.preview.get().querySelector('test-element') as TestElement;
+    testElement = Playground.preview.get('test-element') as TestElement;
 
     assertEquals(values.splice(0), [
       'constructor()',
@@ -141,9 +131,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
   await t.step('disconnected from parent element', () => {
     testElement.remove();
 
-    assertEquals(values.splice(0), [
-      'disconnectedCallback()',
-    ]);
+    assertEquals(values.splice(0), ['disconnectedCallback()']);
   });
 
   await t.step('transferred element to another document', async () => {
@@ -200,7 +188,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
 
     await t.step('initial changed', () => {
       Playground.preview.set('<test-element attr1="1" attr2="2"></test-element>');
-      testElement = Playground.preview.get().querySelector('test-element') as TestElement;
+      testElement = Playground.preview.get('test-element') as TestElement;
 
       assertEquals(values.splice(0), [
         'constructor()',
@@ -239,16 +227,14 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
 
       await Playground.sleep(100);
 
-      assertEquals(values.splice(0), [
-        'attributeChangedCallback()',
-      ]);
+      assertEquals(values.splice(0), ['attributeChangedCallback()']);
       assertEquals(
         testElement.outerHTML,
         '<test-element attr1="a" attr2="2"><span>attr1:a</span><span>attr2:2</span></test-element>',
       );
     });
 
-    await t.step('not an observed attribute', async () => {
+    await t.step('changed but not an observed attribute', async () => {
       testElement.setAttribute('attr2', 'x');
 
       await Playground.sleep(100);
@@ -267,7 +253,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
 
     await t.step('first time synchronous update', () => {
       Playground.preview.set('<test-element attr1="1" attr2="2"></test-element>');
-      testElement = Playground.preview.get().querySelector('test-element') as TestElement;
+      testElement = Playground.preview.get('test-element') as TestElement;
 
       assertEquals(testElement.updateCounter, 1);
       assertEquals(values.splice(0), [
@@ -328,7 +314,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
     values.splice(0);
 
     Playground.preview.set('<test-element attr1="1" attr2="2"></test-element>');
-    testElement = Playground.preview.get().querySelector('test-element') as TestElement;
+    testElement = Playground.preview.get('test-element') as TestElement;
 
     await Playground.sleep(100);
 

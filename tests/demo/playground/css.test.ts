@@ -1,8 +1,7 @@
+import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assertEquals, assertInstanceOf } from '@std/assert';
 
 import { css } from '../../../mod.ts';
-
-import { Playground } from './Playground.ts';
 
 await Playground.test('css()', async (t) => {
   await t.step('tagged template literal', () => {

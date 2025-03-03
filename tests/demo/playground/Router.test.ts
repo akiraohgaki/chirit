@@ -1,8 +1,7 @@
+import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 
 import { Router } from '../../../mod.ts';
-
-import { Playground } from './Playground.ts';
 
 const initialUrl = location.href;
 const mode = location.href.search('router-history.playground') !== -1 ? 'history' : 'hash';
@@ -81,23 +80,32 @@ await Playground.test('Router', async (t) => {
     assertStrictEquals(router.onerror, func);
   });
 
-  await t.step('navigate()', async () => {
+  await t.step('navigate()', async (t) => {
     const baseUrl = (router.mode === 'hash' ? `${initialUrl}#` : location.origin) + router.base;
 
-    router.navigate('');
-    await Playground.sleep(50);
+    await t.step('navigate but URL is blank', async () => {
+      router.navigate('');
 
-    assertEquals(location.href, baseUrl);
+      await Playground.sleep(50);
 
-    router.navigate('route1');
-    await Playground.sleep(50);
+      assertEquals(location.href, baseUrl);
+    });
 
-    assertEquals(location.href, baseUrl + 'route1');
+    await t.step('to existing route', async () => {
+      router.navigate('route1');
 
-    router.navigate('route2');
-    await Playground.sleep(50);
+      await Playground.sleep(50);
 
-    assertEquals(location.href, baseUrl + 'route2');
+      assertEquals(location.href, baseUrl + 'route1');
+    });
+
+    await t.step('to another route', async () => {
+      router.navigate('route2');
+
+      await Playground.sleep(50);
+
+      assertEquals(location.href, baseUrl + 'route2');
+    });
   });
 });
 
@@ -138,31 +146,41 @@ await Playground.test('Client-side routing', async (t) => {
     errorMessage = (exception as Error).message;
   };
 
-  await t.step('navigation events', async () => {
-    router.navigate('a/1/2');
-    await Playground.sleep(50);
+  await t.step('parameters and events', async (t) => {
+    await t.step('match route pattern', async () => {
+      router.navigate('a/1/2');
 
-    assertEquals(location.href, baseUrl + 'a/1/2');
-    assertEquals(handlerParams, { name1: '1', name2: '2' });
-    assertEquals(eventType, router.mode === 'hash' ? 'hashchange' : 'pushstate');
+      await Playground.sleep(50);
 
-    router.navigate('b/1/2');
-    await Playground.sleep(50);
+      assertEquals(location.href, baseUrl + 'a/1/2');
+      assertEquals(handlerParams, { name1: '1', name2: '2' });
+      assertEquals(eventType, router.mode === 'hash' ? 'hashchange' : 'pushstate');
+    });
 
-    assertEquals(location.href, baseUrl + 'b/1/2');
-    assertEquals(handlerParams, { name1: '1', name2: '2' });
-    assertEquals(eventType, router.mode === 'hash' ? 'hashchange' : 'pushstate');
+    await t.step('match another route pattern', async () => {
+      router.navigate('b/1/2');
 
-    router.navigate('a');
-    await Playground.sleep(50);
+      await Playground.sleep(50);
 
-    assertEquals(location.href, baseUrl + 'a');
-    assertEquals(handlerParams, {});
-    assertEquals(eventType, router.mode === 'hash' ? 'hashchange' : 'pushstate');
+      assertEquals(location.href, baseUrl + 'b/1/2');
+      assertEquals(handlerParams, { name1: '1', name2: '2' });
+      assertEquals(eventType, router.mode === 'hash' ? 'hashchange' : 'pushstate');
+    });
+
+    await t.step('match any route pattern', async () => {
+      router.navigate('a');
+
+      await Playground.sleep(50);
+
+      assertEquals(location.href, baseUrl + 'a');
+      assertEquals(handlerParams, {});
+      assertEquals(eventType, router.mode === 'hash' ? 'hashchange' : 'pushstate');
+    });
   });
 
   await t.step('error handling', async () => {
     router.navigate('error');
+
     await Playground.sleep(50);
 
     assertEquals(location.href, baseUrl + 'error');
@@ -171,51 +189,84 @@ await Playground.test('Client-side routing', async (t) => {
     assertEquals(errorMessage, 'error');
   });
 
-  await t.step('URL navigation', async () => {
-    router.navigate('');
-    await Playground.sleep(50);
+  await t.step('URL navigation', async (t) => {
+    await t.step('to base', async () => {
+      router.navigate('');
 
-    assertEquals(location.href, baseUrl);
+      await Playground.sleep(50);
 
-    router.navigate('./');
-    await Playground.sleep(50);
+      assertEquals(location.href, baseUrl);
+    });
 
-    assertEquals(location.href, baseUrl);
+    await t.step('to current', async () => {
+      router.navigate('./');
 
-    router.navigate('../');
-    await Playground.sleep(50);
+      await Playground.sleep(50);
 
-    assertEquals(location.href, parentUrl);
+      assertEquals(location.href, baseUrl);
+    });
 
-    router.navigate('/');
-    await Playground.sleep(50);
+    await t.step('to parent', async () => {
+      router.navigate('../');
 
-    assertEquals(location.href, rootUrl);
+      await Playground.sleep(50);
 
-    // hash: #/base/hash
-    // history: /base/#hash
-    router.navigate('#hash');
-    await Playground.sleep(50);
+      assertEquals(location.href, parentUrl);
+    });
 
-    assertEquals(location.href, baseUrl + (router.mode === 'hash' ? 'hash' : '#hash'));
+    await t.step('to root', async () => {
+      router.navigate('/');
 
-    if (router.mode === 'history') {
+      await Playground.sleep(50);
+
+      assertEquals(location.href, rootUrl);
+    });
+
+    await t.step('hash', async () => {
+      // hash: #/base/hash
+      // history: /base/#hash
+      router.navigate('#hash');
+
+      await Playground.sleep(50);
+
+      assertEquals(location.href, baseUrl + (router.mode === 'hash' ? 'hash' : '#hash'));
+    });
+
+    await t.step('query', async () => {
+      if (router.mode === 'hash') {
+        // Because hash mode refreshes page.
+        return;
+      }
+
       // hash: ?query with refreshing page
       // history: /base/?query without refreshing page
       router.navigate('?query=true');
+
       await Playground.sleep(50);
 
       assertEquals(location.href, baseUrl + '?query=true');
+    });
+
+    await t.step('to origin', async () => {
+      if (router.mode === 'hash') {
+        // Because hash mode refreshes page.
+        return;
+      }
 
       // hash: location.origin with refreshing page
       // history: location.origin without refreshing page
       router.navigate(location.origin);
+
       await Playground.sleep(50);
 
       assertEquals(location.href, rootUrl);
-    }
+    });
 
-    // Always refreshing page.
-    //router.navigate('https://example.com/');
+    /*
+    await t.step('to external', () => {
+      // Always refreshing page.
+      router.navigate('https://example.com/');
+    });
+    */
   });
 });

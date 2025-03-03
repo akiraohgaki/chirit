@@ -1,8 +1,7 @@
+import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from '@std/assert';
 
 import { NodeStructure } from '../../../mod.ts';
-
-import { Playground } from './Playground.ts';
 
 class TestElement extends HTMLElement {
   constructor() {
@@ -13,8 +12,22 @@ class TestElement extends HTMLElement {
 
 customElements.define('test-element', TestElement);
 
+// Makes Element object in a separate scope,
+// to ensure that object are cleared by garbage collection.
+function createNodeStructureForGC(): NodeStructure<Element> {
+  const element = document.createElement('div');
+  element.id = 'gc';
+
+  const nodeStructure = new NodeStructure(element);
+
+  element.remove();
+
+  return nodeStructure;
+}
+
 await Playground.test('NodeStructure', async (t) => {
   const testElement = document.createElement('test-element');
+
   Playground.preview.set(testElement);
 
   let nodeStructure: NodeStructure<ShadowRoot>;
@@ -29,7 +42,7 @@ await Playground.test('NodeStructure', async (t) => {
     assertStrictEquals(nodeStructure.host, testElement.shadowRoot);
   });
 
-  await t.step('adoptStyles()', () => {
+  await t.step('adoptStyles()', async (t) => {
     const style = ':host { font-size: 140%; }';
 
     const sheet = new CSSStyleSheet();
@@ -37,24 +50,32 @@ await Playground.test('NodeStructure', async (t) => {
 
     assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 0);
 
-    nodeStructure.adoptStyles(style);
+    await t.step('from string', () => {
+      nodeStructure.adoptStyles(style);
 
-    assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 1);
+      assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 1);
+    });
 
-    nodeStructure.adoptStyles(sheet);
+    await t.step('from CSSStyleSheet', () => {
+      nodeStructure.adoptStyles(sheet);
 
-    assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 1);
+      assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 1);
+    });
 
-    nodeStructure.adoptStyles([style, sheet]);
+    await t.step('from array', () => {
+      nodeStructure.adoptStyles([style, sheet]);
 
-    assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 2);
+      assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 2);
+    });
 
-    nodeStructure.adoptStyles([...nodeStructure.host.adoptedStyleSheets, style, sheet]);
+    await t.step('from merged array', () => {
+      nodeStructure.adoptStyles([...nodeStructure.host.adoptedStyleSheets, style, sheet]);
 
-    assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 4);
+      assertEquals(Array.from(nodeStructure.host.adoptedStyleSheets).length, 4);
+    });
   });
 
-  await t.step('update()', () => {
+  await t.step('update()', async (t) => {
     const html = '<span>1</span>';
 
     const node = document.createElement('span');
@@ -68,21 +89,29 @@ await Playground.test('NodeStructure', async (t) => {
 
     assertEquals(testElement.shadowRoot?.innerHTML, '');
 
-    nodeStructure.update(html);
+    await t.step('from string', () => {
+      nodeStructure.update(html);
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<span>1</span>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<span>1</span>');
+    });
 
-    nodeStructure.update(node);
+    await t.step('from Node', () => {
+      nodeStructure.update(node);
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<span>2</span>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<span>2</span>');
+    });
 
-    nodeStructure.update(templateForNodeList.content.childNodes);
+    await t.step('from NodeList', () => {
+      nodeStructure.update(templateForNodeList.content.childNodes);
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<span>3</span><span>4</span>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<span>3</span><span>4</span>');
+    });
 
-    nodeStructure.update(templateForDocumentFragment.content);
+    await t.step('from DocumentFragment', () => {
+      nodeStructure.update(templateForDocumentFragment.content);
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<span>5</span><span>6</span>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<span>5</span><span>6</span>');
+    });
   });
 
   await t.step('clone()', () => {
@@ -97,6 +126,7 @@ await Playground.test('NodeStructure', async (t) => {
 
 await Playground.test('DOM management', async (t) => {
   const testElement = document.createElement('test-element');
+
   Playground.preview.set(testElement);
 
   let eventType = '';
@@ -108,119 +138,121 @@ await Playground.test('DOM management', async (t) => {
 
   const nodeStructure = new NodeStructure(testElement.shadowRoot as ShadowRoot, context);
 
-  // To delayed execution to check DOM changes in DevTools.
+  // To delays execution to check DOM changes in DevTools.
   const sleepTime = 0; // 3000
 
-  await t.step('DOM manipulation', async () => {
+  await t.step('DOM manipulation', async (t) => {
     await Playground.sleep(sleepTime);
 
-    // Add node.
-    nodeStructure.update('<span>1</span>');
+    await t.step('add node', () => {
+      nodeStructure.update('<span>1</span>');
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<span>1</span>');
-
-    await Playground.sleep(sleepTime);
-
-    // Add node to last.
-    nodeStructure.update('<span>1</span><span>2</span>');
-
-    assertEquals(testElement.shadowRoot?.innerHTML, '<span>1</span><span>2</span>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<span>1</span>');
+    });
 
     await Playground.sleep(sleepTime);
 
-    // Add node to first.
-    nodeStructure.update('<p>a</p><span>1</span><span>2</span>');
+    await t.step('add node to last', () => {
+      nodeStructure.update('<span>1</span><span>2</span>');
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p>a</p><span>1</span><span>2</span>');
-
-    await Playground.sleep(sleepTime);
-
-    // Remove node.
-    nodeStructure.update('<p>a</p>');
-
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p>a</p>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<span>1</span><span>2</span>');
+    });
 
     await Playground.sleep(sleepTime);
 
-    // Add attribute.
-    nodeStructure.update('<p title="a">a</p>');
+    await t.step('add node to first', () => {
+      nodeStructure.update('<p>a</p><span>1</span><span>2</span>');
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p title="a">a</p>');
-
-    await Playground.sleep(sleepTime);
-
-    // Add attribute.
-    nodeStructure.update('<p title="a" class="a">a</p>');
-
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p title="a" class="a">a</p>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p>a</p><span>1</span><span>2</span>');
+    });
 
     await Playground.sleep(sleepTime);
 
-    // Remove attribute.
-    nodeStructure.update('<p class="a">a</p>');
+    await t.step('remove node', () => {
+      nodeStructure.update('<p>a</p>');
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p class="a">a</p>');
-
-    await Playground.sleep(sleepTime);
-
-    // Change attribute.
-    nodeStructure.update('<p class="b">a</p>');
-
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p class="b">a</p>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p>a</p>');
+    });
 
     await Playground.sleep(sleepTime);
 
-    // Change child node.
-    nodeStructure.update('<p class="b">b</p>');
+    await t.step('add attribute', () => {
+      nodeStructure.update('<p title="a">a</p>');
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p class="b">b</p>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p title="a">a</p>');
+    });
 
     await Playground.sleep(sleepTime);
 
-    // Change child node.
-    nodeStructure.update('<p class="b"><span>c</span></p>');
+    await t.step('add another attribute', () => {
+      nodeStructure.update('<p title="a" class="a">a</p>');
 
-    assertEquals(testElement.shadowRoot?.innerHTML, '<p class="b"><span>c</span></p>');
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p title="a" class="a">a</p>');
+    });
+
+    await Playground.sleep(sleepTime);
+
+    await t.step('remove attribute', () => {
+      nodeStructure.update('<p class="a">a</p>');
+
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p class="a">a</p>');
+    });
+
+    await Playground.sleep(sleepTime);
+
+    await t.step('change attribute', () => {
+      nodeStructure.update('<p class="b">a</p>');
+
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p class="b">a</p>');
+    });
+
+    await Playground.sleep(sleepTime);
+
+    await t.step('change child text node', () => {
+      nodeStructure.update('<p class="b">b</p>');
+
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p class="b">b</p>');
+    });
+
+    await Playground.sleep(sleepTime);
+
+    await t.step('replace child node', () => {
+      nodeStructure.update('<p class="b"><span>c</span></p>');
+
+      assertEquals(testElement.shadowRoot?.innerHTML, '<p class="b"><span>c</span></p>');
+    });
 
     await Playground.sleep(sleepTime);
   });
 
-  await t.step('event binding', async () => {
-    await Playground.sleep(sleepTime);
-
+  await t.step('event binding', async (t) => {
     const button1 = '<button data-onevent="true" onclick="this.eventHandler(event)">a</button>';
     const button2 = '<button data-onevent="false">b</button>';
 
-    nodeStructure.update(button1);
-    (testElement.shadowRoot?.querySelector('button[data-onevent="true"]') as HTMLButtonElement).click();
+    await Playground.sleep(sleepTime);
 
-    assertEquals(eventType, 'click');
+    await t.step('onevent attribute', () => {
+      nodeStructure.update(button1);
+
+      (testElement.shadowRoot?.querySelector('button[data-onevent="true"]') as HTMLButtonElement).click();
+
+      assertEquals(eventType, 'click');
+    });
 
     await Playground.sleep(sleepTime);
 
     eventType = '';
 
-    // Node changed, the event binding should be reset.
-    nodeStructure.update(button2 + button1);
-    (testElement.shadowRoot?.querySelector('button[data-onevent="true"]') as HTMLButtonElement).click();
+    await t.step('if node changed, the event binding should be reset', () => {
+      nodeStructure.update(button2 + button1);
 
-    assertEquals(eventType, 'click');
+      (testElement.shadowRoot?.querySelector('button[data-onevent="true"]') as HTMLButtonElement).click();
+
+      assertEquals(eventType, 'click');
+    });
 
     await Playground.sleep(sleepTime);
   });
-
-  // Makes Element object in a separate scope,
-  // to ensure that object are cleared by garbage collection.
-  function createNodeStructureForGC(): NodeStructure<Element> {
-    const element = document.createElement('div');
-    element.id = 'gc';
-
-    const nodeStructure = new NodeStructure(element);
-
-    element.remove();
-
-    return nodeStructure;
-  }
 
   await t.step('garbage collection', async () => {
     if (navigator.userAgent.search('Firefox') !== -1) {
@@ -230,6 +262,7 @@ await Playground.test('DOM management', async (t) => {
 
     const nodeStructure = createNodeStructureForGC();
 
+    // Wait for the element has gone.
     await new Promise((resolve) => {
       const intervalId = setInterval(() => {
         try {
@@ -240,7 +273,7 @@ await Playground.test('DOM management', async (t) => {
           clearInterval(intervalId);
           resolve(exception);
         }
-      }, 1000);
+      }, 0);
     });
 
     assertThrows(() => nodeStructure.host.id, Error);

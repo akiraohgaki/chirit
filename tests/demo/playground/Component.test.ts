@@ -1,10 +1,13 @@
+import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertStrictEquals } from '@std/assert';
 
 import { Component, CustomElement, NodeStructure, Observable, State, Store } from '../../../mod.ts';
 
-import { Playground } from './Playground.ts';
+const observable = new Observable();
+const state = new State(0);
+const store = new Store({ a: 0 });
 
-class TestComponent extends Component {
+class TestComponent1 extends Component {
   override styles() {
     return 'span { color: red; }';
   }
@@ -13,175 +16,158 @@ class TestComponent extends Component {
   }
 }
 
-TestComponent.define('test-component');
+class TestComponent2 extends Component {
+  override createContentContainer(): Element | DocumentFragment {
+    return document.createElement('div');
+  }
+}
 
-const observable = new Observable();
+class TestComponent3 extends Component {
+  override updatedCallback(): void {
+    this.dispatch('custom-event', { isCustomEvent: true });
+  }
+}
+
+class TestComponent4 extends Component {
+  override template() {
+    return `<span>state:${state.get()}</span><span>store.state:${store.state.a}</span>`;
+  }
+}
+
+TestComponent1.define('test-component-1');
+TestComponent2.define('test-component-2');
+TestComponent3.define('test-component-3');
+TestComponent4.define('test-component-4');
 
 await Playground.test('Component', async (t) => {
-  let testComponent: TestComponent;
+  let testComponent1: TestComponent1;
 
   await t.step('constructor()', () => {
-    testComponent = new TestComponent();
+    testComponent1 = new TestComponent1();
 
-    assertInstanceOf(testComponent, CustomElement);
+    assert(testComponent1);
+    assertInstanceOf(testComponent1, CustomElement);
   });
 
   await t.step('attr', () => {
-    testComponent.attr.attr1 = '1';
+    testComponent1.attr.attr1 = '1';
 
-    assertEquals(testComponent.attr.attr1, '1');
+    assertEquals(testComponent1.attr.attr1, '1');
   });
 
   await t.step('structure', () => {
-    assertInstanceOf(testComponent.structure, NodeStructure);
+    assertInstanceOf(testComponent1.structure, NodeStructure);
   });
 
   await t.step('content', () => {
-    assertStrictEquals(testComponent.content, testComponent.structure.host);
+    assertStrictEquals(testComponent1.content, testComponent1.structure.host);
   });
 
   await t.step('observe()', async () => {
-    testComponent.observe(observable);
+    testComponent1.observe(observable);
 
     observable.notify(1);
 
     await Playground.sleep(100);
 
-    assertEquals(testComponent.updateCounter, 1);
+    assertEquals(testComponent1.updateCounter, 1);
   });
 
   await t.step('unobserve()', async () => {
-    testComponent.unobserve(observable);
+    testComponent1.unobserve(observable);
 
     observable.notify(1);
 
     await Playground.sleep(100);
 
-    assertEquals(testComponent.updateCounter, 1);
+    assertEquals(testComponent1.updateCounter, 1);
   });
 
   await t.step('dispatch()', () => {
     let isCustomEvent = false;
-    testComponent.addEventListener('custom-event', (event) => {
+    testComponent1.addEventListener('custom-event', (event) => {
       isCustomEvent = (event as CustomEvent).detail.isCustomEvent;
     });
 
-    assert(testComponent.dispatch('custom-event', { isCustomEvent: true }));
+    assert(testComponent1.dispatch('custom-event', { isCustomEvent: true }));
     assert(isCustomEvent);
   });
 });
 
 await Playground.test('Content container', async (t) => {
-  await t.step('default content container is ShadowRoot', () => {
-    const testComponent = new TestComponent();
+  const testComponent1 = new TestComponent1();
+  const testComponent2 = new TestComponent2();
 
-    assertInstanceOf(testComponent.content, ShadowRoot);
+  await t.step('default content container should be ShadowRoot', () => {
+    assertInstanceOf(testComponent1.content, ShadowRoot);
   });
 
   await t.step('custom content container', () => {
-    class TestComponent2 extends Component {
-      override createContentContainer(): Element | DocumentFragment {
-        return document.createElement('div');
-      }
-    }
-
-    TestComponent2.define('test-component-2');
-
-    const testComponent2 = new TestComponent2();
-
     assertInstanceOf(testComponent2.content, HTMLDivElement);
   });
 });
 
 await Playground.test('Rendering', async (t) => {
-  const testComponent = new TestComponent();
+  const testComponent1 = new TestComponent1();
 
-  testComponent.render();
+  testComponent1.render();
 
-  await t.step('style', () => {
-    assertEquals((testComponent.content as ShadowRoot).adoptedStyleSheets.length, 1);
+  await t.step('styles() should be called and style sheets adopted', () => {
+    assertEquals((testComponent1.content as ShadowRoot).adoptedStyleSheets.length, 1);
   });
 
-  await t.step('template', () => {
-    assertEquals((testComponent.content as ShadowRoot).innerHTML, '<span>TestComponent</span>');
+  await t.step('template() should be called and content updated', () => {
+    assertEquals((testComponent1.content as ShadowRoot).innerHTML, '<span>TestComponent</span>');
   });
 });
 
 await Playground.test('Event handling', async (t) => {
-  class TestComponent3 extends Component {
-    override updatedCallback(): void {
-      this.dispatch('custom-event', { isCustomEvent: true });
-    }
-  }
-
-  TestComponent3.define('test-component-3');
-
   const testComponent3 = new TestComponent3();
 
   const parentElement = document.createElement('div');
   parentElement.appendChild(testComponent3);
 
-  await t.step('custom event bubbles', async () => {
-    let isCustomEvent = false;
-    parentElement.addEventListener('custom-event', (event) => {
-      isCustomEvent = (event as CustomEvent).detail.isCustomEvent;
-    });
+  await t.step(
+    'custom event from dispatch() should propagate across the shadow DOM boundary into the standard DOM',
+    async () => {
+      let isCustomEvent = false;
+      parentElement.addEventListener('custom-event', (event) => {
+        isCustomEvent = (event as CustomEvent).detail.isCustomEvent;
+      });
 
-    testComponent3.update();
+      testComponent3.update();
 
-    await Playground.sleep(100);
+      await Playground.sleep(100);
 
-    assert(isCustomEvent);
-  });
+      assert(isCustomEvent);
+    },
+  );
 });
 
 await Playground.test('State management', async (t) => {
-  const state = new State(0);
-  const store = new Store({ a: 0 });
-
-  class TestComponent4 extends Component {
-    override template() {
-      return `<span>${state.get()}</span><span>${store.state.a}</span>`;
-    }
-  }
-
-  TestComponent4.define('test-component-4');
-
   const testComponent4 = new TestComponent4();
 
   testComponent4.observe(state, store);
 
-  testComponent4.updateSync();
+  await t.step('should rendered with initial state', () => {
+    testComponent4.updateSync();
 
-  await t.step('use State', async () => {
-    assertEquals(
-      (testComponent4.content as ShadowRoot).innerHTML,
-      '<span>0</span><span>0</span>',
-    );
+    assertEquals((testComponent4.content as ShadowRoot).innerHTML, '<span>state:0</span><span>store.state:0</span>');
+  });
 
+  await t.step('should re-rendered with updated state', async () => {
     state.set(1);
 
     await Playground.sleep(100);
 
-    assertEquals(
-      (testComponent4.content as ShadowRoot).innerHTML,
-      '<span>1</span><span>0</span>',
-    );
+    assertEquals((testComponent4.content as ShadowRoot).innerHTML, '<span>state:1</span><span>store.state:0</span>');
   });
 
-  await t.step('use Store', async () => {
-    assertEquals(
-      (testComponent4.content as ShadowRoot).innerHTML,
-      '<span>1</span><span>0</span>',
-    );
-
+  await t.step('should re-rendered with updated state of store', async () => {
     store.update({ a: 1 });
 
     await Playground.sleep(100);
 
-    assertEquals(
-      (testComponent4.content as ShadowRoot).innerHTML,
-      '<span>1</span><span>1</span>',
-    );
+    assertEquals((testComponent4.content as ShadowRoot).innerHTML, '<span>state:1</span><span>store.state:1</span>');
   });
 });
