@@ -28,25 +28,25 @@ test.describe('Testing on playground page', () => {
   });
 
   test('Component', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/Component.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/Component.test.bundle.js';`);
 
     await expectStatus(page);
   });
 
   test('CustomElement', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/CustomElement.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/CustomElement.test.bundle.js';`);
 
     await expectStatus(page);
   });
 
   test('ElementAttributesProxy', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/ElementAttributesProxy.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/ElementAttributesProxy.test.bundle.js';`);
 
     await expectStatus(page, 60000);
   });
 
   test('NodeStructure', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/NodeStructure.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/NodeStructure.test.bundle.js';`);
 
     await expectStatus(page, 60000);
   });
@@ -54,7 +54,7 @@ test.describe('Testing on playground page', () => {
   test('Router - hash mode', async ({ page, baseURL }) => {
     await page.goto('/router-hash.playground');
 
-    await runCode(page, `import '${baseURL}/playground/Router.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/Router.test.bundle.js';`);
 
     await expectStatus(page);
   });
@@ -62,31 +62,31 @@ test.describe('Testing on playground page', () => {
   test('Router - history mode', async ({ page, baseURL }) => {
     await page.goto('/router-history.playground');
 
-    await runCode(page, `import '${baseURL}/playground/Router.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/Router.test.bundle.js';`);
 
     await expectStatus(page);
   });
 
   test('createComponent()', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/createComponent.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/createComponent.test.bundle.js';`);
 
     await expectStatus(page);
   });
 
   test('css()', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/css.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/css.test.bundle.js';`);
 
     await expectStatus(page);
   });
 
   test('html()', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/html.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/html.test.bundle.js';`);
 
     await expectStatus(page);
   });
 
   test('dom', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/playground/dom.test.bundle.js';`);
+    await runCode(page, `import '${baseURL}/dom.test.bundle.js';`);
 
     await expectStatus(page);
   });
