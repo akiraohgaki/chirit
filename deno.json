@@ -86,8 +86,8 @@
   },
   "imports": {
     "@akiraohgaki/devsrv": "jsr:@akiraohgaki/devsrv@^0.9.1",
-    "@playwright/test": "npm:@playwright/test@^1.49.1",
-    "@std/assert": "jsr:@std/assert@^1.0.10"
+    "@playwright/test": "npm:@playwright/test@^1.50.1",
+    "@std/assert": "jsr:@std/assert@^1.0.11"
   },
   "nodeModulesDir": "auto"
 }
