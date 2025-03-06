@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertStrictEquals } from '@std/assert';
 
-import { Component, CustomElement, NodeStructure, Observable, State, Store } from '../../../mod.ts';
+import { Component, CustomElement, NodeStructure, Observable, State, Store } from '../../mod.ts';
 
 const observable = new Observable();
 const state = new State(0);

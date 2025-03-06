@@ -82,7 +82,7 @@
     "test:unit": "deno test -A --coverage && deno coverage --html",
     "test:e2e": "deno run -A npm:playwright test",
     "test:post": "echo 'Skip task test:post'",
-    "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/demo"
+    "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/playground"
   },
   "imports": {
     "@akiraohgaki/devsrv": "jsr:@akiraohgaki/devsrv@^0.9.1",

@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 
-import { Router } from '../../../mod.ts';
+import { Router } from '../../mod.ts';
 
 const initialUrl = location.href;
 const mode = location.href.search('router-hash.playground') !== -1 ? 'hash' : 'history';

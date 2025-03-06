@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertStrictEquals } from '@std/assert';
 
-import { dom } from '../../../mod.ts';
+import { dom } from '../../mod.ts';
 
 await Playground.test('dom', async (t) => {
   await t.step('globalThis', () => {

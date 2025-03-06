@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assertEquals, assertInstanceOf } from '@std/assert';
 
-import { html } from '../../../mod.ts';
+import { html } from '../../mod.ts';
 
 await Playground.test('html()', async (t) => {
   await t.step('tagged template literal', () => {

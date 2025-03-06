@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertStrictEquals, assertThrows } from '@std/assert';
 
-import { NodeStructure } from '../../../mod.ts';
+import { NodeStructure } from '../../mod.ts';
 
 class TestElement extends HTMLElement {
   constructor() {

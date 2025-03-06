@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertNotInstanceOf } from '@std/assert';
 
-import { Component, createComponent } from '../../../mod.ts';
+import { Component, createComponent } from '../../mod.ts';
 
 class BaseComponent extends Component {
   override createContentContainer(): ShadowRoot {

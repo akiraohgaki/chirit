@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertNotInstanceOf, assertThrows } from '@std/assert';
 
-import { ElementAttributesProxy } from '../../../mod.ts';
+import { ElementAttributesProxy } from '../../mod.ts';
 
 // Makes Element object in a separate scope,
 // to ensure that object are cleared by garbage collection.

@@ -1,7 +1,7 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf } from '@std/assert';
 
-import { CustomElement } from '../../../mod.ts';
+import { CustomElement } from '../../mod.ts';
 
 const values: Array<string> = [];
 let isRenderError = false;
