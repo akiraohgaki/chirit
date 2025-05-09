@@ -65,8 +65,12 @@ createComponent('message-component', {
   observedAttributes: ['message'],
   styles: () => {
     return css`
-      :host { display: inline-block; }
-      span { font-size: 140%; }
+      :host {
+        display: inline-block;
+      }
+      span {
+        font-size: 140%;
+      }
     `;
   },
   template: (context) => {
