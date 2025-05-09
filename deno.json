@@ -71,7 +71,7 @@
   "tasks": {
     "check": "deno task check:pre && deno task check:check && deno task check:post",
     "check:pre": "deno outdated && deno fmt && deno lint",
-    "check:check": "deno check mod.ts util.ts",
+    "check:check": "deno check src/ tests/ *.ts",
     "check:post": "echo 'Skip task check:post'",
     "build": "deno task build:pre && deno task build:build && deno task build:post",
     "build:pre": "echo 'Skip task build:pre'",
@@ -79,7 +79,7 @@
     "build:post": "echo 'Skip task build:post'",
     "test": "deno task test:pre && deno task test:unit && deno task test:e2e && deno task test:post",
     "test:pre": "deno run -A npm:playwright install --with-deps",
-    "test:unit": "deno test -A --coverage && deno coverage --html",
+    "test:unit": "deno test -A --coverage",
     "test:e2e": "deno run -A npm:playwright test",
     "test:post": "echo 'Skip task test:post'",
     "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/playground"
