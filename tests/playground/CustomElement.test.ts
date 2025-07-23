@@ -80,7 +80,7 @@ class TestElement extends CustomElement {
 await Playground.test('CustomElement', async (t) => {
   let testElement: TestElement;
 
-  await t.step('observedAttributes()', () => {
+  await t.step('observedAttributes', () => {
     assertEquals(TestElement.observedAttributes, ['attr1']);
     assertEquals(values.splice(0), ['observedAttributes']);
   });
