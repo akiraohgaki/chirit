@@ -51,7 +51,7 @@ import type { ElementPropertiesProxyConfig } from './types.ts';
  * prop.__reflectFromAttribute('count');
  * // Reflects the current value from the attribute to the property
  *
- * * prop.__reflectToAttribute('count');
+ * prop.__reflectToAttribute('count');
  * // Reflects the current value from the property to the attribute
  * ```
  */
@@ -66,14 +66,14 @@ export class ElementPropertiesProxy {
    *
    * @param key - The property key to reflect from the attribute.
    */
-  __reflectFromAttribute: (key: string) => void = () => {}; // this is a trick for type definitions
+  __reflectFromAttribute: (key: string) => void = () => {}; // this is a trick to ensure the method is defined
 
   /**
    * Reflects the current value from the property to the attribute.
    *
    * @param key - The property key to reflect to the attribute.
    */
-  __reflectToAttribute: (key: string) => void = () => {}; // this is a trick for type definitions
+  __reflectToAttribute: (key: string) => void = () => {}; // this is a trick to ensure the method is defined
 
   /**
    * Creates a new Proxy object but the instance is not the ElementPropertiesProxy class.
@@ -99,76 +99,98 @@ export class ElementPropertiesProxy {
 
     const properties: Map<string, unknown> = new Map();
 
-    const reflectFromAttribute = (key: string) => {
-      const target = getTarget();
-      const value = properties.get(key);
-      const attrValue = target.getAttribute(key) ?? '';
-      if (config[key].converter && typeof config[key].converter === 'function') {
-        properties.set(key, config[key].converter(attrValue));
-      } else if (typeof value === 'boolean') {
-        properties.set(key, target.hasAttribute(key));
-      } else if (typeof value === 'string') {
-        properties.set(key, attrValue);
-      } else if (typeof value === 'number') {
-        properties.set(key, parseFloat(attrValue));
-      } else if (typeof value === 'object') {
-        try {
-          properties.set(key, JSON.parse(attrValue));
-        } catch {
-          properties.set(key, null);
+    const proxyBase = {
+      __reflectFromAttribute: (key: string) => {
+        const propConfig = config[key];
+
+        if (!propConfig) {
+          console.warn(`Configuration for key '${key}' not found during reflectFromAttribute.`);
+          return;
         }
-      }
+
+        const target = getTarget();
+        const value = properties.get(key);
+        const attrValue = target.getAttribute(key) ?? '';
+
+        if (value === undefined) {
+          return;
+        } else if (propConfig.converter && typeof propConfig.converter === 'function') {
+          properties.set(key, propConfig.converter(attrValue));
+        } else if (typeof value === 'boolean') {
+          properties.set(key, target.hasAttribute(key));
+        } else if (typeof value === 'string') {
+          properties.set(key, attrValue);
+        } else if (typeof value === 'number') {
+          properties.set(key, parseFloat(attrValue));
+        } else if (typeof value === 'object') {
+          try {
+            properties.set(key, JSON.parse(attrValue));
+          } catch {
+            properties.set(key, null);
+          }
+        }
+      },
+      __reflectToAttribute: (key: string) => {
+        const propConfig = config[key];
+
+        if (!propConfig) {
+          console.warn(`Configuration for key '${key}' not found during reflectToAttribute.`);
+          return;
+        }
+
+        const target = getTarget();
+        const value = properties.get(key);
+
+        if (value === undefined) {
+          return;
+        } else if (typeof value === 'boolean') {
+          if (value) {
+            target.setAttribute(key, '');
+          } else {
+            target.removeAttribute(key);
+          }
+        } else if (typeof value === 'string') {
+          target.setAttribute(key, value);
+        } else if (typeof value === 'number') {
+          target.setAttribute(key, value.toString());
+        } else if (typeof value === 'object') {
+          try {
+            target.setAttribute(key, JSON.stringify(value));
+          } catch {
+            target.setAttribute(key, '');
+          }
+        }
+      },
     };
 
-    const reflectToAttribute = (key: string) => {
-      const target = getTarget();
-      const value = properties.get(key);
-      if (typeof value === 'boolean') {
-        if (value) {
-          target.setAttribute(key, '');
-        } else {
-          target.removeAttribute(key);
-        }
-      } else if (typeof value === 'string') {
-        target.setAttribute(key, value);
-      } else if (typeof value === 'number') {
-        target.setAttribute(key, value.toString());
-      } else if (typeof value === 'object') {
-        try {
-          target.setAttribute(key, JSON.stringify(value));
-        } catch {
-          target.setAttribute(key, '');
-        }
-      }
-    };
-
-    for (const [key, value] of Object.entries(config)) {
-      properties.set(key, value.value); // should use structuredClone() ?
+    for (const [key, propConfig] of Object.entries(config)) {
+      properties.set(key, propConfig.value);
       const target = getTarget();
       if (target.hasAttribute(key)) {
-        reflectFromAttribute(key);
-      } else if (value.reflect) {
-        reflectToAttribute(key);
+        proxyBase.__reflectFromAttribute(key);
+      } else if (propConfig.reflect) {
+        proxyBase.__reflectToAttribute(key);
       }
     }
 
-    return new Proxy({
-      __reflectFromAttribute: reflectFromAttribute,
-      __reflectToAttribute: reflectToAttribute,
-    }, {
-      set: (_target, key, value) => {
+    return new Proxy(proxyBase, {
+      set: (proxyTarget, key, value) => {
         if (typeof key === 'string' && properties.has(key)) {
           properties.set(key, value);
           if (config[key].reflect) {
-            reflectToAttribute(key);
+            proxyTarget.__reflectToAttribute(key);
           }
           return true;
         }
         return false;
       },
-      get: (target, key) => {
-        if (['__reflectFromAttribute', '__reflectToAttribute'].includes(key as string)) {
-          return Reflect.get(target, key);
+      get: (proxyTarget, key) => {
+        if (key === '__reflectFromAttribute') {
+          return proxyTarget.__reflectFromAttribute;
+        }
+
+        if (key === '__reflectToAttribute') {
+          return proxyTarget.__reflectToAttribute;
         }
 
         if (typeof key === 'string' && properties.has(key)) {
@@ -176,10 +198,10 @@ export class ElementPropertiesProxy {
         }
         return undefined;
       },
-      deleteProperty: (_target, _key) => {
+      deleteProperty: (_proxyTarget, _key) => {
         return false; // Deletion is not allowed
       },
-      has: (_target, key) => {
+      has: (_proxyTarget, key) => {
         if (typeof key === 'string' && properties.has(key)) {
           return true;
         }
@@ -188,7 +210,7 @@ export class ElementPropertiesProxy {
       ownKeys: () => {
         return Array.from(properties.keys());
       },
-      getOwnPropertyDescriptor: (_target, key) => {
+      getOwnPropertyDescriptor: (_proxyTarget, key) => {
         if (typeof key === 'string' && properties.has(key)) {
           return {
             configurable: false,
