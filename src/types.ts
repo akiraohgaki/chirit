@@ -33,3 +33,23 @@ export interface CreateComponentOptions<T> {
    */
   template?: (context: T) => string | Node | NodeList;
 }
+
+/**
+ * Configuration for ElementPropertiesProxy.
+ */
+export interface ElementPropertiesProxyConfig {
+  [key: string]: {
+    /**
+     * The initial value of the property.
+     */
+    value: unknown;
+    /**
+     * Whether to reflect the property to the attribute.
+     */
+    reflect?: boolean;
+    /**
+     * Converts the attribute value to the property value.
+     */
+    converter?: (value: string) => unknown;
+  };
+}
