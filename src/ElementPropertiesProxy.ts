@@ -112,7 +112,7 @@ export class ElementPropertiesProxy {
         const value = properties.get(key);
         const attrValue = target.getAttribute(key) ?? '';
 
-        if (value === undefined) {
+        if (value === undefined || value === null) {
           return;
         } else if (propConfig.converter && typeof propConfig.converter === 'function') {
           properties.set(key, propConfig.converter(attrValue));
@@ -141,7 +141,7 @@ export class ElementPropertiesProxy {
         const target = getTarget();
         const value = properties.get(key);
 
-        if (value === undefined) {
+        if (value === undefined || value === null) {
           return;
         } else if (typeof value === 'boolean') {
           if (value) {
@@ -213,7 +213,7 @@ export class ElementPropertiesProxy {
       getOwnPropertyDescriptor: (_proxyTarget, key) => {
         if (typeof key === 'string' && properties.has(key)) {
           return {
-            configurable: false,
+            configurable: true,
             enumerable: true,
             value: properties.get(key),
           };
