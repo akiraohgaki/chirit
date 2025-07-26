@@ -45,6 +45,12 @@ test.describe('Testing on playground page', () => {
     await expectStatus(page, 60000);
   });
 
+  test('ElementPropertiesProxy', async ({ page, baseURL }) => {
+    await runCode(page, `import '${baseURL}/ElementPropertiesProxy.test.bundle.js';`);
+
+    await expectStatus(page, 60000);
+  });
+
   test('NodeStructure', async ({ page, baseURL }) => {
     await runCode(page, `import '${baseURL}/NodeStructure.test.bundle.js';`);
 
