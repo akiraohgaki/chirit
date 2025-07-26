@@ -31,102 +31,118 @@ await Playground.test('ElementPropertiesProxy', async (t) => {
 });
 
 await Playground.test('Proxy object', async (t) => {
+  await t.step('property manipulation', () => {
+    const element = document.createElement('div');
+
+    const elementPropertiesProxy = new ElementPropertiesProxy(element, {
+      prop0: { value: 0 },
+      prop1: { value: 1, reflect: true },
+      prop2: { value: 2, converter: (value) => parseInt(value, 10) },
+    });
+
+    elementPropertiesProxy.prop0 = 0.5;
+    elementPropertiesProxy['prop1'] = 1.5;
+    element.setAttribute('prop2', '2.5');
+    elementPropertiesProxy.__reflectFromAttribute('prop2');
+
+    assertEquals(elementPropertiesProxy.prop0, 0.5);
+    assert(!element.hasAttribute('prop0'));
+    assertEquals(elementPropertiesProxy['prop1'], 1.5);
+    assertEquals(element.getAttribute('prop1'), '1.5');
+    assertEquals(elementPropertiesProxy.prop2, 2);
+    assertEquals(element.getAttribute('prop2'), '2.5');
+    assertEquals(Object.keys(elementPropertiesProxy).toSorted(), ['prop0', 'prop1', 'prop2']);
+    assert(Object.getOwnPropertyDescriptor(elementPropertiesProxy, 'prop1') !== undefined);
+    assert('prop1' in elementPropertiesProxy);
+    assertThrows(() => delete elementPropertiesProxy.prop0, Error);
+    assertEquals(element.outerHTML, '<div prop1="1.5" prop2="2.5"></div>');
+  });
+
   await t.step('reflect from attributes to properties', () => {
     const element = document.createElement('div');
-    element.setAttribute('no-reflect', '1');
-    element.setAttribute('undefined', '[]');
+
+    element.setAttribute('undefined', '0');
+    element.setAttribute('null', '0');
     element.setAttribute('boolean', '');
     element.setAttribute('string', 'text');
     element.setAttribute('number', '1');
     element.setAttribute('array', '[1]');
     element.setAttribute('object', '{"key":"value"}');
-    element.setAttribute('null', '[]');
-    element.setAttribute('date', '1970-01-01T00:00:00.000Z');
+    element.setAttribute('date', '"1970-01-01T00:00:00.000Z"');
     element.setAttribute('set', '[1]');
     element.setAttribute('map', '[["a",1]]');
 
     const elementPropertiesProxy = new ElementPropertiesProxy(element, {
-      'no-reflect': {
-        value: 0,
-      },
       undefined: {
         value: undefined,
-        reflect: true,
-      },
-      boolean: {
-        value: false,
-        reflect: true,
-      },
-      string: {
-        value: '',
-        reflect: true,
-      },
-      number: {
-        value: 0,
-        reflect: true,
-      },
-      array: {
-        value: [],
-        reflect: true,
-      },
-      object: {
-        value: {},
-        reflect: true,
       },
       null: {
         value: null,
-        reflect: true,
+      },
+      boolean: {
+        value: false,
+      },
+      string: {
+        value: '',
+      },
+      number: {
+        value: 0,
+      },
+      array: {
+        value: [],
+      },
+      object: {
+        value: {},
       },
       date: {
         value: new Date(),
-        reflect: true,
-        converter: (value) => new Date(value),
+        converter: (value) => new Date(JSON.parse(value)),
       },
       set: {
         value: new Set([0]),
-        reflect: true,
       },
       map: {
         value: new Map([['a', 0]]),
-        reflect: true,
       },
     });
 
-    assertEquals(elementPropertiesProxy['no-reflect'], 1);
     assertEquals(elementPropertiesProxy.undefined, undefined);
-    assertEquals(elementPropertiesProxy.boolean, true);
+    assertEquals(elementPropertiesProxy.null, null);
+    assert(elementPropertiesProxy.boolean);
     assertEquals(elementPropertiesProxy.string, 'text');
     assertEquals(elementPropertiesProxy.number, 1);
     assertEquals(elementPropertiesProxy.array, [1]);
     assertEquals(elementPropertiesProxy.object, { key: 'value' });
-    assertEquals(elementPropertiesProxy.null, []);
     assertEquals(elementPropertiesProxy.date, new Date('1970-01-01T00:00:00.000Z'));
     assertEquals(elementPropertiesProxy.set, [1]);
     assertEquals(elementPropertiesProxy.map, [['a', 1]]);
 
-    element.setAttribute('no-reflect', '2');
+    elementPropertiesProxy.undefined = 1;
+    elementPropertiesProxy.null = 1;
     element.removeAttribute('boolean');
-    elementPropertiesProxy.__reflectFromAttribute('no-reflect');
+    elementPropertiesProxy.__reflectFromAttribute('undefined');
+    elementPropertiesProxy.__reflectFromAttribute('null');
     elementPropertiesProxy.__reflectFromAttribute('boolean');
 
-    assertEquals(elementPropertiesProxy['no-reflect'], 2);
-    assertEquals(elementPropertiesProxy.boolean, false);
+    assertEquals(elementPropertiesProxy.undefined, 0);
+    assertEquals(elementPropertiesProxy.null, 0);
+    assert(!elementPropertiesProxy.boolean);
   });
 
   await t.step('reflect from properties to attributes', () => {
     const element = document.createElement('div');
 
     const elementPropertiesProxy = new ElementPropertiesProxy(element, {
-      'no-reflect': {
-        value: 1,
-      },
       undefined: {
         value: undefined,
         reflect: true,
       },
+      null: {
+        value: null,
+        reflect: true,
+      },
       boolean: {
         value: true,
-        reflect: true,
       },
       string: {
         value: 'text',
@@ -144,14 +160,10 @@ await Playground.test('Proxy object', async (t) => {
         value: { key: 'value' },
         reflect: true,
       },
-      null: {
-        value: null,
-        reflect: true,
-      },
       date: {
         value: new Date('1970-01-01T00:00:00.000Z'),
         reflect: true,
-        converter: (value) => new Date(value),
+        converter: (value) => new Date(JSON.parse(value)),
       },
       set: {
         value: new Set([0]),
@@ -163,25 +175,24 @@ await Playground.test('Proxy object', async (t) => {
       },
     });
 
-    assertEquals(element.hasAttribute('no-reflect'), false);
-    assertEquals(element.hasAttribute('undefined'), false);
-    assertEquals(element.getAttribute('boolean'), '');
+    assert(!element.hasAttribute('undefined'));
+    assert(!element.hasAttribute('null'));
+    assert(!element.hasAttribute('boolean'));
     assertEquals(element.getAttribute('string'), 'text');
     assertEquals(element.getAttribute('number'), '1');
     assertEquals(element.getAttribute('array'), '[1]');
     assertEquals(element.getAttribute('object'), '{"key":"value"}');
-    assertEquals(element.getAttribute('null'), 'null');
     assertEquals(element.getAttribute('date'), '"1970-01-01T00:00:00.000Z"');
     assertEquals(element.getAttribute('set'), '{}');
     assertEquals(element.getAttribute('map'), '{}');
 
-    elementPropertiesProxy['no-reflect'] = 2;
-    elementPropertiesProxy.boolean = false;
-    elementPropertiesProxy.__reflectToAttribute('no-reflect');
+    elementPropertiesProxy.undefined = 0;
+    elementPropertiesProxy.null = 0;
     elementPropertiesProxy.__reflectToAttribute('boolean');
 
-    assertEquals(element.getAttribute('no-reflect'), '2');
-    assertEquals(element.hasAttribute('boolean'), false);
+    assertEquals(element.getAttribute('undefined'), '0');
+    assertEquals(element.getAttribute('null'), '0');
+    assertEquals(element.getAttribute('boolean'), '');
   });
 
   await t.step('garbage collection', async () => {
