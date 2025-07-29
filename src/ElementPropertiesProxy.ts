@@ -54,8 +54,8 @@ import type { ElementPropertiesProxyConfig } from './types.ts';
  * prop.__reflectToAttribute('count');
  * // Reflects the current value from the property to the attribute
  *
- * prop.__onchange = (key) => {
- *   console.log(`Property "${key}" has changed.`);
+ * prop.__onchange = (key, oldValue, newValue) => {
+ *   console.log('Property has changed.');
  * };
  * ```
  */
@@ -83,8 +83,10 @@ export class ElementPropertiesProxy {
    * The function to be called when a property changed.
    *
    * @param key - The property key that changed.
+   * @param oldValue - The old value of the property.
+   * @param newValue - The new value of the property.
    */
-  __onchange: (key: string) => void = () => {}; // this is a trick to ensure the method is defined
+  __onchange: (key: string, oldValue: unknown, newValue: unknown) => void = () => {}; // this is a trick to ensure the method is defined
 
   /**
    * Creates a new Proxy object but the instance is not the ElementPropertiesProxy class.
@@ -115,16 +117,18 @@ export class ElementPropertiesProxy {
         const propConfig = config[key];
 
         if (!propConfig) {
+          console.warn(`Property "${key}" is not defined in the configuration.`);
           return;
         }
 
         const target = getTarget();
-        const attrValue = target.getAttribute(key) ?? '';
         const value = properties.get(key);
 
-        if (typeof value !== 'boolean' && !target.hasAttribute(key)) {
+        if (!target.hasAttribute(key) && typeof value !== 'boolean') {
           return;
         }
+
+        const attrValue = target.getAttribute(key) ?? '';
 
         try {
           if (propConfig.converter && typeof propConfig.converter === 'function') {
@@ -134,22 +138,29 @@ export class ElementPropertiesProxy {
           } else if (typeof value === 'string') {
             properties.set(key, attrValue);
           } else if (typeof value === 'number') {
-            properties.set(key, parseFloat(attrValue));
-          } else if (typeof value === 'object') {
+            properties.set(key, Number(attrValue));
+          } else if (typeof value === 'bigint') {
+            properties.set(key, BigInt(attrValue));
+          } else if (typeof value === 'object' && value !== null) {
             properties.set(key, JSON.parse(attrValue));
-          }
-
-          if (value !== properties.get(key)) {
-            this.__onchange(key);
+          } else {
+            // value is undefined, null, symbol or function.
+            properties.set(key, attrValue);
           }
         } catch (exception) {
           console.error(`Error reflecting from attribute "${key}":`, exception);
+        }
+
+        const newValue = properties.get(key);
+        if (value !== newValue) {
+          proxyBase.__onchange(key, value, newValue);
         }
       },
       __reflectToAttribute: (key: string) => {
         const propConfig = config[key];
 
         if (!propConfig) {
+          console.warn(`Property "${key}" is not defined in the configuration.`);
           return;
         }
 
@@ -168,20 +179,29 @@ export class ElementPropertiesProxy {
           } else if (typeof value === 'string') {
             target.setAttribute(key, value);
           } else if (typeof value === 'number') {
-            target.setAttribute(key, value.toString());
-          } else if (typeof value === 'object') {
+            target.setAttribute(key, String(value));
+          } else if (typeof value === 'bigint') {
+            target.setAttribute(key, String(value));
+          } else if (typeof value === 'object' && value !== null) {
             target.setAttribute(key, JSON.stringify(value));
+          } else {
+            // value is symbol or function.
+            target.setAttribute(key, String(value));
           }
         } catch (exception) {
           console.error(`Error reflecting to attribute "${key}":`, exception);
         }
       },
-      __onchange: (_key: string) => {},
+      __onchange: (_key: string, _oldValue: unknown, _newValue: unknown) => {},
     };
 
+    // Initialize properties based on the config.
+    // This will set the initial values and reflect them to attributes if needed.
     for (const [key, propConfig] of Object.entries(config)) {
       properties.set(key, propConfig.value);
+
       const target = getTarget();
+
       if (target.hasAttribute(key) || typeof propConfig.value === 'boolean') {
         proxyBase.__reflectFromAttribute(key);
       } else if (propConfig.reflect) {
@@ -194,11 +214,11 @@ export class ElementPropertiesProxy {
         if (typeof key === 'string' && properties.has(key)) {
           const oldValue = properties.get(key);
           properties.set(key, value);
-          if (value !== oldValue) {
-            proxyTarget.__onchange(key);
-          }
-          if (config[key].reflect) {
-            proxyTarget.__reflectToAttribute(key);
+          if (oldValue !== value) {
+            proxyTarget.__onchange(key, oldValue, value);
+            if (config[key].reflect) {
+              proxyTarget.__reflectToAttribute(key);
+            }
           }
           return true;
         }
@@ -211,6 +231,10 @@ export class ElementPropertiesProxy {
 
         if (key === '__reflectToAttribute') {
           return proxyTarget.__reflectToAttribute;
+        }
+
+        if (key === '__onchange') {
+          return proxyTarget.__onchange;
         }
 
         if (typeof key === 'string' && properties.has(key)) {
