@@ -112,7 +112,7 @@ export class ElementPropertiesProxy {
 
     const properties: Map<string, unknown> = new Map();
 
-    const proxyBase = {
+    const proxyTarget = {
       __reflectFromAttribute: (key: string) => {
         const propConfig = config[key];
 
@@ -153,7 +153,7 @@ export class ElementPropertiesProxy {
 
         const newValue = properties.get(key);
         if (value !== newValue) {
-          proxyBase.__onchange(key, value, newValue);
+          proxyTarget.__onchange(key, value, newValue);
         }
       },
       __reflectToAttribute: (key: string) => {
@@ -203,13 +203,13 @@ export class ElementPropertiesProxy {
       const target = getTarget();
 
       if (target.hasAttribute(key) || typeof propConfig.value === 'boolean') {
-        proxyBase.__reflectFromAttribute(key);
+        proxyTarget.__reflectFromAttribute(key);
       } else if (propConfig.reflect) {
-        proxyBase.__reflectToAttribute(key);
+        proxyTarget.__reflectToAttribute(key);
       }
     }
 
-    return new Proxy(proxyBase, {
+    return new Proxy(proxyTarget, {
       set: (proxyTarget, key, value) => {
         if (typeof key === 'string' && properties.has(key)) {
           const oldValue = properties.get(key);

@@ -56,33 +56,33 @@ export class ElementAttributesProxy {
     };
 
     return new Proxy({}, {
-      set: (_target, name, value) => {
+      set: (_proxyTarget, key, value) => {
         const target = getTarget();
-        if (typeof name === 'string' && typeof value === 'string') {
-          target.setAttribute(name, value);
+        if (typeof key === 'string' && typeof value === 'string') {
+          target.setAttribute(key, value);
           return true;
         }
         return false;
       },
-      get: (_target, name) => {
+      get: (_proxyTarget, key) => {
         const target = getTarget();
         // Returns undefined instead of null if attribute is not exist.
-        if (typeof name === 'string' && target.hasAttribute(name)) {
-          return target.getAttribute(name);
+        if (typeof key === 'string' && target.hasAttribute(key)) {
+          return target.getAttribute(key);
         }
         return undefined;
       },
-      deleteProperty: (_target, name) => {
+      deleteProperty: (_proxyTarget, key) => {
         const target = getTarget();
-        if (typeof name === 'string' && target.hasAttribute(name)) {
-          target.removeAttribute(name);
+        if (typeof key === 'string' && target.hasAttribute(key)) {
+          target.removeAttribute(key);
           return true;
         }
         return false;
       },
-      has: (_target, name) => {
+      has: (_proxyTarget, key) => {
         const target = getTarget();
-        if (typeof name === 'string' && target.hasAttribute(name)) {
+        if (typeof key === 'string' && target.hasAttribute(key)) {
           return true;
         }
         return false;
@@ -97,13 +97,13 @@ export class ElementAttributesProxy {
         }
         return keys;
       },
-      getOwnPropertyDescriptor: (_target, name) => {
+      getOwnPropertyDescriptor: (_proxyTarget, key) => {
         const target = getTarget();
-        if (typeof name === 'string' && target.hasAttribute(name)) {
+        if (typeof key === 'string' && target.hasAttribute(key)) {
           return {
             configurable: true,
             enumerable: true,
-            value: target.getAttribute(name),
+            value: target.getAttribute(key),
           };
         }
         return undefined;
