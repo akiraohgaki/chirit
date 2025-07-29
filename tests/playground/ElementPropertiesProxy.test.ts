@@ -61,16 +61,19 @@ await Playground.test('Proxy object', async (t) => {
   await t.step('reflect from attributes to properties', () => {
     const element = document.createElement('div');
 
-    element.setAttribute('undefined', '0');
-    element.setAttribute('null', '0');
+    element.setAttribute('undefined', 'text');
+    element.setAttribute('null', 'text');
+    element.setAttribute('symbol', 'text');
+    element.setAttribute('function', 'text');
+
     element.setAttribute('boolean', '');
     element.setAttribute('string', 'text');
     element.setAttribute('number', '1');
-    element.setAttribute('array', '[1]');
+    element.setAttribute('bigint', '1');
     element.setAttribute('object', '{"key":"value"}');
-    element.setAttribute('date', '"1970-01-01T00:00:00.000Z"');
+    element.setAttribute('array', '[1]');
     element.setAttribute('set', '[1]');
-    element.setAttribute('map', '[["a",1]]');
+    element.setAttribute('date', '"1970-01-01T00:00:00.000Z"');
 
     const elementPropertiesProxy = new ElementPropertiesProxy(element, {
       undefined: {
@@ -78,6 +81,12 @@ await Playground.test('Proxy object', async (t) => {
       },
       null: {
         value: null,
+      },
+      symbol: {
+        value: Symbol(),
+      },
+      function: {
+        value: () => {},
       },
       boolean: {
         value: false,
@@ -88,44 +97,41 @@ await Playground.test('Proxy object', async (t) => {
       number: {
         value: 0,
       },
-      array: {
-        value: [],
+      bigint: {
+        value: 0n,
       },
       object: {
         value: {},
+      },
+      array: {
+        value: [],
+      },
+      set: {
+        value: new Set([0]),
       },
       date: {
         value: new Date(),
         converter: (value) => new Date(JSON.parse(value)),
       },
-      set: {
-        value: new Set([0]),
-      },
-      map: {
-        value: new Map([['a', 0]]),
-      },
     });
 
-    assertEquals(elementPropertiesProxy.undefined, undefined);
-    assertEquals(elementPropertiesProxy.null, null);
+    assertEquals(elementPropertiesProxy.undefined, 'text');
+    assertEquals(elementPropertiesProxy.null, 'text');
+    assertEquals(typeof elementPropertiesProxy.symbol, 'text');
+    assertEquals(typeof elementPropertiesProxy.function, 'text');
+
     assert(elementPropertiesProxy.boolean);
     assertEquals(elementPropertiesProxy.string, 'text');
     assertEquals(elementPropertiesProxy.number, 1);
-    assertEquals(elementPropertiesProxy.array, [1]);
+    assertEquals(elementPropertiesProxy.bigint, 1);
     assertEquals(elementPropertiesProxy.object, { key: 'value' });
-    assertEquals(elementPropertiesProxy.date, new Date('1970-01-01T00:00:00.000Z'));
+    assertEquals(elementPropertiesProxy.array, [1]);
     assertEquals(elementPropertiesProxy.set, [1]);
-    assertEquals(elementPropertiesProxy.map, [['a', 1]]);
+    assertEquals(elementPropertiesProxy.date, new Date('1970-01-01T00:00:00.000Z'));
 
-    elementPropertiesProxy.undefined = 1;
-    elementPropertiesProxy.null = 1;
     element.removeAttribute('boolean');
-    elementPropertiesProxy.__reflectFromAttribute('undefined');
-    elementPropertiesProxy.__reflectFromAttribute('null');
     elementPropertiesProxy.__reflectFromAttribute('boolean');
 
-    assertEquals(elementPropertiesProxy.undefined, 0);
-    assertEquals(elementPropertiesProxy.null, 0);
     assert(!elementPropertiesProxy.boolean);
   });
 
@@ -141,6 +147,14 @@ await Playground.test('Proxy object', async (t) => {
         value: null,
         reflect: true,
       },
+      symbol: {
+        value: Symbol(),
+        reflect: true,
+      },
+      function: {
+        value: () => {},
+        reflect: true,
+      },
       boolean: {
         value: true,
       },
@@ -152,12 +166,20 @@ await Playground.test('Proxy object', async (t) => {
         value: 1,
         reflect: true,
       },
-      array: {
-        value: [1],
+      bigint: {
+        value: 1n,
         reflect: true,
       },
       object: {
         value: { key: 'value' },
+        reflect: true,
+      },
+      array: {
+        value: [1],
+        reflect: true,
+      },
+      set: {
+        value: new Set([0]),
         reflect: true,
       },
       date: {
@@ -165,33 +187,28 @@ await Playground.test('Proxy object', async (t) => {
         reflect: true,
         converter: (value) => new Date(JSON.parse(value)),
       },
-      set: {
-        value: new Set([0]),
-        reflect: true,
-      },
-      map: {
-        value: new Map([['a', 0]]),
-        reflect: true,
-      },
     });
 
     assert(!element.hasAttribute('undefined'));
     assert(!element.hasAttribute('null'));
+    assertEquals(element.getAttribute('symbol'), 'Symbol()');
+    assertEquals(element.getAttribute('function'), '() => {}');
+
     assert(!element.hasAttribute('boolean'));
     assertEquals(element.getAttribute('string'), 'text');
     assertEquals(element.getAttribute('number'), '1');
-    assertEquals(element.getAttribute('array'), '[1]');
+    assertEquals(element.getAttribute('bigint'), '1');
     assertEquals(element.getAttribute('object'), '{"key":"value"}');
-    assertEquals(element.getAttribute('date'), '"1970-01-01T00:00:00.000Z"');
+    assertEquals(element.getAttribute('array'), '[1]');
     assertEquals(element.getAttribute('set'), '{}');
-    assertEquals(element.getAttribute('map'), '{}');
+    assertEquals(element.getAttribute('date'), '"1970-01-01T00:00:00.000Z"');
 
-    elementPropertiesProxy.undefined = 0;
-    elementPropertiesProxy.null = 0;
+    elementPropertiesProxy.undefined = 'text';
+    elementPropertiesProxy.null = 'text';
     elementPropertiesProxy.__reflectToAttribute('boolean');
 
-    assertEquals(element.getAttribute('undefined'), '0');
-    assertEquals(element.getAttribute('null'), '0');
+    assertEquals(element.getAttribute('undefined'), 'text');
+    assertEquals(element.getAttribute('null'), 'text');
     assertEquals(element.getAttribute('boolean'), '');
   });
 
