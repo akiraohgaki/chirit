@@ -203,12 +203,16 @@ await Playground.test('Proxy object', async (t) => {
     assertEquals(element.getAttribute('set'), '{}');
     assertEquals(element.getAttribute('date'), '"1970-01-01T00:00:00.000Z"');
 
-    elementPropertiesProxy.undefined = 'text';
-    elementPropertiesProxy.null = 'text';
+    element.setAttribute('undefined', 'text');
+    element.setAttribute('null', 'text');
+    elementPropertiesProxy.__reflectToAttribute('undefined');
+    elementPropertiesProxy.__reflectToAttribute('null');
+
+    assert(!element.hasAttribute('undefined'));
+    assert(!element.hasAttribute('null'));
+
     elementPropertiesProxy.__reflectToAttribute('boolean');
 
-    assertEquals(element.getAttribute('undefined'), 'text');
-    assertEquals(element.getAttribute('null'), 'text');
     assertEquals(element.getAttribute('boolean'), '');
   });
 
