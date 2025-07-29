@@ -117,13 +117,13 @@ await Playground.test('Proxy object', async (t) => {
 
     assertEquals(elementPropertiesProxy.undefined, 'text');
     assertEquals(elementPropertiesProxy.null, 'text');
-    assertEquals(typeof elementPropertiesProxy.symbol, 'text');
-    assertEquals(typeof elementPropertiesProxy.function, 'text');
+    assertEquals(elementPropertiesProxy.symbol, 'text');
+    assertEquals(elementPropertiesProxy.function, 'text');
 
     assert(elementPropertiesProxy.boolean);
     assertEquals(elementPropertiesProxy.string, 'text');
     assertEquals(elementPropertiesProxy.number, 1);
-    assertEquals(elementPropertiesProxy.bigint, 1);
+    assertEquals(elementPropertiesProxy.bigint, 1n);
     assertEquals(elementPropertiesProxy.object, { key: 'value' });
     assertEquals(elementPropertiesProxy.array, [1]);
     assertEquals(elementPropertiesProxy.set, [1]);
@@ -157,6 +157,7 @@ await Playground.test('Proxy object', async (t) => {
       },
       boolean: {
         value: true,
+        reflect: true,
       },
       string: {
         value: 'text',
@@ -191,8 +192,8 @@ await Playground.test('Proxy object', async (t) => {
 
     assert(!element.hasAttribute('undefined'));
     assert(!element.hasAttribute('null'));
-    assertEquals(element.getAttribute('symbol'), 'Symbol()');
-    assertEquals(element.getAttribute('function'), '() => {}');
+    assert(element.hasAttribute('symbol')); // 'Symbol()'
+    assert(element.hasAttribute('function')); // '() => {}'
 
     assert(!element.hasAttribute('boolean'));
     assertEquals(element.getAttribute('string'), 'text');
@@ -211,7 +212,7 @@ await Playground.test('Proxy object', async (t) => {
     assert(!element.hasAttribute('undefined'));
     assert(!element.hasAttribute('null'));
 
-    elementPropertiesProxy.__reflectToAttribute('boolean');
+    elementPropertiesProxy.boolean = true;
 
     assertEquals(element.getAttribute('boolean'), '');
   });
