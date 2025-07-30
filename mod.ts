@@ -6,7 +6,7 @@ export * from './src/types.ts';
 
 export * from './src/Component.ts';
 export * from './src/CustomElement.ts';
-export * from './src/ElementAttributesProxy.ts';
+export * from './src/ElementAttributes.ts';
 export * from './src/ElementPropertiesProxy.ts';
 export * from './src/NodeStructure.ts';
 export * from './src/Observable.ts';

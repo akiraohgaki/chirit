@@ -1,5 +1,5 @@
 import { CustomElement } from './CustomElement.ts';
-import { ElementAttributesProxy } from './ElementAttributesProxy.ts';
+import { ElementAttributes } from './ElementAttributes.ts';
 import { NodeStructure } from './NodeStructure.ts';
 import { dom } from './dom.ts';
 
@@ -131,7 +131,7 @@ import { dom } from './dom.ts';
  * ```
  */
 export class Component extends CustomElement {
-  #attr: ElementAttributesProxy;
+  #attributes: ElementAttributes;
 
   #structure: NodeStructure<Element | DocumentFragment>;
 
@@ -143,15 +143,15 @@ export class Component extends CustomElement {
 
     this.update = this.update.bind(this);
 
-    this.#attr = new ElementAttributesProxy(this);
+    this.#attributes = new ElementAttributes(this);
     this.#structure = new NodeStructure(this.createContentContainer(), this);
   }
 
   /**
    * Returns a proxy object for element attributes.
    */
-  get attr(): ElementAttributesProxy {
-    return this.#attr;
+  get attr(): Record<string, string> {
+    return this.#attributes.attributes;
   }
 
   /**
