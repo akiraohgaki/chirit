@@ -30,7 +30,9 @@ await Playground.test('createComponent()', async (t) => {
     const values: Array<string> = [];
 
     createComponent('test-component-3', {
-      observedAttributes: ['attr1'],
+      properties: {
+        prop1: { value: 0 },
+      },
       init: (_context) => {
         values.push('init()');
       },
@@ -46,13 +48,13 @@ await Playground.test('createComponent()', async (t) => {
       },
       template: (context) => {
         values.push('template()');
-        return '<span>attr1:' + context.attrs.attr1 + '</span>';
+        return '<span>prop1:' + context.props.prop1 + '</span>';
       },
     });
 
     const testComponent3 = document.createElement('test-component-3') as Component;
 
-    testComponent3.attrs.attr1 = '1';
+    testComponent3.attrs.prop1 = '1';
 
     await Playground.sleep(100);
 
@@ -67,6 +69,6 @@ await Playground.test('createComponent()', async (t) => {
       'connected()',
       'disconnected()',
     ]);
-    assertEquals((testComponent3.content as ShadowRoot).innerHTML, '<span>attr1:1</span>');
+    assertEquals((testComponent3.content as ShadowRoot).innerHTML, '<span>prop1:1</span>');
   });
 });
