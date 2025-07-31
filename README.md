@@ -62,7 +62,9 @@ import { createComponent, css, html } from '@akiraohgaki/chirit';
 // `css` and `html` tagged template functions are optional.
 
 createComponent('message-component', {
-  observedAttributes: ['message'],
+  properties: {
+    message: { value: '' },
+  },
   styles: () => {
     return css`
       :host {
@@ -75,7 +77,7 @@ createComponent('message-component', {
   },
   template: (context) => {
     return html`
-      <span>${context.attrs.message}</span>
+      <span>${context.props.message}</span>
     `;
   },
 });
