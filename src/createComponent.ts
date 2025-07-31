@@ -51,8 +51,8 @@ import { Component } from './Component.ts';
  *       ];
  *     },
  *     template: (context) => {
- *       const color = context.attr.color ?? '#000000';
- *       const size = context.attr.size ?? '100px';
+ *       const color = context.attrs.color ?? '#000000';
+ *       const size = context.attrs.size ?? '100px';
  *
  *       return `
  *         <style>

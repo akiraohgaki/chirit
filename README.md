@@ -75,7 +75,7 @@ createComponent('message-component', {
   },
   template: (context) => {
     return html`
-      <span>${context.attr.message}</span>
+      <span>${context.attrs.message}</span>
     `;
   },
 });

@@ -39,8 +39,8 @@ import { dom } from './dom.ts';
  *   override template(): string {
  *     return `
  *       <style>
- *       :host { width: ${this.prop.size}; height: ${this.prop.size}; }
- *       div { background-color: ${this.prop.color}; }
+ *       :host { width: ${this.props.size}; height: ${this.props.size}; }
+ *       div { background-color: ${this.props.color}; }
  *       </style>
  *
  *       <!-- The execution context for an event handler is the component instance. -->
@@ -177,7 +177,7 @@ export class Component extends CustomElement {
   /**
    * Returns a proxy object for element attributes.
    */
-  get attr(): Record<string, string> {
+  get attrs(): Record<string, string> {
     return this.#attributes.attributes;
   }
 
@@ -186,7 +186,7 @@ export class Component extends CustomElement {
    *
    * The properties are defined in the static properties getter.
    */
-  get prop(): Record<string, unknown> {
+  get props(): Record<string, unknown> {
     return this.#properties.properties;
   }
 

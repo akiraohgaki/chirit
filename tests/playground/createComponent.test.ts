@@ -46,13 +46,13 @@ await Playground.test('createComponent()', async (t) => {
       },
       template: (context) => {
         values.push('template()');
-        return '<span>attr1:' + context.attr.attr1 + '</span>';
+        return '<span>attr1:' + context.attrs.attr1 + '</span>';
       },
     });
 
     const testComponent3 = document.createElement('test-component-3') as Component;
 
-    testComponent3.attr.attr1 = '1';
+    testComponent3.attrs.attr1 = '1';
 
     await Playground.sleep(100);
 

@@ -49,10 +49,10 @@ await Playground.test('Component', async (t) => {
     assertInstanceOf(testComponent1, CustomElement);
   });
 
-  await t.step('attr', () => {
-    testComponent1.attr.attr1 = '1';
+  await t.step('attrs', () => {
+    testComponent1.attrs.attr1 = '1';
 
-    assertEquals(testComponent1.attr.attr1, '1');
+    assertEquals(testComponent1.attrs.attr1, '1');
   });
 
   await t.step('structure', () => {
