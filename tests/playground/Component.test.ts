@@ -1,13 +1,27 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertStrictEquals } from '@std/assert';
 
-import { Component, CustomElement, NodeStructure, Observable, State, Store } from '../../mod.ts';
+import {
+  Component,
+  CustomElement,
+  ElementAttributes,
+  ElementProperties,
+  NodeStructure,
+  Observable,
+  State,
+  Store,
+} from '../../mod.ts';
 
 const observable = new Observable();
 const state = new State(0);
 const store = new Store({ a: 0 });
 
 class TestComponent1 extends Component {
+  static override get properties() {
+    return {
+      prop1: { value: 0, reflect: true },
+    };
+  }
   override styles() {
     return 'span { color: red; }';
   }
@@ -17,13 +31,13 @@ class TestComponent1 extends Component {
 }
 
 class TestComponent2 extends Component {
-  override createContentContainer(): Element | DocumentFragment {
+  override createContentContainer() {
     return document.createElement('div');
   }
 }
 
 class TestComponent3 extends Component {
-  override updatedCallback(): void {
+  override updatedCallback() {
     this.dispatch('custom-event', { isCustomEvent: true });
   }
 }
@@ -49,18 +63,28 @@ await Playground.test('Component', async (t) => {
     assertInstanceOf(testComponent1, CustomElement);
   });
 
-  await t.step('attrs', () => {
-    testComponent1.attrs.attr1 = '1';
-
-    assertEquals(testComponent1.attrs.attr1, '1');
+  await t.step('elementAttributes', () => {
+    assertInstanceOf(testComponent1.elementAttributes, ElementAttributes);
   });
 
-  await t.step('structure', () => {
-    assertInstanceOf(testComponent1.structure, NodeStructure);
+  await t.step('elementProperties', () => {
+    assertInstanceOf(testComponent1.elementProperties, ElementProperties);
+  });
+
+  await t.step('nodeStructure', () => {
+    assertInstanceOf(testComponent1.nodeStructure, NodeStructure);
+  });
+
+  await t.step('attrs', () => {
+    assertStrictEquals(testComponent1.attrs, testComponent1.elementAttributes.proxy);
+  });
+
+  await t.step('props', () => {
+    assertStrictEquals(testComponent1.props, testComponent1.elementProperties.proxy);
   });
 
   await t.step('content', () => {
-    assertStrictEquals(testComponent1.content, testComponent1.structure.host);
+    assertStrictEquals(testComponent1.content, testComponent1.nodeStructure.host);
   });
 
   await t.step('observe()', async () => {
@@ -91,6 +115,28 @@ await Playground.test('Component', async (t) => {
 
     assert(testComponent1.dispatch('custom-event', { isCustomEvent: true }));
     assert(isCustomEvent);
+  });
+});
+
+await Playground.test('Attributes and properties', async (t) => {
+  const testComponent1 = new TestComponent1();
+
+  testComponent1.connectedCallback();
+
+  await t.step('should reflect from attribute to property', async () => {
+    testComponent1.attrs.prop1 = '1';
+
+    await Playground.sleep(100);
+
+    assertEquals(testComponent1.props.prop1, 1);
+  });
+
+  await t.step('should reflect from property to attribute', async () => {
+    testComponent1.props.prop1 = 2;
+
+    await Playground.sleep(100);
+
+    assertEquals(testComponent1.attrs.prop1, '2');
   });
 });
 
