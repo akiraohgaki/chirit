@@ -11,21 +11,21 @@
  *
  * const elementAttributes = new ElementAttributes(element);
  *
- * console.log(elementAttributes.attributes.color);
+ * console.log(elementAttributes.proxy.color);
  * // undefined
  *
- * elementAttributes.attributes.color = '#ff0000';
+ * elementAttributes.proxy.color = '#ff0000';
  *
- * console.log(elementAttributes.attributes.color);
+ * console.log(elementAttributes.proxy.color);
  * // '#ff0000'
  *
- * console.log('color' in elementAttributes.attributes);
+ * console.log('color' in elementAttributes.proxy);
  * // true
  *
- * console.log(Object.keys(elementAttributes.attributes));
+ * console.log(Object.keys(elementAttributes.proxy));
  * // ['color']
  *
- * delete elementAttributes.attributes.color;
+ * delete elementAttributes.proxy.color;
  * ```
  */
 export class ElementAttributes {
@@ -48,7 +48,7 @@ export class ElementAttributes {
   /**
    * Returns the proxy object for attribute manipulation.
    */
-  get attributes(): Record<string, string> {
+  get proxy(): Record<string, string> {
     return this.#proxy;
   }
 

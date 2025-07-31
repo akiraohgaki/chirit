@@ -28,8 +28,8 @@ await Playground.test('ElementAttributes', async (t) => {
     assert(elementAttributes);
   });
 
-  await t.step('attributes', () => {
-    assertEquals(elementAttributes.attributes.attr1, '1');
+  await t.step('proxy', () => {
+    assertEquals(elementAttributes.proxy.attr1, '1');
   });
 });
 
@@ -39,18 +39,18 @@ await Playground.test('Attributes management', async (t) => {
 
     const elementAttributes = new ElementAttributes(element);
 
-    elementAttributes.attributes.attr0 = '0';
-    elementAttributes.attributes.attr1 = '1';
-    elementAttributes.attributes.attr2 = '2';
-    delete elementAttributes.attributes.attr0;
+    elementAttributes.proxy.attr0 = '0';
+    elementAttributes.proxy.attr1 = '1';
+    elementAttributes.proxy.attr2 = '2';
+    delete elementAttributes.proxy.attr0;
 
-    assertEquals(elementAttributes.attributes.attr0, undefined);
-    assertEquals(elementAttributes.attributes.attr1, '1');
-    assertEquals(elementAttributes.attributes.attr2, '2');
-    assertEquals(Object.keys(elementAttributes.attributes).toSorted(), ['attr1', 'attr2']);
-    assert(Object.getOwnPropertyDescriptor(elementAttributes.attributes, 'attr1') !== undefined);
-    assert(!('attr0' in elementAttributes.attributes));
-    assert('attr1' in elementAttributes.attributes);
+    assertEquals(elementAttributes.proxy.attr0, undefined);
+    assertEquals(elementAttributes.proxy.attr1, '1');
+    assertEquals(elementAttributes.proxy.attr2, '2');
+    assertEquals(Object.keys(elementAttributes.proxy).toSorted(), ['attr1', 'attr2']);
+    assert(Object.getOwnPropertyDescriptor(elementAttributes.proxy, 'attr1') !== undefined);
+    assert(!('attr0' in elementAttributes.proxy));
+    assert('attr1' in elementAttributes.proxy);
     assertEquals(element.outerHTML, '<div attr1="1" attr2="2"></div>');
   });
 
@@ -66,7 +66,7 @@ await Playground.test('Attributes management', async (t) => {
     await new Promise((resolve) => {
       const intervalId = setInterval(() => {
         try {
-          if (elementAttributes.attributes.id) {
+          if (elementAttributes.proxy.id) {
             void 0;
           }
         } catch (exception) {
@@ -76,6 +76,6 @@ await Playground.test('Attributes management', async (t) => {
       }, 0);
     });
 
-    assertThrows(() => elementAttributes.attributes.id, Error);
+    assertThrows(() => elementAttributes.proxy.id, Error);
   });
 });

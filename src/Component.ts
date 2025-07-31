@@ -178,7 +178,7 @@ export class Component extends CustomElement {
    * Returns a proxy object for element attributes.
    */
   get attrs(): Record<string, string> {
-    return this.#attributes.attributes;
+    return this.#attributes.proxy;
   }
 
   /**
@@ -187,7 +187,7 @@ export class Component extends CustomElement {
    * The properties are defined in the static properties getter.
    */
   get props(): Record<string, unknown> {
-    return this.#properties.properties;
+    return this.#properties.proxy;
   }
 
   /**

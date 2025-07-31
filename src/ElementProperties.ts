@@ -18,36 +18,36 @@ import type { ElementPropertiesConfig } from './types.ts';
  *
  * elementProperties.sync();
  *
- * console.log(elementProperties.properties.count);
+ * console.log(elementProperties.proxy.count);
  * // 0
  * console.log(element.getAttribute('count'));
  * // '0'
  *
- * console.log(elementProperties.properties['is-active']);
+ * console.log(elementProperties.proxy['is-active']);
  * // false
  * console.log(element.hasAttribute('is-active'));
  * // false
  *
- * elementProperties.properties.count = 1;
- * elementProperties.properties['is-active'] = true;
+ * elementProperties.proxy.count = 1;
+ * elementProperties.proxy['is-active'] = true;
  *
- * console.log(elementProperties.properties.count);
+ * console.log(elementProperties.proxy.count);
  * // 1
  * console.log(element.getAttribute('count'));
  * // '1'
  *
- * console.log(elementProperties.properties['is-active']);
+ * console.log(elementProperties.proxy['is-active']);
  * // true
  * console.log(element.hasAttribute('is-active'));
  * // true
  *
- * console.log('count' in elementProperties.properties);
+ * console.log('count' in elementProperties.proxy);
  * // true
  *
- * console.log(Object.keys(elementProperties.properties));
+ * console.log(Object.keys(elementProperties.proxy));
  * // ['count', 'is-active']
  *
- * delete elementProperties.properties.count;
+ * delete elementProperties.proxy.count;
  * // Deletion is not allowed
  *
  * elementProperties.reflectFromAttribute('count');
@@ -91,7 +91,7 @@ export class ElementProperties {
   /**
    * Returns the proxy object for property manipulation.
    */
-  get properties(): Record<string, unknown> {
+  get proxy(): Record<string, unknown> {
     return this.#proxy;
   }
 

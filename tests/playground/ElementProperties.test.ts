@@ -33,27 +33,27 @@ await Playground.test('ElementProperties', async (t) => {
     assert(elementProperties);
   });
 
-  await t.step('properties', () => {
-    assertEquals(elementProperties.properties.prop1, 0);
-    assertEquals(elementProperties.properties.prop2, 0);
+  await t.step('proxy', () => {
+    assertEquals(elementProperties.proxy.prop1, 0);
+    assertEquals(elementProperties.proxy.prop2, 0);
   });
 
   await t.step('sync()', () => {
     elementProperties.sync();
 
-    assertEquals(elementProperties.properties.prop1, 1);
+    assertEquals(elementProperties.proxy.prop1, 1);
     assertEquals(element.getAttribute('prop2'), '0');
   });
 
   await t.step('reflectFromAttribute()', () => {
-    elementProperties.properties.prop1 = 2;
+    elementProperties.proxy.prop1 = 2;
     elementProperties.reflectFromAttribute('prop1');
 
-    assertEquals(elementProperties.properties.prop1, 1);
+    assertEquals(elementProperties.proxy.prop1, 1);
   });
 
   await t.step('reflectToAttribute()', () => {
-    elementProperties.properties.prop1 = 2;
+    elementProperties.proxy.prop1 = 2;
     elementProperties.reflectToAttribute('prop1');
 
     assertEquals(element.getAttribute('prop1'), '2');
@@ -83,19 +83,19 @@ await Playground.test('Properties management', async (t) => {
       hasChanged = true;
     };
     elementProperties.sync();
-    elementProperties.properties.prop0 = 0.5;
-    elementProperties.properties.prop1 = 1.5;
+    elementProperties.proxy.prop0 = 0.5;
+    elementProperties.proxy.prop1 = 1.5;
     element.setAttribute('prop2', '2.5');
     elementProperties.reflectFromAttribute('prop2');
 
     assert(hasChanged);
-    assertEquals(elementProperties.properties.prop0, 0.5);
-    assertEquals(elementProperties.properties.prop1, 1.5);
-    assertEquals(elementProperties.properties.prop2, 2);
-    assertEquals(Object.keys(elementProperties.properties).toSorted(), ['prop0', 'prop1', 'prop2']);
-    assert(Object.getOwnPropertyDescriptor(elementProperties.properties, 'prop1') !== undefined);
-    assert('prop1' in elementProperties.properties);
-    assertThrows(() => delete elementProperties.properties.prop0, Error);
+    assertEquals(elementProperties.proxy.prop0, 0.5);
+    assertEquals(elementProperties.proxy.prop1, 1.5);
+    assertEquals(elementProperties.proxy.prop2, 2);
+    assertEquals(Object.keys(elementProperties.proxy).toSorted(), ['prop0', 'prop1', 'prop2']);
+    assert(Object.getOwnPropertyDescriptor(elementProperties.proxy, 'prop1') !== undefined);
+    assert('prop1' in elementProperties.proxy);
+    assertThrows(() => delete elementProperties.proxy.prop0, Error);
     assertEquals(element.outerHTML, '<div prop1="1.5" prop2="2.5"></div>');
   });
 
@@ -158,24 +158,24 @@ await Playground.test('Properties management', async (t) => {
 
     elementProperties.sync();
 
-    assertEquals(elementProperties.properties.undefined, 'text');
-    assertEquals(elementProperties.properties.null, 'text');
-    assertEquals(elementProperties.properties.symbol, 'text');
-    assertEquals(elementProperties.properties.function, 'text');
+    assertEquals(elementProperties.proxy.undefined, 'text');
+    assertEquals(elementProperties.proxy.null, 'text');
+    assertEquals(elementProperties.proxy.symbol, 'text');
+    assertEquals(elementProperties.proxy.function, 'text');
 
-    assert(elementProperties.properties.boolean);
-    assertEquals(elementProperties.properties.string, 'text');
-    assertEquals(elementProperties.properties.number, 1);
-    assertEquals(elementProperties.properties.bigint, 1n);
-    assertEquals(elementProperties.properties.object, { key: 'value' });
-    assertEquals(elementProperties.properties.array, [1]);
-    assertEquals(elementProperties.properties.set, [1]);
-    assertEquals(elementProperties.properties.date, new Date('1970-01-01T00:00:00.000Z'));
+    assert(elementProperties.proxy.boolean);
+    assertEquals(elementProperties.proxy.string, 'text');
+    assertEquals(elementProperties.proxy.number, 1);
+    assertEquals(elementProperties.proxy.bigint, 1n);
+    assertEquals(elementProperties.proxy.object, { key: 'value' });
+    assertEquals(elementProperties.proxy.array, [1]);
+    assertEquals(elementProperties.proxy.set, [1]);
+    assertEquals(elementProperties.proxy.date, new Date('1970-01-01T00:00:00.000Z'));
 
     element.removeAttribute('boolean');
     elementProperties.reflectFromAttribute('boolean');
 
-    assert(!elementProperties.properties.boolean);
+    assert(!elementProperties.proxy.boolean);
   });
 
   await t.step('reflect from properties to attributes', () => {
@@ -257,7 +257,7 @@ await Playground.test('Properties management', async (t) => {
     assert(!element.hasAttribute('undefined'));
     assert(!element.hasAttribute('null'));
 
-    elementProperties.properties.boolean = true;
+    elementProperties.proxy.boolean = true;
 
     assertEquals(element.getAttribute('boolean'), '');
   });
