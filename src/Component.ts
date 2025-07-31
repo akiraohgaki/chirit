@@ -23,6 +23,7 @@ import { dom } from './dom.ts';
  *     return {
  *      color: { value: '#000000' },
  *      size: { value: '100px' },
+ *     }
  *   }
  *
  *   override styles(): Array<string | CSSStyleSheet> {
