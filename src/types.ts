@@ -37,7 +37,7 @@ export interface CreateComponentOptions<T> {
 /**
  * Configuration for ElementPropertiesProxy.
  */
-export interface ElementPropertiesProxyConfig {
+export interface ElementPropertiesConfig {
   [key: string]: {
     /**
      * The initial value of the property.

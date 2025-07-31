@@ -1,60 +1,99 @@
 import { Playground } from '@akiraohgaki/devsrv/playground';
-import { assert, assertEquals, assertInstanceOf, assertNotInstanceOf, assertThrows } from '@std/assert';
+import { assert, assertEquals, assertStrictEquals, assertThrows } from '@std/assert';
 
-import { ElementPropertiesProxy } from '../../mod.ts';
+import { ElementProperties } from '../../mod.ts';
 
 // Makes Element object in a separate scope,
 // to ensure that object are cleared by garbage collection.
-function createElementPropertiesProxyForGC(): ElementPropertiesProxy {
+function createElementPropertiesForGC(): ElementProperties {
   const element = document.createElement('div');
   element.id = 'gc';
 
-  const elementPropertiesProxy = new ElementPropertiesProxy(element, {
+  const elementProperties = new ElementProperties(element, {
     id: { value: 'gc' },
   });
 
   element.remove();
 
-  return elementPropertiesProxy;
+  return elementProperties;
 }
 
-await Playground.test('ElementPropertiesProxy', async (t) => {
+await Playground.test('ElementProperties', async (t) => {
+  const element = document.createElement('div');
+  element.setAttribute('prop1', '1');
+
+  let elementProperties: ElementProperties;
+
   await t.step('constructor()', () => {
-    const element = document.createElement('div');
+    elementProperties = new ElementProperties(element, {
+      prop1: { value: 0 },
+      prop2: { value: 0, reflect: true },
+    });
 
-    const elementPropertiesProxy = new ElementPropertiesProxy(element, {});
+    assert(elementProperties);
+  });
 
-    assert(elementPropertiesProxy);
-    assertNotInstanceOf(elementPropertiesProxy, ElementPropertiesProxy);
-    assertInstanceOf(elementPropertiesProxy, Object);
+  await t.step('properties', () => {
+    assertEquals(elementProperties.properties.prop1, 0);
+    assertEquals(elementProperties.properties.prop2, 0);
+  });
+
+  await t.step('sync()', () => {
+    elementProperties.sync();
+
+    assertEquals(elementProperties.properties.prop1, 1);
+    assertEquals(element.getAttribute('prop2'), '0');
+  });
+
+  await t.step('reflectFromAttribute()', () => {
+    elementProperties.properties.prop1 = 2;
+    elementProperties.reflectFromAttribute('prop1');
+
+    assertEquals(elementProperties.properties.prop1, 1);
+  });
+
+  await t.step('reflectToAttribute()', () => {
+    elementProperties.properties.prop1 = 2;
+    elementProperties.reflectToAttribute('prop1');
+
+    assertEquals(element.getAttribute('prop1'), '2');
+  });
+
+  await t.step('onchange()', () => {
+    const func = () => {};
+
+    elementProperties.onchange = func;
+
+    assertStrictEquals(elementProperties.onchange, func);
   });
 });
 
-await Playground.test('Proxy object', async (t) => {
+await Playground.test('Properties management', async (t) => {
   await t.step('property manipulation', () => {
     const element = document.createElement('div');
 
-    const elementPropertiesProxy = new ElementPropertiesProxy(element, {
+    const elementProperties = new ElementProperties(element, {
       prop0: { value: 0 },
       prop1: { value: 1, reflect: true },
       prop2: { value: 2, converter: (value) => parseInt(value, 10) },
     });
 
-    elementPropertiesProxy.prop0 = 0.5;
-    elementPropertiesProxy['prop1'] = 1.5;
+    elementProperties.sync();
+    elementProperties.properties.prop0 = 0.5;
+    elementProperties.properties.prop1 = 1.5;
     element.setAttribute('prop2', '2.5');
-    elementPropertiesProxy.__reflectFromAttribute('prop2');
+    elementProperties.reflectFromAttribute('prop2');
 
-    assertEquals(elementPropertiesProxy.prop0, 0.5);
+    assertEquals(elementProperties.properties.prop0, 0.5);
     assert(!element.hasAttribute('prop0'));
-    assertEquals(elementPropertiesProxy['prop1'], 1.5);
+    assertEquals(elementProperties.properties.prop1, 1.5);
     assertEquals(element.getAttribute('prop1'), '1.5');
-    assertEquals(elementPropertiesProxy.prop2, 2);
+    assertEquals(elementProperties.properties.prop2, 2);
     assertEquals(element.getAttribute('prop2'), '2.5');
-    assertEquals(Object.keys(elementPropertiesProxy).toSorted(), ['prop0', 'prop1', 'prop2']);
-    assert(Object.getOwnPropertyDescriptor(elementPropertiesProxy, 'prop1') !== undefined);
-    assert('prop1' in elementPropertiesProxy);
-    assertThrows(() => delete elementPropertiesProxy.prop0, Error);
+    assertEquals(Object.keys(elementProperties.properties).toSorted(), ['prop0', 'prop1', 'prop2']);
+    assert(Object.getOwnPropertyDescriptor(elementProperties.properties, 'prop1') !== undefined);
+    assert('prop1' in elementProperties.properties);
+    assertThrows(() => delete elementProperties.properties.prop0, Error);
     assertEquals(element.outerHTML, '<div prop1="1.5" prop2="2.5"></div>');
   });
 
@@ -75,7 +114,7 @@ await Playground.test('Proxy object', async (t) => {
     element.setAttribute('set', '[1]');
     element.setAttribute('date', '"1970-01-01T00:00:00.000Z"');
 
-    const elementPropertiesProxy = new ElementPropertiesProxy(element, {
+    const elementProperties = new ElementProperties(element, {
       undefined: {
         value: undefined,
       },
@@ -115,30 +154,32 @@ await Playground.test('Proxy object', async (t) => {
       },
     });
 
-    assertEquals(elementPropertiesProxy.undefined, 'text');
-    assertEquals(elementPropertiesProxy.null, 'text');
-    assertEquals(elementPropertiesProxy.symbol, 'text');
-    assertEquals(elementPropertiesProxy.function, 'text');
+    elementProperties.sync();
 
-    assert(elementPropertiesProxy.boolean);
-    assertEquals(elementPropertiesProxy.string, 'text');
-    assertEquals(elementPropertiesProxy.number, 1);
-    assertEquals(elementPropertiesProxy.bigint, 1n);
-    assertEquals(elementPropertiesProxy.object, { key: 'value' });
-    assertEquals(elementPropertiesProxy.array, [1]);
-    assertEquals(elementPropertiesProxy.set, [1]);
-    assertEquals(elementPropertiesProxy.date, new Date('1970-01-01T00:00:00.000Z'));
+    assertEquals(elementProperties.properties.undefined, 'text');
+    assertEquals(elementProperties.properties.null, 'text');
+    assertEquals(elementProperties.properties.symbol, 'text');
+    assertEquals(elementProperties.properties.function, 'text');
+
+    assert(elementProperties.properties.boolean);
+    assertEquals(elementProperties.properties.string, 'text');
+    assertEquals(elementProperties.properties.number, 1);
+    assertEquals(elementProperties.properties.bigint, 1n);
+    assertEquals(elementProperties.properties.object, { key: 'value' });
+    assertEquals(elementProperties.properties.array, [1]);
+    assertEquals(elementProperties.properties.set, [1]);
+    assertEquals(elementProperties.properties.date, new Date('1970-01-01T00:00:00.000Z'));
 
     element.removeAttribute('boolean');
-    elementPropertiesProxy.__reflectFromAttribute('boolean');
+    elementProperties.reflectFromAttribute('boolean');
 
-    assert(!elementPropertiesProxy.boolean);
+    assert(!elementProperties.properties.boolean);
   });
 
   await t.step('reflect from properties to attributes', () => {
     const element = document.createElement('div');
 
-    const elementPropertiesProxy = new ElementPropertiesProxy(element, {
+    const elementProperties = new ElementProperties(element, {
       undefined: {
         value: undefined,
         reflect: true,
@@ -190,6 +231,8 @@ await Playground.test('Proxy object', async (t) => {
       },
     });
 
+    elementProperties.sync();
+
     assert(!element.hasAttribute('undefined'));
     assert(!element.hasAttribute('null'));
     assert(element.hasAttribute('symbol')); // 'Symbol()'
@@ -206,13 +249,13 @@ await Playground.test('Proxy object', async (t) => {
 
     element.setAttribute('undefined', 'text');
     element.setAttribute('null', 'text');
-    elementPropertiesProxy.__reflectToAttribute('undefined');
-    elementPropertiesProxy.__reflectToAttribute('null');
+    elementProperties.reflectToAttribute('undefined');
+    elementProperties.reflectToAttribute('null');
 
     assert(!element.hasAttribute('undefined'));
     assert(!element.hasAttribute('null'));
 
-    elementPropertiesProxy.boolean = true;
+    elementProperties.properties.boolean = true;
 
     assertEquals(element.getAttribute('boolean'), '');
   });
@@ -223,13 +266,13 @@ await Playground.test('Proxy object', async (t) => {
       return;
     }
 
-    const elementPropertiesProxy = createElementPropertiesProxyForGC();
+    const elementProperties = createElementPropertiesForGC();
 
     // Wait for the element has gone.
     await new Promise((resolve) => {
       const intervalId = setInterval(() => {
         try {
-          elementPropertiesProxy.__reflectFromAttribute('id');
+          elementProperties.reflectFromAttribute('id');
         } catch (exception) {
           clearInterval(intervalId);
           resolve(exception);
@@ -237,6 +280,6 @@ await Playground.test('Proxy object', async (t) => {
       }, 0);
     });
 
-    assertThrows(() => elementPropertiesProxy.__reflectFromAttribute('id'), Error);
+    assertThrows(() => elementProperties.reflectFromAttribute('id'), Error);
   });
 });

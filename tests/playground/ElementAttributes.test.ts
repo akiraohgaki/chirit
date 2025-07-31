@@ -18,6 +18,7 @@ function createElementAttributesForGC(): ElementAttributes {
 
 await Playground.test('ElementAttributes', async (t) => {
   const element = document.createElement('div');
+  element.setAttribute('attr1', '1');
 
   let elementAttributes: ElementAttributes;
 
@@ -28,7 +29,7 @@ await Playground.test('ElementAttributes', async (t) => {
   });
 
   await t.step('attributes', () => {
-    assertEquals(typeof elementAttributes.attributes, 'object');
+    assertEquals(elementAttributes.attributes.attr1, '1');
   });
 });
 
