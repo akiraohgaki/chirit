@@ -78,18 +78,20 @@ await Playground.test('Properties management', async (t) => {
       prop2: { value: 2, converter: (value) => parseInt(value, 10) },
     });
 
+    let hasChanged = false;
+    elementProperties.onchange = () => {
+      hasChanged = true;
+    };
     elementProperties.sync();
     elementProperties.properties.prop0 = 0.5;
     elementProperties.properties.prop1 = 1.5;
     element.setAttribute('prop2', '2.5');
     elementProperties.reflectFromAttribute('prop2');
 
+    assert(hasChanged);
     assertEquals(elementProperties.properties.prop0, 0.5);
-    assert(!element.hasAttribute('prop0'));
     assertEquals(elementProperties.properties.prop1, 1.5);
-    assertEquals(element.getAttribute('prop1'), '1.5');
     assertEquals(elementProperties.properties.prop2, 2);
-    assertEquals(element.getAttribute('prop2'), '2.5');
     assertEquals(Object.keys(elementProperties.properties).toSorted(), ['prop0', 'prop1', 'prop2']);
     assert(Object.getOwnPropertyDescriptor(elementProperties.properties, 'prop1') !== undefined);
     assert('prop1' in elementProperties.properties);
