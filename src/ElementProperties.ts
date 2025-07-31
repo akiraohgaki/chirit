@@ -54,7 +54,7 @@ import type { ElementPropertiesConfig } from './types.ts';
  *
  * elementProperties.reflectToAttribute('count');
  *
- * elementProperties.onchange = (key, oldValue, newValue) => {
+ * elementProperties.onchange = (_key, _oldValue, _newValue) => {
  *   console.log('Property has changed.');
  * };
  * ```
