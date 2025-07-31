@@ -1,5 +1,8 @@
+import { ElementPropertiesConfig } from './types.ts';
+
 import { CustomElement } from './CustomElement.ts';
 import { ElementAttributes } from './ElementAttributes.ts';
+import { ElementProperties } from './ElementProperties.ts';
 import { NodeStructure } from './NodeStructure.ts';
 import { dom } from './dom.ts';
 
@@ -16,8 +19,10 @@ import { dom } from './dom.ts';
  * ```ts
  * // Create a custom class that extends the Component class.
  * class ColorPreviewComponent extends Component {
- *   static override get observedAttributes(): Array<string> {
- *     return ['color', 'size'];
+ *   static override get properties(): ElementPropertiesConfig {
+ *     return {
+ *      color: { value: '#000000' },
+ *      size: { value: '100px' },
  *   }
  *
  *   override styles(): Array<string | CSSStyleSheet> {
@@ -30,15 +35,12 @@ import { dom } from './dom.ts';
  *     ];
  *   }
  *
- *   // When a observed attributes changed, the template content is re-rendered.
+ *   // When a properties or an observed attributes changed, the template content is re-rendered.
  *   override template(): string {
- *     const color = this.attr.color ?? '#000000';
- *     const size = this.attr.size ?? '100px';
- *
  *     return `
  *       <style>
- *       :host { width: ${size}; height: ${size}; }
- *       div { background-color: ${color}; }
+ *       :host { width: ${this.prop.size}; height: ${this.prop.size}; }
+ *       div { background-color: ${this.prop.color}; }
  *       </style>
  *
  *       <!-- The execution context for an event handler is the component instance. -->
@@ -93,7 +95,7 @@ import { dom } from './dom.ts';
  *     ];
  *   }
  *
- *   // When a observed state changed, the template content is re-rendered.
+ *   // When an observed state changed, the template content is re-rendered.
  *   override template(): string {
  *     return `
  *       <style>
@@ -133,7 +135,25 @@ import { dom } from './dom.ts';
 export class Component extends CustomElement {
   #attributes: ElementAttributes;
 
+  #properties: ElementProperties;
+
   #structure: NodeStructure<Element | DocumentFragment>;
+
+  /**
+   * Returns an observed attributes.
+   *
+   * By default, it returns the keys of the properties configuration.
+   */
+  static override get observedAttributes(): Array<string> {
+    return Object.keys(this.properties);
+  }
+
+  /**
+   * Returns a properties configuration.
+   */
+  static get properties(): ElementPropertiesConfig {
+    return {};
+  }
 
   /**
    * Creates a new instance of the Component class.
@@ -144,6 +164,13 @@ export class Component extends CustomElement {
     this.update = this.update.bind(this);
 
     this.#attributes = new ElementAttributes(this);
+    this.#properties = new ElementProperties(
+      this,
+      (this.constructor as unknown as { properties: ElementPropertiesConfig }).properties,
+    );
+    this.#properties.onchange = () => {
+      this.update();
+    };
     this.#structure = new NodeStructure(this.createContentContainer(), this);
   }
 
@@ -152,6 +179,15 @@ export class Component extends CustomElement {
    */
   get attr(): Record<string, string> {
     return this.#attributes.attributes;
+  }
+
+  /**
+   * Returns a proxy object for element properties.
+   *
+   * The properties are defined in the static properties getter.
+   */
+  get prop(): Record<string, unknown> {
+    return this.#properties.properties;
   }
 
   /**
@@ -168,6 +204,46 @@ export class Component extends CustomElement {
    */
   get content(): Element | DocumentFragment {
     return this.#structure.host;
+  }
+
+  /**
+   * Callback invoked when an observed attribute changed.
+   *
+   * By default, the element is updated.
+   *
+   * @param name - The name of the attribute that changed.
+   * @param oldValue - The previous value of the attribute.
+   * @param newValue - The new value of the attribute.
+   * @param _namespace - The namespace of the attribute.
+   */
+  override attributeChangedCallback(
+    name: string,
+    oldValue: string | null,
+    newValue: string | null,
+    _namespace?: string | null,
+  ): void {
+    // Should be executed after the initial update via connectedCallback.
+    if (this.updateCounter && oldValue !== newValue) {
+      this.#properties.reflectFromAttribute(name); // update method will be called by onchange callback
+      this.update();
+    }
+  }
+
+  /**
+   * Callback invoked when the element is connected to a parent node.
+   *
+   * By default, the element is updated.
+   */
+  override connectedCallback(): void {
+    if (this.updateCounter) {
+      // Re-update
+      // The element might have changed its parent node.
+      this.update();
+    } else {
+      this.#properties.sync();
+      // Initial update
+      this.updateSync();
+    }
   }
 
   /**
