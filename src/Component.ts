@@ -133,11 +133,11 @@ import { dom } from './dom.ts';
  * ```
  */
 export class Component extends CustomElement {
-  #attributes: ElementAttributes;
+  #elementAttributes: ElementAttributes;
 
-  #properties: ElementProperties;
+  #elementProperties: ElementProperties;
 
-  #structure: NodeStructure<Element | DocumentFragment>;
+  #nodeStructure: NodeStructure<Element | DocumentFragment>;
 
   /**
    * Returns an observed attributes.
@@ -163,47 +163,62 @@ export class Component extends CustomElement {
 
     this.update = this.update.bind(this);
 
-    this.#attributes = new ElementAttributes(this);
-    this.#properties = new ElementProperties(
+    this.#elementAttributes = new ElementAttributes(this);
+    this.#elementProperties = new ElementProperties(
       this,
       (this.constructor as unknown as { properties: ElementPropertiesConfig }).properties,
     );
-    this.#properties.onchange = () => {
-      this.update();
-    };
-    this.#structure = new NodeStructure(this.createContentContainer(), this);
+    this.#nodeStructure = new NodeStructure(this.createContentContainer(), this);
   }
 
   /**
-   * Returns a proxy object for element attributes.
+   * Returns the internal ElementAttributes instance.
    */
-  get attrs(): Record<string, string> {
-    return this.#attributes.proxy;
+  get elementAttributes(): ElementAttributes {
+    return this.#elementAttributes;
   }
 
   /**
-   * Returns a proxy object for element properties.
-   *
-   * The properties are defined in the static properties getter.
+   * Returns the internal ElementProperties instance.
    */
-  get props(): Record<string, unknown> {
-    return this.#properties.proxy;
+  get elementProperties(): ElementProperties {
+    return this.#elementProperties;
   }
 
   /**
    * Returns the internal NodeStructure instance.
    */
-  get structure(): NodeStructure<Element | DocumentFragment> {
-    return this.#structure;
+  get nodeStructure(): NodeStructure<Element | DocumentFragment> {
+    return this.#nodeStructure;
   }
 
   /**
-   * Returns the same of Component.structure.host.
+   * Returns a proxy object for element attributes.
    *
-   * This is a convenient way to access the content container of the component.
+   * This is the same as Component.elementAttributes.proxy.
+   */
+  get attrs(): Record<string, string> {
+    return this.#elementAttributes.proxy;
+  }
+
+  /**
+   * Returns a proxy object for element properties.
+   *
+   * This is the same as Component.elementProperties.proxy.
+   *
+   * The properties are defined in the static properties getter.
+   */
+  get props(): Record<string, unknown> {
+    return this.#elementProperties.proxy;
+  }
+
+  /**
+   * Returns the content container of the component.
+   *
+   * This is the same as Component.nodeStructure.host.
    */
   get content(): Element | DocumentFragment {
-    return this.#structure.host;
+    return this.#nodeStructure.host;
   }
 
   /**
@@ -224,7 +239,7 @@ export class Component extends CustomElement {
   ): void {
     // Should be executed after the initial update via connectedCallback.
     if (this.updateCounter && oldValue !== newValue) {
-      this.#properties.reflectFromAttribute(name); // update method will be called by onchange callback
+      this.#elementProperties.reflectFromAttribute(name); // update method will be called by onchange callback
       this.update();
     }
   }
@@ -240,7 +255,11 @@ export class Component extends CustomElement {
       // The element might have changed its parent node.
       this.update();
     } else {
-      this.#properties.sync();
+      this.#elementProperties.sync();
+      this.#elementProperties.onchange = () => {
+        this.update();
+      };
+
       // Initial update
       this.updateSync();
     }
@@ -285,7 +304,7 @@ export class Component extends CustomElement {
    * @param detail - Details to include in the event object.
    */
   dispatch(type: string, detail?: unknown): boolean {
-    return this.#structure.host.dispatchEvent(
+    return this.#nodeStructure.host.dispatchEvent(
       new dom.globalThis.CustomEvent(type, {
         detail: detail,
         bubbles: true,
@@ -307,10 +326,10 @@ export class Component extends CustomElement {
    * Renders DOM with the styles and the template content.
    */
   override render(): void {
-    if (!this.updateCounter && this.#structure.host instanceof dom.globalThis.ShadowRoot) {
-      this.#structure.adoptStyles(this.styles());
+    if (!this.updateCounter && this.#nodeStructure.host instanceof dom.globalThis.ShadowRoot) {
+      this.#nodeStructure.adoptStyles(this.styles());
     }
-    this.#structure.update(this.template());
+    this.#nodeStructure.update(this.template());
   }
 
   /**
