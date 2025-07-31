@@ -9,9 +9,9 @@ export interface CreateComponentOptions<T> {
    */
   base?: typeof Component;
   /**
-   * List of an observed attributes.
+   * The properties configuration.
    */
-  observedAttributes?: Array<string>;
+  properties?: ElementPropertiesConfig;
   /**
    * Callback invoked when the element is created.
    */

@@ -1,4 +1,4 @@
-import type { CreateComponentOptions } from './types.ts';
+import type { CreateComponentOptions, ElementPropertiesConfig } from './types.ts';
 
 import { Component } from './Component.ts';
 
@@ -26,7 +26,10 @@ import { Component } from './Component.ts';
  *   'color-preview',
  *   {
  *     base: Component,
- *     observedAttributes: ['color', 'size'],
+ *     properties: {
+ *       color: { value: '#000000' },
+ *       size: { value: '100px' },
+ *     },
  *     init: (context) => {
  *       context.clickHandler = (event) => {
  *         context.dispatch('color-preview-click');
@@ -51,18 +54,15 @@ import { Component } from './Component.ts';
  *       ];
  *     },
  *     template: (context) => {
- *       const color = context.attrs.color ?? '#000000';
- *       const size = context.attrs.size ?? '100px';
- *
  *       return `
  *         <style>
- *         :host { width: ${size}; height: ${size}; }
- *         div { background-color: ${color}; }
+ *         :host { width: ${context.props.size}; height: ${context.props.size}; }
+ *         div { background-color: ${context.props.color}; }
  *         </style>
  *
  *         <!-- The execution context for an event handler is the component instance. -->
  *         <div onclick="this.clickHandler(event)">
- *         ${debugState.get() ? color : ''}
+ *         ${debugState.get() ? context.props.color : ''}
  *         </div>
  *       `;
  *     },
@@ -84,10 +84,8 @@ export function createComponent<T = Component>(name: string, options?: CreateCom
   const BaseComponent = options?.base ?? Component;
 
   const CustomComponent = class extends BaseComponent {
-    static override get observedAttributes(): Array<string> {
-      return (options?.observedAttributes && Array.isArray(options.observedAttributes))
-        ? options.observedAttributes
-        : super.observedAttributes;
+    static override get properties(): ElementPropertiesConfig {
+      return (options?.properties && typeof options.properties === 'object') ? options.properties : super.properties;
     }
 
     constructor() {
