@@ -1,5 +1,7 @@
 import type { ElementPropertiesConfig } from './types.ts';
 
+import { isEqual } from './util/isEqual.ts';
+
 /**
  * Manages the properties of an element.
  *
@@ -167,7 +169,7 @@ export class ElementProperties {
     }
 
     const newValue = this.#properties.get(key);
-    if (value !== newValue) {
+    if (isEqual(value, newValue)) {
       this.#onchange(key, value, newValue);
     }
   }
@@ -248,7 +250,7 @@ export class ElementProperties {
         if (typeof key === 'string' && this.#properties.has(key)) {
           const oldValue = this.#properties.get(key);
           this.#properties.set(key, value);
-          if (oldValue !== value) {
+          if (isEqual(oldValue, value)) {
             this.#onchange(key, oldValue, value);
             if (this.#config[key].reflect) {
               this.reflectToAttribute(key);
