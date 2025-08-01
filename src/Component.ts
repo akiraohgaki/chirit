@@ -21,9 +21,9 @@ import { dom } from './dom.ts';
  * class ColorPreviewComponent extends Component {
  *   static override get properties(): ElementPropertiesConfig {
  *     return {
- *      color: { value: '#000000' },
- *      size: { value: '100px' },
- *     }
+ *       color: { value: '#000000' },
+ *       size: { value: '100px' },
+ *     };
  *   }
  *
  *   override styles(): Array<string | CSSStyleSheet> {
