@@ -3,7 +3,6 @@
  *
  * The provided function is executed at most once every wait time.
  *
- * @remarks
  * This also works in non-browser environments.
  *
  * @example Basic usage

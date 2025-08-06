@@ -3,7 +3,6 @@
  *
  * It also compares nested objects and arrays recursively.
  *
- * @remarks
  * This also works in non-browser environments.
  *
  * @example Basic usage

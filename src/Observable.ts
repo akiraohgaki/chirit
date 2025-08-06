@@ -3,7 +3,6 @@
  *
  * It notifies observers when a new value is available.
  *
- * @remarks
  * This also works in non-browser environments.
  *
  * @example Basic usage

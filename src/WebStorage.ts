@@ -6,7 +6,6 @@ import { dom } from './dom.ts';
  * It provides a consistent interface for interacting with web storage (localStorage or sessionStorage).
  * And any JSON serializable value can be stored in the storage.
  *
- * @remarks
  * This also works in Deno.
  *
  * @example Basic usage

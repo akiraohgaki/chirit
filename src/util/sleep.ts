@@ -1,7 +1,6 @@
 /**
  * Pauses execution for a given duration.
  *
- * @remarks
  * This also works in non-browser environments.
  *
  * @example Basic usage

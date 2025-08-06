@@ -11,7 +11,6 @@ import { dom } from './dom.ts';
  *
  * It inherited the CustomElement class.
  *
- * @remarks
  * Consider using the createComponent function for a quick way to create a component.
  *
  * @example Create a component
@@ -139,7 +138,7 @@ export class Component extends CustomElement {
   /**
    * An observed attributes.
    *
-   * By default, it returns the keys of the properties configuration.
+   * By default, returns the keys of the properties configuration.
    */
   static override get observedAttributes(): Array<string> {
     return Object.keys(this.properties);
@@ -148,8 +147,7 @@ export class Component extends CustomElement {
   /**
    * A properties configuration.
    *
-   * @remarks
-   * Subclasses should implement this method to return the content.
+   * By default, returns empty object.
    */
   static get properties(): ElementPropertiesConfig {
     return {};
@@ -195,7 +193,6 @@ export class Component extends CustomElement {
   /**
    * The proxy object for attribute manipulation.
    *
-   * @remarks
    * This is an alias for Component.elementAttributes.proxy.
    */
   get attrs(): Record<string, string> {
@@ -205,7 +202,6 @@ export class Component extends CustomElement {
   /**
    * The proxy object for property manipulation.
    *
-   * @remarks
    * This is an alias for Component.elementProperties.proxy.
    */
   get props(): Record<string, unknown> {
@@ -215,7 +211,6 @@ export class Component extends CustomElement {
   /**
    * The content container of the component.
    *
-   * @remarks
    * This is an alias for Component.nodeStructure.host.
    */
   get content(): Element | DocumentFragment {
@@ -225,7 +220,7 @@ export class Component extends CustomElement {
   /**
    * Callback invoked when an observed attribute changes.
    *
-   * By default, the element is updated.
+   * By default, updates the element.
    *
    * @param name - The name of the attribute that changed.
    * @param oldValue - The old value of the attribute.
@@ -248,7 +243,7 @@ export class Component extends CustomElement {
   /**
    * Callback invoked when the element is connected to a parent node.
    *
-   * By default, the element is updated.
+   * By default, updates the element.
    */
   override connectedCallback(): void {
     if (this.updateCounter) {
@@ -269,7 +264,6 @@ export class Component extends CustomElement {
   /**
    * Observes an observable objects.
    *
-   * @remarks
    * The observable object should have an interface similar to the Observable class.
    *
    * @param args - An observable objects.
@@ -285,7 +279,6 @@ export class Component extends CustomElement {
   /**
    * Stops observing an observable objects.
    *
-   * @remarks
    * The observable object should have an interface similar to the Observable class.
    *
    * @param args - An observable objects.
@@ -319,7 +312,7 @@ export class Component extends CustomElement {
   /**
    * Creates the content container for the internal NodeStructure.
    *
-   * By default, this method creates an open shadow DOM.
+   * By default, creates an open shadow DOM.
    */
   createContentContainer(): Element | DocumentFragment {
     return this.attachShadow({ mode: 'open' });
@@ -338,12 +331,11 @@ export class Component extends CustomElement {
   /**
    * Creates the styles.
    *
+   * By default, returns empty array.
+   *
    * This method works only if the content container is a ShadowRoot.
    *
-   * @remarks
-   * Subclasses should implement this method to return the content.
-   *
-   * @returns The stylesheets content.
+   * @returns The stylesheets.
    */
   styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
     return [];
@@ -352,8 +344,7 @@ export class Component extends CustomElement {
   /**
    * Creates the template content.
    *
-   * @remarks
-   * Subclasses should implement this method to return the content.
+   * By default, returns empty string.
    *
    * @returns The template content.
    */

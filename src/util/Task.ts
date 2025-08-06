@@ -5,7 +5,6 @@ import type { TaskOptions } from './types.ts';
  *
  * It supports parallel execution and looping tasks.
  *
- * @remarks
  * This also works in non-browser environments.
  *
  * @example Basic usage

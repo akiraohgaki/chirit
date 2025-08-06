@@ -49,8 +49,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * An observed attributes.
    *
-   * @remarks
-   * Subclasses should implement this method to return the content.
+   * By default, returns empty array.
    */
   static get observedAttributes(): Array<string> {
     return [];
@@ -87,7 +86,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when an observed attribute changes.
    *
-   * By default, the element is updated.
+   * By default, updates the element.
    *
    * @param _name - The name of the attribute that changed.
    * @param oldValue - The old value of the attribute.
@@ -109,7 +108,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element is connected to a parent node.
    *
-   * By default, the element is updated.
+   * By default, updates the element.
    */
   connectedCallback(): void {
     if (this.#updateCounter) {
@@ -164,8 +163,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Renders the content of the element.
    *
-   * @remarks
-   * Subclasses should implement this method to render the content.
+   * Subclasses should implement this method.
    */
   render(): void {
   }

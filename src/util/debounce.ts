@@ -3,7 +3,6 @@
  *
  * Delay the execution of the provided function until the specified wait time elapses.
  *
- * @remarks
  * This also works in non-browser environments.
  *
  * @example Basic usage

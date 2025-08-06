@@ -7,7 +7,6 @@ import { Component } from './Component.ts';
  *
  * It is based on the Component class.
  *
- * @remarks
  * Consider using the Component class to create complex components.
  *
  * @example Create a component

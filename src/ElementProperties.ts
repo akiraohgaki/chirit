@@ -119,6 +119,8 @@ export class ElementProperties {
 
   /**
    * Synchronizes properties with attributes.
+   *
+   * @throws {Error} - If the target element is not available.
    */
   sync(): void {
     const target = this.#getTarget();
@@ -136,6 +138,8 @@ export class ElementProperties {
    * Reflects the current value from the attribute to the property.
    *
    * @param key - The property key to reflect from the attribute.
+   *
+   * @throws {Error} - If the target element is not available.
    */
   reflectFromAttribute(key: string): void {
     const propConfig = this.#config[key];
@@ -184,6 +188,8 @@ export class ElementProperties {
    * Reflects the current value from the property to the attribute.
    *
    * @param key - The property key to reflect to the attribute.
+   *
+   * @throws {Error} - If the target element is not available.
    */
   reflectToAttribute(key: string): void {
     const propConfig = this.#config[key];

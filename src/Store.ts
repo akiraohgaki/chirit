@@ -8,7 +8,6 @@ import { isEqual } from './util/isEqual.ts';
  * It inherited the Observable class.
  * And notifies observers when the state is changed.
  *
- * @remarks
  * Consider using the State class to manage atomic state.
  *
  * This also works in non-browser environments.
