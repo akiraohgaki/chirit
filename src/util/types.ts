@@ -1,5 +1,5 @@
 /**
- * Options for Task.
+ * The options for the task.
  */
 export interface TaskOptions {
   /**

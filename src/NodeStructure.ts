@@ -5,10 +5,8 @@ const hostCollection = new WeakSet();
 /**
  * Manages the structure of DOM nodes.
  *
- * This class simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
+ * It simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
  * DOM updates are optimized through a diffing process.
- *
- * ----
  *
  * @example Update the content of the host node
  * ```ts
@@ -71,12 +69,12 @@ export class NodeStructure<T extends Node> {
     this.#hostRef = new WeakRef(host);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
 
-    // Manage onevent handlers
+    // Manage onevent handlers.
     this.#oneventCollection = new Set();
   }
 
   /**
-   * Returns the host node.
+   * The host node.
    *
    * @throws {Error} - If the host node is not available.
    */
@@ -87,6 +85,7 @@ export class NodeStructure<T extends Node> {
   /**
    * Adopts styles to the host node.
    *
+   * @remarks
    * This method works only if the host node is a Document or ShadowRoot.
    *
    * @param styles - The styles to adopt to the host node.

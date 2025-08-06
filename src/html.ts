@@ -3,9 +3,8 @@ import { dom } from './dom.ts';
 /**
  * Creates a DocumentFragment from a template literals.
  *
- * This function is a tagged template function for HTML.
- *
- * ----
+ * @remarks
+ * This function is a tagged template function.
  *
  * @example Basic usage
  * ```ts

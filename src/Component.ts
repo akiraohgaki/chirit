@@ -7,13 +7,12 @@ import { NodeStructure } from './NodeStructure.ts';
 import { dom } from './dom.ts';
 
 /**
- * A base class for creating custom web components.
+ * A base class for creating reusable web components.
  *
- * This class as a base class for creating reusable web components, it provides many powerful features.
+ * It provides many powerful features.
  *
+ * @remarks
  * If you need a quick way to create a component, consider using the createComponent function.
- *
- * ----
  *
  * @example Create a component
  * ```ts
@@ -77,13 +76,13 @@ import { dom } from './dom.ts';
  * // Create a custom class that extends the Component class.
  * class ColorPreviewComponent extends Component {
  *   override connectedCallback(): void {
- *     super.connectedCallback(); // must always be called first
- *     this.observe(colorPreviewStore, debugState); // observe the observables
+ *     super.connectedCallback(); // must always be called first.
+ *     this.observe(colorPreviewStore, debugState); // observe the observables.
  *   }
  *
  *   override disconnectedCallback(): void {
- *     this.unobserve(colorPreviewStore, debugState); // unobserve the observables
- *     super.disconnectedCallback(); // should always be called last
+ *     this.unobserve(colorPreviewStore, debugState); // unobserve the observables.
+ *     super.disconnectedCallback(); // should always be called last.
  *   }
  *
  *   override styles(): Array<string | CSSStyleSheet> {
@@ -141,8 +140,9 @@ export class Component extends CustomElement {
   #nodeStructure: NodeStructure<Element | DocumentFragment>;
 
   /**
-   * Returns an observed attributes.
+   * An observed attributes.
    *
+   * @remarks
    * By default, it returns the keys of the properties configuration.
    */
   static override get observedAttributes(): Array<string> {
@@ -150,7 +150,10 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Returns a properties configuration.
+   * A properties configuration.
+   *
+   * @remarks
+   * This method should be implemented by subclasses to return the content.
    */
   static get properties(): ElementPropertiesConfig {
     return {};
@@ -173,39 +176,41 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Returns the internal ElementAttributes instance.
+   * The internal ElementAttributes instance.
    */
   get elementAttributes(): ElementAttributes {
     return this.#elementAttributes;
   }
 
   /**
-   * Returns the internal ElementProperties instance.
+   * The internal ElementProperties instance.
    */
   get elementProperties(): ElementProperties {
     return this.#elementProperties;
   }
 
   /**
-   * Returns the internal NodeStructure instance.
+   * The internal NodeStructure instance.
    */
   get nodeStructure(): NodeStructure<Element | DocumentFragment> {
     return this.#nodeStructure;
   }
 
   /**
-   * Returns a proxy object for element attributes.
+   * The proxy object for attribute manipulation.
    *
-   * This is the same as Component.elementAttributes.proxy.
+   * @remarks
+   * This is an alias for Component.elementAttributes.proxy.
    */
   get attrs(): Record<string, string> {
     return this.#elementAttributes.proxy;
   }
 
   /**
-   * Returns a proxy object for element properties.
+   * The proxy object for property manipulation.
    *
-   * This is the same as Component.elementProperties.proxy.
+   * @remarks
+   * This is an alias for Component.elementProperties.proxy.
    *
    * The properties are defined in the static properties getter.
    */
@@ -214,9 +219,10 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Returns the content container of the component.
+   * The content container of the component.
    *
-   * This is the same as Component.nodeStructure.host.
+   * @remarks
+   * This is an alias for Component.nodeStructure.host.
    */
   get content(): Element | DocumentFragment {
     return this.#nodeStructure.host;
@@ -225,6 +231,7 @@ export class Component extends CustomElement {
   /**
    * Callback invoked when an observed attribute changed.
    *
+   * @remarks
    * By default, the element is updated.
    *
    * @param name - The name of the attribute that changed.
@@ -240,7 +247,7 @@ export class Component extends CustomElement {
   ): void {
     // Should be executed after the initial update via connectedCallback.
     if (this.updateCounter && oldValue !== newValue) {
-      this.#elementProperties.reflectFromAttribute(name); // update method will be called by onchange callback
+      this.#elementProperties.reflectFromAttribute(name); // update method will be called by onchange callback.
       this.update();
     }
   }
@@ -248,11 +255,12 @@ export class Component extends CustomElement {
   /**
    * Callback invoked when the element is connected to a parent node.
    *
+   * @remarks
    * By default, the element is updated.
    */
   override connectedCallback(): void {
     if (this.updateCounter) {
-      // Re-update
+      // Re-update.
       // The element might have changed its parent node.
       this.update();
     } else {
@@ -261,7 +269,7 @@ export class Component extends CustomElement {
         this.update();
       };
 
-      // Initial update
+      // Initial update.
       this.updateSync();
     }
   }
@@ -317,6 +325,7 @@ export class Component extends CustomElement {
   /**
    * Creates the content container for the internal NodeStructure.
    *
+   * @remarks
    * By default, this method creates an open shadow DOM.
    */
   createContentContainer(): Element | DocumentFragment {
@@ -336,9 +345,10 @@ export class Component extends CustomElement {
   /**
    * Creates the styles.
    *
+   * @remarks
    * This method works only if the content container is a ShadowRoot.
    *
-   * This method should be implemented by subclasses to return the styles.
+   * This method should be implemented by subclasses to return the content.
    */
   styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
     return [];
@@ -347,6 +357,7 @@ export class Component extends CustomElement {
   /**
    * Creates the template content.
    *
+   * @remarks
    * This method should be implemented by subclasses to return the content.
    */
   template(): string | Node | NodeList {

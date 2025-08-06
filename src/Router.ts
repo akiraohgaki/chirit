@@ -3,10 +3,8 @@ import { dom } from './dom.ts';
 /**
  * A client-side router for front-end application.
  *
- * This class manages routes and handle navigation events within an application.
+ * It manages routes and handle navigation events within an application.
  * It supports both hash-based routing and history-based routing modes.
- *
- * ----
  *
  * @example Basic usage
  * ```ts
@@ -77,21 +75,21 @@ export class Router {
   }
 
   /**
-   * Returns the current routing mode.
+   * The current routing mode.
    */
   get mode(): 'hash' | 'history' {
     return this.#mode;
   }
 
   /**
-   * Returns the current base path.
+   * The current base path.
    */
   get base(): string {
     return this.#base;
   }
 
   /**
-   * Returns the number of route patterns in the collection.
+   * The number of route patterns in the collection.
    */
   get size(): number {
     return this.#routeCollection.size;
@@ -99,6 +97,8 @@ export class Router {
 
   /**
    * The function to be called when the route changed.
+   *
+   * @param event - The event that fire when URL state has changed.
    */
   set onchange(handler: (event: Event) => unknown) {
     this.#onchange = handler;
@@ -106,6 +106,8 @@ export class Router {
 
   /**
    * The function to be called when the route changed.
+   *
+   * @param event - The event that fire when URL state has changed.
    */
   get onchange(): (event: Event) => unknown {
     return this.#onchange;
@@ -113,6 +115,8 @@ export class Router {
 
   /**
    * The function to be called when an error occurs.
+   *
+   * @param exception - The error that occurred.
    */
   set onerror(handler: (exception: unknown) => unknown) {
     this.#onerror = handler;
@@ -120,6 +124,8 @@ export class Router {
 
   /**
    * The function to be called when an error occurs.
+   *
+   * @param exception - The error that occurred.
    */
   get onerror(): (exception: unknown) => unknown {
     return this.#onerror;

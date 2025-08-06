@@ -5,13 +5,12 @@ import { isEqual } from './util/isEqual.ts';
 /**
  * An observable store for complex state management.
  *
- * This class provides a way to manages the state and notifies observers when the state is changed.
+ * It provides a way to manages the state and notifies observers when the state is changed.
  *
+ * @remarks
  * If you need atomic state management, consider using the State class.
  *
- * This class also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
@@ -79,7 +78,7 @@ export class Store<T extends Record<string, unknown>> extends Observable<T> {
   }
 
   /**
-   * Returns the current state.
+   * The current state.
    */
   get state(): T {
     return this.#state;
@@ -116,7 +115,7 @@ export class Store<T extends Record<string, unknown>> extends Observable<T> {
   }
 
   /**
-   * Notifies all subscribed observers of the current state.
+   * Notifies all subscribed observers of the state.
    */
   override notify(): void {
     super.notify(this.#state);

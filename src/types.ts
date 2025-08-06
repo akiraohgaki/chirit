@@ -1,41 +1,55 @@
 import type { Component } from './Component.ts';
 
 /**
- * Options for createComponent.
+ * The options for the component.
  */
 export interface CreateComponentOptions<T> {
   /**
    * The base component to be extended.
    */
-  base?: typeof Component;
+  base: typeof Component;
   /**
-   * The properties configuration.
+   * The configuration object defining properties and their behaviors.
    */
-  properties?: ElementPropertiesConfig;
+  properties: ElementPropertiesConfig;
   /**
    * Callback invoked when the element is created.
+   *
+   * @param context - The instance of the element.
    */
-  init?: (context: T) => void;
+  init: (context: T) => void;
   /**
    * Callback invoked when the element is connected to a parent node.
+   *
+   * @param context - The instance of the element.
    */
-  connected?: (context: T) => void;
+  connected: (context: T) => void;
   /**
    * Callback invoked when the element is disconnected from a parent node.
+   *
+   * @param context - The instance of the element.
    */
-  disconnected?: (context: T) => void;
+  disconnected: (context: T) => void;
   /**
    * Creates the styles.
+   *
+   * @param context - The instance of the element.
+   *
+   * @returns The stylesheets content.
    */
-  styles?: (context: T) => string | CSSStyleSheet | Array<string | CSSStyleSheet>;
+  styles: (context: T) => string | CSSStyleSheet | Array<string | CSSStyleSheet>;
   /**
    * Creates the template content.
+   *
+   * @param context - The instance of the element.
+   *
+   * @returns The template content.
    */
-  template?: (context: T) => string | Node | NodeList;
+  template: (context: T) => string | Node | NodeList;
 }
 
 /**
- * Configuration for ElementPropertiesProxy.
+ * The configuration object defining properties and their behaviors.
  */
 export interface ElementPropertiesConfig {
   [key: string]: {
@@ -49,6 +63,10 @@ export interface ElementPropertiesConfig {
     reflect?: boolean;
     /**
      * Converts the attribute value to the property value.
+     *
+     * @param value - The value of the attribute.
+     *
+     * @returns The value to the property.
      */
     converter?: (value: string) => unknown;
   };

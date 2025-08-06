@@ -1,11 +1,10 @@
 /**
  * Compares two values for equality.
  *
- * This function handling nested objects and arrays.
+ * It compares nested objects and arrays recursively.
  *
- * This function also work in non-browser environment.
- *
- * ----
+ * @remarks
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts

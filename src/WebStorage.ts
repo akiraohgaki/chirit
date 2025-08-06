@@ -3,12 +3,11 @@ import { dom } from './dom.ts';
 /**
  * A wrapper class for web storage.
  *
- * This class provides a consistent interface for interacting with web storage (localStorage or sessionStorage).
+ * It provides a consistent interface for interacting with web storage (localStorage or sessionStorage).
  * Any value to JSON serializable can be stored in the storage.
  *
- * This class also work in Deno.
- *
- * ----
+ * @remarks
+ * This also works in Deno.
  *
  * @example Basic usage
  * ```ts
@@ -63,21 +62,21 @@ export class WebStorage {
   }
 
   /**
-   * Returns the current storage mode.
+   * The current storage mode.
    */
   get mode(): 'local' | 'session' {
     return this.#mode;
   }
 
   /**
-   * Returns the current prefix.
+   * The current prefix.
    */
   get prefix(): string {
     return this.#prefix;
   }
 
   /**
-   * Returns the number of items stored in the storage.
+   * The number of items stored in the storage.
    */
   get size(): number {
     return this.#storage.length;

@@ -3,8 +3,6 @@
  *
  * Main use cases such as server-side rendering and unit testing.
  *
- * ----
- *
  * @example Basic usage
  * ```ts
  * dom.globalThis = jsdom.window;

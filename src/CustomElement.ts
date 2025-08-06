@@ -4,9 +4,7 @@ import { debounce } from './util/debounce.ts';
 /**
  * A base class for building custom elements.
  *
- * This class provides a mechanism for asynchronous updates and handling lifecycle callbacks.
- *
- * ----
+ * It provides a mechanism for asynchronous updates and handling lifecycle callbacks.
  *
  * @example Create a custom element
  * ```ts
@@ -49,7 +47,10 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   #debouncedUpdate: () => void;
 
   /**
-   * Returns an observed attributes.
+   * An observed attributes.
+   *
+   * @remarks
+   * This method should be implemented by subclasses to return the content.
    */
   static get observedAttributes(): Array<string> {
     return [];
@@ -77,7 +78,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   }
 
   /**
-   * Returns the number of times the element has been updated.
+   * The number of times the element has been updated.
    */
   get updateCounter(): number {
     return this.#updateCounter;
@@ -86,6 +87,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when an observed attribute changed.
    *
+   * @remarks
    * By default, the element is updated.
    *
    * @param _name - The name of the attribute that changed.
@@ -108,15 +110,16 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element is connected to a parent node.
    *
+   * @remarks
    * By default, the element is updated.
    */
   connectedCallback(): void {
     if (this.#updateCounter) {
-      // Re-update
+      // Re-update.
       // The element might have changed its parent node.
       this.update();
     } else {
-      // Initial update
+      // Initial update.
       this.updateSync();
     }
   }
@@ -124,6 +127,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element is disconnected from a parent node.
    *
+   * @remarks
    * By default, to do nothing.
    */
   disconnectedCallback(): void {
@@ -132,6 +136,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element is moved to a new document.
    *
+   * @remarks
    * By default, to do nothing.
    *
    * @param _oldDocument - The previous document.
@@ -163,6 +168,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Renders the element's content.
    *
+   * @remarks
    * This method should be implemented by subclasses to render the content.
    */
   render(): void {
@@ -171,6 +177,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element has been updated.
    *
+   * @remarks
    * By default, to do nothing.
    */
   updatedCallback(): void {
@@ -179,6 +186,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when an error occurs during the update process.
    *
+   * @remarks
    * By default, output an error log.
    *
    * @param exception - The error that occurred.

@@ -1,11 +1,10 @@
 /**
  * Provides a way to notifies observers.
  *
- * This class provides a way to notifies observers when a new value is available.
+ * It provides a way to notifies observers when a new value is available.
  *
- * This class also work in non-browser environment.
- *
- * ----
+ * @remarks
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts

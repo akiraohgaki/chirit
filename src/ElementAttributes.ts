@@ -1,9 +1,7 @@
 /**
  * Manages the attributes of an element.
  *
- * This class simplifies attribute manipulation to the target element.
- *
- * ----
+ * It simplifies attribute manipulation to the target element.
  *
  * @example Element's attribute manipulation
  * ```ts
@@ -46,7 +44,7 @@ export class ElementAttributes {
   }
 
   /**
-   * Returns the proxy object for attribute manipulation.
+   * The proxy object for attribute manipulation.
    */
   get proxy(): Record<string, string> {
     return this.#proxy;

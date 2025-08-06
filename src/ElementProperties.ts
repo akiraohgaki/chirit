@@ -5,9 +5,7 @@ import { isEqual } from './util/isEqual.ts';
 /**
  * Manages the properties of an element.
  *
- * This class simplifies reflecting from properties to attributes and vice versa.
- *
- * ----
+ * It simplifies reflecting from properties to attributes and vice versa.
  *
  * @example Element's property manipulation
  * ```ts
@@ -50,7 +48,7 @@ import { isEqual } from './util/isEqual.ts';
  * // ['count', 'is-active']
  *
  * delete elementProperties.proxy.count;
- * // Deletion is not allowed
+ * // Deletion is not allowed.
  *
  * elementProperties.reflectFromAttribute('count');
  *
@@ -91,7 +89,7 @@ export class ElementProperties {
   }
 
   /**
-   * Returns the proxy object for property manipulation.
+   * The proxy object for property manipulation.
    */
   get proxy(): Record<string, unknown> {
     return this.#proxy;
@@ -99,6 +97,10 @@ export class ElementProperties {
 
   /**
    * The function to be called when a property changed.
+   *
+   * @param key - The key of the property that changed.
+   * @param oldValue - The previous value of the property.
+   * @param newValue - The new value of the property.
    */
   set onchange(handler: (key: string, oldValue: unknown, newValue: unknown) => unknown) {
     this.#onchange = handler;
@@ -106,6 +108,10 @@ export class ElementProperties {
 
   /**
    * The function to be called when a property changed.
+   *
+   * @param key - The key of the property that changed.
+   * @param oldValue - The previous value of the property.
+   * @param newValue - The new value of the property.
    */
   get onchange(): (key: string, oldValue: unknown, newValue: unknown) => unknown {
     return this.#onchange;
@@ -165,7 +171,7 @@ export class ElementProperties {
         this.#properties.set(key, attrValue);
       }
     } catch (exception) {
-      console.error(`Error reflecting from attribute "${key}":`, exception);
+      console.error(`An error occurred while reflecting from attribute "${key}".`, exception);
     }
 
     const newValue = this.#properties.get(key);
@@ -211,7 +217,7 @@ export class ElementProperties {
         target.setAttribute(key, String(value));
       }
     } catch (exception) {
-      console.error(`Error reflecting to attribute "${key}":`, exception);
+      console.error(`An error occurred while reflecting to attribute "${key}".`, exception);
     }
   }
 
