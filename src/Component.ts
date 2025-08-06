@@ -7,12 +7,12 @@ import { NodeStructure } from './NodeStructure.ts';
 import { dom } from './dom.ts';
 
 /**
- * A base class for creating reusable web components.
+ * A base class for creating web component.
  *
- * It provides many powerful features.
+ * It inherited the CustomElement class.
  *
  * @remarks
- * If you need a quick way to create a component, consider using the createComponent function.
+ * Consider using the createComponent function for a quick way to create a component.
  *
  * @example Create a component
  * ```ts
@@ -35,7 +35,7 @@ import { dom } from './dom.ts';
  *     ];
  *   }
  *
- *   // When a properties or an observed attributes changed, the template content is re-rendered.
+ *   // When a property or an observed attribute changes, the template content is re-rendered.
  *   override template(): string {
  *     return `
  *       <style>
@@ -43,7 +43,7 @@ import { dom } from './dom.ts';
  *       div { background-color: ${this.props.color}; }
  *       </style>
  *
- *       <!-- The execution context for an event handler is the component instance. -->
+ *       <!-- The execution context for an event handler is the instance of the component. -->
  *       <div onclick="this.clickHandler(event)"></div>
  *     `;
  *   }
@@ -62,27 +62,26 @@ import { dom } from './dom.ts';
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * @example State management in component
+ * @example State management in a component
  * ```ts
- * // The Store class is an observable store for complex state management.
+ * // The Store class is an observable store for managing complex state.
  * const colorPreviewStore = new Store({
  *   color: '#000000',
  *   size: '100px',
  * });
  *
- * // The State class is an observable state for atomic state management.
+ * // The State class is an observable state for managing atomic state.
  * const debugState = new State(true);
  *
- * // Create a custom class that extends the Component class.
  * class ColorPreviewComponent extends Component {
  *   override connectedCallback(): void {
- *     super.connectedCallback(); // must always be called first.
+ *     super.connectedCallback(); // it must always be called first.
  *     this.observe(colorPreviewStore, debugState); // observe the observables.
  *   }
  *
  *   override disconnectedCallback(): void {
  *     this.unobserve(colorPreviewStore, debugState); // unobserve the observables.
- *     super.disconnectedCallback(); // should always be called last.
+ *     super.disconnectedCallback(); // it should always be called last.
  *   }
  *
  *   override styles(): Array<string | CSSStyleSheet> {
@@ -95,7 +94,7 @@ import { dom } from './dom.ts';
  *     ];
  *   }
  *
- *   // When an observed state changed, the template content is re-rendered.
+ *   // When the observables changes, the template content is re-rendered.
  *   override template(): string {
  *     return `
  *       <style>
@@ -108,7 +107,6 @@ import { dom } from './dom.ts';
  *       }
  *       </style>
  *
- *       <!-- The execution context for an event handler is the component instance. -->
  *       <div onclick="this.clickHandler(event)">
  *       ${debugState.get() ? colorPreviewStore.state.color : ''}
  *       </div>
@@ -123,7 +121,6 @@ import { dom } from './dom.ts';
  *   }
  * }
  *
- * // Define the custom element.
  * ColorPreviewComponent.define('color-preview');
  *
  * // Use the custom element in HTML.
@@ -142,7 +139,6 @@ export class Component extends CustomElement {
   /**
    * An observed attributes.
    *
-   * @remarks
    * By default, it returns the keys of the properties configuration.
    */
   static override get observedAttributes(): Array<string> {
@@ -153,7 +149,7 @@ export class Component extends CustomElement {
    * A properties configuration.
    *
    * @remarks
-   * This method should be implemented by subclasses to return the content.
+   * Subclasses should implement this method to return the content.
    */
   static get properties(): ElementPropertiesConfig {
     return {};
@@ -211,8 +207,6 @@ export class Component extends CustomElement {
    *
    * @remarks
    * This is an alias for Component.elementProperties.proxy.
-   *
-   * The properties are defined in the static properties getter.
    */
   get props(): Record<string, unknown> {
     return this.#elementProperties.proxy;
@@ -229,13 +223,12 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Callback invoked when an observed attribute changed.
+   * Callback invoked when an observed attribute changes.
    *
-   * @remarks
    * By default, the element is updated.
    *
    * @param name - The name of the attribute that changed.
-   * @param oldValue - The previous value of the attribute.
+   * @param oldValue - The old value of the attribute.
    * @param newValue - The new value of the attribute.
    * @param _namespace - The namespace of the attribute.
    */
@@ -245,9 +238,9 @@ export class Component extends CustomElement {
     newValue: string | null,
     _namespace?: string | null,
   ): void {
-    // Should be executed after the initial update via connectedCallback.
+    // This should be executed after the initial update via connectedCallback.
     if (this.updateCounter && oldValue !== newValue) {
-      this.#elementProperties.reflectFromAttribute(name); // update method will be called by onchange callback.
+      this.#elementProperties.reflectFromAttribute(name); // The update method will be invoked by the onchange callback.
       this.update();
     }
   }
@@ -255,7 +248,6 @@ export class Component extends CustomElement {
   /**
    * Callback invoked when the element is connected to a parent node.
    *
-   * @remarks
    * By default, the element is updated.
    */
   override connectedCallback(): void {
@@ -275,11 +267,12 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Observes one or more objects for changes.
+   * Observes an observable objects.
    *
-   * If the object has a subscribe function, it will be called with the Component.update method of this component as a callback for change notifications.
+   * @remarks
+   * The observable object should have an interface similar to the Observable class.
    *
-   * @param args - The objects to observe for changes.
+   * @param args - An observable objects.
    */
   observe(...args: Array<unknown>): void {
     for (const arg of args as Array<Record<string, unknown>>) {
@@ -290,11 +283,12 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Stops observing one or more objects for changes.
+   * Stops observing an observable objects.
    *
-   * If the object has an unsubscribe function, it will be called with the Component.update method of this component to remove it from the list of observers.
+   * @remarks
+   * The observable object should have an interface similar to the Observable class.
    *
-   * @param args - The objects to stop observing.
+   * @param args - An observable objects.
    */
   unobserve(...args: Array<unknown>): void {
     for (const arg of args as Array<Record<string, unknown>>) {
@@ -325,7 +319,6 @@ export class Component extends CustomElement {
   /**
    * Creates the content container for the internal NodeStructure.
    *
-   * @remarks
    * By default, this method creates an open shadow DOM.
    */
   createContentContainer(): Element | DocumentFragment {
@@ -345,10 +338,12 @@ export class Component extends CustomElement {
   /**
    * Creates the styles.
    *
-   * @remarks
    * This method works only if the content container is a ShadowRoot.
    *
-   * This method should be implemented by subclasses to return the content.
+   * @remarks
+   * Subclasses should implement this method to return the content.
+   *
+   * @returns The stylesheets content.
    */
   styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
     return [];
@@ -358,7 +353,9 @@ export class Component extends CustomElement {
    * Creates the template content.
    *
    * @remarks
-   * This method should be implemented by subclasses to return the content.
+   * Subclasses should implement this method to return the content.
+   *
+   * @returns The template content.
    */
   template(): string | Node | NodeList {
     return '';

@@ -2,7 +2,7 @@ import { dom } from './dom.ts';
 import { debounce } from './util/debounce.ts';
 
 /**
- * A base class for building custom elements.
+ * A base class for creating custom element.
  *
  * It provides a mechanism for asynchronous updates and handling lifecycle callbacks.
  *
@@ -14,7 +14,7 @@ import { debounce } from './util/debounce.ts';
  *     return ['color', 'size'];
  *   }
  *
- *   // When a observed attributes changed, the element is re-rendered.
+ *   // When an observed attribute changes, the element is re-rendered.
  *   override render(): void {
  *     const color = this.getAttribute('color') ?? '#000000';
  *     const size = this.getAttribute('size') ?? '100px';
@@ -50,7 +50,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    * An observed attributes.
    *
    * @remarks
-   * This method should be implemented by subclasses to return the content.
+   * Subclasses should implement this method to return the content.
    */
   static get observedAttributes(): Array<string> {
     return [];
@@ -85,13 +85,12 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   }
 
   /**
-   * Callback invoked when an observed attribute changed.
+   * Callback invoked when an observed attribute changes.
    *
-   * @remarks
    * By default, the element is updated.
    *
    * @param _name - The name of the attribute that changed.
-   * @param oldValue - The previous value of the attribute.
+   * @param oldValue - The old value of the attribute.
    * @param newValue - The new value of the attribute.
    * @param _namespace - The namespace of the attribute.
    */
@@ -101,7 +100,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
     newValue: string | null,
     _namespace?: string | null,
   ): void {
-    // Should be executed after the initial update via connectedCallback.
+    // This should be executed after the initial update via connectedCallback.
     if (this.#updateCounter && oldValue !== newValue) {
       this.update();
     }
@@ -110,7 +109,6 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element is connected to a parent node.
    *
-   * @remarks
    * By default, the element is updated.
    */
   connectedCallback(): void {
@@ -127,8 +125,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element is disconnected from a parent node.
    *
-   * @remarks
-   * By default, to do nothing.
+   * By default, do nothing.
    */
   disconnectedCallback(): void {
   }
@@ -136,24 +133,23 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element is moved to a new document.
    *
-   * @remarks
-   * By default, to do nothing.
+   * By default, do nothing.
    *
-   * @param _oldDocument - The previous document.
+   * @param _oldDocument - The old document.
    * @param _newDocument - The new document.
    */
   adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
   }
 
   /**
-   * Updates the element asynchronously, scheduling an update for later execution.
+   * Asynchronously updates the element, scheduling an update for later execution.
    */
   update(): void {
     this.#debouncedUpdate();
   }
 
   /**
-   * Updates the element synchronously, calling additional lifecycle callbacks.
+   * Synchronously updates the element and calls additional lifecycle callbacks.
    */
   updateSync(): void {
     try {
@@ -166,10 +162,10 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   }
 
   /**
-   * Renders the element's content.
+   * Renders the content of the element.
    *
    * @remarks
-   * This method should be implemented by subclasses to render the content.
+   * Subclasses should implement this method to render the content.
    */
   render(): void {
   }
@@ -177,16 +173,14 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Callback invoked when the element has been updated.
    *
-   * @remarks
-   * By default, to do nothing.
+   * By default, do nothing.
    */
   updatedCallback(): void {
   }
 
   /**
-   * Callback invoked when an error occurs during the update process.
+   * Callback invoked when an error occurs during element updating.
    *
-   * @remarks
    * By default, output an error log.
    *
    * @param exception - The error that occurred.

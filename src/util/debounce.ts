@@ -1,7 +1,7 @@
 /**
- * Creates debounced function.
+ * Creates a debounced function.
  *
- * Delays invoking the provided function until the specified wait time has passed.
+ * Delay the execution of the provided function until the specified wait time elapses.
  *
  * @remarks
  * This also works in non-browser environments.
@@ -19,7 +19,7 @@
  * debouncedFunc(); // executed.
  * ```
  *
- * @param func - The function to debounce.
+ * @param func - The function to be debounced.
  * @param ms - The number of milliseconds to wait.
  *
  * @returns Debounced function.

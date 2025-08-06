@@ -1,7 +1,7 @@
 /**
- * Provides a way to notifies observers.
+ * Observable.
  *
- * It provides a way to notifies observers when a new value is available.
+ * It notifies observers when a new value is available.
  *
  * @remarks
  * This also works in non-browser environments.
@@ -53,7 +53,7 @@ export class Observable<T = unknown> {
   }
 
   /**
-   * Notifies all subscribed observers of the value.
+   * Notifies all subscribed observers.
    *
    * @param value - The value to notify.
    */

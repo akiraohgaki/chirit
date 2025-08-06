@@ -3,24 +3,24 @@ import type { CreateComponentOptions, ElementPropertiesConfig } from './types.ts
 import { Component } from './Component.ts';
 
 /**
- * Creates reusable web components.
+ * Creates web component.
  *
- * It creates a component based on the Component class.
+ * It is based on the Component class.
  *
  * @remarks
- * If you need to create a complex component, consider using the Component class.
+ * Consider using the Component class to create complex components.
  *
  * @example Create a component
  * ```ts
- * // The interface of the component to be created.
+ * // This is the interface of the component.
  * interface ColorPreviewComponentInterface extends Component {
  *   clickHandler: (event: Event) => void;
  * }
  *
- * // The State class is an observable state for atomic state management.
+ * // The State class is an observable state for managing atomic state.
  * const debugState = new State(true);
  *
- * // Create the component as color-preview element.
+ * // Create the component as a color-preview element.
  * createComponent<ColorPreviewComponentInterface>(
  *   'color-preview',
  *   {

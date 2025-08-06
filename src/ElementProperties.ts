@@ -7,7 +7,7 @@ import { isEqual } from './util/isEqual.ts';
  *
  * It simplifies reflecting from properties to attributes and vice versa.
  *
- * @example Element's property manipulation
+ * @example Property manipulation
  * ```ts
  * const element = document.createElement('counter-button');
  *
@@ -96,10 +96,10 @@ export class ElementProperties {
   }
 
   /**
-   * The function to be called when a property changed.
+   * The function invoked when a property changes.
    *
    * @param key - The key of the property that changed.
-   * @param oldValue - The previous value of the property.
+   * @param oldValue - The old value of the property.
    * @param newValue - The new value of the property.
    */
   set onchange(handler: (key: string, oldValue: unknown, newValue: unknown) => unknown) {
@@ -107,10 +107,10 @@ export class ElementProperties {
   }
 
   /**
-   * The function to be called when a property changed.
+   * The function invoked when a property changes.
    *
    * @param key - The key of the property that changed.
-   * @param oldValue - The previous value of the property.
+   * @param oldValue - The old value of the property.
    * @param newValue - The new value of the property.
    */
   get onchange(): (key: string, oldValue: unknown, newValue: unknown) => unknown {

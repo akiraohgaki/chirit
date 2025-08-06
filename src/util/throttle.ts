@@ -1,7 +1,7 @@
 /**
- * Creates throttled function.
+ * Creates a throttled function.
  *
- * Only invokes the provided function at most once per every wait time.
+ * The provided function is executed at most once every wait time.
  *
  * @remarks
  * This also works in non-browser environments.
@@ -19,7 +19,7 @@
  * throttledFunc(); // canceled.
  * ```
  *
- * @param func - The function to throttle.
+ * @param func - The function to be throttled.
  * @param ms - The number of milliseconds to wait.
  *
  * @returns Throttled function.

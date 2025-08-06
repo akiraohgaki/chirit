@@ -3,7 +3,7 @@
  *
  * It simplifies attribute manipulation to the target element.
  *
- * @example Element's attribute manipulation
+ * @example Attribute manipulation
  * ```ts
  * const element = document.createElement('color-preview');
  *

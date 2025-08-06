@@ -6,7 +6,7 @@ const hostCollection = new WeakSet();
  * Manages the structure of DOM nodes.
  *
  * It simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
- * DOM updates are optimized through a diffing process.
+ * And DOM updates are optimized through a diffing process.
  *
  * @example Update the content of the host node
  * ```ts
@@ -85,7 +85,6 @@ export class NodeStructure<T extends Node> {
   /**
    * Adopts styles to the host node.
    *
-   * @remarks
    * This method works only if the host node is a Document or ShadowRoot.
    *
    * @param styles - The styles to adopt to the host node.

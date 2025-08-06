@@ -96,7 +96,7 @@ export class Router {
   }
 
   /**
-   * The function to be called when the route changed.
+   * The function invoked when the route changes.
    *
    * @param event - The event that fire when URL state has changed.
    */
@@ -105,7 +105,7 @@ export class Router {
   }
 
   /**
-   * The function to be called when the route changed.
+   * The function invoked when the route changes.
    *
    * @param event - The event that fire when URL state has changed.
    */
@@ -114,7 +114,7 @@ export class Router {
   }
 
   /**
-   * The function to be called when an error occurs.
+   * The function invoked when an error occurs.
    *
    * @param exception - The error that occurred.
    */
@@ -123,7 +123,7 @@ export class Router {
   }
 
   /**
-   * The function to be called when an error occurs.
+   * The function invoked when an error occurs.
    *
    * @param exception - The error that occurred.
    */
@@ -135,7 +135,7 @@ export class Router {
    * Registers a route pattern and its handler function.
    *
    * @param pattern - The route pattern with named parameters.
-   * @param handler - The function to be called when the route is matched.
+   * @param handler - The function invoked when a route matches.
    */
   set(pattern: string, handler: (params: Record<string, string>) => unknown): void {
     if (!this.#routeCollection.size) {

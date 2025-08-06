@@ -1,10 +1,9 @@
 import { dom } from './dom.ts';
 
 /**
- * Creates a CSSStyleSheet from a template literals.
+ * Creates a CSSStyleSheet from template literals.
  *
- * @remarks
- * This function is a tagged template function.
+ * This is a tagged template function.
  *
  * @example Basic usage
  * ```ts

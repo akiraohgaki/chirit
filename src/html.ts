@@ -1,10 +1,9 @@
 import { dom } from './dom.ts';
 
 /**
- * Creates a DocumentFragment from a template literals.
+ * Creates a DocumentFragment from template literals.
  *
- * @remarks
- * This function is a tagged template function.
+ * This is a tagged template function.
  *
  * @example Basic usage
  * ```ts
@@ -23,7 +22,7 @@ export function html(strings: TemplateStringsArray, ...values: Array<unknown>): 
     return acc + str + (i < values.length ? values[i] : '');
   }, '');
 
-  // !DOCTYPE, HTML, HEAD, BODY will stripped inside HTMLTemplateElement.
+  // !DOCTYPE, HTML, HEAD, BODY will be stripped inside HTMLTemplateElement.
   const template = dom.globalThis.document.createElement('template');
   template.innerHTML = content;
 

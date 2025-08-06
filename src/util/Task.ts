@@ -3,7 +3,7 @@ import type { TaskOptions } from './types.ts';
 /**
  * Manage and execute tasks.
  *
- * It provides a way to manage tasks that supports parallel execution and looping tasks.
+ * It supports parallel execution and looping tasks.
  *
  * @remarks
  * This also works in non-browser environments.
