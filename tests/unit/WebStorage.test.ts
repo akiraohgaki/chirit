@@ -10,9 +10,9 @@ Deno.test('WebStorage', async (t) => {
 
   await t.step('constructor()', async (t) => {
     await t.step('invalid storage mode', () => {
-      // @ts-ignore invalid parameter
+      // @ts-ignore because invalid parameter.
       assertThrows(() => new WebStorage(), Error);
-      // @ts-ignore invalid parameter
+      // @ts-ignore because invalid parameter.
       assertThrows(() => new WebStorage('invalid'), Error);
     });
 

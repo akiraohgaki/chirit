@@ -85,15 +85,15 @@ Deno.test('State management', async (t) => {
     });
 
     await t.step('when state changed', () => {
-      store.update(updatedState); // changed
-      store.update(updatedState); // no changed
+      store.update(updatedState); // changed.
+      store.update(updatedState); // no changed.
 
       assertEquals(values.splice(0), [updatedState]);
     });
 
     await t.step('when state reset', () => {
-      store.reset(); // changed
-      store.reset(); // no changed
+      store.reset(); // changed.
+      store.reset(); // no changed.
 
       assertEquals(values.splice(0), [initialState]);
     });
