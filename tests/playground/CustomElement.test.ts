@@ -43,17 +43,17 @@ class TestElement extends CustomElement {
     super.adoptedCallback(oldDocument, newDocument);
   }
 
-  override update() {
+  override update(): void {
     values.push('update()');
     return super.update();
   }
 
-  override updateSync() {
+  override updateSync(): void {
     values.push('updateSync()');
     super.updateSync();
   }
 
-  override render() {
+  override render(): void {
     values.push('render()');
     if (isRenderError) {
       throw new Error('error');
@@ -63,7 +63,7 @@ class TestElement extends CustomElement {
       `<span>attr2:${this.getAttribute('attr2') ?? ''}</span>`;
   }
 
-  override updatedCallback() {
+  override updatedCallback(): void {
     values.push('updatedCallback()');
     if (isUpdatedCallbackError) {
       throw new Error('error');
@@ -71,7 +71,7 @@ class TestElement extends CustomElement {
     super.updatedCallback();
   }
 
-  override errorCallback(exception: unknown) {
+  override errorCallback(exception: unknown): void {
     values.push('errorCallback()');
     super.errorCallback(exception);
   }

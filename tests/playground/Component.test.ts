@@ -1,3 +1,5 @@
+import type { ElementPropertiesConfig } from '../../mod.ts';
+
 import { Playground } from '@akiraohgaki/devsrv/playground';
 import { assert, assertEquals, assertInstanceOf, assertStrictEquals } from '@std/assert';
 
@@ -17,33 +19,33 @@ const state = new State(0);
 const store = new Store({ a: 0 });
 
 class TestComponent1 extends Component {
-  static override get properties() {
+  static override get properties(): ElementPropertiesConfig {
     return {
       prop1: { value: 0, reflect: true },
     };
   }
-  override styles() {
+  override styles(): string {
     return 'span { color: red; }';
   }
-  override template() {
+  override template(): string {
     return '<span>TestComponent</span>';
   }
 }
 
 class TestComponent2 extends Component {
-  override createContentContainer() {
+  override createContentContainer(): Element {
     return document.createElement('div');
   }
 }
 
 class TestComponent3 extends Component {
-  override updatedCallback() {
+  override updatedCallback(): void {
     this.dispatch('custom-event', { isCustomEvent: true });
   }
 }
 
 class TestComponent4 extends Component {
-  override template() {
+  override template(): string {
     return `<span>state:${state.get()}</span><span>store.state:${store.state.a}</span>`;
   }
 }
@@ -174,7 +176,7 @@ await Playground.test('Event handling', async (t) => {
   parentElement.appendChild(testComponent3);
 
   await t.step(
-    'custom event from dispatch() should propagate across the shadow DOM boundary into the standard DOM',
+    'custom event from dispatch() should propagate across the Shadow DOM boundary into the standard DOM',
     async () => {
       let isCustomEvent = false;
       parentElement.addEventListener('custom-event', (event) => {

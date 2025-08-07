@@ -18,7 +18,7 @@ await Playground.test('createComponent()', async (t) => {
     assertInstanceOf(TestComponent1, Function);
   });
 
-  await t.step('specific base component', () => {
+  await t.step('specific base class', () => {
     createComponent('test-component-2', { base: BaseComponent });
 
     const testComponent2 = document.createElement('test-component-2') as BaseComponent;
@@ -26,7 +26,7 @@ await Playground.test('createComponent()', async (t) => {
     assert((testComponent2.content as ShadowRoot).delegatesFocus);
   });
 
-  await t.step('component lifecycle callbacks', async () => {
+  await t.step('lifecycle callbacks', async () => {
     const values: Array<string> = [];
 
     createComponent('test-component-3', {
