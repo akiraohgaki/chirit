@@ -98,7 +98,7 @@ export class Store<T extends Record<string, unknown>> extends Observable<T> {
   }
 
   /**
-   * Updates the state with a partial object.
+   * Updates the state with a partial state object.
    *
    * @param state - The partial state object to merge into the current state.
    */

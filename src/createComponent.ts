@@ -58,7 +58,7 @@ import { Component } from './Component.ts';
  *         div { background-color: ${context.props.color}; }
  *         </style>
  *
- *         <!-- The execution context for an event handler is the component instance. -->
+ *         <!-- The execution context for an event handler is this custom element. -->
  *         <div onclick="this.clickHandler(event)">
  *         ${debugState.get() ? context.props.color : ''}
  *         </div>
@@ -73,7 +73,7 @@ import { Component } from './Component.ts';
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * @template T - The type of the component class.
+ * @template T - The type of the base component class.
  *
  * @param name - The name of the custom element.
  * @param options - The options for the component.

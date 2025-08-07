@@ -5,7 +5,7 @@ import type { Component } from './Component.ts';
  */
 export interface CreateComponentOptions<T> {
   /**
-   * The base component to be extended.
+   * The base component class.
    */
   base: typeof Component;
   /**
@@ -35,7 +35,7 @@ export interface CreateComponentOptions<T> {
    *
    * @param context - The instance of the element.
    *
-   * @returns The stylesheets content.
+   * @returns The stylesheets of the element.
    */
   styles: (context: T) => string | CSSStyleSheet | Array<string | CSSStyleSheet>;
   /**
@@ -43,7 +43,7 @@ export interface CreateComponentOptions<T> {
    *
    * @param context - The instance of the element.
    *
-   * @returns The template content.
+   * @returns The template content of the element.
    */
   template: (context: T) => string | Node | NodeList;
 }

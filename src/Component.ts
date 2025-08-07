@@ -34,7 +34,7 @@ import { dom } from './dom.ts';
  *     ];
  *   }
  *
- *   // When a property or an observed attribute changes, the template content is re-rendered.
+ *   // When a property or an observed attribute changed, the element is re-rendered using the template.
  *   override template(): string {
  *     return `
  *       <style>
@@ -42,7 +42,7 @@ import { dom } from './dom.ts';
  *       div { background-color: ${this.props.color}; }
  *       </style>
  *
- *       <!-- The execution context for an event handler is the instance of the component. -->
+ *       <!-- The execution context for an event handler is this custom element. -->
  *       <div onclick="this.clickHandler(event)"></div>
  *     `;
  *   }
@@ -61,7 +61,7 @@ import { dom } from './dom.ts';
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * @example State management in a component
+ * @example Component and state management
  * ```ts
  * // The Store class is an observable store for managing complex state.
  * const colorPreviewStore = new Store({
@@ -74,13 +74,15 @@ import { dom } from './dom.ts';
  *
  * class ColorPreviewComponent extends Component {
  *   override connectedCallback(): void {
- *     super.connectedCallback(); // it must always be called first.
+ *     super.connectedCallback(); // must always be called first.
+ *
  *     this.observe(colorPreviewStore, debugState); // observe the observables.
  *   }
  *
  *   override disconnectedCallback(): void {
  *     this.unobserve(colorPreviewStore, debugState); // unobserve the observables.
- *     super.disconnectedCallback(); // it should always be called last.
+ *
+ *     super.disconnectedCallback(); // should always be called last.
  *   }
  *
  *   override styles(): Array<string | CSSStyleSheet> {
@@ -93,7 +95,7 @@ import { dom } from './dom.ts';
  *     ];
  *   }
  *
- *   // When the observables changes, the template content is re-rendered.
+ *   // When the observables changed, the template content is re-rendered using the template.
  *   override template(): string {
  *     return `
  *       <style>
@@ -147,7 +149,7 @@ export class Component extends CustomElement {
   /**
    * A properties configuration.
    *
-   * By default, returns empty object.
+   * By default, returns an empty object.
    */
   static get properties(): ElementPropertiesConfig {
     return {};
@@ -209,7 +211,7 @@ export class Component extends CustomElement {
   }
 
   /**
-   * The content container of the component.
+   * The content container of the element.
    *
    * This is an alias for Component.nodeStructure.host.
    */
@@ -218,7 +220,7 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Callback invoked when an observed attribute changes.
+   * Callback invoked when an observed attribute changed.
    *
    * By default, updates the element.
    *
@@ -251,6 +253,7 @@ export class Component extends CustomElement {
       // The element might have changed its parent node.
       this.update();
     } else {
+      // Additional setup for properties.
       this.#elementProperties.sync();
       this.#elementProperties.onchange = () => {
         this.update();
@@ -264,7 +267,7 @@ export class Component extends CustomElement {
   /**
    * Observes an observable objects.
    *
-   * The observable object should have an interface similar to the Observable class.
+   * An observable object must inherited from the Observable class or have a similar interface.
    *
    * @param args - An observable objects.
    */
@@ -279,7 +282,7 @@ export class Component extends CustomElement {
   /**
    * Stops observing an observable objects.
    *
-   * The observable object should have an interface similar to the Observable class.
+   * An observable object must inherited from the Observable class or have a similar interface.
    *
    * @param args - An observable objects.
    */
@@ -292,9 +295,9 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Dispatches a custom event on the content container of the component.
+   * Dispatches a custom event on the content container of the element.
    *
-   * The event bubbles out of the shadow DOM.
+   * This custom event bubbles out of Shadow DOM.
    *
    * @param type - The type of the event to dispatch.
    * @param detail - Details to include in the event object.
@@ -310,9 +313,9 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Creates the content container for the internal NodeStructure.
+   * Creates the content container managed by an internal NodeStructure.
    *
-   * By default, creates an open shadow DOM.
+   * By default, creates an open Shadow DOM.
    */
   createContentContainer(): Element | DocumentFragment {
     return this.attachShadow({ mode: 'open' });
@@ -331,11 +334,11 @@ export class Component extends CustomElement {
   /**
    * Creates the styles.
    *
-   * By default, returns empty array.
+   * By default, returns an empty array.
    *
-   * This method works only if the content container is a ShadowRoot.
+   * This method works only if the content container is ShadowRoot.
    *
-   * @returns The stylesheets.
+   * @returns The stylesheets of the element.
    */
   styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
     return [];
@@ -344,9 +347,9 @@ export class Component extends CustomElement {
   /**
    * Creates the template content.
    *
-   * By default, returns empty string.
+   * By default, returns an empty string.
    *
-   * @returns The template content.
+   * @returns The template content of the element.
    */
   template(): string | Node | NodeList {
     return '';

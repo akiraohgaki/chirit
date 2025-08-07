@@ -1,5 +1,5 @@
 /**
- * Pauses execution for a given duration.
+ * Pauses execution for a specified amount of time.
  *
  * This also works in non-browser environments.
  *

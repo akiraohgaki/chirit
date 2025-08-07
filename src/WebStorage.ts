@@ -61,14 +61,14 @@ export class WebStorage {
   }
 
   /**
-   * The current storage mode.
+   * The storage mode.
    */
   get mode(): 'local' | 'session' {
     return this.#mode;
   }
 
   /**
-   * The current prefix.
+   * The prefix.
    */
   get prefix(): string {
     return this.#prefix;

@@ -246,13 +246,13 @@ export class NodeStructure<T extends Node> {
     } else if (original && diff) {
       if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
         if (original instanceof dom.globalThis.Element && diff instanceof dom.globalThis.Element) {
-          // Element it's HTMLElement, SVGElement.
+          // Element: HTMLElement, SVGElement.
           this.#patchAttributes(original, diff);
           if (!hostCollection.has(original)) {
             this.#patchNodesInsideOf(original, diff);
           }
         } else if (original instanceof dom.globalThis.CharacterData && diff instanceof dom.globalThis.CharacterData) {
-          // CharacterData it's Text, Comment, ProcessingInstruction.
+          // CharacterData: Text, Comment, ProcessingInstruction.
           if (original.nodeValue !== diff.nodeValue) {
             original.nodeValue = diff.nodeValue;
           }

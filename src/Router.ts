@@ -1,9 +1,8 @@
 import { dom } from './dom.ts';
 
 /**
- * A client-side router for front-end application.
+ * A client-side router that manages routes and handle navigation events within an application.
  *
- * It manages routes and handle navigation events within an application.
  * It supports both hash-based routing and history-based routing modes.
  *
  * @example Basic usage
@@ -75,14 +74,14 @@ export class Router {
   }
 
   /**
-   * The current routing mode.
+   * The routing mode.
    */
   get mode(): 'hash' | 'history' {
     return this.#mode;
   }
 
   /**
-   * The current base path.
+   * The base path.
    */
   get base(): string {
     return this.#base;
@@ -96,7 +95,7 @@ export class Router {
   }
 
   /**
-   * The function invoked when the route changes.
+   * The function invoked when the route changed.
    *
    * @param event - The event that fire when URL state has changed.
    */
@@ -105,7 +104,7 @@ export class Router {
   }
 
   /**
-   * The function invoked when the route changes.
+   * The function invoked when the route changed.
    *
    * @param event - The event that fire when URL state has changed.
    */
@@ -114,7 +113,7 @@ export class Router {
   }
 
   /**
-   * The function invoked when an error occurs.
+   * The function invoked when an error occurred.
    *
    * @param exception - The error that occurred.
    */
@@ -123,7 +122,7 @@ export class Router {
   }
 
   /**
-   * The function invoked when an error occurs.
+   * The function invoked when an error occurred.
    *
    * @param exception - The error that occurred.
    */
@@ -135,7 +134,7 @@ export class Router {
    * Registers a route pattern and its handler function.
    *
    * @param pattern - The route pattern with named parameters.
-   * @param handler - The function invoked when a route matches.
+   * @param handler - The function invoked when a route matched.
    */
   set(pattern: string, handler: (params: Record<string, string>) => unknown): void {
     if (!this.#routeCollection.size) {

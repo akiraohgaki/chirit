@@ -14,7 +14,7 @@ import { debounce } from './util/debounce.ts';
  *     return ['color', 'size'];
  *   }
  *
- *   // When an observed attribute changes, the element is re-rendered.
+ *   // When an observed attribute changed, the element is re-rendered.
  *   override render(): void {
  *     const color = this.getAttribute('color') ?? '#000000';
  *     const size = this.getAttribute('size') ?? '100px';
@@ -49,7 +49,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * An observed attributes.
    *
-   * By default, returns empty array.
+   * By default, returns an empty array.
    */
   static get observedAttributes(): Array<string> {
     return [];
@@ -84,7 +84,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   }
 
   /**
-   * Callback invoked when an observed attribute changes.
+   * Callback invoked when an observed attribute changed.
    *
    * By default, updates the element.
    *
@@ -126,8 +126,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    *
    * By default, do nothing.
    */
-  disconnectedCallback(): void {
-  }
+  disconnectedCallback(): void {}
 
   /**
    * Callback invoked when the element is moved to a new document.
@@ -137,18 +136,21 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    * @param _oldDocument - The old document.
    * @param _newDocument - The new document.
    */
-  adoptedCallback(_oldDocument: Document, _newDocument: Document): void {
-  }
+  adoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
   /**
-   * Asynchronously updates the element, scheduling an update for later execution.
+   * Asynchronously updates the element.
+   *
+   * It scheduling an update for later execution.
    */
   update(): void {
     this.#debouncedUpdate();
   }
 
   /**
-   * Synchronously updates the element and calls additional lifecycle callbacks.
+   * Synchronously updates the element.
+   *
+   * It calls additional lifecycle callbacks.
    */
   updateSync(): void {
     try {
@@ -163,18 +165,17 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Renders the content of the element.
    *
+   * By default, do nothing.
    * Subclasses should implement this method.
    */
-  render(): void {
-  }
+  render(): void {}
 
   /**
    * Callback invoked when the element has been updated.
    *
    * By default, do nothing.
    */
-  updatedCallback(): void {
-  }
+  updatedCallback(): void {}
 
   /**
    * Callback invoked when an error occurs during element updating.

@@ -1,7 +1,5 @@
 /**
- * Observable.
- *
- * It notifies observers when a new value is available.
+ * Notifies observers when a new value is available.
  *
  * This also works in non-browser environments.
  *

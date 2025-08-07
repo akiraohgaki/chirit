@@ -96,7 +96,7 @@ export class ElementProperties {
   }
 
   /**
-   * The function invoked when a property changes.
+   * The function invoked when a property changed.
    *
    * @param key - The key of the property that changed.
    * @param oldValue - The old value of the property.
@@ -107,7 +107,7 @@ export class ElementProperties {
   }
 
   /**
-   * The function invoked when a property changes.
+   * The function invoked when a property changed.
    *
    * @param key - The key of the property that changed.
    * @param oldValue - The old value of the property.
