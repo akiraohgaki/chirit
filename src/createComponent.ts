@@ -7,11 +7,11 @@ import { Component } from './Component.ts';
  *
  * It is based on the Component class.
  *
- * Consider using the Component class to create complex components.
+ * Consider using the Component class to create complex web components.
  *
- * @example Create a component
+ * @example Create a custom element
  * ```ts
- * // This is the interface of the component.
+ * // This is the interface of the custom element.
  * interface ColorPreviewComponentInterface extends Component {
  *   clickHandler: (event: Event) => void;
  * }
@@ -19,7 +19,7 @@ import { Component } from './Component.ts';
  * // The State class is an observable state for managing atomic state.
  * const debugState = new State(true);
  *
- * // Create the component as a color-preview element.
+ * // Create the custom element as a color-preview element.
  * createComponent<ColorPreviewComponentInterface>(
  *   'color-preview',
  *   {
@@ -73,7 +73,7 @@ import { Component } from './Component.ts';
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * @template T - The type of the base component class.
+ * @template T - The type of the base class.
  *
  * @param name - The name of the custom element.
  * @param options - The options for the component.

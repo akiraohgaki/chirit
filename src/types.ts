@@ -5,7 +5,7 @@ import type { Component } from './Component.ts';
  */
 export interface CreateComponentOptions<T> {
   /**
-   * The base component class.
+   * The base class.
    */
   base: typeof Component;
   /**

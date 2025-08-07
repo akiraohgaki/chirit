@@ -11,9 +11,9 @@ import { dom } from './dom.ts';
  *
  * It inherited the CustomElement class.
  *
- * Consider using the createComponent function for a quick way to create a component.
+ * Consider using the createComponent function for a quick way to create web components.
  *
- * @example Create a component
+ * @example Create a custom element
  * ```ts
  * // Create a custom class that extends the Component class.
  * class ColorPreviewComponent extends Component {
