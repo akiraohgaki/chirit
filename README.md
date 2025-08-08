@@ -51,19 +51,22 @@ import * as chirit from '@akiraohgaki/chirit';
 
 ### Examples
 
-#### Web components
-
-Create a simple component using the createComponent function:
-
-TypeScript/JavaScript
+Create a counter component using the createComponent function.
 
 ```ts
 import { createComponent, css, html } from '@akiraohgaki/chirit';
-// `css` and `html` tagged template functions are optional.
 
-createComponent('message-component', {
+createComponent('counter-component', {
   properties: {
-    message: { value: '' },
+    count: { value: 0 },
+  },
+  init: (context) => {
+    context.increment = () => {
+      context.props.count = context.props.count + 1;
+    };
+    context.decrement = () => {
+      context.props.count = context.props.count - 1;
+    };
   },
   styles: () => {
     return css`
@@ -71,44 +74,51 @@ createComponent('message-component', {
         display: inline-block;
       }
       span {
-        font-size: 140%;
+        color: red;
       }
     `;
   },
   template: (context) => {
     return html`
-      <span>${context.props.message}</span>
+      <span>${context.props.count}</span>
+      <button onclick="this.increment()">+</button>
+      <button onclick="this.decrement()">-</button>
     `;
   },
 });
 ```
 
-HTML
-
 ```html
-<message-component message="Hello"></message-component>
+<counter-component count="0"></counter-component>
 ```
 
-#### State management
-
-Create a counter component using the State class:
-
-TypeScript/JavaScript
+Also, make the counter state to be shared with other components using the State class.
 
 ```ts
-import { createComponent, html, State } from '@akiraohgaki/chirit';
+import { createComponent, css, html, State } from '@akiraohgaki/chirit';
 
-const counterState = new State(0);
+export const counterState = new State(0);
 
 createComponent('counter-component', {
   init: (context) => {
     context.observe(counterState);
+
     context.increment = () => {
       counterState.set(counterState.get() + 1);
     };
     context.decrement = () => {
       counterState.set(counterState.get() - 1);
     };
+  },
+  styles: () => {
+    return css`
+      :host {
+        display: inline-block;
+      }
+      span {
+        color: red;
+      }
+    `;
   },
   template: () => {
     return html`
@@ -119,8 +129,6 @@ createComponent('counter-component', {
   },
 });
 ```
-
-HTML
 
 ```html
 <counter-component></counter-component>
@@ -133,10 +141,10 @@ HTML
 [Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component) class:
 
 - Lifecycle callbacks: updatedCallback, errorCallback, etc.
-- Reactive to attribute and state changes: Automatically re-renders when attributes or observed states change.
+- Reactive to changes: Automatically re-renders when properties, attributes or states changed.
 - Template and style management: Define the structure and style of your component.
 - Event binding: Bind event handlers to elements within the component.
-- DOM diffing: Efficiently updates the DOM node tree when content changes.
+- DOM diffing: Efficiently updates the DOM node tree when content changed.
 - Custom event dispatching: Publish events to communicate with other components.
 
 [createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent) function:
