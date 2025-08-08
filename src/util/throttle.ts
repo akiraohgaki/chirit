@@ -1,11 +1,9 @@
 /**
- * Creates throttled function.
+ * Creates a throttled function.
  *
- * Only invokes the provided function at most once per every wait time.
+ * The provided function is executed at most once every wait time.
  *
- * This function also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
@@ -13,15 +11,17 @@
  *   //...
  * }, 50);
  *
- * throttledFunc(); // Executed
- * throttledFunc(); // Canceled
+ * throttledFunc(); // executed.
+ * throttledFunc(); // canceled.
  * await sleep(100);
- * throttledFunc(); // Executed
- * throttledFunc(); // Canceled
+ * throttledFunc(); // executed.
+ * throttledFunc(); // canceled.
  * ```
  *
- * @param func - The function to throttle.
+ * @param func - The function to be throttled.
  * @param ms - The number of milliseconds to wait.
+ *
+ * @returns Throttled function.
  */
 export function throttle<T extends Array<unknown>>(
   func: (...args: T) => unknown,

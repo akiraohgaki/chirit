@@ -1,11 +1,9 @@
 /**
  * Compares two values for equality.
  *
- * This function handling nested objects and arrays.
+ * It also compares nested objects and arrays recursively.
  *
- * This function also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
@@ -27,9 +25,11 @@ export function isEqual(valueA: unknown, valueB: unknown): boolean {
 /**
  * Compares two values for equality.
  *
+ * It also compares nested objects and arrays recursively.
+ *
  * @param valueA - The first value to compare.
  * @param valueB - The second value to compare.
- * @param track - A WeakSet to track circular references.
+ * @param track - A WeakSet used to track circular references.
  */
 function isDeepEqual(valueA: unknown, valueB: unknown, track: WeakSet<object>): boolean {
   if (typeof valueA !== typeof valueB) {

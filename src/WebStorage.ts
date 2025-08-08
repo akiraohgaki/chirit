@@ -3,12 +3,10 @@ import { dom } from './dom.ts';
 /**
  * A wrapper class for web storage.
  *
- * This class provides a consistent interface for interacting with web storage (localStorage or sessionStorage).
- * Any value to JSON serializable can be stored in the storage.
+ * It provides a consistent interface for interacting with web storage (localStorage or sessionStorage).
+ * And any JSON serializable value can be stored in the storage.
  *
- * This class also work in Deno.
- *
- * ----
+ * This also works in Deno.
  *
  * @example Basic usage
  * ```ts
@@ -17,7 +15,7 @@ import { dom } from './dom.ts';
  * storage.set('app_first_run', false);
  * const isAppFirstRun = storage.get('app_first_run');
  *
- * // Define prefix for keys.
+ * // Define prefix for all keys.
  * const user = new WebStorage('local', 'user_');
  * // these actual key name is user_settings.
  * user.set('settings', { colorTheme: 'dark' });
@@ -39,7 +37,7 @@ export class WebStorage {
    * Creates a new instance of the WebStorage class.
    *
    * @param mode - The storage mode to use (local or session).
-   * @param prefix - The prefix to add to keys.
+   * @param prefix - The prefix to add to all keys.
    *
    * @throws {Error} - If the provided mode is not local or session.
    */
@@ -63,21 +61,21 @@ export class WebStorage {
   }
 
   /**
-   * Returns the current storage mode.
+   * The storage mode.
    */
   get mode(): 'local' | 'session' {
     return this.#mode;
   }
 
   /**
-   * Returns the current prefix.
+   * The prefix.
    */
   get prefix(): string {
     return this.#prefix;
   }
 
   /**
-   * Returns the number of items stored in the storage.
+   * The number of items stored in the storage.
    */
   get size(): number {
     return this.#storage.length;

@@ -1,12 +1,9 @@
 import { dom } from './dom.ts';
 
 /**
- * A client-side router for front-end application.
+ * A client-side router that manages routes and handle navigation events within an application.
  *
- * This class manages routes and handle navigation events within an application.
  * It supports both hash-based routing and history-based routing modes.
- *
- * ----
  *
  * @example Basic usage
  * ```ts
@@ -77,49 +74,57 @@ export class Router {
   }
 
   /**
-   * Returns the current routing mode.
+   * The routing mode.
    */
   get mode(): 'hash' | 'history' {
     return this.#mode;
   }
 
   /**
-   * Returns the current base path.
+   * The base path.
    */
   get base(): string {
     return this.#base;
   }
 
   /**
-   * Returns the number of route patterns in the collection.
+   * The number of route patterns in the collection.
    */
   get size(): number {
     return this.#routeCollection.size;
   }
 
   /**
-   * The function to be called when the route changed.
+   * The function invoked when the route changed.
+   *
+   * @param event - The event that fire when URL state has changed.
    */
   set onchange(handler: (event: Event) => unknown) {
     this.#onchange = handler;
   }
 
   /**
-   * The function to be called when the route changed.
+   * The function invoked when the route changed.
+   *
+   * @param event - The event that fire when URL state has changed.
    */
   get onchange(): (event: Event) => unknown {
     return this.#onchange;
   }
 
   /**
-   * The function to be called when an error occurs.
+   * The function invoked when an error occurred.
+   *
+   * @param exception - The error that occurred.
    */
   set onerror(handler: (exception: unknown) => unknown) {
     this.#onerror = handler;
   }
 
   /**
-   * The function to be called when an error occurs.
+   * The function invoked when an error occurred.
+   *
+   * @param exception - The error that occurred.
    */
   get onerror(): (exception: unknown) => unknown {
     return this.#onerror;
@@ -129,7 +134,7 @@ export class Router {
    * Registers a route pattern and its handler function.
    *
    * @param pattern - The route pattern with named parameters.
-   * @param handler - The function to be called when the route is matched.
+   * @param handler - The function invoked when a route matched.
    */
   set(pattern: string, handler: (params: Record<string, string>) => unknown): void {
     if (!this.#routeCollection.size) {

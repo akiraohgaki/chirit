@@ -39,8 +39,14 @@ test.describe('Testing on playground page', () => {
     await expectStatus(page);
   });
 
-  test('ElementAttributesProxy', async ({ page, baseURL }) => {
-    await runCode(page, `import '${baseURL}/ElementAttributesProxy.test.bundle.js';`);
+  test('ElementAttributes', async ({ page, baseURL }) => {
+    await runCode(page, `import '${baseURL}/ElementAttributes.test.bundle.js';`);
+
+    await expectStatus(page, 60000);
+  });
+
+  test('ElementProperties', async ({ page, baseURL }) => {
+    await runCode(page, `import '${baseURL}/ElementProperties.test.bundle.js';`);
 
     await expectStatus(page, 60000);
   });

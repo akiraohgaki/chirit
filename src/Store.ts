@@ -3,15 +3,14 @@ import { dom } from './dom.ts';
 import { isEqual } from './util/isEqual.ts';
 
 /**
- * An observable store for complex state management.
+ * An observable store for managing complex state.
  *
- * This class provides a way to manages the state and notifies observers when the state is changed.
+ * It inherited the Observable class.
+ * And notifies observers when the state is changed.
  *
- * If you need atomic state management, consider using the State class.
+ * Consider using the State class to manage atomic state.
  *
- * This class also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
@@ -79,7 +78,7 @@ export class Store<T extends Record<string, unknown>> extends Observable<T> {
   }
 
   /**
-   * Returns the current state.
+   * The current state.
    */
   get state(): T {
     return this.#state;
@@ -99,7 +98,7 @@ export class Store<T extends Record<string, unknown>> extends Observable<T> {
   }
 
   /**
-   * Updates the state with a partial object.
+   * Updates the state with a partial state object.
    *
    * @param state - The partial state object to merge into the current state.
    */
@@ -116,7 +115,7 @@ export class Store<T extends Record<string, unknown>> extends Observable<T> {
   }
 
   /**
-   * Notifies all subscribed observers of the current state.
+   * Notifies all subscribed observers.
    */
   override notify(): void {
     super.notify(this.#state);

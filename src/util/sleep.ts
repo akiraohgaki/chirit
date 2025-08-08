@@ -1,14 +1,12 @@
 /**
- * Pauses the execution for a specified amount of time.
+ * Pauses execution for a specified amount of time.
  *
- * This function also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
  * await sleep(100);
- * console.log('Executed after 100ms');
+ * console.log('100ms has passed');
  * ```
  *
  * @param ms - The number of milliseconds to wait.

@@ -3,11 +3,9 @@ import type { TaskOptions } from './types.ts';
 /**
  * Manage and execute tasks.
  *
- * This class provides a way to manage tasks with support for parallel execution and looping tasks.
+ * It supports parallel execution and looping tasks.
  *
- * This class also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
@@ -36,7 +34,7 @@ export class Task {
   /**
    * Creates a new instance of the Task class.
    *
-   * @param options - The options for configuring the task.
+   * @param options - The options for the task.
    */
   constructor(options: Partial<TaskOptions> = {}) {
     this.#options = {
@@ -52,21 +50,21 @@ export class Task {
   }
 
   /**
-   * Returns the number of tasks in the queue.
+   * The number of tasks in the queue.
    */
   get queueSize(): number {
     return this.#taskQueue.size;
   }
 
   /**
-   * Returns the number of looping tasks in the collection.
+   * The number of looping tasks in the collection.
    */
   get loopSize(): number {
     return this.#loopTaskCollection.size;
   }
 
   /**
-   * Checks if any task is currently running.
+   * Whether there is a task currently running.
    */
   get isRunning(): boolean {
     return this.#runningCounter > 0;

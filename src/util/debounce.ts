@@ -1,11 +1,9 @@
 /**
- * Creates debounced function.
+ * Creates a debounced function.
  *
- * Delays invoking the provided function until the specified wait time has passed.
+ * Delay the execution of the provided function until the specified wait time elapses.
  *
- * This function also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
@@ -13,15 +11,17 @@
  *   //...
  * }, 50);
  *
- * debouncedFunc(); // Canceled
- * debouncedFunc(); // Executed
+ * debouncedFunc(); // canceled.
+ * debouncedFunc(); // executed.
  * await sleep(100);
- * debouncedFunc(); // Canceled
- * debouncedFunc(); // Executed
+ * debouncedFunc(); // canceled.
+ * debouncedFunc(); // executed.
  * ```
  *
- * @param func - The function to debounce.
+ * @param func - The function to be debounced.
  * @param ms - The number of milliseconds to wait.
+ *
+ * @returns Debounced function.
  */
 export function debounce<T extends Array<unknown>>(
   func: (...args: T) => unknown,

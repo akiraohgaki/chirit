@@ -11,9 +11,9 @@ await Playground.test('Router', async (t) => {
 
   await t.step('constructor()', async (t) => {
     await t.step('invalid routing mode', () => {
-      // @ts-ignore invalid parameter
+      // @ts-ignore because invalid parameter.
       assertThrows(() => new Router(), Error);
-      // @ts-ignore invalid parameter
+      // @ts-ignore because invalid parameter.
       assertThrows(() => new Router('invalid'), Error);
     });
 
@@ -137,8 +137,8 @@ await Playground.test('Client-side routing', async (t) => {
   });
 
   router.onchange = (event) => {
-    // hash: hashchange
-    // history: pushstate | popstate
+    // hash: hashchange event.
+    // history: pushstate or popstate event.
     eventType = event.type;
   };
 
@@ -238,8 +238,8 @@ await Playground.test('Client-side routing', async (t) => {
         return;
       }
 
-      // hash: ?query with refreshing page
-      // history: /base/?query without refreshing page
+      // hash: ?query with refreshing page.
+      // history: /base/?query without refreshing page.
       router.navigate('?query=true');
 
       await Playground.sleep(50);
@@ -253,8 +253,8 @@ await Playground.test('Client-side routing', async (t) => {
         return;
       }
 
-      // hash: location.origin with refreshing page
-      // history: location.origin without refreshing page
+      // hash: location.origin with refreshing page.
+      // history: location.origin without refreshing page.
       router.navigate(location.origin);
 
       await Playground.sleep(50);

@@ -3,15 +3,14 @@ import { dom } from './dom.ts';
 import { isEqual } from './util/isEqual.ts';
 
 /**
- * An observable state for atomic state management.
+ * An observable state for managing atomic state.
  *
- * This class provides a way to manages the state and notifies observers when the state is changed.
+ * It inherited the Observable class.
+ * And notifies observers when the state is changed.
  *
- * If you need complex state management, consider using the Store class.
+ * Consider using the Store class to manage complex state.
  *
- * This class also work in non-browser environment.
- *
- * ----
+ * This also works in non-browser environments.
  *
  * @example Basic usage
  * ```ts
@@ -85,7 +84,7 @@ export class State<T> extends Observable<T> {
   }
 
   /**
-   * Notifies all subscribed observers of the current state.
+   * Notifies all subscribed observers.
    */
   override notify(): void {
     super.notify(this.#state);

@@ -1,32 +1,33 @@
-import type { CreateComponentOptions } from './types.ts';
+import type { CreateComponentOptions, ElementPropertiesConfig } from './types.ts';
 
 import { Component } from './Component.ts';
 
 /**
- * Creates custom web components.
+ * Creates web component.
  *
- * This function is a convenient way to creates a component based on the Component class.
+ * It is based on the Component class.
  *
- * If you need to create a complex component, consider using the Component class.
+ * Consider using the Component class to create complex web components.
  *
- * ----
- *
- * @example Create a component
+ * @example Create a custom element
  * ```ts
- * // The interface of the component to be created.
+ * // This is the interface of the custom element.
  * interface ColorPreviewComponentInterface extends Component {
  *   clickHandler: (event: Event) => void;
  * }
  *
- * // The State class is an observable state for atomic state management.
+ * // The State class is an observable state for managing atomic state.
  * const debugState = new State(true);
  *
- * // Create the component as color-preview element.
+ * // Create the custom element as a color-preview element.
  * createComponent<ColorPreviewComponentInterface>(
  *   'color-preview',
  *   {
  *     base: Component,
- *     observedAttributes: ['color', 'size'],
+ *     properties: {
+ *       color: { value: '#000000' },
+ *       size: { value: '100px' },
+ *     },
  *     init: (context) => {
  *       context.clickHandler = (event) => {
  *         context.dispatch('color-preview-click');
@@ -51,18 +52,15 @@ import { Component } from './Component.ts';
  *       ];
  *     },
  *     template: (context) => {
- *       const color = context.attr.color ?? '#000000';
- *       const size = context.attr.size ?? '100px';
- *
  *       return `
  *         <style>
- *         :host { width: ${size}; height: ${size}; }
- *         div { background-color: ${color}; }
+ *         :host { width: ${context.props.size}; height: ${context.props.size}; }
+ *         div { background-color: ${context.props.color}; }
  *         </style>
  *
- *         <!-- The execution context for an event handler is the component instance. -->
+ *         <!-- The execution context for an event handler is this custom element. -->
  *         <div onclick="this.clickHandler(event)">
- *         ${debugState.get() ? color : ''}
+ *         ${debugState.get() ? context.props.color : ''}
  *         </div>
  *       `;
  *     },
@@ -75,25 +73,23 @@ import { Component } from './Component.ts';
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * @template T - The type of the component class.
+ * @template T - The type of the base class.
  *
  * @param name - The name of the custom element.
- * @param options - The options for configuring the component.
+ * @param options - The options for the component.
  */
-export function createComponent<T = Component>(name: string, options?: CreateComponentOptions<T>): T {
-  const BaseComponent = options?.base ?? Component;
+export function createComponent<T = Component>(name: string, options: Partial<CreateComponentOptions<T>> = {}): T {
+  const BaseComponent = options.base ?? Component;
 
   const CustomComponent = class extends BaseComponent {
-    static override get observedAttributes(): Array<string> {
-      return (options?.observedAttributes && Array.isArray(options.observedAttributes))
-        ? options.observedAttributes
-        : super.observedAttributes;
+    static override get properties(): ElementPropertiesConfig {
+      return (options.properties && typeof options.properties === 'object') ? options.properties : super.properties;
     }
 
     constructor() {
       super();
 
-      if (options?.init && typeof options.init === 'function') {
+      if (options.init && typeof options.init === 'function') {
         options.init(this as unknown as T);
       }
     }
@@ -101,13 +97,13 @@ export function createComponent<T = Component>(name: string, options?: CreateCom
     override connectedCallback(): void {
       super.connectedCallback();
 
-      if (options?.connected && typeof options.connected === 'function') {
+      if (options.connected && typeof options.connected === 'function') {
         options.connected(this as unknown as T);
       }
     }
 
     override disconnectedCallback(): void {
-      if (options?.disconnected && typeof options.disconnected === 'function') {
+      if (options.disconnected && typeof options.disconnected === 'function') {
         options.disconnected(this as unknown as T);
       }
 
@@ -115,13 +111,13 @@ export function createComponent<T = Component>(name: string, options?: CreateCom
     }
 
     override styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
-      return (options?.styles && typeof options.styles === 'function')
+      return (options.styles && typeof options.styles === 'function')
         ? options.styles(this as unknown as T)
         : super.styles();
     }
 
     override template(): string | Node | NodeList {
-      return (options?.template && typeof options.template === 'function')
+      return (options.template && typeof options.template === 'function')
         ? options.template(this as unknown as T)
         : super.template();
     }

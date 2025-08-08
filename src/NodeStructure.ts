@@ -5,10 +5,8 @@ const hostCollection = new WeakSet();
 /**
  * Manages the structure of DOM nodes.
  *
- * This class simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
- * DOM updates are optimized through a diffing process.
- *
- * ----
+ * It simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
+ * And DOM updates are optimized through a diffing process.
  *
  * @example Update the content of the host node
  * ```ts
@@ -71,12 +69,12 @@ export class NodeStructure<T extends Node> {
     this.#hostRef = new WeakRef(host);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
 
-    // Manage onevent handlers
+    // Manage onevent handlers.
     this.#oneventCollection = new Set();
   }
 
   /**
-   * Returns the host node.
+   * The host node.
    *
    * @throws {Error} - If the host node is not available.
    */
@@ -248,13 +246,13 @@ export class NodeStructure<T extends Node> {
     } else if (original && diff) {
       if (original.nodeType === diff.nodeType && original.nodeName === diff.nodeName) {
         if (original instanceof dom.globalThis.Element && diff instanceof dom.globalThis.Element) {
-          // Element it's HTMLElement, SVGElement.
+          // Element: HTMLElement, SVGElement.
           this.#patchAttributes(original, diff);
           if (!hostCollection.has(original)) {
             this.#patchNodesInsideOf(original, diff);
           }
         } else if (original instanceof dom.globalThis.CharacterData && diff instanceof dom.globalThis.CharacterData) {
-          // CharacterData it's Text, Comment, ProcessingInstruction.
+          // CharacterData: Text, Comment, ProcessingInstruction.
           if (original.nodeValue !== diff.nodeValue) {
             original.nodeValue = diff.nodeValue;
           }
