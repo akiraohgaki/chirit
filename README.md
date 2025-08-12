@@ -181,7 +181,7 @@ createComponent('counter-component', {
 
 [WebStorage](https://jsr.io/@akiraohgaki/chirit/doc/~/WebStorage) class:
 
-- Provides a consistent interface for interacting with localStorage and sessionStorage.
+- Supports both local storage and session storage modes.
 - Stores and retrieves values as JSON serializable objects.
 
 ## Documentation
