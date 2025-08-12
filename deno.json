@@ -85,8 +85,8 @@
     "serve": "deno run -A jsr:@akiraohgaki/devsrv/serve tests/playground"
   },
   "imports": {
-    "@akiraohgaki/devsrv": "jsr:@akiraohgaki/devsrv@^0.10.0",
-    "@playwright/test": "npm:@playwright/test@^1.52.0",
+    "@akiraohgaki/devsrv": "jsr:@akiraohgaki/devsrv@^0.10.2",
+    "@playwright/test": "npm:@playwright/test@^1.54.2",
     "@std/assert": "jsr:@std/assert@^1.0.13"
   },
   "nodeModulesDir": "auto"
