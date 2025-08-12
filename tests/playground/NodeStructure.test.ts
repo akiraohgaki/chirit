@@ -124,7 +124,7 @@ await Playground.test('NodeStructure', async (t) => {
   });
 });
 
-await Playground.test('DOM management', async (t) => {
+await Playground.test('DOM management features', async (t) => {
   const testElement = document.createElement('test-element');
 
   Playground.preview.set(testElement);

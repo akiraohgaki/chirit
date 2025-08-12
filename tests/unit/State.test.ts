@@ -37,7 +37,7 @@ Deno.test('State', async (t) => {
   });
 });
 
-Deno.test('State management', async (t) => {
+Deno.test('State management features', async (t) => {
   const state = new State(initialState);
 
   const previousState = state.get();

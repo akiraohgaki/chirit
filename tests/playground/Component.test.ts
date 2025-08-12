@@ -131,6 +131,7 @@ await Playground.test('Attributes and properties', async (t) => {
     await Playground.sleep(100);
 
     assertEquals(testComponent1.props.prop1, 1);
+    assertEquals(testComponent1.updateCounter, 2);
   });
 
   await t.step('should reflect from property to attribute', async () => {
@@ -139,6 +140,7 @@ await Playground.test('Attributes and properties', async (t) => {
     await Playground.sleep(100);
 
     assertEquals(testComponent1.attrs.prop1, '2');
+    assertEquals(testComponent1.updateCounter, 3);
   });
 });
 

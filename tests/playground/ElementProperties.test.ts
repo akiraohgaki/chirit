@@ -68,7 +68,7 @@ await Playground.test('ElementProperties', async (t) => {
   });
 });
 
-await Playground.test('Properties management', async (t) => {
+await Playground.test('Properties management features', async (t) => {
   await t.step('property manipulation', () => {
     const element = document.createElement('div');
 

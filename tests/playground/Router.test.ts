@@ -109,7 +109,7 @@ await Playground.test('Router', async (t) => {
   });
 });
 
-await Playground.test('Client-side routing', async (t) => {
+await Playground.test('Routing features', async (t) => {
   const router = new Router(mode, '/parent/sub');
 
   const rootUrl = (router.mode === 'hash' ? `${initialUrl}#` : location.origin) + '/';

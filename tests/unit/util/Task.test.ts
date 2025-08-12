@@ -101,7 +101,7 @@ Deno.test('Task', async (t) => {
   });
 });
 
-Deno.test('Task execution', async (t) => {
+Deno.test('Task features', async (t) => {
   await t.step('parallel execution', async () => {
     const task = new Task({
       maxParallelism: 3,

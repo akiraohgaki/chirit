@@ -33,7 +33,7 @@ await Playground.test('ElementAttributes', async (t) => {
   });
 });
 
-await Playground.test('Attributes management', async (t) => {
+await Playground.test('Attributes management features', async (t) => {
   await t.step('attribute manipulation', () => {
     const element = document.createElement('div');
 
