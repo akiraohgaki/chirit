@@ -35,7 +35,7 @@ export interface CreateComponentOptions<T> {
    *
    * @param context - The instance of the element.
    *
-   * @returns The stylesheets of the element.
+   * @returns The style sheets of the element.
    */
   styles: (context: T) => string | CSSStyleSheet | Array<string | CSSStyleSheet>;
   /**

@@ -1,7 +1,7 @@
 import { dom } from './dom.ts';
 
 /**
- * A client-side router that manages routes and handle navigation events within an application.
+ * A client-side router that manage routes and handle navigation events.
  *
  * It supports both hash-based routing and history-based routing modes.
  *
@@ -53,7 +53,7 @@ export class Router {
    * @param mode - The routing mode to use (hash or history).
    * @param base - The base path for all routes.
    *
-   * @throws {Error} - If the provided mode is not hash or history.
+   * @throws {Error} - If the routing mode is not hash or history.
    */
   constructor(mode: 'hash' | 'history', base: string = '') {
     if (mode !== 'hash' && mode !== 'history') {

@@ -47,7 +47,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   #debouncedUpdate: () => void;
 
   /**
-   * An observed attributes.
+   * The observed attributes of the element.
    *
    * By default, returns an empty array.
    */
@@ -129,7 +129,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   disconnectedCallback(): void {}
 
   /**
-   * Callback invoked when the element is moved to a new document.
+   * Callback invoked when the element is moved to a different document.
    *
    * By default, do nothing.
    *
@@ -141,7 +141,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   /**
    * Asynchronously updates the element.
    *
-   * It scheduling an update for later execution.
+   * It schedules a synchronously update for later execution.
    */
   update(): void {
     this.#debouncedUpdate();
@@ -149,8 +149,6 @@ export class CustomElement extends dom.globalThis.HTMLElement {
 
   /**
    * Synchronously updates the element.
-   *
-   * It calls additional lifecycle callbacks.
    */
   updateSync(): void {
     try {
@@ -166,6 +164,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    * Renders the content of the element.
    *
    * By default, do nothing.
+   *
    * Subclasses should implement this method.
    */
   render(): void {}
@@ -178,7 +177,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   updatedCallback(): void {}
 
   /**
-   * Callback invoked when an error occurs during element updating.
+   * Callback invoked when an error occurred while the element updating.
    *
    * By default, output an error log.
    *

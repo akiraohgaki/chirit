@@ -1,7 +1,7 @@
 /**
  * Creates a throttled function.
  *
- * The provided function is executed at most once every wait time.
+ * It executes the provided function at most once every wait time.
  *
  * This also works in non-browser environments.
  *

@@ -1,5 +1,5 @@
 /**
- * Notifies observers when a new value is available.
+ * Notify observers.
  *
  * This also works in non-browser environments.
  *

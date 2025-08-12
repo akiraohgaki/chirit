@@ -3,7 +3,7 @@ import type { ElementPropertiesConfig } from './types.ts';
 import { isEqual } from './util/isEqual.ts';
 
 /**
- * Manages the properties of an element.
+ * Manage the properties of an element.
  *
  * It simplifies reflecting from properties to attributes and vice versa.
  *
@@ -171,7 +171,7 @@ export class ElementProperties {
       } else if (typeof value === 'object' && value !== null) {
         this.#properties.set(key, JSON.parse(attrValue));
       } else {
-        // value is undefined, null, symbol or function.
+        // value: undefined, null, symbol, function.
         this.#properties.set(key, attrValue);
       }
     } catch (exception) {
@@ -219,7 +219,7 @@ export class ElementProperties {
       } else if (typeof value === 'object' && value !== null) {
         target.setAttribute(key, JSON.stringify(value));
       } else {
-        // value is symbol or function.
+        // value: symbol, function.
         target.setAttribute(key, String(value));
       }
     } catch (exception) {

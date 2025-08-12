@@ -1,9 +1,9 @@
 import { dom } from './dom.ts';
 
 /**
- * A wrapper class for web storage.
+ * Manage web storage.
  *
- * It provides a consistent interface for interacting with web storage (localStorage or sessionStorage).
+ * It supports both local storage and session storage modes.
  * And any JSON serializable value can be stored in the storage.
  *
  * This also works in Deno.
@@ -37,9 +37,9 @@ export class WebStorage {
    * Creates a new instance of the WebStorage class.
    *
    * @param mode - The storage mode to use (local or session).
-   * @param prefix - The prefix to add to all keys.
+   * @param prefix - The prefix for all keys.
    *
-   * @throws {Error} - If the provided mode is not local or session.
+   * @throws {Error} - If the storage mode is not local or session.
    */
   constructor(mode: 'local' | 'session', prefix: string = '') {
     this.#mode = mode;
@@ -68,7 +68,7 @@ export class WebStorage {
   }
 
   /**
-   * The prefix.
+   * The prefix for all keys.
    */
   get prefix(): string {
     return this.#prefix;

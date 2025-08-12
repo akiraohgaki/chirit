@@ -3,10 +3,9 @@ import { dom } from './dom.ts';
 const hostCollection = new WeakSet();
 
 /**
- * Manages the structure of DOM nodes.
+ * Manage the structure of DOM nodes.
  *
- * It simplifies DOM manipulation by managing the lifecycle of linked DOM nodes and contexts.
- * And DOM updates are optimized through a diffing process.
+ * It simplifies DOM manipulation and DOM updates are optimized through a diffing process.
  *
  * @example Update the content of the host node
  * ```ts
@@ -46,7 +45,7 @@ const hostCollection = new WeakSet();
  * ]);
  * ```
  *
- * @template T - The type of the host node (e.g., HTMLElement).
+ * @template T - The type of the host node.
  */
 export class NodeStructure<T extends Node> {
   #hostRef: WeakRef<T> | null;
@@ -58,7 +57,7 @@ export class NodeStructure<T extends Node> {
   /**
    * Creates a new instance of the NodeStructure class.
    *
-   * @param host - The host node to manage.
+   * @param host - The host node to manage structure for.
    * @param context - The context object associated with the structure.
    */
   constructor(host: T, context?: unknown) {
@@ -87,7 +86,7 @@ export class NodeStructure<T extends Node> {
    *
    * This method works only if the host node is a Document or ShadowRoot.
    *
-   * @param styles - The styles to adopt to the host node.
+   * @param styles - The style sheets to adopt to the host node.
    *
    * @throws {Error} - If the host node is not available.
    */
@@ -112,7 +111,7 @@ export class NodeStructure<T extends Node> {
         host.adoptedStyleSheets = sheets;
       }
     } else {
-      console.warn('The styles cannot be adopted because the host node is not a "Document" or "ShadowRoot".');
+      console.warn('The style sheets cannot be adopted because the host node is not a "Document" or "ShadowRoot".');
     }
   }
 
@@ -209,7 +208,7 @@ export class NodeStructure<T extends Node> {
   }
 
   /**
-   * Patch the nodes inside of the original node.
+   * Patches the nodes inside of the original node.
    *
    * @param original - The original node.
    * @param diff - The diff node.
@@ -232,7 +231,7 @@ export class NodeStructure<T extends Node> {
   }
 
   /**
-   * Patch the nodes.
+   * Patches the nodes.
    *
    * @param parent - The parent node.
    * @param original - The original node.
@@ -266,7 +265,7 @@ export class NodeStructure<T extends Node> {
   }
 
   /**
-   * Patch the attributes of the element.
+   * Patches the attributes of the element.
    *
    * @param original - The original element.
    * @param diff - The diff element.
@@ -294,7 +293,7 @@ export class NodeStructure<T extends Node> {
   }
 
   /**
-   * Fix the onevent handlers inside of the target node.
+   * Fixes the onevent handlers inside of the target node.
    *
    * @param target - The target node.
    */
@@ -309,7 +308,7 @@ export class NodeStructure<T extends Node> {
   }
 
   /**
-   * Fix the onevent handlers of the target element.
+   * Fixes the onevent handlers of the target element.
    *
    * @param target - The target element.
    */

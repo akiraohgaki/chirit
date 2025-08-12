@@ -95,7 +95,7 @@ import { dom } from './dom.ts';
  *     ];
  *   }
  *
- *   // When the observables changed, the template content is re-rendered using the template.
+ *   // When the observed observables changed, the element is re-rendered using the template.
  *   override template(): string {
  *     return `
  *       <style>
@@ -138,16 +138,16 @@ export class Component extends CustomElement {
   #nodeStructure: NodeStructure<Element | DocumentFragment>;
 
   /**
-   * An observed attributes.
+   * The observed attributes of the element.
    *
-   * By default, returns the keys of the properties configuration.
+   * By default, returns the keys of the properties.
    */
   static override get observedAttributes(): Array<string> {
     return Object.keys(this.properties);
   }
 
   /**
-   * A properties configuration.
+   * The properties configuration for the element.
    *
    * By default, returns an empty object.
    */
@@ -172,21 +172,21 @@ export class Component extends CustomElement {
   }
 
   /**
-   * The internal ElementAttributes instance.
+   * ElementAttributes instance that manage an attributes.
    */
   get elementAttributes(): ElementAttributes {
     return this.#elementAttributes;
   }
 
   /**
-   * The internal ElementProperties instance.
+   * ElementProperties instance that manage a properties.
    */
   get elementProperties(): ElementProperties {
     return this.#elementProperties;
   }
 
   /**
-   * The internal NodeStructure instance.
+   * NodeStructure instance that manage the structure of DOM nodes.
    */
   get nodeStructure(): NodeStructure<Element | DocumentFragment> {
     return this.#nodeStructure;
@@ -297,7 +297,7 @@ export class Component extends CustomElement {
   /**
    * Dispatches a custom event on the content container of the element.
    *
-   * This custom event bubbles out of Shadow DOM.
+   * Dispatched custom event bubbles out of Shadow DOM.
    *
    * @param type - The type of the event to dispatch.
    * @param detail - Details to include in the event object.
@@ -313,7 +313,7 @@ export class Component extends CustomElement {
   }
 
   /**
-   * Creates the content container managed by an internal NodeStructure.
+   * Creates the content container managed by NodeStructure.
    *
    * By default, creates an open Shadow DOM.
    */
@@ -338,7 +338,7 @@ export class Component extends CustomElement {
    *
    * This method works only if the content container is ShadowRoot.
    *
-   * @returns The stylesheets of the element.
+   * @returns The style sheets of the element.
    */
   styles(): string | CSSStyleSheet | Array<string | CSSStyleSheet> {
     return [];
