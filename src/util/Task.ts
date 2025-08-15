@@ -153,7 +153,7 @@ export class Task {
     Promise.resolve().then(() => {
       return func();
     }).catch((exception) => {
-      console.log(exception);
+      console.error(exception);
     }).finally(() => {
       this.#runningCounter--;
 
