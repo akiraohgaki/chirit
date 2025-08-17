@@ -66,6 +66,14 @@ await Playground.test('ElementProperties', async (t) => {
 
     assertStrictEquals(elementProperties.onchange, func);
   });
+
+  await t.step('onerror()', () => {
+    const func = () => {};
+
+    elementProperties.onerror = func;
+
+    assertStrictEquals(elementProperties.onerror, func);
+  });
 });
 
 await Playground.test('Properties management features', async (t) => {
@@ -260,6 +268,30 @@ await Playground.test('Properties management features', async (t) => {
     elementProperties.proxy.boolean = true;
 
     assertEquals(element.getAttribute('boolean'), '');
+  });
+
+  await t.step('error handling', () => {
+    const element = document.createElement('div');
+
+    element.setAttribute('error', 'text');
+
+    const elementProperties = new ElementProperties(element, {
+      error: {
+        value: '',
+        converter: () => {
+          throw new Error('error');
+        },
+      },
+    });
+
+    let errorMessage = '';
+    elementProperties.onerror = (exception) => {
+      errorMessage = (exception as Error).message;
+    };
+
+    elementProperties.sync();
+
+    assertEquals(errorMessage, 'error');
   });
 
   await t.step('garbage collection', async () => {

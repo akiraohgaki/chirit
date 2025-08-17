@@ -51,11 +51,13 @@ import { isEqual } from './util/isEqual.ts';
  * // Deletion is not allowed.
  *
  * elementProperties.reflectFromAttribute('count');
- *
  * elementProperties.reflectToAttribute('count');
  *
- * elementProperties.onchange = (_key, _oldValue, _newValue) => {
- *   console.log('Property has changed.');
+ * elementProperties.onchange = (key, oldValue, newValue) => {
+ *   console.log('Property has changed.', key, oldValue, newValue);
+ * };
+ * elementProperties.onerror = (exception) => {
+ *   console.error('An error occurred while reflecting the value.', exception);
  * };
  * ```
  */
@@ -69,6 +71,8 @@ export class ElementProperties {
   #proxy: Record<string, unknown>;
 
   #onchange: (key: string, oldValue: unknown, newValue: unknown) => unknown;
+
+  #onerror: (exception: unknown) => unknown;
 
   /**
    * Creates a new instance of the ElementProperties class.
@@ -86,6 +90,9 @@ export class ElementProperties {
 
     this.#proxy = this.#createProxy();
     this.#onchange = () => {};
+    this.#onerror = (exception) => {
+      console.error(exception);
+    };
   }
 
   /**
@@ -115,6 +122,24 @@ export class ElementProperties {
    */
   get onchange(): (key: string, oldValue: unknown, newValue: unknown) => unknown {
     return this.#onchange;
+  }
+
+  /**
+   * The function invoked when an error occurred.
+   *
+   * @param exception - The error that occurred.
+   */
+  set onerror(handler: (exception: unknown) => unknown) {
+    this.#onerror = handler;
+  }
+
+  /**
+   * The function invoked when an error occurred.
+   *
+   * @param exception - The error that occurred.
+   */
+  get onerror(): (exception: unknown) => unknown {
+    return this.#onerror;
   }
 
   /**
@@ -175,7 +200,7 @@ export class ElementProperties {
         this.#properties.set(key, attrValue);
       }
     } catch (exception) {
-      console.error(`An error occurred while reflecting from attribute "${key}".`, exception);
+      this.#onerror(exception);
     }
 
     const newValue = this.#properties.get(key);
@@ -223,7 +248,7 @@ export class ElementProperties {
         target.setAttribute(key, String(value));
       }
     } catch (exception) {
-      console.error(`An error occurred while reflecting to attribute "${key}".`, exception);
+      this.#onerror(exception);
     }
   }
 
