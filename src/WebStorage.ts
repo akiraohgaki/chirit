@@ -1,3 +1,6 @@
+type KeysOf<T> = Extract<keyof T, string>;
+type ValueOf<T, K extends KeysOf<T>> = T[K];
+
 import { dom } from './dom.ts';
 
 /**
@@ -6,17 +9,22 @@ import { dom } from './dom.ts';
  * It supports both local storage and session storage modes.
  * And any JSON serializable value can be stored in the storage.
  *
- * This also works in Deno.
+ * This also works in non-browser environments. (Deno)
  *
  * @example Basic usage
  * ```ts
+ * type StorageSchema = {
+ *   app_first_run: boolean;
+ *   settings: { colorTheme: string };
+ * };
+ *
  * // Set and get values in the storage.
- * const storage = new WebStorage('local');
+ * const storage = new WebStorage<StorageSchema>('local');
  * storage.set('app_first_run', false);
  * const isAppFirstRun = storage.get('app_first_run');
  *
  * // Define prefix for all keys.
- * const user = new WebStorage('local', 'user_');
+ * const user = new WebStorage<StorageSchema>('local', 'user_');
  * // these actual key name is user_settings.
  * user.set('settings', { colorTheme: 'dark' });
  * const settings = user.get('settings');
@@ -25,8 +33,10 @@ import { dom } from './dom.ts';
  * console.log(localStorage.getItem('user_settings'));
  * // '{"_v":{"colorTheme":"dark"}}'
  * ```
+ *
+ * @template T - The type of the storage schema.
  */
-export class WebStorage {
+export class WebStorage<T extends Record<string, unknown> = Record<string, unknown>> {
   #mode: 'local' | 'session';
 
   #prefix: string;
@@ -100,7 +110,7 @@ export class WebStorage {
    * @param key - The key to use.
    * @param value - The value to store.
    */
-  set(key: string, value: unknown): void {
+  set<K extends KeysOf<T>>(key: K, value: ValueOf<T, K>): void {
     // Stores value as special JSON object.
     // If the value is undefined, _v is not contained in the JSON.
     this.#storage.setItem(
@@ -116,7 +126,7 @@ export class WebStorage {
    *
    * @returns The stored value, or undefined if not found.
    */
-  get(key: string): unknown {
+  get<K extends KeysOf<T>>(key: K): ValueOf<T, K> | string | undefined {
     const value = this.#storage.getItem(this.#prefix + key);
     if (typeof value === 'string') {
       if (value) {
@@ -145,7 +155,7 @@ export class WebStorage {
    *
    * @param key - The key to remove.
    */
-  delete(key: string): void {
+  delete<K extends KeysOf<T>>(key: K): void {
     this.#storage.removeItem(this.#prefix + key);
   }
 

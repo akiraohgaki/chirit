@@ -9,10 +9,15 @@ import { isEqual } from './util/isEqual.ts';
  *
  * @example Property manipulation
  * ```ts
+ * type PropertiesSchema = {
+ *   count: number;
+ *   'is-active': boolean;
+ * };
+ *
  * const element = document.createElement('counter-button');
  *
- * const elementProperties = new ElementProperties(element, {
- *   'count': { value: 0, reflect: true },
+ * const elementProperties = new ElementProperties<PropertiesSchema>(element, {
+ *   count: { value: 0, reflect: true },
  *   'is-active': { value: false, reflect: true }
  * });
  *
@@ -22,7 +27,6 @@ import { isEqual } from './util/isEqual.ts';
  * // 0
  * console.log(element.getAttribute('count'));
  * // '0'
- *
  * console.log(elementProperties.proxy['is-active']);
  * // false
  * console.log(element.hasAttribute('is-active'));
@@ -35,7 +39,6 @@ import { isEqual } from './util/isEqual.ts';
  * // 1
  * console.log(element.getAttribute('count'));
  * // '1'
- *
  * console.log(elementProperties.proxy['is-active']);
  * // true
  * console.log(element.hasAttribute('is-active'));
@@ -49,26 +52,18 @@ import { isEqual } from './util/isEqual.ts';
  *
  * delete elementProperties.proxy.count;
  * // Deletion is not allowed.
- *
- * elementProperties.reflectFromAttribute('count');
- * elementProperties.reflectToAttribute('count');
- *
- * elementProperties.onchange = (key, oldValue, newValue) => {
- *   console.log('Property has changed.', key, oldValue, newValue);
- * };
- * elementProperties.onerror = (exception) => {
- *   console.error('An error occurred while reflecting the value.', exception);
- * };
  * ```
+ *
+ * @template T - The type of the properties schema.
  */
-export class ElementProperties {
+export class ElementProperties<T extends Record<string, unknown> = Record<string, unknown>> {
   #targetRef: WeakRef<Element> | null;
 
   #config: ElementPropertiesConfig;
 
   #properties: Map<string, unknown>;
 
-  #proxy: Record<string, unknown>;
+  #proxy: T;
 
   #onchange: (key: string, oldValue: unknown, newValue: unknown) => unknown;
 
@@ -98,7 +93,7 @@ export class ElementProperties {
   /**
    * The proxy object for property manipulation.
    */
-  get proxy(): Record<string, unknown> {
+  get proxy(): T {
     return this.#proxy;
   }
 
@@ -281,8 +276,8 @@ export class ElementProperties {
   /**
    * Creates a proxy object for property manipulation.
    */
-  #createProxy(): Record<string, unknown> {
-    return new Proxy({}, {
+  #createProxy(): T {
+    return new Proxy({} as T, {
       set: (_proxyTarget, key, value) => {
         if (typeof key === 'string' && this.#properties.has(key)) {
           const oldValue = this.#properties.get(key);

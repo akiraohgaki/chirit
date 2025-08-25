@@ -5,9 +5,13 @@
  *
  * @example Attribute manipulation
  * ```ts
+ * type AttributesSchema = {
+ *   color: string;
+ * };
+ *
  * const element = document.createElement('color-preview');
  *
- * const elementAttributes = new ElementAttributes(element);
+ * const elementAttributes = new ElementAttributes<AttributesSchema>(element);
  *
  * console.log(elementAttributes.proxy.color);
  * // undefined
@@ -25,11 +29,13 @@
  *
  * delete elementAttributes.proxy.color;
  * ```
+ *
+ * @template T - The type of the attributes schema.
  */
-export class ElementAttributes {
+export class ElementAttributes<T extends Record<string, string> = Record<string, string>> {
   #targetRef: WeakRef<Element> | null;
 
-  #proxy: Record<string, string>;
+  #proxy: T;
 
   /**
    * Creates a new instance of the ElementAttributes class.
@@ -46,7 +52,7 @@ export class ElementAttributes {
   /**
    * The proxy object for attribute manipulation.
    */
-  get proxy(): Record<string, string> {
+  get proxy(): Partial<T> {
     return this.#proxy;
   }
 
@@ -70,8 +76,8 @@ export class ElementAttributes {
   /**
    * Creates a proxy object for attribute manipulation.
    */
-  #createProxy(): Record<string, string> {
-    return new Proxy({}, {
+  #createProxy(): T {
+    return new Proxy({} as T, {
       set: (_proxyTarget, key, value) => {
         const target = this.#getTarget();
         if (typeof key === 'string' && typeof value === 'string') {
