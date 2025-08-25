@@ -5,11 +5,11 @@ import { ElementAttributes } from '../../mod.ts';
 
 // Makes Element object in a separate scope,
 // to ensure that object are cleared by garbage collection.
-function createElementAttributesForGC(): ElementAttributes {
+function createElementAttributesForGC(): ElementAttributes<{ id: string }> {
   const element = document.createElement('div');
   element.id = 'gc';
 
-  const elementAttributes = new ElementAttributes(element);
+  const elementAttributes = new ElementAttributes<{ id: string }>(element);
 
   element.remove();
 
@@ -20,7 +20,7 @@ await Playground.test('ElementAttributes', async (t) => {
   const element = document.createElement('div');
   element.setAttribute('attr1', '1');
 
-  let elementAttributes: ElementAttributes;
+  let elementAttributes: ElementAttributes<{ attr1: string }>;
 
   await t.step('constructor()', () => {
     elementAttributes = new ElementAttributes(element);
@@ -37,7 +37,11 @@ await Playground.test('Attributes management features', async (t) => {
   await t.step('attribute manipulation', () => {
     const element = document.createElement('div');
 
-    const elementAttributes = new ElementAttributes(element);
+    const elementAttributes = new ElementAttributes<{
+      attr0: string;
+      attr1: string;
+      attr2: string;
+    }>(element);
 
     elementAttributes.proxy.attr0 = '0';
     elementAttributes.proxy.attr1 = '1';

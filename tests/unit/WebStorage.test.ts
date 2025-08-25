@@ -6,7 +6,7 @@ localStorage.clear();
 sessionStorage.clear();
 
 Deno.test('WebStorage', async (t) => {
-  let webStorage: WebStorage;
+  let webStorage: WebStorage<{ a: number; b: number }>;
 
   await t.step('constructor()', async (t) => {
     await t.step('invalid storage mode', () => {
@@ -81,7 +81,7 @@ Deno.test('WebStorage', async (t) => {
 
 Deno.test('Storage mode', async (t) => {
   await t.step('local storage', () => {
-    const webStorage = new WebStorage('local', 'test_');
+    const webStorage = new WebStorage<{ a: number; b: number }>('local', 'test_');
 
     webStorage.set('a', 1);
     localStorage.setItem('test_b', '{"_v":1}');
@@ -93,7 +93,7 @@ Deno.test('Storage mode', async (t) => {
   });
 
   await t.step('session storage', () => {
-    const webStorage = new WebStorage('session', 'test_');
+    const webStorage = new WebStorage<{ a: number; b: number }>('session', 'test_');
 
     webStorage.set('a', 1);
     sessionStorage.setItem('test_b', '{"_v":1}');
@@ -106,7 +106,19 @@ Deno.test('Storage mode', async (t) => {
 });
 
 Deno.test('Stored data', async (t) => {
-  const webStorage = new WebStorage('local');
+  const webStorage = new WebStorage<{
+    keyA: string;
+    keyB: string;
+    boolean: boolean;
+    number: number;
+    string: string;
+    array: Array<number>;
+    object: { key: string };
+    null: null;
+    undefined: undefined;
+    Set: object;
+    Map: object;
+  }>('local');
 
   await t.step('compatibility', () => {
     localStorage.setItem('keyA', 'value');

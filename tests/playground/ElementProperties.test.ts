@@ -5,11 +5,11 @@ import { ElementProperties } from '../../mod.ts';
 
 // Makes Element object in a separate scope,
 // to ensure that object are cleared by garbage collection.
-function createElementPropertiesForGC(): ElementProperties {
+function createElementPropertiesForGC(): ElementProperties<{ id: string }> {
   const element = document.createElement('div');
   element.id = 'gc';
 
-  const elementProperties = new ElementProperties(element, {
+  const elementProperties = new ElementProperties<{ id: string }>(element, {
     id: { value: 'gc' },
   });
 
@@ -22,11 +22,11 @@ await Playground.test('ElementProperties', async (t) => {
   const element = document.createElement('div');
   element.setAttribute('prop1', '1');
 
-  let elementProperties: ElementProperties;
+  let elementProperties: ElementProperties<{ prop1: number; prop2: number }>;
 
   await t.step('constructor()', () => {
     elementProperties = new ElementProperties(element, {
-      prop1: { value: 0 },
+      prop1: { value: 1 },
       prop2: { value: 0, reflect: true },
     });
 
@@ -80,7 +80,11 @@ await Playground.test('Properties management features', async (t) => {
   await t.step('property manipulation', () => {
     const element = document.createElement('div');
 
-    const elementProperties = new ElementProperties(element, {
+    const elementProperties = new ElementProperties<{
+      prop0: number;
+      prop1: number;
+      prop2: number;
+    }>(element, {
       prop0: { value: 0 },
       prop1: { value: 1, reflect: true },
       prop2: { value: 2, converter: (value) => parseInt(value, 10) },
@@ -103,6 +107,7 @@ await Playground.test('Properties management features', async (t) => {
     assertEquals(Object.keys(elementProperties.proxy).toSorted(), ['prop0', 'prop1', 'prop2']);
     assert(Object.getOwnPropertyDescriptor(elementProperties.proxy, 'prop1') !== undefined);
     assert('prop1' in elementProperties.proxy);
+    // @ts-ignore because delete is not allowed.
     assertThrows(() => delete elementProperties.proxy.prop0, Error);
     assertEquals(element.outerHTML, '<div prop1="1.5" prop2="2.5"></div>');
   });
@@ -121,10 +126,23 @@ await Playground.test('Properties management features', async (t) => {
     element.setAttribute('bigint', '1');
     element.setAttribute('object', '{"key":"value"}');
     element.setAttribute('array', '[1]');
-    element.setAttribute('set', '[1]');
+    element.setAttribute('set', '{}');
     element.setAttribute('date', '"1970-01-01T00:00:00.000Z"');
 
-    const elementProperties = new ElementProperties(element, {
+    const elementProperties = new ElementProperties<{
+      undefined: string;
+      null: string;
+      symbol: string;
+      function: string;
+      boolean: boolean;
+      string: string;
+      number: number;
+      bigint: bigint;
+      object: { key: string };
+      array: Array<number>;
+      set: object;
+      date: Date;
+    }>(element, {
       undefined: {
         value: undefined,
       },
@@ -177,7 +195,7 @@ await Playground.test('Properties management features', async (t) => {
     assertEquals(elementProperties.proxy.bigint, 1n);
     assertEquals(elementProperties.proxy.object, { key: 'value' });
     assertEquals(elementProperties.proxy.array, [1]);
-    assertEquals(elementProperties.proxy.set, [1]);
+    assertEquals(elementProperties.proxy.set, {});
     assertEquals(elementProperties.proxy.date, new Date('1970-01-01T00:00:00.000Z'));
 
     element.removeAttribute('boolean');
@@ -189,7 +207,20 @@ await Playground.test('Properties management features', async (t) => {
   await t.step('reflect from properties to attributes', () => {
     const element = document.createElement('div');
 
-    const elementProperties = new ElementProperties(element, {
+    const elementProperties = new ElementProperties<{
+      undefined: string;
+      null: string;
+      symbol: string;
+      function: string;
+      boolean: boolean;
+      string: string;
+      number: number;
+      bigint: bigint;
+      object: { key: string };
+      array: Array<number>;
+      set: object;
+      date: Date;
+    }>(element, {
       undefined: {
         value: undefined,
         reflect: true,
@@ -275,7 +306,7 @@ await Playground.test('Properties management features', async (t) => {
 
     element.setAttribute('error', 'text');
 
-    const elementProperties = new ElementProperties(element, {
+    const elementProperties = new ElementProperties<{ error: string }>(element, {
       error: {
         value: '',
         converter: () => {
