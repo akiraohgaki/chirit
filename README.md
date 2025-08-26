@@ -54,9 +54,14 @@ import * as chirit from '@akiraohgaki/chirit';
 Create a counter component using the createComponent function.
 
 ```ts
-import { createComponent, css, html } from '@akiraohgaki/chirit';
+import { type Component, createComponent, css, html } from '@akiraohgaki/chirit';
 
-createComponent('counter-component', {
+interface CounterComponentInterface extends Component<{ props: { count: number } }> {
+  increment: () => void;
+  decrement: () => void;
+}
+
+createComponent<CounterComponentInterface>('counter-component', {
   properties: {
     count: { value: 0 },
   },
@@ -95,11 +100,16 @@ createComponent('counter-component', {
 Also, make the counter state to be shared with other components using the State class.
 
 ```ts
-import { createComponent, css, html, State } from '@akiraohgaki/chirit';
+import { type Component, createComponent, css, html, State } from '@akiraohgaki/chirit';
+
+interface CounterComponentInterface extends Component {
+  increment: () => void;
+  decrement: () => void;
+}
 
 export const counterState = new State(0);
 
-createComponent('counter-component', {
+createComponent<CounterComponentInterface>('counter-component', {
   init: (context) => {
     context.observe(counterState);
 
