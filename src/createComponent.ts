@@ -11,30 +11,29 @@ import { Component } from './Component.ts';
  *
  * @example Create a custom element
  * ```ts
- * // This is the interface of the custom element.
- * interface ColorPreviewComponentInterface extends Component {
- *   clickHandler: (event: Event) => void;
- * }
- *
  * // The State class is an observable state for managing atomic state.
  * const debugState = new State(true);
  *
+ * // This is a custom base class extending the Component class.
+ * class BaseComponent extends Component {
+ *   clickHandler(event: Event): void {
+ *     this.dispatch('color-preview-click');
+ *     if (debugState.get()) {
+ *       console.log(event);
+ *     }
+ *   }
+ * }
+ *
  * // Create the custom element as a color-preview element.
- * createComponent<ColorPreviewComponentInterface>(
+ * createComponent(
  *   'color-preview',
  *   {
- *     base: Component,
+ *     base: BaseComponent,
  *     properties: {
  *       color: { value: '#000000' },
  *       size: { value: '100px' },
  *     },
- *     init: (context) => {
- *       context.clickHandler = (event) => {
- *         context.dispatch('color-preview-click');
- *         if (debugState.get()) {
- *           console.log(event);
- *         }
- *       };
+ *     init: (_context) => {
  *     },
  *     connected: (context) => {
  *       context.observe(debugState);
@@ -73,13 +72,16 @@ import { Component } from './Component.ts';
  * // <color-preview color="#0000ff" size="100px"></color-preview>
  * ```
  *
- * @template T - The type of the base class.
+ * @template T - The type of the element instance.
  *
  * @param name - The name of the custom element.
  * @param options - The options for the component.
  */
-export function createComponent<T = Component>(name: string, options: Partial<CreateComponentOptions<T>> = {}): T {
-  const BaseComponent = options.base ?? Component;
+export function createComponent<T extends Component = Component>(
+  name: string,
+  options: Partial<CreateComponentOptions<T>> = {},
+): new () => T {
+  const BaseComponent = options.base as unknown as typeof Component ?? Component;
 
   const CustomComponent = class extends BaseComponent {
     static override get properties(): ElementPropertiesConfig {
@@ -125,5 +127,5 @@ export function createComponent<T = Component>(name: string, options: Partial<Cr
 
   CustomComponent.define(name);
 
-  return CustomComponent as T;
+  return CustomComponent as unknown as new () => T;
 }
