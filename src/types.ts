@@ -1,13 +1,33 @@
 import type { Component } from './Component.ts';
 
 /**
- * The options for the component.
+ * The type of schemas within the component.
  */
-export interface CreateComponentOptions<T> {
+export interface ComponentSchemas {
   /**
-   * The base class.
+   * The type of the attributes schema.
    */
-  base: typeof Component;
+  attrs: Record<string, string>;
+  /**
+   * The type of the properties schema.
+   */
+  props: Record<string, unknown>;
+  /**
+   * The type of the content container.
+   */
+  content: Element | DocumentFragment;
+}
+
+/**
+ * The options for the component.
+ *
+ * @template T - The type of the element instance.
+ */
+export interface CreateComponentOptions<T extends Component<Partial<ComponentSchemas>> = Component<ComponentSchemas>> {
+  /**
+   * The base class for the component.
+   */
+  base: new () => T;
   /**
    * The configuration object defining properties and their behaviors.
    */

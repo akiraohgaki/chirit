@@ -3,7 +3,15 @@ import { assert, assertEquals, assertInstanceOf, assertNotInstanceOf } from '@st
 
 import { Component, createComponent } from '../../mod.ts';
 
-class BaseComponent extends Component {
+class BaseComponent extends Component<{
+  attrs: { prop1: string };
+  props: { prop1: number };
+  content: ShadowRoot;
+}> {
+  get delegatesFocus(): boolean {
+    return this.content.delegatesFocus;
+  }
+
   override createContentContainer(): ShadowRoot {
     return this.attachShadow({ mode: 'open', delegatesFocus: true });
   }
@@ -23,13 +31,14 @@ await Playground.test('createComponent()', async (t) => {
 
     const testComponent2 = document.createElement('test-component-2') as BaseComponent;
 
-    assert((testComponent2.content as ShadowRoot).delegatesFocus);
+    assert(testComponent2.delegatesFocus);
   });
 
   await t.step('lifecycle callbacks', async () => {
     const values: Array<string> = [];
 
     createComponent('test-component-3', {
+      base: BaseComponent,
       properties: {
         prop1: { value: 0 },
       },
@@ -48,11 +57,11 @@ await Playground.test('createComponent()', async (t) => {
       },
       template: (context) => {
         values.push('template()');
-        return '<span>prop1:' + context.props.prop1 + '</span>';
+        return `<span>prop1:${context.props.prop1};delegatesFocus:${context.delegatesFocus}</span>`;
       },
     });
 
-    const testComponent3 = document.createElement('test-component-3') as Component;
+    const testComponent3 = document.createElement('test-component-3') as BaseComponent;
 
     testComponent3.attrs.prop1 = '1';
 
@@ -69,6 +78,6 @@ await Playground.test('createComponent()', async (t) => {
       'connected()',
       'disconnected()',
     ]);
-    assertEquals((testComponent3.content as ShadowRoot).innerHTML, '<span>prop1:1</span>');
+    assertEquals(testComponent3.content.innerHTML, '<span>prop1:1;delegatesFocus:true</span>');
   });
 });

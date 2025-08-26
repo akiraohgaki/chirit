@@ -18,7 +18,11 @@ const observable = new Observable();
 const state = new State(0);
 const store = new Store({ a: 0 });
 
-class TestComponent1 extends Component {
+class TestComponent1 extends Component<{
+  attrs: { prop1: string };
+  props: { prop1: number };
+  content: ShadowRoot;
+}> {
   static override get properties(): ElementPropertiesConfig {
     return {
       prop1: { value: 0, reflect: true },
@@ -32,8 +36,8 @@ class TestComponent1 extends Component {
   }
 }
 
-class TestComponent2 extends Component {
-  override createContentContainer(): Element {
+class TestComponent2 extends Component<{ content: HTMLDivElement }> {
+  override createContentContainer(): HTMLDivElement {
     return document.createElement('div');
   }
 }
@@ -44,7 +48,7 @@ class TestComponent3 extends Component {
   }
 }
 
-class TestComponent4 extends Component {
+class TestComponent4 extends Component<{ content: ShadowRoot }> {
   override template(): string {
     return `<span>state:${state.get()}</span><span>store.state:${store.state.a}</span>`;
   }
@@ -163,11 +167,11 @@ await Playground.test('Rendering', async (t) => {
   testComponent1.render();
 
   await t.step('styles() should be called and style sheets adopted', () => {
-    assertEquals((testComponent1.content as ShadowRoot).adoptedStyleSheets.length, 1);
+    assertEquals(testComponent1.content.adoptedStyleSheets.length, 1);
   });
 
   await t.step('template() should be called and content updated', () => {
-    assertEquals((testComponent1.content as ShadowRoot).innerHTML, '<span>TestComponent</span>');
+    assertEquals(testComponent1.content.innerHTML, '<span>TestComponent</span>');
   });
 });
 
@@ -202,7 +206,7 @@ await Playground.test('State management', async (t) => {
   await t.step('should rendered with initial state', () => {
     testComponent4.updateSync();
 
-    assertEquals((testComponent4.content as ShadowRoot).innerHTML, '<span>state:0</span><span>store.state:0</span>');
+    assertEquals(testComponent4.content.innerHTML, '<span>state:0</span><span>store.state:0</span>');
   });
 
   await t.step('should re-rendered with updated state', async () => {
@@ -210,7 +214,7 @@ await Playground.test('State management', async (t) => {
 
     await Playground.sleep(100);
 
-    assertEquals((testComponent4.content as ShadowRoot).innerHTML, '<span>state:1</span><span>store.state:0</span>');
+    assertEquals(testComponent4.content.innerHTML, '<span>state:1</span><span>store.state:0</span>');
   });
 
   await t.step('should re-rendered with updated state of store', async () => {
@@ -218,6 +222,6 @@ await Playground.test('State management', async (t) => {
 
     await Playground.sleep(100);
 
-    assertEquals((testComponent4.content as ShadowRoot).innerHTML, '<span>state:1</span><span>store.state:1</span>');
+    assertEquals(testComponent4.content.innerHTML, '<span>state:1</span><span>store.state:1</span>');
   });
 });

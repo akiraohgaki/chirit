@@ -1,4 +1,8 @@
-import { ElementPropertiesConfig } from './types.ts';
+import type { ComponentSchemas, ElementPropertiesConfig } from './types.ts';
+
+type ResolveComponentAttrs<T> = T extends ComponentSchemas['attrs'] ? T : ComponentSchemas['attrs'];
+type ResolveComponentProps<T> = T extends ComponentSchemas['props'] ? T : ComponentSchemas['props'];
+type ResolveComponentContent<T> = T extends ComponentSchemas['content'] ? T : ComponentSchemas['content'];
 
 import { CustomElement } from './CustomElement.ts';
 import { ElementAttributes } from './ElementAttributes.ts';
@@ -15,8 +19,14 @@ import { dom } from './dom.ts';
  *
  * @example Create a custom element
  * ```ts
+ * type ComponentSchemas = {
+ *   attrs: { color: string; size: string };
+ *   props: { color: string; size: string };
+ *   content: ShadowRoot;
+ * };
+ *
  * // Create a custom class that extends the Component class.
- * class ColorPreviewComponent extends Component {
+ * class ColorPreviewComponent extends Component<ComponentSchemas> {
  *   static override get properties(): ElementPropertiesConfig {
  *     return {
  *       color: { value: '#000000' },
@@ -80,7 +90,7 @@ import { dom } from './dom.ts';
  *   }
  *
  *   override disconnectedCallback(): void {
- *     this.unobserve(colorPreviewStore, debugState); // unobserve the observables.
+ *     this.unobserve(colorPreviewStore, debugState); // stop observing the observables.
  *
  *     super.disconnectedCallback(); // should always be called last.
  *   }
@@ -129,13 +139,15 @@ import { dom } from './dom.ts';
  * // <color-preview></color-preview>
  * // <color-preview></color-preview>
  * ```
+ *
+ * @template T - The type of schemas within the component.
  */
-export class Component extends CustomElement {
-  #elementAttributes: ElementAttributes;
+export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> extends CustomElement {
+  #elementAttributes: ElementAttributes<ResolveComponentAttrs<T['attrs']>>;
 
-  #elementProperties: ElementProperties;
+  #elementProperties: ElementProperties<ResolveComponentProps<T['props']>>;
 
-  #nodeStructure: NodeStructure<Element | DocumentFragment>;
+  #nodeStructure: NodeStructure<ResolveComponentContent<T['content']>>;
 
   /**
    * The observed attributes of the element.
@@ -168,27 +180,30 @@ export class Component extends CustomElement {
       this,
       (this.constructor as unknown as { properties: ElementPropertiesConfig }).properties,
     );
-    this.#nodeStructure = new NodeStructure(this.createContentContainer(), this);
+    this.#nodeStructure = new NodeStructure(
+      this.createContentContainer() as ResolveComponentContent<T['content']>,
+      this,
+    );
   }
 
   /**
    * ElementAttributes instance that manage an attributes.
    */
-  get elementAttributes(): ElementAttributes {
+  get elementAttributes(): ElementAttributes<ResolveComponentAttrs<T['attrs']>> {
     return this.#elementAttributes;
   }
 
   /**
    * ElementProperties instance that manage a properties.
    */
-  get elementProperties(): ElementProperties {
+  get elementProperties(): ElementProperties<ResolveComponentProps<T['props']>> {
     return this.#elementProperties;
   }
 
   /**
    * NodeStructure instance that manage the structure of DOM nodes.
    */
-  get nodeStructure(): NodeStructure<Element | DocumentFragment> {
+  get nodeStructure(): NodeStructure<ResolveComponentContent<T['content']>> {
     return this.#nodeStructure;
   }
 
@@ -197,7 +212,7 @@ export class Component extends CustomElement {
    *
    * This is an alias for Component.elementAttributes.proxy.
    */
-  get attrs(): Record<string, string> {
+  get attrs(): Partial<ResolveComponentAttrs<T['attrs']>> {
     return this.#elementAttributes.proxy;
   }
 
@@ -206,7 +221,7 @@ export class Component extends CustomElement {
    *
    * This is an alias for Component.elementProperties.proxy.
    */
-  get props(): Record<string, unknown> {
+  get props(): ResolveComponentProps<T['props']> {
     return this.#elementProperties.proxy;
   }
 
@@ -215,7 +230,7 @@ export class Component extends CustomElement {
    *
    * This is an alias for Component.nodeStructure.host.
    */
-  get content(): Element | DocumentFragment {
+  get content(): ResolveComponentContent<T['content']> {
     return this.#nodeStructure.host;
   }
 
