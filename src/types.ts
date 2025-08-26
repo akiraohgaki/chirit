@@ -23,7 +23,7 @@ export interface ComponentSchemas {
  *
  * @template T - The type of the element instance.
  */
-export interface CreateComponentOptions<T extends Component = Component> {
+export interface CreateComponentOptions<T extends Component<Partial<ComponentSchemas>> = Component<ComponentSchemas>> {
   /**
    * The base class for the component.
    */

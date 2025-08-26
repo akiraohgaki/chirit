@@ -1,4 +1,4 @@
-import type { CreateComponentOptions, ElementPropertiesConfig } from './types.ts';
+import type { ComponentSchemas, CreateComponentOptions, ElementPropertiesConfig } from './types.ts';
 
 import { Component } from './Component.ts';
 
@@ -77,7 +77,7 @@ import { Component } from './Component.ts';
  * @param name - The name of the custom element.
  * @param options - The options for the component.
  */
-export function createComponent<T extends Component = Component>(
+export function createComponent<T extends Component<Partial<ComponentSchemas>> = Component<ComponentSchemas>>(
   name: string,
   options: Partial<CreateComponentOptions<T>> = {},
 ): new () => T {
