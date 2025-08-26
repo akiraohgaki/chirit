@@ -26,7 +26,7 @@ await Playground.test('ElementProperties', async (t) => {
 
   await t.step('constructor()', () => {
     elementProperties = new ElementProperties(element, {
-      prop1: { value: 1 },
+      prop1: { value: 0 },
       prop2: { value: 0, reflect: true },
     });
 
