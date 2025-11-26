@@ -43,6 +43,14 @@ function isDeepEqual(valueA: unknown, valueB: unknown, track: WeakSet<object>): 
     track.add(valueA);
     track.add(valueB);
 
+    if (valueA instanceof Date && valueB instanceof Date) {
+      return valueA.getTime() === valueB.getTime();
+    }
+
+    if (valueA instanceof RegExp && valueB instanceof RegExp) {
+      return valueA.source === valueB.source && valueA.flags === valueB.flags;
+    }
+
     if (Array.isArray(valueA) && Array.isArray(valueB)) {
       if (valueA.length !== valueB.length) {
         return false;

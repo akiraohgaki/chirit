@@ -10,15 +10,21 @@ Deno.test('isEqual()', async (t) => {
     assert(!isEqual(0, null));
     assert(!isEqual(0, undefined));
 
-    assert(isEqual([], []));
-    assert(!isEqual([], null));
+    assert(isEqual({}, {}));
+    assert(isEqual(null, null));
+    assert(!isEqual({}, null));
+    assert(!isEqual(null, {}));
+
+    assert(isEqual(new Date(0), new Date(0)));
+    assert(!isEqual(new Date(0), new Date(1)));
+
+    assert(isEqual(/a/, /a/));
+    assert(!isEqual(/a/, /b/));
+    assert(!isEqual(/a/, /a/i));
 
     assert(isEqual([0], [0]));
     assert(!isEqual([0], [1]));
     assert(!isEqual([0], [0, 1]));
-
-    assert(isEqual({}, {}));
-    assert(!isEqual({}, null));
 
     assert(isEqual({ a: 0 }, { a: 0 }));
     assert(!isEqual({ a: 0 }, { a: 1 }));
