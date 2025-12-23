@@ -169,7 +169,7 @@ Deno.test('Task features', async (t) => {
 
     task.add(() => {
       isExecuted = true;
-      throw new Error('error');
+      throw new Error('error handling');
     });
 
     task.start();

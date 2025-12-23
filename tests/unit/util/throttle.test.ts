@@ -43,7 +43,7 @@ Deno.test('throttle()', async (t) => {
 
     const throttledFunc = throttle(() => {
       isExecuted = true;
-      throw new Error('error');
+      throw new Error('error handling');
     }, 0);
 
     throttledFunc();

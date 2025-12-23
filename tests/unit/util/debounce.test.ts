@@ -43,7 +43,7 @@ Deno.test('debounce()', async (t) => {
 
     const debouncedFunc = debounce(() => {
       isExecuted = true;
-      throw new Error('error');
+      throw new Error('error handling');
     }, 0);
 
     debouncedFunc();
