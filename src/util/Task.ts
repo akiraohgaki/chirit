@@ -23,9 +23,9 @@ import type { TaskOptions } from './types.ts';
 export class Task {
   #options: TaskOptions;
 
-  #loopTaskCollection: Map<() => unknown, number>;
+  #loopTaskMap: Map<() => unknown, number>;
 
-  #taskQueue: Set<() => unknown>;
+  #taskQueueSet: Set<() => unknown>;
 
   #runningCounter: number;
 
@@ -43,8 +43,8 @@ export class Task {
       ...options,
     };
 
-    this.#loopTaskCollection = new Map();
-    this.#taskQueue = new Set();
+    this.#loopTaskMap = new Map();
+    this.#taskQueueSet = new Set();
     this.#runningCounter = 0;
     this.#intervalId = undefined;
   }
@@ -53,14 +53,14 @@ export class Task {
    * The number of tasks in the queue.
    */
   get queueSize(): number {
-    return this.#taskQueue.size;
+    return this.#taskQueueSet.size;
   }
 
   /**
    * The number of looping tasks in the collection.
    */
   get loopSize(): number {
-    return this.#loopTaskCollection.size;
+    return this.#loopTaskMap.size;
   }
 
   /**
@@ -76,7 +76,7 @@ export class Task {
    * @param func - The task function to add.
    */
   add(func: () => unknown): void {
-    this.#taskQueue.add(func);
+    this.#taskQueueSet.add(func);
   }
 
   /**
@@ -86,8 +86,8 @@ export class Task {
    * @param ms - The number of milliseconds to delay.
    */
   addLoop(func: () => unknown, ms: number): void {
-    this.#loopTaskCollection.set(func, ms);
-    this.#taskQueue.add(func);
+    this.#loopTaskMap.set(func, ms);
+    this.#taskQueueSet.add(func);
   }
 
   /**
@@ -96,16 +96,16 @@ export class Task {
    * @param func - The task function to delete.
    */
   delete(func: () => unknown): void {
-    this.#loopTaskCollection.delete(func);
-    this.#taskQueue.delete(func);
+    this.#loopTaskMap.delete(func);
+    this.#taskQueueSet.delete(func);
   }
 
   /**
    * Clears all tasks from the collection and queue.
    */
   clear(): void {
-    this.#loopTaskCollection.clear();
-    this.#taskQueue.clear();
+    this.#loopTaskMap.clear();
+    this.#taskQueueSet.clear();
   }
 
   /**
@@ -134,19 +134,19 @@ export class Task {
    */
   #run(): void {
     if (
-      this.#taskQueue.size === 0 ||
+      this.#taskQueueSet.size === 0 ||
       this.#runningCounter >= this.#options.maxParallelism
     ) {
       return;
     }
 
-    const func = this.#taskQueue.values().next().value;
+    const func = this.#taskQueueSet.values().next().value;
 
     if (!func) {
       return;
     }
 
-    this.#taskQueue.delete(func);
+    this.#taskQueueSet.delete(func);
 
     this.#runningCounter++;
 
@@ -157,10 +157,10 @@ export class Task {
     }).finally(() => {
       this.#runningCounter--;
 
-      if (this.#loopTaskCollection.has(func)) {
+      if (this.#loopTaskMap.has(func)) {
         setTimeout(() => {
           this.add(func);
-        }, this.#loopTaskCollection.get(func));
+        }, this.#loopTaskMap.get(func));
       }
     });
   }

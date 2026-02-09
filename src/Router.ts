@@ -41,7 +41,7 @@ export class Router {
 
   #onerror: (exception: unknown) => unknown;
 
-  #routeCollection: Map<string, (params: Record<string, string>) => unknown>;
+  #routeMap: Map<string, (params: Record<string, string>) => unknown>;
 
   #_hashchangeCallback: (event: HashChangeEvent) => void;
 
@@ -68,7 +68,7 @@ export class Router {
       console.error(exception);
     };
 
-    this.#routeCollection = new Map();
+    this.#routeMap = new Map();
     this.#_hashchangeCallback = this.#hashchangeCallback.bind(this);
     this.#_popstateCallback = this.#popstateCallback.bind(this);
   }
@@ -91,7 +91,7 @@ export class Router {
    * The number of route patterns in the collection.
    */
   get size(): number {
-    return this.#routeCollection.size;
+    return this.#routeMap.size;
   }
 
   /**
@@ -137,7 +137,7 @@ export class Router {
    * @param handler - The function invoked when a route matched.
    */
   set(pattern: string, handler: (params: Record<string, string>) => unknown): void {
-    if (!this.#routeCollection.size) {
+    if (!this.#routeMap.size) {
       if (this.#mode === 'hash') {
         dom.globalThis.addEventListener('hashchange', this.#_hashchangeCallback);
       } else if (this.#mode === 'history') {
@@ -145,7 +145,7 @@ export class Router {
       }
     }
 
-    this.#routeCollection.set(this.#fixRoutePattern(pattern), handler);
+    this.#routeMap.set(this.#fixRoutePattern(pattern), handler);
   }
 
   /**
@@ -154,9 +154,9 @@ export class Router {
    * @param pattern - The route pattern to remove.
    */
   delete(pattern: string): void {
-    this.#routeCollection.delete(this.#fixRoutePattern(pattern));
+    this.#routeMap.delete(this.#fixRoutePattern(pattern));
 
-    if (!this.#routeCollection.size) {
+    if (!this.#routeMap.size) {
       if (this.#mode === 'hash') {
         dom.globalThis.removeEventListener('hashchange', this.#_hashchangeCallback);
       } else if (this.#mode === 'history') {
@@ -264,7 +264,7 @@ export class Router {
    */
   #invokeRouteHandler(path: string): void {
     try {
-      for (const [pattern, handler] of this.#routeCollection) {
+      for (const [pattern, handler] of this.#routeMap) {
         const matches = path.match(new RegExp(pattern));
         if (matches) {
           handler(matches.groups ?? {});
