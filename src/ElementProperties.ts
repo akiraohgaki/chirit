@@ -84,7 +84,7 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
     this.#initProperties();
 
     this.#proxy = this.#createProxy();
-    this.#onchange = () => { };
+    this.#onchange = () => {};
     this.#onerror = (exception) => {
       console.error(exception);
     };
