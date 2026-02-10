@@ -61,7 +61,7 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
 
   #config: ElementPropertiesConfig;
 
-  #properties: Map<string, unknown>;
+  #propertyMap: Map<string, unknown>;
 
   #proxy: T;
 
@@ -80,11 +80,11 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
     this.#targetRef = new WeakRef(target);
 
     this.#config = config;
-    this.#properties = new Map();
+    this.#propertyMap = new Map();
     this.#initProperties();
 
     this.#proxy = this.#createProxy();
-    this.#onchange = () => {};
+    this.#onchange = () => { };
     this.#onerror = (exception) => {
       console.error(exception);
     };
@@ -146,7 +146,7 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
     const target = this.#getTarget();
 
     for (const [key, propConfig] of Object.entries(this.#config)) {
-      if (target.hasAttribute(key) || typeof this.#properties.get(key) === 'boolean') {
+      if (target.hasAttribute(key) || typeof this.#propertyMap.get(key) === 'boolean') {
         this.reflectFromAttribute(key);
       } else if (propConfig.reflect) {
         this.reflectToAttribute(key);
@@ -169,7 +169,7 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
     }
 
     const target = this.#getTarget();
-    const value = this.#properties.get(key);
+    const value = this.#propertyMap.get(key);
 
     if (!target.hasAttribute(key) && typeof value !== 'boolean') {
       return;
@@ -179,26 +179,26 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
 
     try {
       if (propConfig.converter && typeof propConfig.converter === 'function') {
-        this.#properties.set(key, propConfig.converter(attrValue));
+        this.#propertyMap.set(key, propConfig.converter(attrValue));
       } else if (typeof value === 'boolean') {
-        this.#properties.set(key, target.hasAttribute(key));
+        this.#propertyMap.set(key, target.hasAttribute(key));
       } else if (typeof value === 'string') {
-        this.#properties.set(key, attrValue);
+        this.#propertyMap.set(key, attrValue);
       } else if (typeof value === 'number') {
-        this.#properties.set(key, Number(attrValue));
+        this.#propertyMap.set(key, Number(attrValue));
       } else if (typeof value === 'bigint') {
-        this.#properties.set(key, BigInt(attrValue));
+        this.#propertyMap.set(key, BigInt(attrValue));
       } else if (typeof value === 'object' && value !== null) {
-        this.#properties.set(key, JSON.parse(attrValue));
+        this.#propertyMap.set(key, JSON.parse(attrValue));
       } else {
         // value: undefined, null, symbol, function.
-        this.#properties.set(key, attrValue);
+        this.#propertyMap.set(key, attrValue);
       }
     } catch (exception) {
       this.#onerror(exception);
     }
 
-    const newValue = this.#properties.get(key);
+    const newValue = this.#propertyMap.get(key);
     if (!isEqual(value, newValue)) {
       this.#onchange(key, value, newValue);
     }
@@ -219,7 +219,7 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
     }
 
     const target = this.#getTarget();
-    const value = this.#properties.get(key);
+    const value = this.#propertyMap.get(key);
 
     try {
       if (value === undefined || value === null) {
@@ -269,7 +269,7 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
    */
   #initProperties(): void {
     for (const [key, propConfig] of Object.entries(this.#config)) {
-      this.#properties.set(key, propConfig.value);
+      this.#propertyMap.set(key, propConfig.value);
     }
   }
 
@@ -279,9 +279,9 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
   #createProxy(): T {
     return new Proxy({} as T, {
       set: (_proxyTarget, key, value) => {
-        if (typeof key === 'string' && this.#properties.has(key)) {
-          const oldValue = this.#properties.get(key);
-          this.#properties.set(key, value);
+        if (typeof key === 'string' && this.#propertyMap.has(key)) {
+          const oldValue = this.#propertyMap.get(key);
+          this.#propertyMap.set(key, value);
           if (!isEqual(oldValue, value)) {
             this.#onchange(key, oldValue, value);
             if (this.#config[key].reflect) {
@@ -293,8 +293,8 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
         return false;
       },
       get: (_proxyTarget, key) => {
-        if (typeof key === 'string' && this.#properties.has(key)) {
-          return this.#properties.get(key);
+        if (typeof key === 'string' && this.#propertyMap.has(key)) {
+          return this.#propertyMap.get(key);
         }
         return undefined;
       },
@@ -303,20 +303,20 @@ export class ElementProperties<T extends Record<string, unknown> = Record<string
         return false;
       },
       has: (_proxyTarget, key) => {
-        if (typeof key === 'string' && this.#properties.has(key)) {
+        if (typeof key === 'string' && this.#propertyMap.has(key)) {
           return true;
         }
         return false;
       },
       ownKeys: () => {
-        return Array.from(this.#properties.keys());
+        return Array.from(this.#propertyMap.keys());
       },
       getOwnPropertyDescriptor: (_proxyTarget, key) => {
-        if (typeof key === 'string' && this.#properties.has(key)) {
+        if (typeof key === 'string' && this.#propertyMap.has(key)) {
           return {
             configurable: true,
             enumerable: true,
-            value: this.#properties.get(key),
+            value: this.#propertyMap.get(key),
           };
         }
         return undefined;

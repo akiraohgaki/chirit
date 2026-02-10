@@ -1,6 +1,6 @@
 import { dom } from './dom.ts';
 
-const hostCollection = new WeakSet();
+const hostSet = new WeakSet();
 
 /**
  * Manage the structure of DOM nodes.
@@ -52,7 +52,7 @@ export class NodeStructure<T extends Node> {
 
   #contextRef: WeakRef<Record<string, unknown>> | null;
 
-  #oneventCollection: Set<[Element, string]>;
+  #oneventSet: Set<[Element, string]>;
 
   /**
    * Creates a new instance of the NodeStructure class.
@@ -62,14 +62,14 @@ export class NodeStructure<T extends Node> {
    */
   constructor(host: T, context?: unknown) {
     // Avoid affect child nodes managed by this feature.
-    hostCollection.add(host);
+    hostSet.add(host);
 
     // Avoid circular references to make GC easier.
     this.#hostRef = new WeakRef(host);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
 
     // Manage onevent handlers.
-    this.#oneventCollection = new Set();
+    this.#oneventSet = new Set();
   }
 
   /**
@@ -247,7 +247,7 @@ export class NodeStructure<T extends Node> {
         if (original instanceof dom.globalThis.Element && diff instanceof dom.globalThis.Element) {
           // Element: HTMLElement, SVGElement.
           this.#patchAttributes(original, diff);
-          if (!hostCollection.has(original)) {
+          if (!hostSet.has(original)) {
             this.#patchNodesInsideOf(original, diff);
           }
         } else if (original instanceof dom.globalThis.CharacterData && diff instanceof dom.globalThis.CharacterData) {
@@ -327,13 +327,13 @@ export class NodeStructure<T extends Node> {
             target.removeAttribute(attribute.name);
             oneventTarget[onevent] = handler.bind(context ?? target);
 
-            this.#oneventCollection.add([target, onevent]);
+            this.#oneventSet.add([target, onevent]);
           }
         }
       }
     }
 
-    if (!hostCollection.has(target)) {
+    if (!hostSet.has(target)) {
       this.#fixOneventHandlersInsideOf(target);
     }
   }
@@ -342,11 +342,11 @@ export class NodeStructure<T extends Node> {
    * Clears the onevent handlers.
    */
   #clearOneventHandlers(): void {
-    for (const [target, onevent] of this.#oneventCollection) {
+    for (const [target, onevent] of this.#oneventSet) {
       const oneventTarget = target as unknown as Record<string, null>;
       oneventTarget[onevent] = null;
     }
 
-    this.#oneventCollection.clear();
+    this.#oneventSet.clear();
   }
 }

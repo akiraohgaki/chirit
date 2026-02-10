@@ -22,13 +22,13 @@
  * @template T - The type of the value.
  */
 export class Observable<T = unknown> {
-  #observerCollection: Set<(value: T) => unknown>;
+  #observerSet: Set<(value: T) => unknown>;
 
   /**
    * Creates a new instance of the Observable class.
    */
   constructor() {
-    this.#observerCollection = new Set();
+    this.#observerSet = new Set();
   }
 
   /**
@@ -37,7 +37,7 @@ export class Observable<T = unknown> {
    * @param observer - An observer function.
    */
   subscribe(observer: (value: T) => unknown): void {
-    this.#observerCollection.add(observer);
+    this.#observerSet.add(observer);
   }
 
   /**
@@ -46,7 +46,7 @@ export class Observable<T = unknown> {
    * @param observer - An observer function.
    */
   unsubscribe(observer: (value: T) => unknown): void {
-    this.#observerCollection.delete(observer);
+    this.#observerSet.delete(observer);
   }
 
   /**
@@ -55,7 +55,7 @@ export class Observable<T = unknown> {
    * @param value - The value to notify.
    */
   notify(value: T): void {
-    for (const observer of this.#observerCollection) {
+    for (const observer of this.#observerSet) {
       observer(value);
     }
   }
