@@ -69,6 +69,10 @@
     ]
   },
   "tasks": {
+    "install": "deno task install:pre && deno task install:install && deno task install:post",
+    "install:pre": "echo 'Skip task install:pre'",
+    "install:install": "deno install",
+    "install:post": "deno run -A npm:playwright install --with-deps",
     "check": "deno task check:pre && deno task check:check && deno task check:post",
     "check:pre": "deno outdated && deno fmt && deno lint",
     "check:check": "deno check src/ tests/ *.ts",
@@ -78,7 +82,7 @@
     "build:build": "deno run -A jsr:@akiraohgaki/devsrv/bundle --minify=true mod.ts mod.bundle.js",
     "build:post": "echo 'Skip task build:post'",
     "test": "deno task test:pre && deno task test:unit && deno task test:e2e && deno task test:post",
-    "test:pre": "deno run -A npm:playwright install --with-deps",
+    "test:pre": "echo 'Skip task test:pre'",
     "test:unit": "deno test -A --coverage",
     "test:e2e": "deno run -A npm:playwright test",
     "test:post": "echo 'Skip task test:post'",
