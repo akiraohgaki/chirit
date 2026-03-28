@@ -5,6 +5,7 @@ import { CustomElement } from '../../mod.ts';
 
 const values: Array<string> = [];
 let isRenderError = false;
+let isBeforeUpdateCallbackError = false;
 let isUpdatedCallbackError = false;
 
 class TestElement extends CustomElement {
@@ -61,6 +62,14 @@ class TestElement extends CustomElement {
     super.render();
     this.innerHTML = `<span>attr1:${this.getAttribute('attr1') ?? ''}</span>` +
       `<span>attr2:${this.getAttribute('attr2') ?? ''}</span>`;
+  }
+
+  override beforeUpdateCallback(): void {
+    values.push('beforeUpdateCallback()');
+    if (isBeforeUpdateCallbackError) {
+      throw new Error('error');
+    }
+    super.beforeUpdateCallback();
   }
 
   override updatedCallback(): void {
@@ -123,6 +132,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
       'constructor()',
       'connectedCallback()',
       'updateSync()',
+      'beforeUpdateCallback()',
       'render()',
       'updatedCallback()',
     ]);
@@ -145,6 +155,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'adoptedCallback()',
         'connectedCallback()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
       ]);
@@ -165,6 +176,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'connectedCallback()',
         'update()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
       ];
@@ -195,6 +207,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'attributeChangedCallback()',
         'connectedCallback()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
       ]);
@@ -213,6 +226,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'attributeChangedCallback()',
         'update()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
       ]);
@@ -261,6 +275,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'attributeChangedCallback()',
         'connectedCallback()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
       ]);
@@ -276,6 +291,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'attributeChangedCallback()',
         'update()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
       ]);
@@ -303,6 +319,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'attributeChangedCallback()',
         'update()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
       ]);
@@ -322,6 +339,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
 
     await t.step('error in render()', async () => {
       isRenderError = true;
+      isBeforeUpdateCallbackError = false;
       isUpdatedCallbackError = false;
 
       testElement.setAttribute('attr1', 'a');
@@ -332,14 +350,16 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'attributeChangedCallback()',
         'update()',
         'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'errorCallback()',
       ]);
     });
 
-    await t.step('error in updatedCallback()', async () => {
+    await t.step('error in beforeUpdateCallback()', async () => {
       isRenderError = false;
-      isUpdatedCallbackError = true;
+      isBeforeUpdateCallbackError = true;
+      isUpdatedCallbackError = false;
 
       testElement.setAttribute('attr1', 'b');
 
@@ -349,6 +369,25 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'attributeChangedCallback()',
         'update()',
         'updateSync()',
+        'beforeUpdateCallback()',
+        'errorCallback()',
+      ]);
+    });
+
+    await t.step('error in updatedCallback()', async () => {
+      isRenderError = false;
+      isBeforeUpdateCallbackError = false;
+      isUpdatedCallbackError = true;
+
+      testElement.setAttribute('attr1', 'c');
+
+      await Playground.sleep(100);
+
+      assertEquals(values.splice(0), [
+        'attributeChangedCallback()',
+        'update()',
+        'updateSync()',
+        'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
         'errorCallback()',
