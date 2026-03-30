@@ -28,7 +28,7 @@ import { debounce } from './util/debounce.ts';
  *   }
  *
  *   override updatedCallback(): void {
- *     console.log('color-preview-updated');
+ *     console.log('color-preview has updated.');
  *   }
  * }
  *
@@ -152,6 +152,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    */
   updateSync(): void {
     try {
+      this.beforeUpdateCallback();
       this.render();
       this.#updateCounter++;
       this.updatedCallback();
@@ -168,6 +169,13 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    * Subclasses should implement this method.
    */
   render(): void {}
+
+  /**
+   * Callback invoked when before the element is updated.
+   *
+   * By default, do nothing.
+   */
+  beforeUpdateCallback(): void {}
 
   /**
    * Callback invoked when the element has been updated.
