@@ -53,11 +53,11 @@ import { dom } from './dom.ts';
  *       </style>
  *
  *       <!-- The execution context for an event handler is this custom element. -->
- *       <div onclick="this.clickHandler(event)"></div>
+ *       <div onclick="this.handleClick(event)"></div>
  *     `;
  *   }
  *
- *   clickHandler(_event: Event): void {
+ *   handleClick(_event: Event): void {
  *     this.dispatch('color-preview-click');
  *   }
  * }
@@ -118,13 +118,13 @@ import { dom } from './dom.ts';
  *       }
  *       </style>
  *
- *       <div onclick="this.clickHandler(event)">
+ *       <div onclick="this.handleClick(event)">
  *       ${debugState.get() ? colorPreviewStore.state.color : ''}
  *       </div>
  *     `;
  *   }
  *
- *   clickHandler(event: Event): void {
+ *   handleClick(event: Event): void {
  *     this.dispatch('color-preview-click');
  *     if (debugState.get()) {
  *       console.log(event);

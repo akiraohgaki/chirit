@@ -10,7 +10,7 @@ const hostSet = new WeakSet();
  * @example Update the content of the host node
  * ```ts
  * const host = document.createElement('div');
- * const context = { eventHandler: (event: Event) => console.log(event) };
+ * const context = { handleClick: (event: Event) => console.log(event) };
  *
  * const nodeStructure = new NodeStructure(host, context);
  *
@@ -24,7 +24,7 @@ const hostSet = new WeakSet();
  *
  * nodeStructure.update(`
  *   <h1>Hello</h1>
- *   <button onclick="this.eventHandler(event)">Click me</button>
+ *   <button onclick="this.handleClick(event)">Click me</button>
  * `);
  * // HTML
  * // <div>
