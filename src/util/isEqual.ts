@@ -1,7 +1,5 @@
 /**
- * Compares two values for equality.
- *
- * It compares nested objects recursively.
+ * Compares two values for equality by recursively checking nested objects.
  *
  * This also works in non-browser environments.
  *

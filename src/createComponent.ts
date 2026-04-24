@@ -3,7 +3,7 @@ import type { ComponentSchemas, CreateComponentOptions, ElementPropertiesConfig 
 import { Component } from './Component.ts';
 
 /**
- * Creates web component.
+ * Creates a web component based on the Component class.
  *
  * It is based on the Component class.
  *

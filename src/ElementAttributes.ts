@@ -1,5 +1,5 @@
 /**
- * Manage the attributes of an element.
+ * Manages the attributes of an element.
  *
  * It simplifies attribute manipulation to the target element.
  *

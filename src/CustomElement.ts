@@ -2,7 +2,7 @@ import { dom } from './dom.ts';
 import { debounce } from './util/debounce.ts';
 
 /**
- * A base class for creating custom element.
+ * A base class for creating custom elements.
  *
  * It provides a mechanism for asynchronous updates and handling lifecycle callbacks.
  *

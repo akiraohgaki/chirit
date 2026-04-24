@@ -1,7 +1,7 @@
 /**
- * Creates a debounced function.
+ * Creates a debounced function that delays execution until the specified wait time has elapsed.
  *
- * It delays the execution of the provided function until the specified wait time has elapses.
+ * This helps in limiting the rate at which a function is executed.
  *
  * This also works in non-browser environments.
  *

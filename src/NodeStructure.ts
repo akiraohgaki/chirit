@@ -3,7 +3,7 @@ import { dom } from './dom.ts';
 const hostSet = new WeakSet();
 
 /**
- * Manage the structure of DOM nodes.
+ * Manages the structure of DOM nodes.
  *
  * It simplifies DOM manipulation and DOM updates are optimized through a diffing process.
  *
