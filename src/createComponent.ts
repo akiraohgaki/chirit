@@ -3,7 +3,7 @@ import type { ComponentSchemas, CreateComponentOptions, ElementPropertiesConfig 
 import { Component } from './Component.ts';
 
 /**
- * Creates web component.
+ * Creates a web component based on the Component class.
  *
  * It is based on the Component class.
  *
@@ -16,7 +16,7 @@ import { Component } from './Component.ts';
  *
  * // This is a custom base class extending the Component class.
  * class BaseComponent extends Component {
- *   clickHandler(event: Event): void {
+ *   handleClick(event: Event): void {
  *     this.dispatch('color-preview-click');
  *     if (debugState.get()) {
  *       console.log(event);
@@ -58,7 +58,7 @@ import { Component } from './Component.ts';
  *         </style>
  *
  *         <!-- The execution context for an event handler is this custom element. -->
- *         <div onclick="this.clickHandler(event)">
+ *         <div onclick="this.handleClick(event)">
  *         ${debugState.get() ? context.props.color : ''}
  *         </div>
  *       `;

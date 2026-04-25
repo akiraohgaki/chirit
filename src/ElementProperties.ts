@@ -3,7 +3,7 @@ import type { ElementPropertiesConfig } from './types.ts';
 import { isEqual } from './util/isEqual.ts';
 
 /**
- * Manage the properties of an element.
+ * Manages the properties of an element.
  *
  * It simplifies reflecting from properties to attributes and vice versa.
  *

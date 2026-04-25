@@ -11,9 +11,9 @@ import { NodeStructure } from './NodeStructure.ts';
 import { dom } from './dom.ts';
 
 /**
- * A base class for creating web component.
+ * A base class for creating web components.
  *
- * It inherited the CustomElement class.
+ * It inherits from the CustomElement class and provides reactivity.
  *
  * Consider using the createComponent function for a quick way to create web components.
  *
@@ -53,11 +53,11 @@ import { dom } from './dom.ts';
  *       </style>
  *
  *       <!-- The execution context for an event handler is this custom element. -->
- *       <div onclick="this.clickHandler(event)"></div>
+ *       <div onclick="this.handleClick(event)"></div>
  *     `;
  *   }
  *
- *   clickHandler(_event: Event): void {
+ *   handleClick(_event: Event): void {
  *     this.dispatch('color-preview-click');
  *   }
  * }
@@ -118,13 +118,13 @@ import { dom } from './dom.ts';
  *       }
  *       </style>
  *
- *       <div onclick="this.clickHandler(event)">
+ *       <div onclick="this.handleClick(event)">
  *       ${debugState.get() ? colorPreviewStore.state.color : ''}
  *       </div>
  *     `;
  *   }
  *
- *   clickHandler(event: Event): void {
+ *   handleClick(event: Event): void {
  *     this.dispatch('color-preview-click');
  *     if (debugState.get()) {
  *       console.log(event);
@@ -187,21 +187,21 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * ElementAttributes instance that manage an attributes.
+   * The ElementAttributes instance that manages attributes.
    */
   get elementAttributes(): ElementAttributes<ResolveComponentAttrs<T['attrs']>> {
     return this.#elementAttributes;
   }
 
   /**
-   * ElementProperties instance that manage a properties.
+   * The ElementProperties instance that manages properties.
    */
   get elementProperties(): ElementProperties<ResolveComponentProps<T['props']>> {
     return this.#elementProperties;
   }
 
   /**
-   * NodeStructure instance that manage the structure of DOM nodes.
+   * The NodeStructure instance that manages the structure of DOM nodes.
    */
   get nodeStructure(): NodeStructure<ResolveComponentContent<T['content']>> {
     return this.#nodeStructure;
@@ -280,9 +280,9 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * Observes an observable objects.
+   * Observes one or more observable objects.
    *
-   * An observable object must inherited from the Observable class or have a similar interface.
+   * An observable object must inherit from the Observable class or have a similar interface.
    *
    * @param args - An observable objects.
    */
@@ -295,9 +295,9 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * Stops observing an observable objects.
+   * Stops observing one or more observable objects.
    *
-   * An observable object must inherited from the Observable class or have a similar interface.
+   * An observable object must inherit from the Observable class or have a similar interface.
    *
    * @param args - An observable objects.
    */

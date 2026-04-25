@@ -4,10 +4,10 @@ type ValueOf<T, K extends KeysOf<T>> = T[K];
 import { dom } from './dom.ts';
 
 /**
- * Manage web storage.
+ * Manages web storage access.
  *
  * It supports both local storage and session storage modes.
- * And any JSON serializable value can be stored in the storage.
+ * Any JSON serializable value can be stored.
  *
  * This also works in non-browser environments. (Deno)
  *

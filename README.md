@@ -150,26 +150,26 @@ createComponent<CounterComponentInterface>('counter-component', {
 
 [Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component) class:
 
-- Lifecycle callbacks: updatedCallback, errorCallback, etc.
+- Lifecycle callbacks: beforeUpdateCallback, updatedCallback, errorCallback, etc.
 - Reactive to changes: Automatically re-renders when properties, attributes or states changed.
 - Template and style management: Define the structure and style of your component.
 - Event binding: Bind event handlers to elements within the component.
 - DOM diffing: Efficiently updates the DOM node tree when content changed.
-- Custom event dispatching: Publish events to communicate with other components.
+- Custom event dispatching: Dispatches events to communicate with other components.
 
 [createComponent](https://jsr.io/@akiraohgaki/chirit/doc/~/createComponent) function:
 
-- A convenient function for quickly creating components based on the Component class.
+- A convenient way to quickly create components based on the Component class.
 
 [html](https://jsr.io/@akiraohgaki/chirit/doc/~/html) function:
 
 - A tagged template function for HTML.
-- Some code editors make syntax highlighting, formatting, and suggestions for template literals.
+- Some code editors provide syntax highlighting, formatting, and suggestions for template literals.
 
 [css](https://jsr.io/@akiraohgaki/chirit/doc/~/css) function:
 
 - A tagged template function for CSS.
-- Some code editors make syntax highlighting, formatting, and suggestions for template literals.
+- Some code editors provide syntax highlighting, formatting, and suggestions for template literals.
 
 ### State management
 

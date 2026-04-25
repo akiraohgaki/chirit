@@ -131,7 +131,7 @@ await Playground.test('DOM management features', async (t) => {
 
   let eventType = '';
   const context = {
-    eventHandler: (event: Event) => {
+    handleClick: (event: Event) => {
       eventType = event.type;
     },
   };
@@ -226,7 +226,7 @@ await Playground.test('DOM management features', async (t) => {
   });
 
   await t.step('event binding', async (t) => {
-    const button1 = '<button data-onevent="true" onclick="this.eventHandler(event)">a</button>';
+    const button1 = '<button data-onevent="true" onclick="this.handleClick(event)">a</button>';
     const button2 = '<button data-onevent="false">b</button>';
 
     await Playground.sleep(sleepTime);

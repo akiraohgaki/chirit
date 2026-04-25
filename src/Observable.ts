@@ -1,5 +1,5 @@
 /**
- * Notify observers.
+ * Notifies observers of state changes.
  *
  * This also works in non-browser environments.
  *
