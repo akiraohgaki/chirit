@@ -26,10 +26,6 @@ import { debounce } from './util/debounce.ts';
  *
  *     this.textContent = color;
  *   }
- *
- *   override updatedCallback(): void {
- *     console.log('color-preview has updated.');
- *   }
  * }
  *
  * // Define the custom element.
