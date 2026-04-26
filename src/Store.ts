@@ -3,10 +3,7 @@ import { dom } from './dom.ts';
 import { isEqual } from './util/isEqual.ts';
 
 /**
- * An observable store for managing complex states.
- *
- * It inherits from the Observable class.
- * It notifies observers when the state changes.
+ * An observable store for managing complex states that inherits from the Observable class and notifies observers when the state changes.
  *
  * Consider using the State class to manage atomic state.
  *

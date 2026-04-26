@@ -11,9 +11,7 @@ import { NodeStructure } from './NodeStructure.ts';
 import { dom } from './dom.ts';
 
 /**
- * A base class for creating web components.
- *
- * It inherits from the CustomElement class and provides reactivity.
+ * A base class for creating web components that inherits from the CustomElement class.
  *
  * Consider using the createComponent function for a quick way to create web components.
  *
