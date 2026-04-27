@@ -150,7 +150,7 @@ createComponent<CounterComponentInterface>('counter-component', {
 
 [Component](https://jsr.io/@akiraohgaki/chirit/doc/~/Component) class:
 
-- Lifecycle callbacks: beforeUpdateCallback, updatedCallback, errorCallback, etc.
+- Lifecycle callbacks: updatedCallback, errorCallback, etc.
 - Reactive to changes: Automatically re-renders when properties, attributes or states changed.
 - Template and style management: Define the structure and style of your component.
 - Event binding: Bind event handlers to elements within the component.
