@@ -133,9 +133,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   adoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
   /**
-   * Asynchronously updates the element.
-   *
-   * It schedules a synchronously update for later execution.
+   * Asynchronously updates the element by scheduling a synchronous update for later execution.
    */
   update(): void {
     this.#debouncedUpdate();

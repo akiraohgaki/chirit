@@ -21,9 +21,7 @@ export function isEqual(valueA: unknown, valueB: unknown): boolean {
 }
 
 /**
- * Compares two values for equality.
- *
- * It compares nested objects recursively.
+ * Compares two values for equality by recursively checking nested objects.
  *
  * @param valueA - The first value to compare.
  * @param valueB - The second value to compare.
