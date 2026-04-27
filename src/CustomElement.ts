@@ -145,9 +145,20 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   updateSync(): void {
     try {
       this.beforeUpdateCallback();
+    } catch (exception) {
+      this.errorCallback(exception);
+    }
+
+    try {
       this.render();
       this.#updateCounter++;
       this.updatedCallback();
+    } catch (exception) {
+      this.errorCallback(exception);
+    }
+
+    try {
+      this.afterUpdateCallback();
     } catch (exception) {
       this.errorCallback(exception);
     }
@@ -161,13 +172,6 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    * Subclasses should implement this method.
    */
   render(): void {}
-
-  /**
-   * Callback invoked when before the element is updated.
-   *
-   * By default, do nothing.
-   */
-  beforeUpdateCallback(): void {}
 
   /**
    * Callback invoked when the element has been updated.
@@ -186,4 +190,18 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   errorCallback(exception: unknown): void {
     console.error(exception);
   }
+
+  /**
+   * Callback invoked when before the element is updated.
+   *
+   * By default, do nothing.
+   */
+  beforeUpdateCallback(): void {}
+
+  /**
+   * Callback invoked when after the element is updated.
+   *
+   * By default, do nothing.
+   */
+  afterUpdateCallback(): void {}
 }
