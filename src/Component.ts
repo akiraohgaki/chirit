@@ -11,9 +11,7 @@ import { NodeStructure } from './NodeStructure.ts';
 import { dom } from './dom.ts';
 
 /**
- * A base class for creating web components.
- *
- * It inherits from the CustomElement class and provides reactivity.
+ * A base class for creating web components that inherits from the CustomElement class.
  *
  * Consider using the createComponent function for a quick way to create web components.
  *
@@ -201,7 +199,7 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * The NodeStructure instance that manages the structure of DOM nodes.
+   * The NodeStructure instance that manages DOM node structures.
    */
   get nodeStructure(): NodeStructure<ResolveComponentContent<T['content']>> {
     return this.#nodeStructure;
@@ -310,9 +308,7 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * Dispatches a custom event on the content container of the element.
-   *
-   * Dispatched custom event bubbles out of Shadow DOM.
+   * Dispatches a custom event from the element's content container that bubbles beyond the Shadow DOM.
    *
    * @param type - The type of the event to dispatch.
    * @param detail - Details to include in the event object.

@@ -1,9 +1,7 @@
 import { dom } from './dom.ts';
 
 /**
- * A client-side router that manages routes and handles navigation events.
- *
- * It supports both hash-based routing and history-based routing modes.
+ * A client-side router that manages routes and navigation events, supporting both hash-based and history-based routing modes.
  *
  * @example Basic usage
  * ```ts

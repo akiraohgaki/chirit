@@ -5,8 +5,9 @@ import { CustomElement } from '../../mod.ts';
 
 const values: Array<string> = [];
 let isRenderError = false;
-let isBeforeUpdateCallbackError = false;
 let isUpdatedCallbackError = false;
+let isBeforeUpdateCallbackError = false;
+let isAfterUpdateCallbackError = false;
 
 class TestElement extends CustomElement {
   static override get observedAttributes(): Array<string> {
@@ -64,14 +65,6 @@ class TestElement extends CustomElement {
       `<span>attr2:${this.getAttribute('attr2') ?? ''}</span>`;
   }
 
-  override beforeUpdateCallback(): void {
-    values.push('beforeUpdateCallback()');
-    if (isBeforeUpdateCallbackError) {
-      throw new Error('error');
-    }
-    super.beforeUpdateCallback();
-  }
-
   override updatedCallback(): void {
     values.push('updatedCallback()');
     if (isUpdatedCallbackError) {
@@ -83,6 +76,22 @@ class TestElement extends CustomElement {
   override errorCallback(exception: unknown): void {
     values.push('errorCallback()');
     super.errorCallback(exception);
+  }
+
+  override beforeUpdateCallback(): void {
+    values.push('beforeUpdateCallback()');
+    if (isBeforeUpdateCallbackError) {
+      throw new Error('error');
+    }
+    super.beforeUpdateCallback();
+  }
+
+  override afterUpdateCallback(): void {
+    values.push('afterUpdateCallback()');
+    if (isAfterUpdateCallbackError) {
+      throw new Error('error');
+    }
+    super.afterUpdateCallback();
   }
 }
 
@@ -135,6 +144,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
       'beforeUpdateCallback()',
       'render()',
       'updatedCallback()',
+      'afterUpdateCallback()',
     ]);
   });
 
@@ -158,6 +168,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
       ]);
     });
 
@@ -179,6 +190,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
       ];
 
       if (navigator.userAgent.search('Firefox') !== -1) {
@@ -210,6 +222,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
       ]);
       assertEquals(
         testElement.outerHTML,
@@ -229,6 +242,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
       ]);
       assertEquals(
         testElement.outerHTML,
@@ -278,6 +292,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
       ]);
     });
 
@@ -294,6 +309,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
       ]);
     });
 
@@ -322,6 +338,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
       ]);
     });
   });
@@ -339,8 +356,9 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
 
     await t.step('error in render()', async () => {
       isRenderError = true;
-      isBeforeUpdateCallbackError = false;
       isUpdatedCallbackError = false;
+      isBeforeUpdateCallbackError = false;
+      isAfterUpdateCallbackError = false;
 
       testElement.setAttribute('attr1', 'a');
 
@@ -353,13 +371,15 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'beforeUpdateCallback()',
         'render()',
         'errorCallback()',
+        'afterUpdateCallback()',
       ]);
     });
 
-    await t.step('error in beforeUpdateCallback()', async () => {
+    await t.step('error in updatedCallback()', async () => {
       isRenderError = false;
-      isBeforeUpdateCallbackError = true;
-      isUpdatedCallbackError = false;
+      isUpdatedCallbackError = true;
+      isBeforeUpdateCallbackError = false;
+      isAfterUpdateCallbackError = false;
 
       testElement.setAttribute('attr1', 'b');
 
@@ -370,14 +390,18 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'update()',
         'updateSync()',
         'beforeUpdateCallback()',
+        'render()',
+        'updatedCallback()',
         'errorCallback()',
+        'afterUpdateCallback()',
       ]);
     });
 
-    await t.step('error in updatedCallback()', async () => {
+    await t.step('error in beforeUpdateCallback()', async () => {
       isRenderError = false;
-      isBeforeUpdateCallbackError = false;
-      isUpdatedCallbackError = true;
+      isUpdatedCallbackError = false;
+      isBeforeUpdateCallbackError = true;
+      isAfterUpdateCallbackError = false;
 
       testElement.setAttribute('attr1', 'c');
 
@@ -388,8 +412,31 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'update()',
         'updateSync()',
         'beforeUpdateCallback()',
+        'errorCallback()',
         'render()',
         'updatedCallback()',
+        'afterUpdateCallback()',
+      ]);
+    });
+
+    await t.step('error in afterUpdateCallback()', async () => {
+      isRenderError = false;
+      isUpdatedCallbackError = false;
+      isBeforeUpdateCallbackError = false;
+      isAfterUpdateCallbackError = true;
+
+      testElement.setAttribute('attr1', 'd');
+
+      await Playground.sleep(100);
+
+      assertEquals(values.splice(0), [
+        'attributeChangedCallback()',
+        'update()',
+        'updateSync()',
+        'beforeUpdateCallback()',
+        'render()',
+        'updatedCallback()',
+        'afterUpdateCallback()',
         'errorCallback()',
       ]);
     });

@@ -5,8 +5,6 @@ import { Component } from './Component.ts';
 /**
  * Creates a web component based on the Component class.
  *
- * It is based on the Component class.
- *
  * Consider using the Component class to create complex web components.
  *
  * @example Create a custom element

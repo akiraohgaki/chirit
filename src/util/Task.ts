@@ -1,9 +1,7 @@
 import type { TaskOptions } from './types.ts';
 
 /**
- * Manages and executes tasks.
- *
- * It supports parallel execution and looping tasks.
+ * Manages and executes tasks with support for parallel execution and looping.
  *
  * This also works in non-browser environments.
  *
@@ -50,21 +48,21 @@ export class Task {
   }
 
   /**
-   * Gets the number of tasks in the queue.
+   * The number of tasks in the queue.
    */
   get queueSize(): number {
     return this.#taskQueueSet.size;
   }
 
   /**
-   * Gets the number of looping tasks in the collection.
+   * The number of looping tasks in the collection.
    */
   get loopSize(): number {
     return this.#loopTaskMap.size;
   }
 
   /**
-   * Gets whether there is a task currently running.
+   * Whether there is a task currently running.
    */
   get isRunning(): boolean {
     return this.#runningCounter > 0;

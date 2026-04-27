@@ -1,7 +1,5 @@
 /**
- * Manages the attributes of an element.
- *
- * It simplifies attribute manipulation to the target element.
+ * Manages and simplifies attribute manipulation for a target element.
  *
  * @example Attribute manipulation
  * ```ts

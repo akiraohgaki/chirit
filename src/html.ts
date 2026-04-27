@@ -1,9 +1,7 @@
 import { dom } from './dom.ts';
 
 /**
- * Creates a DocumentFragment from template literals.
- *
- * This is a tagged template function.
+ * A tagged template function that creates a DocumentFragment from template literals.
  *
  * @example Basic usage
  * ```ts

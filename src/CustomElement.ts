@@ -2,9 +2,7 @@ import { dom } from './dom.ts';
 import { debounce } from './util/debounce.ts';
 
 /**
- * A base class for creating custom elements.
- *
- * It provides a mechanism for asynchronous updates and handling lifecycle callbacks.
+ * A base class for creating custom elements that provides a mechanism for asynchronous updates and lifecycle callback handling.
  *
  * @example Create a custom element
  * ```ts
@@ -135,9 +133,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   adoptedCallback(_oldDocument: Document, _newDocument: Document): void {}
 
   /**
-   * Asynchronously updates the element.
-   *
-   * It schedules a synchronously update for later execution.
+   * Asynchronously updates the element by scheduling a synchronous update for later execution.
    */
   update(): void {
     this.#debouncedUpdate();
@@ -149,9 +145,20 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   updateSync(): void {
     try {
       this.beforeUpdateCallback();
+    } catch (exception) {
+      this.errorCallback(exception);
+    }
+
+    try {
       this.render();
       this.#updateCounter++;
       this.updatedCallback();
+    } catch (exception) {
+      this.errorCallback(exception);
+    }
+
+    try {
+      this.afterUpdateCallback();
     } catch (exception) {
       this.errorCallback(exception);
     }
@@ -165,13 +172,6 @@ export class CustomElement extends dom.globalThis.HTMLElement {
    * Subclasses should implement this method.
    */
   render(): void {}
-
-  /**
-   * Callback invoked when before the element is updated.
-   *
-   * By default, do nothing.
-   */
-  beforeUpdateCallback(): void {}
 
   /**
    * Callback invoked when the element has been updated.
@@ -190,4 +190,18 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   errorCallback(exception: unknown): void {
     console.error(exception);
   }
+
+  /**
+   * Callback invoked when before the element is updated.
+   *
+   * By default, do nothing.
+   */
+  beforeUpdateCallback(): void {}
+
+  /**
+   * Callback invoked when after the element is updated.
+   *
+   * By default, do nothing.
+   */
+  afterUpdateCallback(): void {}
 }
