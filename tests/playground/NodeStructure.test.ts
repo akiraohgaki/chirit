@@ -226,15 +226,16 @@ await Playground.test('DOM management features', async (t) => {
   });
 
   await t.step('event binding', async (t) => {
-    const button1 = '<button data-onevent="true" onclick="this.handleClick(event)">a</button>';
-    const button2 = '<button data-onevent="false">b</button>';
+    const button1 = '<button data-onevent="click" onclick="this.handleClick(event)">a</button>';
+    const button2 = '<button data-onevent="none">b</button>';
+    const button3 = '<button data-onevent="custom" oncustom="this.handleClick(event)">c</button>';
 
     await Playground.sleep(sleepTime);
 
     await t.step('onevent attribute', () => {
       nodeStructure.update(button1);
 
-      (testElement.shadowRoot?.querySelector('button[data-onevent="true"]') as HTMLButtonElement).click();
+      (testElement.shadowRoot?.querySelector('button[data-onevent="click"]') as HTMLButtonElement).click();
 
       assertEquals(eventType, 'click');
     });
@@ -246,9 +247,23 @@ await Playground.test('DOM management features', async (t) => {
     await t.step('if node changed, the event binding should be reset', () => {
       nodeStructure.update(button2 + button1);
 
-      (testElement.shadowRoot?.querySelector('button[data-onevent="true"]') as HTMLButtonElement).click();
+      (testElement.shadowRoot?.querySelector('button[data-onevent="click"]') as HTMLButtonElement).click();
 
       assertEquals(eventType, 'click');
+    });
+
+    await Playground.sleep(sleepTime);
+
+    eventType = '';
+
+    await t.step('custom event attribute', () => {
+      nodeStructure.update(button3);
+
+      (testElement.shadowRoot?.querySelector('button[data-onevent="custom"]') as HTMLButtonElement).dispatchEvent(
+        new CustomEvent('custom'),
+      );
+
+      assertEquals(eventType, 'custom');
     });
 
     await Playground.sleep(sleepTime);
