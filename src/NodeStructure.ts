@@ -50,7 +50,7 @@ export class NodeStructure<T extends Node> {
 
   #contextRef: WeakRef<Record<string, unknown>> | null;
 
-  #oneventSet: Set<[Element, string]>;
+  #eventListenerSet: Set<[Element, string, EventListener]>;
 
   /**
    * Creates a new instance of the NodeStructure class.
@@ -66,8 +66,8 @@ export class NodeStructure<T extends Node> {
     this.#hostRef = new WeakRef(host);
     this.#contextRef = context ? new WeakRef(context as Record<string, unknown>) : null;
 
-    // Manage onevent handlers.
-    this.#oneventSet = new Set();
+    // Manage event listeners.
+    this.#eventListenerSet = new Set();
   }
 
   /**
@@ -315,18 +315,17 @@ export class NodeStructure<T extends Node> {
       // NamedNodeMap of Element.attributes is live so must be convert to array.
       for (const attribute of Array.from(target.attributes)) {
         if (attribute.name.search(/^on\w+/i) !== -1) {
-          const onevent = attribute.name.toLowerCase();
-          const oneventTarget = target as unknown as Record<string, (event: Event) => unknown>;
+          const attributeName = attribute.name.toLowerCase();
+          const type = attributeName.substring(2);
 
-          if (onevent in target && typeof oneventTarget[onevent] === 'function') {
-            const handler = new Function('event', attribute.value);
-            const context = this.#getContext();
+          const handler = new Function('event', attribute.value) as EventListener;
+          const context = this.#getContext();
+          const boundHandler = handler.bind(context ?? target);
 
-            target.removeAttribute(attribute.name);
-            oneventTarget[onevent] = handler.bind(context ?? target);
+          target.removeAttribute(attribute.name);
+          target.addEventListener(type, boundHandler);
 
-            this.#oneventSet.add([target, onevent]);
-          }
+          this.#eventListenerSet.add([target, type, boundHandler]);
         }
       }
     }
@@ -340,11 +339,10 @@ export class NodeStructure<T extends Node> {
    * Clears the onevent handlers.
    */
   #clearOneventHandlers(): void {
-    for (const [target, onevent] of this.#oneventSet) {
-      const oneventTarget = target as unknown as Record<string, null>;
-      oneventTarget[onevent] = null;
+    for (const [target, type, listener] of this.#eventListenerSet) {
+      target.removeEventListener(type, listener);
     }
 
-    this.#oneventSet.clear();
+    this.#eventListenerSet.clear();
   }
 }
