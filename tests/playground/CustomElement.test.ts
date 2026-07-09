@@ -181,7 +181,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
 
       await Playground.sleep(100);
 
-      let expected = [
+      assertEquals(values.splice(0), [
         'disconnectedCallback()',
         'adoptedCallback()',
         'connectedCallback()',
@@ -191,18 +191,7 @@ await Playground.test('Custom element lifecycle callbacks', async (t) => {
         'render()',
         'updatedCallback()',
         'afterUpdateCallback()',
-      ];
-
-      if (navigator.userAgent.search('Firefox') !== -1) {
-        // Because the behavior is different in Firefox.
-        expected = [
-          'disconnectedCallback()',
-          'adoptedCallback()',
-          'connectedCallback()',
-        ];
-      }
-
-      assertEquals(values.splice(0), expected);
+      ]);
     });
   });
 
