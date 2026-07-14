@@ -314,13 +314,26 @@ export class NodeStructure<T extends Node> {
     if (target.hasAttributes()) {
       // NamedNodeMap of Element.attributes is live so must be convert to array.
       for (const attribute of Array.from(target.attributes)) {
+        // e.g. onclick, onsubmit, oncustom...
         if (attribute.name.search(/^on\w+/i) !== -1) {
-          const attributeName = attribute.name.toLowerCase();
-          const type = attributeName.substring(2);
+          const type = attribute.name.toLowerCase().substring(2);
+          const context = (this.#getContext() ?? target) as Record<string, () => unknown>;
+          let boundHandler: () => unknown;
 
-          const handler = new Function('event', attribute.value) as EventListener;
-          const context = this.#getContext();
-          const boundHandler = handler.bind(context ?? target);
+          // e.g.
+          // onclick="this.handleClick(event)"
+          // onclick=" this.handleClick( event ) ; "
+          // onclick="this.handleClick()"
+          const match = attribute.value.trim().match(/^this\.([a-zA-Z0-9_]+)\(\s*event\s*\)\s*;?$/);
+          if (match && typeof context[match[1]] === 'function') {
+            boundHandler = context[match[1]].bind(context);
+          } else {
+            console.warn(
+              `CSP Warning: Event handler for "${attribute.name}" is not optimized for CSP. Please use "this.methodName(event)".`,
+            );
+            const handler = new Function('event', attribute.value);
+            boundHandler = handler.bind(context);
+          }
 
           target.removeAttribute(attribute.name);
           target.addEventListener(type, boundHandler);
