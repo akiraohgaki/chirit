@@ -316,7 +316,7 @@ export class NodeStructure<T extends Node> {
       for (const attribute of Array.from(target.attributes)) {
         // e.g. onclick, onsubmit, oncustom...
         if (attribute.name.search(/^on\w+/i) !== -1) {
-          const type = attribute.name.toLowerCase().substring(2);
+          const type = attribute.name.toLowerCase().slice(2);
           const context = (this.#getContext() ?? target) as Record<string, () => unknown>;
           let boundHandler: () => unknown;
 
