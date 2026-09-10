@@ -100,7 +100,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   }
 
   /**
-   * Callback invoked when the element is connected to a parent node.
+   * Callback invoked when the element is connected to the document tree.
    *
    * By default, updates the element.
    */
@@ -116,7 +116,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   }
 
   /**
-   * Callback invoked when the element is disconnected from a parent node.
+   * Callback invoked when the element is disconnected from the document tree.
    *
    * By default, do nothing.
    */
@@ -174,7 +174,7 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   render(): void {}
 
   /**
-   * Callback invoked when the element has been updated.
+   * Callback invoked when the element has completed updating.
    *
    * By default, do nothing.
    */
@@ -192,14 +192,14 @@ export class CustomElement extends dom.globalThis.HTMLElement {
   }
 
   /**
-   * Callback invoked when before the element is updated.
+   * Callback invoked before the element is updated.
    *
    * By default, do nothing.
    */
   beforeUpdateCallback(): void {}
 
   /**
-   * Callback invoked when after the element is updated.
+   * Callback invoked after the element is updated.
    *
    * By default, do nothing.
    */

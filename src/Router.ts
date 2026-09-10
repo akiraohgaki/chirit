@@ -199,7 +199,7 @@ export class Router {
       newVirtualPath = url;
     }
 
-    const oldVirtualPath = dom.globalThis.location.hash.substring(1);
+    const oldVirtualPath = dom.globalThis.location.hash.slice(1);
     const oldVirtualUrl = new URL(oldVirtualPath, dom.globalThis.location.origin);
     const newVirtualUrl = new URL(this.#resolveBaseUrl(newVirtualPath), oldVirtualUrl.href);
 
@@ -242,7 +242,7 @@ export class Router {
    */
   #hashchangeCallback(event: HashChangeEvent): void {
     this.#onchange(event);
-    this.#invokeRouteHandler(dom.globalThis.location.hash.substring(1));
+    this.#invokeRouteHandler(dom.globalThis.location.hash.slice(1));
   }
 
   /**
@@ -291,6 +291,6 @@ export class Router {
   #fixRoutePattern(pattern: string): string {
     // Replace :name to (?<name>[^/?#]+) but don't replace if it's a part of non-capturing groups (?:pattern).
     // And the pattern may start with ':' so prefix the pattern with '/' and remove it when the replacement complete.
-    return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').substring(1);
+    return `/${pattern}`.replace(/([^?]):(\w+)/g, '$1(?<$2>[^/?#]+)').slice(1);
   }
 }
