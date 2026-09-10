@@ -256,7 +256,7 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * Callback invoked when the element is connected to a parent node.
+   * Callback invoked when the element is connected to the document tree.
    *
    * By default, updates the element.
    */
@@ -343,7 +343,7 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * Creates the styles.
+   * Returns the styles for the element.
    *
    * By default, returns an empty array.
    *
@@ -356,7 +356,7 @@ export class Component<T extends Partial<ComponentSchemas> = ComponentSchemas> e
   }
 
   /**
-   * Creates the template content.
+   * Returns the template content for the element.
    *
    * By default, returns an empty string.
    *
